@@ -2,8 +2,13 @@ name: Daily AI Tech Blogger
 
 on:
   schedule:
-    - cron: '0 8 * * *' # Runs automatically every day at 8:00 AM UTC
-  workflow_dispatch: # Allows you to trigger it manually via a button
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+
+# We must give the bot permission to push code AND trigger other workflows
+permissions:
+  contents: write
+  actions: write
 
 jobs:
   write_and_commit:
@@ -18,7 +23,6 @@ jobs:
         with:
           python-version: '3.10'
 
-      # We install feedparser for the RSS feed, and the Groq library
       - name: Install Dependencies
         run: pip install feedparser groq
 
@@ -34,3 +38,10 @@ jobs:
           git add content/posts/*
           git commit -m "Auto-published new tech article via Groq" || exit 0
           git push
+
+      # THIS IS THE MAGIC FIX
+      # It explicitly tells GitHub to run your Hugo build workflow
+      - name: Trigger Site Rebuild
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run hugo.yaml --ref main
