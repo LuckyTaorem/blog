@@ -10,4 +10,4 @@ We aggregate, analyze, and deliver the most important technology news from aroun
 
 Stay informed on the latest breakthroughs in Artificial Intelligence, consumer electronics, and software engineering.
 
-[Explore the Latest Articles](/blog/posts/)
+{{< recent >}}
