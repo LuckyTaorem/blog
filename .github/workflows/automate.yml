@@ -37,6 +37,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git add content/posts/*
           git commit -m "Auto-published new tech article via Groq" || exit 0
+          git pull --rebase origin main
           git push
 
       # THIS IS THE MAGIC FIX
@@ -45,3 +46,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh workflow run hugo.yaml --ref main
+        
