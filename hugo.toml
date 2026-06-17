@@ -1,3 +1,7 @@
-baseURL = 'https://luckytaorem.github.io/blog/'
+baseURL = "https://luckytaorem.github.io/blog/"
+title = "My Tech Blog"
 locale = "en-us"
-title = 'My Awesome Hugo Site'
+
+[module]
+  [[module.imports]]
+    path = "github.com/gethinode/hinode"
