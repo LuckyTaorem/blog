@@ -1,0 +1,3 @@
+baseURL = 'https://luckytaorem.github.io/blog/'
+languageCode = 'en-us'
+title = 'My Awesome Hugo Site'

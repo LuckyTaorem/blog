@@ -1,0 +1,3 @@
+[submodule "themes/hinode"]
+	path = themes/hinode
+	url = https://github.com/gethinode/hinode.git
