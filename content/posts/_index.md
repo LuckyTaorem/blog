@@ -2,4 +2,5 @@
 title: "Latest Tech Articles"
 description: "Read our latest deep dives into AI and technology."
 type: "list"
+layout: "customlist"
 ---
