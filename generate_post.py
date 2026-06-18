@@ -140,48 +140,56 @@ def extract_image(entry, title, slug):
     return generate_fallback_image(title, slug)
 
 # 3. Main Loop
-for entry in feed.entries[:5]:
-    # Determine published date (try published, then updated)
-    published_struct = entry.get('published_parsed') or entry.get('updated_parsed')
-    if not published_struct:
-        # If no date available, skip (or optionally treat as today)
-        print(f"Skipping (no publish date): {entry.get('title', 'NO TITLE')}")
+for current_feed in RSS_FEEDS:
+    print(f"\nChecking {current_feed}...")
+    feed = feedparser.parse(current_feed)
+
+    # skip if feed parsing failed or no entries
+    if not getattr(feed, "entries", None):
+        print("No entries found for this feed.")
         continue
 
-    # Convert struct_time to UTC date
-    published_dt = datetime.fromtimestamp(time.mktime(published_struct), tz=timezone.utc)
-    if published_dt.date() != datetime.now(timezone.utc).date():
-        print(f"Skipping (not today): {entry.get('title', 'NO TITLE')} (published {published_dt.date()})")
-        continue
+    for entry in feed.entries[:5]:
+        # Determine published date (try published, then updated)
+        published_struct = entry.get('published_parsed') or entry.get('updated_parsed')
+        if not published_struct:
+            # If no date available, skip (or optionally treat as today)
+            print(f"Skipping (no publish date): {entry.get('title', 'NO TITLE')}")
+            continue
 
-    # Skip if this entry already exists in the site's posts
-    if post_exists(entry, output_dir):
-        print(f"Skipping (Already exists on site): {entry.get('title', 'NO TITLE')}")
-        continue
+        # Convert struct_time to UTC date
+        published_dt = datetime.fromtimestamp(time.mktime(published_struct), tz=timezone.utc)
+        if published_dt.date() != datetime.now(timezone.utc).date():
+            print(f"Skipping (not today): {entry.get('title', 'NO TITLE')} (published {published_dt.date()})")
+            continue
 
-    news_title = html.unescape(entry.title)
+        # Skip if this entry already exists in the site's posts
+        if post_exists(entry, output_dir):
+            print(f"Skipping (Already exists on site): {entry.get('title', 'NO TITLE')}")
+            continue
 
-    filename_slug = re.sub(r'[^\w\s-]', '', news_title).strip().lower()
-    filename_slug = re.sub(r'[-\s]+', '-', filename_slug)
-    filename = filename_slug + ".md"
+        news_title = html.unescape(entry.title)
 
-    file_path = os.path.join(output_dir, filename)
+        filename_slug = re.sub(r'[^\w\s-]', '', news_title).strip().lower()
+        filename_slug = re.sub(r'[-\s]+', '-', filename_slug)
+        filename = filename_slug + ".md"
 
-    if os.path.exists(file_path):
-        print(f"Skipping (Already published): {news_title}")
-        continue
+        file_path = os.path.join(output_dir, filename)
 
-    print(f"Found NEW article: {news_title}")
-    news_summary = html.unescape(entry.get('summary', ''))
+        if os.path.exists(file_path):
+            print(f"Skipping (Already published): {news_title}")
+            continue
 
-    # Pass the title and slug to our new image engine
-    raw_image_url = extract_image(entry, news_title, filename_slug)
-    image_url = html.unescape(raw_image_url)
+        print(f"Found NEW article: {news_title}")
+        news_summary = html.unescape(entry.get('summary', ''))
 
-    # ... (rest of your existing code for prompt, Groq call, saving file, etc.)
+        # Pass the title and slug to our new image engine
+        raw_image_url = extract_image(entry, news_title, filename_slug)
+        image_url = html.unescape(raw_image_url)
 
-        
-    prompt = f"""
+        # ... (rest of your existing code for prompt, Groq call, saving file, etc.)
+
+        prompt = f"""
 Act as an expert tech journalist and SEO specialist. Read this short news summary: {news_summary}
 
 Write a comprehensive, highly engaging 1500-word blog post about this topic. 
@@ -204,39 +212,39 @@ tags: ["Insert 3 to 5 relevant tags here based on the text"]
 (Write the rest of the markdown article here. Do not wrap the whole output in markdown code blocks, just output the raw text starting with the ---.)
 """
 
-    print("Sending to Groq...")
-    response = client.chat.completions.create(
-        messages=[
+        print("Sending to Groq...")
+        response = client.chat.completions.create(
+            messages=[
                 {"role": "system", "content": "You are a professional tech blogger."},
                 {"role": "user", "content": prompt}
-        ],
-        model="llama-3.3-70b-versatile",
-        temperature=0.7,
-        max_tokens=4000,
-    )
+            ],
+            model="llama-3.3-70b-versatile",
+            temperature=0.7,
+            max_tokens=4000,
+        )
 
-    article_content = response.choices[0].message.content.strip()
-        
-    # Strip markdown block tags safely (using chr(96) to prevent chat UI bugs)
-    start_pattern = r"^" + chr(96)*3 + r"(?:markdown)?\s*\n"
-    end_pattern = r"\n" + chr(96)*3 + r"\s*$"
-        
-    article_content = re.sub(start_pattern, "", article_content, flags=re.IGNORECASE)
-    article_content = re.sub(end_pattern, "", article_content)
+        article_content = response.choices[0].message.content.strip()
+
+        # Strip markdown block tags safely (using chr(96) to prevent chat UI bugs)
+        start_pattern = r"^" + chr(96)*3 + r"(?:markdown)?\s*\n"
+        end_pattern = r"\n" + chr(96)*3 + r"\s*$"
+
+        article_content = re.sub(start_pattern, "", article_content, flags=re.IGNORECASE)
+        article_content = re.sub(end_pattern, "", article_content)
 
         # FOOLPROOF FRONTMATTER FIX
-    if not article_content.startswith("---"):
-        first_dash_idx = article_content.find("---")
-        if first_dash_idx != -1:
-            article_content = article_content[first_dash_idx:]
-        else:
-            fallback_yaml = f"---\ntitle: \"{news_title}\"\ndate: {datetime.now(timezone.utc).isoformat()}\ndraft: false\nimages: [\"{image_url}\"]\n---\n\n"
-            article_content = fallback_yaml + article_content
+        if not article_content.startswith("---"):
+            first_dash_idx = article_content.find("---")
+            if first_dash_idx != -1:
+                article_content = article_content[first_dash_idx:]
+            else:
+                fallback_yaml = f"---\ntitle: \"{news_title}\"\ndate: {datetime.now(timezone.utc).isoformat()}\ndraft: false\nimages: [\"{image_url}\"]\n---\n\n"
+                article_content = fallback_yaml + article_content
 
-    with open(file_path, "w", encoding="utf-8") as f:
-        f.write(article_content)
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(article_content)
 
-    print(f"Success! Blog post saved to: {file_path}")
-        
-    # Break out so we move on to the next website
-    break
+        print(f"Success! Blog post saved to: {file_path}")
+
+        # Break out so we move on to the next website
+        break
