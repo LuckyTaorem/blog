@@ -1,19 +1,24 @@
 <div class="row row-cols-1 row-cols-md-2 g-4 mt-4">
   {{ range first 6 (where site.RegularPages "Section" "posts") }}
     <div class="col">
-      <div class="card h-100 shadow-sm border-0 bg-light">
+      <div class="card h-100 shadow-sm border-0">
+        
+        {{ if .Params.images }}
+          <img src="{{ index .Params.images 0 }}" class="card-img-top" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
+        {{ end }}
+
         <div class="card-body">
           <h3 class="card-title h5 mb-3">
-            <a href="{{ .RelPermalink }}" class="text-decoration-none text-dark fw-bold stretched-link">
+            <a href="{{ .RelPermalink }}" class="text-decoration-none text-body fw-bold stretched-link">
               {{ .Title }}
             </a>
           </h3>
-          <p class="card-text text-secondary" style="font-size: 0.95rem;">
+          <p class="card-text text-body-secondary" style="font-size: 0.95rem;">
             {{ .Summary | plainify | truncate 120 }}
           </p>
         </div>
         <div class="card-footer bg-transparent border-0 pb-3">
-          <small class="text-muted fw-semibold">
+          <small class="text-body-tertiary fw-semibold">
             {{ .Date.Format "January 2, 2006" }}
           </small>
         </div>
@@ -23,5 +28,5 @@
 </div>
 
 <div class="mt-5 mb-3 text-center">
-  <a href="/blog/posts/" class="btn btn-primary px-4 py-2 rounded-pill fw-bold">View All Articles</a>
+  <a href="/posts/" class="btn btn-primary px-4 py-2 rounded-pill fw-bold">View All Articles</a>
 </div>

@@ -1,7 +1,51 @@
 baseURL = "https://luckytaorem.github.io/blog/"
-title = "My Tech Blog"
+title = "LT Developer"
 locale = "en-us"
 
 [module]
   [[module.imports]]
     path = "github.com/gethinode/hinode"
+
+[params.footer]
+  copyright = "© 2026 LT Developer. All rights reserved."
+
+[params.navigation]
+  logo = "img/logo.png"
+
+
+# --- TOP NAVIGATION MENU ---
+[[menus.main]]
+  name = "Home"
+  pageRef = "/"
+  weight = 10
+
+[[menus.main]]
+  name = "Articles"
+  pageRef = "/posts"
+  weight = 20
+
+[[menus.main]]
+  name = "About Us"
+  pageRef = "/about"
+  weight = 30
+
+[[menus.main]]
+  name = "Contact"
+  pageRef = "/contact"
+  weight = 40
+
+# --- FOOTER MENU ---
+[[menus.footer]]
+  name = "About Us"
+  pageRef = "/about"
+  weight = 10
+
+[[menus.footer]]
+  name = "Contact Us"
+  pageRef = "/contact"
+  weight = 20
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
