@@ -10,26 +10,70 @@
 		
 		
 		
+			<lastBuildDate>Thu, 18 Jun 2026 10:29:51 +0000</lastBuildDate>
+		
 			<atom:link href="http://localhost:1313/blog/categories/index.xml" rel="self" type="application/rss+xml" />
 			<item>
-				<title>Artificial Intelligence</title>
-				<link>http://localhost:1313/blog/categories/artificial-intelligence/</link>
-				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/artificial-intelligence/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Business</title>
-				<link>http://localhost:1313/blog/categories/business/</link>
-				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/business/</guid>
+				<title>Movie</title>
+				<link>http://localhost:1313/blog/categories/movie/</link>
+				<pubDate>Thu, 18 Jun 2026 10:29:51 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/movie/</guid>
 				<description></description>
 			</item>
 			<item>
 				<title>Gaming</title>
 				<link>http://localhost:1313/blog/categories/gaming/</link>
-				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+				<pubDate>Thu, 18 Jun 2026 10:29:48 +0000</pubDate>
 				<guid>http://localhost:1313/blog/categories/gaming/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Business</title>
+				<link>http://localhost:1313/blog/categories/business/</link>
+				<pubDate>Thu, 18 Jun 2026 10:29:43 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/business/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Security</title>
+				<link>http://localhost:1313/blog/categories/security/</link>
+				<pubDate>Thu, 18 Jun 2026 10:29:17 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/security/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Promo Code</title>
+				<link>http://localhost:1313/blog/categories/promo-code/</link>
+				<pubDate>Thu, 18 Jun 2026 10:28:20 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/promo-code/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Healthcare Tech</title>
+				<link>http://localhost:1313/blog/categories/healthcare-tech/</link>
+				<pubDate>Thu, 18 Jun 2026 10:27:12 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/healthcare-tech/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Space</title>
+				<link>http://localhost:1313/blog/categories/space/</link>
+				<pubDate>Thu, 18 Jun 2026 10:27:07 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/space/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Legal/Compliance</title>
+				<link>http://localhost:1313/blog/categories/legal/compliance/</link>
+				<pubDate>Thu, 18 Jun 2026 06:22:43 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/legal/compliance/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Artificial Intelligence</title>
+				<link>http://localhost:1313/blog/categories/artificial-intelligence/</link>
+				<pubDate>Thu, 18 Jun 2026 04:41:36 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/artificial-intelligence/</guid>
 				<description></description>
 			</item>
 			<item>
@@ -40,52 +84,10 @@
 				<description></description>
 			</item>
 			<item>
-				<title>Healthcare Tech</title>
-				<link>http://localhost:1313/blog/categories/healthcare-tech/</link>
-				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/healthcare-tech/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Legal/Compliance</title>
-				<link>http://localhost:1313/blog/categories/legal/compliance/</link>
-				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/legal/compliance/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Movie</title>
-				<link>http://localhost:1313/blog/categories/movie/</link>
-				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/movie/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Promo Code</title>
-				<link>http://localhost:1313/blog/categories/promo-code/</link>
-				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/promo-code/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Security</title>
-				<link>http://localhost:1313/blog/categories/security/</link>
-				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/security/</guid>
-				<description></description>
-			</item>
-			<item>
 				<title>Software</title>
 				<link>http://localhost:1313/blog/categories/software/</link>
 				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
 				<guid>http://localhost:1313/blog/categories/software/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Space</title>
-				<link>http://localhost:1313/blog/categories/space/</link>
-				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/space/</guid>
 				<description></description>
 			</item>
 	</channel>
