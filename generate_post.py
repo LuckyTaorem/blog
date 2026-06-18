@@ -63,7 +63,10 @@ for current_feed in RSS_FEEDS:
             
         print(f"Found NEW article: {news_title}")
         news_summary = html.unescape(entry.summary)
-        image_url = extract_image(entry)
+        
+        # Extract the image AND clean out any HTML entities like &#038;
+        raw_image_url = extract_image(entry)
+        image_url = html.unescape(raw_image_url)
         
         prompt = f"""
 Act as an expert tech journalist and SEO specialist. Read this short news summary: {news_summary}
