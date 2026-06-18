@@ -1,4 +1,5 @@
 import os
+os.makedirs("assets/images", exist_ok=True)
 import feedparser
 from groq import Groq
 import re
@@ -73,7 +74,7 @@ def post_exists(entry, news_title, output_dir):
 # --- Custom Image Generator ---
 def generate_fallback_image(title, slug):
     # Hugo looks for images in the 'static' folder
-    img_dir = "static/images"
+    img_dir = "assets/images"
     os.makedirs(img_dir, exist_ok=True)
     filepath = os.path.join(img_dir, f"{slug}.jpg")
 
@@ -117,11 +118,30 @@ def generate_fallback_image(title, slug):
         w, h = draw.textsize(wrapped_text, font=font)
 
     # Draw the text in white perfectly centered
-    draw.multiline_text(((W-w)/2, (H-h)/2), wrapped_text, font=font, fill=(255, 255, 255), align="center")
+    x = (W - w) / 2
+    y = (H - h) / 2
+
+    # Shadow
+    draw.multiline_text(
+        (x + 4, y + 4),
+        wrapped_text,
+        font=font,
+        fill=(0, 0, 0),
+        align="center"
+    )
+
+    # Main text
+    draw.multiline_text(
+        (x, y),
+        wrapped_text,
+        font=font,
+        fill=(255, 255, 255),
+        align="center"
+    )
 
     # Save and return the relative path for Hugo
     img.save(filepath)
-    return f"/images/{slug}.jpg"
+    return f"/assets/images/{slug}.jpg"
 
 # --- Unsplash Fetcher ---
 def get_unsplash_image(title):
@@ -171,6 +191,66 @@ def extract_image(entry, title, slug):
     print("Unsplash failed. Generating custom title image...")
     return generate_fallback_image(title, slug)
 
+def update_today_post_images(output_dir):
+    today = datetime.now(timezone.utc).date()
+
+    for fname in os.listdir(output_dir):
+        if not fname.endswith(".md"):
+            continue
+
+        file_path = os.path.join(output_dir, fname)
+
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                content = f.read()
+
+            # Extract date from frontmatter
+            date_match = re.search(r"date:\s*([^\n]+)", content)
+            if not date_match:
+                continue
+
+            post_date = datetime.fromisoformat(
+                date_match.group(1).strip().replace("Z", "+00:00")
+            ).date()
+
+            if post_date != today:
+                continue
+
+            slug = os.path.splitext(fname)[0]
+
+            # Extract thumbnail
+            thumb_match = re.search(r'thumbnail:\s*"([^"]+)"', content)
+
+            if thumb_match:
+                thumb_url = thumb_match.group(1)
+
+                if thumb_url.startswith("http"):
+                    local_thumb = download_and_verify_image(
+                        thumb_url,
+                        f"{slug}-thumb",
+                        slug
+                    )
+
+                    content = re.sub(
+                        r'thumbnail:\s*"([^"]+)"',
+                        f'thumbnail: "{local_thumb}"',
+                        content
+                    )
+
+                    content = re.sub(
+                        r'images:\s*\[[^\]]*\]',
+                        f'images: ["{local_thumb}"]',
+                        content
+                    )
+
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(content)
+
+            print(f"Updated images: {fname}")
+
+        except Exception as e:
+            print(f"Error processing {fname}: {e}")
+
 # --- The Image Downloader (Anti-Hotlink Protection) ---
 def download_and_verify_image(url, slug, title):
     # If the URL is already our generated fallback, skip downloading
@@ -204,6 +284,8 @@ def download_and_verify_image(url, slug, title):
     # If the download failed or was blocked by a firewall, generate the custom text image
     return generate_fallback_image(title, slug)
 
+update_today_post_images(output_dir)
+
 # 3. Main Loop
 for current_feed in RSS_FEEDS:
     print(f"\nChecking {current_feed}...")
@@ -233,8 +315,7 @@ for current_feed in RSS_FEEDS:
 
         # NEW: Pass the title into our updated post_exists function
         if post_exists(entry, news_title, output_dir):
-            print(f"Skipping (Already exists on site): {news_title}")
-            continue
+            print(f"Post exists. Will update images only: {news_title}")
 
         # Keep your existing slug logic below this point
         filename_slug = re.sub(r'[^\w\s-]', '', news_title).strip().lower()
@@ -324,6 +405,39 @@ Do not invent new categories.
 
 # --- Replace your Main Loop call with this ---
         article_content = generate_article(prompt, news_summary)
+
+        # --- If post already exists, only fetch/store images and rewrite image paths ---
+        if os.path.exists(file_path):
+           print(f"Post exists. Updating images only: {news_title}")
+
+           with open(file_path, "r", encoding="utf-8") as f:
+               existing_content = f.read()
+
+           # Find all markdown images: ![alt](url)
+           image_matches = re.findall(r'!\[[^\]]*\]\((.*?)\)', existing_content)
+
+           for idx, img_url in enumerate(image_matches, start=1):
+               # Skip already-local images
+               if img_url.startswith("/images/") or img_url.startswith("/assets/images/"):
+                   continue
+               
+               try:
+                   local_img = download_and_verify_image(
+                       html.unescape(img_url),
+                       f"{filename_slug}-{idx}",
+                       news_title
+                   )
+
+                   # Replace remote URL with local path
+                   existing_content = existing_content.replace(img_url, local_img)
+
+               except Exception as e:
+                   print(f"Failed image download: {img_url} -> {e}")
+
+           with open(file_path, "w", encoding="utf-8") as f:
+               f.write(existing_content)
+
+        continue
 
         # Strip markdown block tags safely (using chr(96) to prevent chat UI bugs)
         start_pattern = r"^" + chr(96)*3 + r"(?:markdown)?\s*\n"
