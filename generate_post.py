@@ -285,17 +285,45 @@ Do not invent new categories.
 """
 
         print("Sending to Groq...")
-        response = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": "You are a professional tech blogger."},
-                {"role": "user", "content": prompt}
-            ],
-            model="llama-3.3-70b-versatile",
-            temperature=0.7,
-            max_tokens=4000,
-        )
+        def generate_article(prompt, news_summary):
+    # Determine model and constraints based on tier/diet
+    # If using 70B, we can request more length. If 8B, we keep it concise.
+            model_settings = [
+            {"model": "llama-3.3-70b-versatile", "word_count": "1200"},
+            {"model": "llama-3.1-8b-instant", "word_count": "600"}
+    ]
 
-        article_content = response.choices[0].message.content.strip()
+            for setting in model_settings:
+                try:
+                    print(f"Attempting to generate with {setting['model']}...")
+
+                # Apply Token Diet: Inject the word count limit dynamically
+                    diet_prompt = prompt.replace("1500-word", f"{setting['word_count']}-word")
+
+                    response = client.chat.completions.create(
+                    messages=[
+                        {"role": "system", "content": "You are a professional tech blogger."},
+                        {"role": "user", "content": diet_prompt}
+                    ],
+                    model=setting['model'],
+                    temperature=0.7,
+                    max_tokens=4000,
+                    )
+                    return response.choices[0].message.content.strip()
+
+                except Exception as e:
+            # Check if it's a Rate Limit error (429)
+                    if hasattr(e, 'status_code') and e.status_code == 429:
+                        print(f"Rate limit reached for {setting['model']}. Switching model...")
+                        continue # Try the next model in the list
+                    else:
+                        # If it's a different error (e.g., connection), re-raise it
+                        raise e
+    
+            raise Exception("All models exhausted.")
+
+# --- Replace your Main Loop call with this ---
+        article_content = generate_article(prompt, news_summary)
 
         # Strip markdown block tags safely (using chr(96) to prevent chat UI bugs)
         start_pattern = r"^" + chr(96)*3 + r"(?:markdown)?\s*\n"
