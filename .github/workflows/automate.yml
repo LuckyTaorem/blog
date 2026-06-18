@@ -24,7 +24,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install Dependencies
-        run: pip install feedparser groq
+        run: pip install feedparser groq requests pillow
 
       - name: Run Groq AI Writer
         env:
