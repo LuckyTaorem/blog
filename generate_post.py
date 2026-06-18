@@ -6,6 +6,9 @@ import time
 from datetime import datetime, timezone
 import html
 import requests
+import json
+import argparse
+import subprocess
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
 from difflib import SequenceMatcher
@@ -17,6 +20,7 @@ print("WORKDIR:", os.getcwd())
 # ==========================================
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 UNSPLASH_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
+QUEUE_FILE = "queue.json"
 
 VALID_CATEGORIES = [
     "Artificial Intelligence", "Hardware", "Software", "Space", "Security", "Business", 
@@ -34,27 +38,21 @@ RSS_FEEDS = [
 ]
 
 output_dir = "content/posts"
-REQUIRED_DIRS = ["assets/images", "assets/images", output_dir]
+REQUIRED_DIRS = ["assets/images", output_dir]
 for directory in REQUIRED_DIRS:
     os.makedirs(directory, exist_ok=True)
 
 # ==========================================
-# 2. CORE FUNCTIONS
+# 2. CORE HELPER FUNCTIONS
 # ==========================================
-def get_existing_post_path(entry, news_title, output_dir):
+def get_existing_post_path(news_title):
     if not os.path.exists(output_dir): return None
-    entry_link = entry.get('link', '').strip()
-    entry_id = entry.get('id', '').strip()
-
     for fname in os.listdir(output_dir):
         if not fname.endswith('.md'): continue
         path = os.path.join(output_dir, fname)
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 content = f.read()
-                if entry_link and entry_link in content: return path
-                if entry_id and entry_id in content: return path
-                
                 title_match = re.search(r'^title:\s*"(.*?)"', content, re.MULTILINE)
                 if title_match:
                     existing_title = title_match.group(1)
@@ -67,12 +65,8 @@ def get_existing_post_path(entry, news_title, output_dir):
 def generate_fallback_image(title, slug):
     print(f"  -> Generating SPACE fallback image for: {slug}")
     img_dir = "assets/images"
-    os.makedirs(img_dir, exist_ok=True)
     filepath = os.path.join(img_dir, f"{slug}.jpg")
-    
     W, H = 1200, 630
-    
-    # 1. Generate Space Background
     img = Image.new('RGB', (W, H), color=(12, 14, 25))
     draw = ImageDraw.Draw(img)
     import random
@@ -84,26 +78,15 @@ def generate_fallback_image(title, slug):
         if random.random() > 0.5: color = tuple(int(c * 0.6) for c in color)
         draw.ellipse((x, y, x+size, y+size), fill=color)
 
-    # 2. Bulletproof Font Loader
     font_path = "Roboto-Bold.ttf"
-    if os.path.exists(font_path) and os.path.getsize(font_path) < 10000:
-        os.remove(font_path) # Destroy corrupt font files
-
+    if os.path.exists(font_path) and os.path.getsize(font_path) < 10000: os.remove(font_path)
     if not os.path.exists(font_path):
-        url = "https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Bold.ttf"
-        r = requests.get(url, timeout=10)
+        r = requests.get("https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Bold.ttf", timeout=10)
         if r.status_code == 200:
             with open(font_path, "wb") as f: f.write(r.content)
+    try: font = ImageFont.truetype(font_path, 90)
+    except Exception: font = ImageFont.load_default()
 
-    try:
-        font = ImageFont.truetype(font_path, 90) # Size 90!
-    except Exception:
-        try:
-            font = ImageFont.truetype("arial.ttf", 90) # Windows Fallback
-        except Exception:
-            font = ImageFont.load_default()
-
-    # 3. Text Wrapping and Drawing
     wrapper = textwrap.TextWrapper(width=26)
     wrapped_text = wrapper.fill(text=title)
     
@@ -114,12 +97,8 @@ def generate_fallback_image(title, slug):
         w, h = draw.textsize(wrapped_text, font=font)
 
     x, y = (W - w) / 2, (H - h) / 2
-    
-    # Heavy shadow
     draw.multiline_text((x + 6, y + 6), wrapped_text, font=font, fill=(0, 0, 0), align="center")
-    # Bright text
     draw.multiline_text((x, y), wrapped_text, font=font, fill=(255, 255, 255), align="center")
-    
     img.save(filepath)
     return f"images/{slug}.jpg"
 
@@ -133,7 +112,7 @@ def get_unsplash_image(title):
     except Exception: pass
     return None
 
-def extract_image(entry, title, slug):
+def extract_rss_image(entry):
     if 'media_content' in entry:
         for media in entry.media_content:
             if 'url' in media: return media['url']
@@ -142,142 +121,157 @@ def extract_image(entry, title, slug):
             if link.get('rel') == 'enclosure' and 'image' in link.get('type', ''): return link.get('href')
     match = re.search(r'<img[^>]+src="([^">]+)"', entry.get('summary', '') + str(entry.get('content', '')))
     if match: return match.group(1)
-    
-    unsplash_url = get_unsplash_image(title)
-    if unsplash_url: return unsplash_url
-    return generate_fallback_image(title, slug)
+    return None
 
-def download_and_verify_image(url, slug, title, is_featured=True):
-    if url.startswith("images/") or url.startswith("/images/"): return url
+def download_and_verify_image(url, slug, title):
     img_dir = "assets/images"
     filepath = os.path.join(img_dir, f"{slug}.jpg")
-    try:
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
-        r = requests.get(url, headers=headers, timeout=10)
-        if r.status_code == 200:
-            with open(filepath, 'wb') as f: f.write(r.content)
-            try:
+    
+    # Try the provided URL first
+    if url and not url.startswith("images/"):
+        try:
+            headers = {'User-Agent': 'Mozilla/5.0'}
+            r = requests.get(url, headers=headers, timeout=10)
+            if r.status_code == 200:
+                with open(filepath, 'wb') as f: f.write(r.content)
                 with Image.open(filepath) as img: img.verify()
                 return f"images/{slug}.jpg"
-            except Exception: pass 
-    except Exception: pass 
-    return generate_fallback_image(title, slug) if is_featured else url
-
-def heal_all_broken_images(output_dir):
-    print("\n--- RUNNING IMAGE HEALER ---")
-    img_dir = "assets/images"
-    for fname in os.listdir(output_dir):
-        if not fname.endswith(".md"): continue
-        slug = fname.replace(".md", "")
-        file_path = os.path.join(output_dir, fname)
+        except Exception: pass 
+        
+    # If RSS had no image or it failed, try Unsplash
+    unsplash_url = get_unsplash_image(title)
+    if unsplash_url:
         try:
-            with open(file_path, "r", encoding="utf-8") as f: content = f.read()
-            title_match = re.search(r'^title:\s*"(.*?)"', content, re.MULTILINE)
-            if not title_match: continue
-            
-            expected_img_path = os.path.join(img_dir, f"{slug}.jpg")
-            expected_img_url = f"images/{slug}.jpg"
-            
-            if not os.path.exists(expected_img_path):
-                generate_fallback_image(title_match.group(1), slug)
-            
-            content = re.sub(r'thumbnail:\s*"([^"]+)"', f'thumbnail: "{expected_img_url}"', content)
-            content = re.sub(r'images:\s*\[[^\]]*\]', f'images: ["{expected_img_url}"]', content)
-            with open(file_path, "w", encoding="utf-8") as f: f.write(content)
+            r = requests.get(unsplash_url, timeout=10)
+            if r.status_code == 200:
+                with open(filepath, 'wb') as f: f.write(r.content)
+                with Image.open(filepath) as img: img.verify()
+                return f"images/{slug}.jpg"
         except Exception: pass
-    print("--- IMAGE HEALER COMPLETE ---\n")
 
-def update_post_images(file_path, slug, title):
+    # If all else fails, use the Space background
+    return generate_fallback_image(title, slug)
+
+def git_commit_and_push(message, trigger_hugo=False):
+    print(f"\n📦 Committing changes: {message}")
     try:
-        with open(file_path, "r", encoding="utf-8") as f: content = f.read()
-        image_matches = re.findall(r'!\[[^\]]*\]\((.*?)\)', content)
-        for idx, img_url in enumerate(image_matches, start=1):
-            if img_url.startswith("/images/") or img_url.startswith("/assets/images/"): continue
-            local_img = download_and_verify_image(html.unescape(img_url), f"{slug}-{idx}", title, is_featured=False)
-            content = content.replace(img_url, local_img)
+        subprocess.run(["git", "config", "--global", "user.name", "AI Automation Bot"], check=True)
+        subprocess.run(["git", "config", "--global", "user.email", "actions@github.com"], check=True)
+        
+        # --- STRICT FILE TARGETING ---
+        subprocess.run(["git", "add", "content/posts/"], check=True)
+        subprocess.run(["git", "add", "assets/images/"], check=True)
+        subprocess.run(["git", "add", "queue.json"], check=True)
+        
+        # Optional: You can keep static/images/ if you still have files going there, 
+        # but we fixed the paths earlier so assets/images/ is the main one now!
+        # subprocess.run(["git", "add", "static/images/"], check=True) 
+        # -----------------------------
 
-        thumb_match = re.search(r'thumbnail:\s*"([^"]+)"', content)
-        if thumb_match and thumb_match.group(1).startswith("http"):
-            local_thumb = download_and_verify_image(thumb_match.group(1), f"{slug}-thumb", title, is_featured=True)
-            content = re.sub(r'thumbnail:\s*"([^"]+)"', f'thumbnail: "{local_thumb}"', content)
-            content = re.sub(r'images:\s*\[[^\]]*\]', f'images: ["{local_thumb}"]', content)
-
-        with open(file_path, "w", encoding="utf-8") as f: f.write(content)
-    except Exception as e: print(f"Failed updating images: {e}")
-
-def generate_article(prompt):
-    model_settings = [
-        {"model": "llama-3.3-70b-versatile", "word_count": "1200"},
-        {"model": "llama-3.1-8b-instant", "word_count": "600"}
-    ]
-    for setting in model_settings:
-        try:
-            print(f"  -> Attempting Groq generation with {setting['model']}...")
-            diet_prompt = prompt.replace("1500-word", f"{setting['word_count']}-word")
-            response = client.chat.completions.create(
-                messages=[
-                    {"role": "system", "content": "You are a professional tech blogger."},
-                    {"role": "user", "content": diet_prompt}
-                ],
-                model=setting['model'],
-                temperature=0.7,
-                max_tokens=4000,
-            )
-            return response.choices[0].message.content.strip()
-        except Exception as e:
-            if hasattr(e, 'status_code') and e.status_code == 429:
-                print(f"  -> Rate limit reached for {setting['model']}. Switching model...")
-                continue 
-            else: raise e
-    raise Exception("All Groq models exhausted or failed.")
+        subprocess.run(["git", "commit", "-m", message], check=False) # allow fail if no changes
+        subprocess.run(["git", "pull", "--rebase", "origin", "main"], check=True)
+        subprocess.run(["git", "push"], check=True)
+        
+        if trigger_hugo:
+            print("🌐 Triggering Hugo rebuild...")
+            subprocess.run(["gh", "workflow", "run", "hugo.yaml", "--ref", "main"], check=True)
+        print("✅ Git operations complete!")
+    except Exception as e:
+        print(f"⚠️ Git/Hugo operation failed: {e}")
 
 # ==========================================
-# 3. MAIN AUTOMATION LOOP
+# 3. SCRAPE MODE (Runs at 8 AM / 8 PM)
 # ==========================================
-heal_all_broken_images(output_dir)
-
-for current_feed in RSS_FEEDS:
-    print(f"\nChecking {current_feed}...")
-    feed = feedparser.parse(current_feed)
-
-    if not getattr(feed, "entries", None):
-        print("No entries found for this feed.")
-        continue
-
-    for entry in feed.entries:
-        published_struct = entry.get('published_parsed') or entry.get('updated_parsed')
-        if not published_struct: continue
-
-        published_dt = datetime.fromtimestamp(time.mktime(published_struct), tz=timezone.utc)
-        if published_dt.date() != datetime.now(timezone.utc).date(): continue
-
-        news_title = html.unescape(entry.get('title', 'NO TITLE'))
-        filename_slug = re.sub(r'[^\w\s-]', '', news_title).strip().lower()
-        filename_slug = re.sub(r'[-\s]+', '-', filename_slug)
-        filename = filename_slug + ".md"
-        file_path = os.path.join(output_dir, filename)
-
-        # 1. Check if Post Exists
-        existing_path = get_existing_post_path(entry, news_title, output_dir)
-        if existing_path:
-            print(f"Post already exists: {news_title}. Verifying images...")
-            update_post_images(existing_path, filename_slug, news_title)
-            continue
+def run_scraper():
+    print("\n--- 🕵️ STARTING RSS SCRAPER ---")
+    
+    queue = []
+    if os.path.exists(QUEUE_FILE):
+        with open(QUEUE_FILE, "r") as f:
+            try: queue = json.load(f)
+            except: queue = []
             
-        print(f"Found NEW article: {news_title}")
-        news_summary = html.unescape(entry.get('summary', ''))
+    existing_queue_titles = [item['title'] for item in queue]
 
-        # 2. Extract & Download Image
-        raw_image_url = extract_image(entry, news_title, filename_slug)
-        image_url = download_and_verify_image(html.unescape(raw_image_url), filename_slug, news_title, is_featured=True)
+    for current_feed in RSS_FEEDS:
+        print(f"\nChecking {current_feed}...")
+        feed = feedparser.parse(current_feed)
 
-        # 3. Generate the Prompt
+        if not getattr(feed, "entries", None): continue
+
+        for entry in feed.entries:
+            published_struct = entry.get('published_parsed') or entry.get('updated_parsed')
+            if not published_struct: continue
+
+            published_dt = datetime.fromtimestamp(time.mktime(published_struct), tz=timezone.utc)
+            if published_dt.date() != datetime.now(timezone.utc).date(): continue
+
+            news_title = html.unescape(entry.get('title', 'NO TITLE'))
+            
+            # 1. Skip if already in Queue
+            if news_title in existing_queue_titles: continue
+            
+            # 2. Skip if already Published (NO IMAGE UPDATES, JUST SKIP)
+            if get_existing_post_path(news_title):
+                print(f"Duplicate found: {news_title}. Skipping entirely.")
+                continue
+
+            print(f"Found NEW article: {news_title}")
+            filename_slug = re.sub(r'[^\w\s-]', '', news_title).strip().lower()
+            filename_slug = re.sub(r'[-\s]+', '-', filename_slug)
+            
+            # Save clean text to queue to avoid JSON serialization errors
+            queue.append({
+                "title": news_title,
+                "slug": filename_slug,
+                "summary": html.unescape(entry.get('summary', '')),
+                "raw_image_url": extract_rss_image(entry)
+            })
+
+    print(f"\nTotal articles now waiting in queue: {len(queue)}")
+    
+    with open(QUEUE_FILE, "w", encoding="utf-8") as f:
+        json.dump(queue, f, indent=4)
+        
+    git_commit_and_push("Updated article queue")
+
+# ==========================================
+# 4. PUBLISH MODE (Runs every hour)
+# ==========================================
+def run_publisher():
+    print("\n--- 🚀 STARTING BATCH PUBLISHER ---")
+    
+    if not os.path.exists(QUEUE_FILE):
+        print("Queue file not found. Nothing to publish.")
+        return
+
+    with open(QUEUE_FILE, "r") as f:
+        queue = json.load(f)
+
+    if not queue:
+        print("Queue is empty. Waiting for next scraper run.")
+        return
+
+    # Take the first 3 articles, leave the rest in the queue
+    BATCH_SIZE = 3
+    batch = queue[:BATCH_SIZE]
+    remaining_queue = queue[BATCH_SIZE:]
+
+    print(f"Publishing {len(batch)} articles. {len(remaining_queue)} remaining in queue.")
+
+    for article in batch:
+        print(f"\nWriting: {article['title']}")
+        file_path = os.path.join(output_dir, article['slug'] + ".md")
+
+        # Download image or generate fallback
+        image_url = download_and_verify_image(article['raw_image_url'], article['slug'], article['title'])
+
         prompt = f"""
-Act as an expert tech journalist and SEO specialist. Read this short news summary: {news_summary}
+Act as an expert tech journalist and SEO specialist. Read this short news summary: {article['summary']}
 
-Write a comprehensive, highly engaging 1500-word blog post about this topic. 
-Include headings, bullet points, and an FAQ section. 
-Output the final result in pure Markdown format. 
+Write a highly engaging, in-depth technical blog post about this topic. 
+You MUST write a minimum of [WORD_COUNT] words. Do not summarize; provide extensive details, analysis, and context.
+Include headings, bullet points, and an FAQ section. Output in pure Markdown format.
 
 CRITICAL SEO RULES:
 1. Title Limit: The title in the frontmatter MUST be catchy, click-optimized, and strictly under 50 characters.
@@ -297,95 +291,87 @@ tags: ["Insert 3 to 5 relevant tags here based on the text"]
 ---
 
 IMPORTANT RULE FOR CATEGORIES: 
-You must evaluate the article and pick EXACTLY ONE category that most closely matches the content from this exact list: {', '.join(VALID_CATEGORIES)}.
-Do not invent new categories.
+You must evaluate the article and pick EXACTLY ONE category from this exact list: {', '.join(VALID_CATEGORIES)}.
 
 ![Featured Image]({image_url})
-
-(Write the rest of the markdown article here starting with an introductory paragraph. Remember, no H1 tags!)
 """
 
-        print("Sending to Groq...")
-        
-        # Determine model and constraints based on tier/diet
         model_settings = [
-            {"model": "llama-3.3-70b-versatile", "word_count": "1200"},
-            {"model": "llama-3.1-8b-instant", "word_count": "600"}
+            {"model": "llama-3.3-70b-versatile", "word_count": "1800"},
+            {"model": "llama-3.1-8b-instant", "word_count": "1500"}
         ]
 
         article_content = None
 
         for setting in model_settings:
             try:
-                print(f"Attempting to generate with {setting['model']}...")
-
-                # Apply Token Diet: Inject the word count limit dynamically
-                diet_prompt = prompt.replace("1500-word", f"{setting['word_count']}-word")
-
+                print(f"  -> Generating with {setting['model']}...")
+                diet_prompt = prompt.replace("[WORD_COUNT]", setting['word_count'])
                 response = client.chat.completions.create(
                     messages=[
-                        {"role": "system", "content": "You are a professional tech blogger."},
+                        {"role": "system", "content": "You are a professional tech blogger. You write exceptionally long, detailed, and comprehensive technical articles."},
                         {"role": "user", "content": diet_prompt}
                     ],
                     model=setting['model'],
                     temperature=0.7,
-                    max_tokens=4000,
+                    max_tokens=6000, 
                 )
                 article_content = response.choices[0].message.content.strip()
-                break # Break out of the fallback loop if successful!
-
+                break 
             except Exception as e:
-                # Check if it's a Rate Limit error (429)
-                if hasattr(e, 'status_code') and e.status_code == 429:
-                    print(f"Rate limit reached for {setting['model']}. Switching model...")
-                    continue # Try the next model in the list
-                else:
-                    print(f"API Error: {e}")
-                    break
+                if hasattr(e, 'status_code') and e.status_code == 429: continue 
+                else: break
         
-        # If both models failed or errored out, skip to the next article
         if not article_content:
-            print("Skipping article due to generation failure.")
+            print("  -> Skipping article due to generation failure.")
+            # Put it back in the queue so we try again next hour
+            remaining_queue.append(article)
             continue
 
-        # Strip markdown block tags safely (using chr(96) to prevent chat UI bugs)
+        # Clean Markdown Blocks
         start_pattern = r"^" + chr(96)*3 + r"(?:markdown)?\s*\n"
         end_pattern = r"\n" + chr(96)*3 + r"\s*$"
-
         article_content = re.sub(start_pattern, "", article_content, flags=re.IGNORECASE)
         article_content = re.sub(end_pattern, "", article_content)
 
-        # FOOLPROOF FRONTMATTER FIX
+        # Fix Frontmatter
         if not article_content.startswith("---"):
             first_dash_idx = article_content.find("---")
-            if first_dash_idx != -1:
-                article_content = article_content[first_dash_idx:]
-            else:
-                fallback_yaml = f"---\ntitle: \"{news_title}\"\ndate: {datetime.now(timezone.utc).isoformat()}\ndraft: false\nimages: [\"{image_url}\"]\n---\n\n"
-                article_content = fallback_yaml + article_content
+            if first_dash_idx != -1: article_content = article_content[first_dash_idx:]
+            else: article_content = f"---\ntitle: \"{article['title']}\"\ndate: {datetime.now(timezone.utc).isoformat()}\ndraft: false\nimages: [\"{image_url}\"]\n---\n\n" + article_content
 
+        # Fix Categories
         cat_match = re.search(r'categories:\s*\["([^"]+)"\]', article_content)
         if cat_match:
             ai_category = cat_match.group(1)
-            # If the AI invented a category not in our master list
             if ai_category not in VALID_CATEGORIES:
                 from difflib import get_close_matches
                 closest = get_close_matches(ai_category, VALID_CATEGORIES, n=1, cutoff=0.4)
                 safe_category = closest[0] if closest else "Other"
-                
-                print(f"  -> Fixed AI Hallucination: Changed '{ai_category}' to '{safe_category}'")
-                
-                # Overwrite the AI's mistake in the raw markdown string
                 article_content = article_content.replace(f'categories: ["{ai_category}"]', f'categories: ["{safe_category}"]')
 
-        # --- SAVE THE FILE ---
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(article_content)
+        print(f"  ✅ Saved: {file_path}")
 
-        print(f"Success! Blog post saved to: {file_path}")
+    # Save the updated queue (minus the 3 we just published)
+    with open(QUEUE_FILE, "w", encoding="utf-8") as f:
+        json.dump(remaining_queue, f, indent=4)
+        
+    git_commit_and_push("Published article batch and updated queue", trigger_hugo=True)
 
-print("\nFINAL IMAGE LIST")
+# ==========================================
+# 5. EXECUTION ROUTER
+# ==========================================
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--scrape", action="store_true", help="Scrape new articles and add to queue")
+    parser.add_argument("--publish", action="store_true", help="Publish next batch from the queue")
+    args = parser.parse_args()
 
-for root, dirs, files in os.walk("assets/images"):
-    for file in files:
-        print(os.path.join(root, file))
+    if args.scrape:
+        run_scraper()
+    elif args.publish:
+        run_publisher()
+    else:
+        print("Please provide a flag: --scrape or --publish")
