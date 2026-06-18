@@ -1,5 +1,4 @@
 import os
-os.makedirs("assets/images", exist_ok=True)
 import feedparser
 from groq import Groq
 import re
@@ -31,14 +30,26 @@ RSS_FEEDS = [
     "https://venturebeat.com/feed/"
 ]
 
+# Create required directories if missing
+REQUIRED_DIRS = [
+    "assets/images",
+    "static/images",
+    "content/posts"
+]
+
+for directory in REQUIRED_DIRS:
+    os.makedirs(directory, exist_ok=True)
+
 output_dir = "content/posts"
-os.makedirs(output_dir, exist_ok=True)
 
 def post_exists(entry, news_title, output_dir):
     """
     Return True if any existing markdown file in output_dir references
     this entry's link/id, or if a highly similar title already exists.
     """
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir, exist_ok=True)
+        return False
     entry_link = entry.get('link', '').strip()
     entry_id = entry.get('id', '').strip()
 
@@ -192,6 +203,11 @@ def extract_image(entry, title, slug):
     return generate_fallback_image(title, slug)
 
 def update_today_post_images(output_dir):
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir, exist_ok=True)
+        print(f"Created missing directory: {output_dir}")
+        return
+    
     today = datetime.now(timezone.utc).date()
 
     for fname in os.listdir(output_dir):
@@ -254,7 +270,7 @@ def update_today_post_images(output_dir):
 # --- The Image Downloader (Anti-Hotlink Protection) ---
 def download_and_verify_image(url, slug, title):
     # If the URL is already our generated fallback, skip downloading
-    if url.startswith("/images/"):
+    if url.startswith("/images/") or url.startswith("/assets/images/"):
         return url
         
     img_dir = "static/images"
@@ -404,8 +420,6 @@ Do not invent new categories.
             raise Exception("All models exhausted.")
 
 # --- Replace your Main Loop call with this ---
-        article_content = generate_article(prompt, news_summary)
-
         # --- If post already exists, only fetch/store images and rewrite image paths ---
         if os.path.exists(file_path):
            print(f"Post exists. Updating images only: {news_title}")
@@ -438,6 +452,8 @@ Do not invent new categories.
                f.write(existing_content)
 
         continue
+
+        article_content = generate_article(prompt, news_summary)
 
         # Strip markdown block tags safely (using chr(96) to prevent chat UI bugs)
         start_pattern = r"^" + chr(96)*3 + r"(?:markdown)?\s*\n"
