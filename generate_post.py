@@ -315,7 +315,16 @@ def update_post_images(file_path, slug, title):
         print(f"Failed updating images: {e}")
 
 # 3. Main Loop
-for entry in feed.entries:
+for current_feed in RSS_FEEDS:
+    print(f"\nChecking {current_feed}...")
+    feed = feedparser.parse(current_feed)
+
+    # skip if feed parsing failed or no entries
+    if not getattr(feed, "entries", None):
+        print("No entries found for this feed.")
+        continue
+
+    for entry in feed.entries:
         published_struct = entry.get('published_parsed') or entry.get('updated_parsed')
         if not published_struct: continue
 
@@ -343,9 +352,7 @@ for entry in feed.entries:
         # Pass the title and slug to our image engine, then DOWNLOAD it safely
         raw_image_url = extract_image(entry, news_title, filename_slug)
         print("RAW IMAGE URL:", raw_image_url)
-        image_url = download_and_verify_image(html.unescape(raw_image_url), filename_slug, news_title)
-
-        # ... (rest of your existing code for prompt, Groq call, saving file, etc.)
+        image_url = download_and_verify_image(html.unescape(raw_image_url), filename_slug, news_title, is_featured=True)
 
         prompt = f"""
 Act as an expert tech journalist and SEO specialist. Read this short news summary: {news_summary}
