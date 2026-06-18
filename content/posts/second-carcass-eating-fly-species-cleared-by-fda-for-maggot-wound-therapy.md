@@ -4,7 +4,7 @@ date: 2026-06-18T04:41:53.456139+00:00
 draft: false
 images: ["https://cdn.arstechnica.net/wp-content/uploads/2026/06/GettyImages-829469540-1152x648.jpg"]
 description: "Maggot therapy lacks robust data but has fans and a fail-safe bacon therapy"
-categories: ["Health Technology", "Medical Innovations"]
+categories: ["Healthcare Tech"]
 tags: ["Maggot Therapy", "Wound Care", "FDA Approval", "Medical Breakthroughs"]
 ---
 

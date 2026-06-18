@@ -1,0 +1,47 @@
+{{ define "main" }}
+<div class="container py-5">
+  <h1 class="fw-bold mb-3 text-body">{{ .Title }}</h1>
+  <p class="text-body-secondary mb-5 fs-5">{{ .Description }}</p>
+
+  <!-- Loop through every category on the site -->
+  {{ range $categoryName, $taxonomy := .Site.Taxonomies.categories }}
+    <div class="mb-5">
+      
+      <!-- Category Title (Capitalized) -->
+      <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
+        <h2 class="fw-bold mb-0 text-capitalize">{{ $categoryName | humanize }}</h2>
+        <a href="{{ "/categories/" | relLangURL }}{{ $categoryName | urlize }}/" class="text-primary text-decoration-none fw-semibold">View All &rarr;</a>
+      </div>
+
+      <!-- 3-Column Grid for the first 6 posts in this category -->
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        {{ range first 6 $taxonomy.Pages }}
+          <div class="col">
+            <div class="card h-100 shadow-sm border-0 bg-body-tertiary">
+              
+              <!-- Safely grab either thumbnail or images parameter -->
+              {{ if .Params.thumbnail }}
+                <img src="{{ .Params.thumbnail | absURL }}" class="card-img-top" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
+              {{ else if .Params.images }}
+                <img src="{{ index .Params.images 0 | absURL }}" class="card-img-top" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
+              {{ end }}
+
+              <div class="card-body">
+                <h3 class="card-title h5 mb-3">
+                  <a href="{{ .RelPermalink }}" class="text-decoration-none text-body fw-bold stretched-link">{{ .Title }}</a>
+                </h3>
+                <p class="card-text text-body-secondary" style="font-size: 0.95rem;">{{ .Summary | plainify | truncate 100 }}</p>
+              </div>
+              <div class="card-footer bg-transparent border-0 pb-3">
+                <small class="text-body-tertiary fw-semibold text-uppercase" style="font-size: 0.75rem;">
+                  {{ .Date.Format "Jan 2, 2006" }} &bull; {{ .ReadingTime }} min read
+                </small>
+              </div>
+            </div>
+          </div>
+        {{ end }}
+      </div>
+    </div>
+  {{ end }}
+</div>
+{{ end }}

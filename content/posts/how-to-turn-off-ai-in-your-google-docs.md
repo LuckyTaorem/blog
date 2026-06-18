@@ -4,7 +4,7 @@ date: 2026-06-18T04:41:28.994916+00:00
 draft: false
 images: ["https://images.unsplash.com/photo-1631551045549-9a735b8e4ea3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MzUzNzR8MHwxfHNlYXJjaHwxfHxIb3clMjB0byUyMHR1cm4lMjBvZmZ8ZW58MHx8fHwxNzgxNzU3Njg4fDA&ixlib=rb-4.1.0&q=80&w=1080"]
 description: "Learn how to disable AI-powered features in Google Docs and stop 'write with Gemini' pop-ups."
-categories: ["Productivity", "Google Docs"]
+categories: ["Software"]
 tags: ["Google Docs", "Gemini", "AI-powered writing", "Productivity hacks", "Tech tips"]
 ---
 

@@ -202,10 +202,15 @@ title: "{news_title}"
 date: {datetime.now(timezone.utc).isoformat()}
 draft: false
 images: ["{image_url}"]
+thumbnail: "{image_url}"
 description: "A 155-character SEO meta description here."
-categories: ["Insert 1 or 2 relevant categories here based on the text"]
+categories: ["Insert EXACTLY ONE category here"]
 tags: ["Insert 3 to 5 relevant tags here based on the text"]
 ---
+
+IMPORTANT RULE FOR CATEGORIES: 
+You must evaluate the article and pick EXACTLY ONE category that most closely matches the content from this exact list: Artificial Intelligence, Hardware, Software, Security, Business, Cloud Computing, Data Science, Networking, Mobile Development, Web Development, Gaming, Robotics, Open Source, Education, Healthcare Tech, Finance/FinTech, Legal/Compliance, Creative/Design, Other. 
+Do not invent new categories.
 
 ![Featured Image]({image_url})
 

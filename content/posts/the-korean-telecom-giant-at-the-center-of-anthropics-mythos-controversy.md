@@ -4,7 +4,7 @@ date: 2026-06-18T04:41:36.399023+00:00
 draft: false
 images: ["https://images.unsplash.com/photo-1637070906584-d791e62c21b8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MzUzNzR8MHwxfHNlYXJjaHwxfHxUaGUlMjBLb3JlYW4lMjBUZWxlY29tJTIwR2lhbnR8ZW58MHx8fHwxNzgxNzU3Njk2fDA&ixlib=rb-4.1.0&q=80&w=1080"]
 description: "SK Telecom's ties to China spark controversy over Anthropic's AI model"
-categories: ["Artificial Intelligence", "Tech News"]
+categories: ["Artificial Intelligence"]
 tags: ["Anthropic", "SK Telecom", "AI Regulation", "China", "Mythos"]
 ---
 

@@ -28,16 +28,16 @@
 				<description></description>
 			</item>
 			<item>
-				<title>Artificial Intelligence</title>
-				<link>http://localhost:1313/blog/categories/artificial-intelligence/</link>
+				<title>Healthcare Tech</title>
+				<link>http://localhost:1313/blog/categories/healthcare-tech/</link>
 				<pubDate>Thu, 18 Jun 2026 06:22:39 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/artificial-intelligence/</guid>
+				<guid>http://localhost:1313/blog/categories/healthcare-tech/</guid>
 				<description></description>
 			</item>
 			<item>
 				<title>Health Technology</title>
 				<link>http://localhost:1313/blog/categories/health-technology/</link>
-				<pubDate>Thu, 18 Jun 2026 06:22:39 +0000</pubDate>
+				<pubDate>Thu, 18 Jun 2026 04:41:53 +0000</pubDate>
 				<guid>http://localhost:1313/blog/categories/health-technology/</guid>
 				<description></description>
 			</item>
@@ -49,6 +49,13 @@
 				<description></description>
 			</item>
 			<item>
+				<title>Artificial Intelligence</title>
+				<link>http://localhost:1313/blog/categories/artificial-intelligence/</link>
+				<pubDate>Thu, 18 Jun 2026 04:41:36 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/artificial-intelligence/</guid>
+				<description></description>
+			</item>
+			<item>
 				<title>Tech News</title>
 				<link>http://localhost:1313/blog/categories/tech-news/</link>
 				<pubDate>Thu, 18 Jun 2026 04:41:36 +0000</pubDate>
@@ -56,17 +63,17 @@
 				<description></description>
 			</item>
 			<item>
-				<title>Google Docs</title>
-				<link>http://localhost:1313/blog/categories/google-docs/</link>
-				<pubDate>Thu, 18 Jun 2026 04:41:28 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/google-docs/</guid>
-				<description></description>
-			</item>
-			<item>
 				<title>Productivity</title>
 				<link>http://localhost:1313/blog/categories/productivity/</link>
 				<pubDate>Thu, 18 Jun 2026 04:41:28 +0000</pubDate>
 				<guid>http://localhost:1313/blog/categories/productivity/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Google Docs</title>
+				<link>http://localhost:1313/blog/categories/google-docs/</link>
+				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/google-docs/</guid>
 				<description></description>
 			</item>
 			<item>

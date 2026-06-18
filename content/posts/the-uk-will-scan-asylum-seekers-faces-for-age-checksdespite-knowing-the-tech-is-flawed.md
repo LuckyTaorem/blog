@@ -4,7 +4,7 @@ date: 2026-06-18T06:22:43.774408+00:00
 draft: false
 images: ["https://images.unsplash.com/photo-1593781493314-ee47b5274316?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MzUzNzR8MHwxfHNlYXJjaHwxfHxUaGUlMjBVSyUyMFdpbGwlMjBTY2FufGVufDB8fHx8MTc4MTc2Mzc2M3ww&ixlib=rb-4.1.0&q=80&w=1080"]
 description: "UK to use flawed age-verification tech on asylum seekers despite risks"
-categories: ["Technology", "Politics"]
+categories: ["Legal/Compliance"]
 tags: ["Age Verification", "Facial Recognition", "Asylum Seekers", "UK Home Office", "Biometric Technology"]
 ---
 

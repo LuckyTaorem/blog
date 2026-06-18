@@ -4,7 +4,7 @@ date: 2026-06-18T06:22:39.834835+00:00
 draft: false
 images: ["https://platform.theverge.com/wp-content/uploads/sites/2/2026/06/ultrasound_phantom_segmentation-b254a71d083eb5c9.png?quality=90&strip=all&crop=0,0,100,100"]
 description: "Midjourney's new ultrasound scanner marks a significant shift from AI image generation to medical tech"
-categories: ["Artificial Intelligence", "Health Technology"]
+categories: ["Healthcare Tech"]
 tags: ["Midjourney", "Ultrasound Scanner", "AI Image Generation", "Medical Technology", "Healthcare Innovation"]
 ---
 
