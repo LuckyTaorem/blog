@@ -14,6 +14,13 @@ from difflib import SequenceMatcher
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 UNSPLASH_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
 
+VALID_CATEGORIES = [
+    "Artificial Intelligence", "Hardware", "Software", "Space", "Security", "Business", 
+    "Cloud Computing", "Data Science", "Networking", "Mobile Development", 
+    "Web Development", "Gaming", "Robotics", "Open Source", "Education", 
+    "Healthcare Tech", "Finance/FinTech", "Legal/Compliance", "Movie", "Promo Code", "Creative/Design", "Other"
+]
+
 # 2. Feed & Directory Setup
 RSS_FEEDS = [
     "https://techcrunch.com/feed/",
@@ -164,6 +171,39 @@ def extract_image(entry, title, slug):
     print("Unsplash failed. Generating custom title image...")
     return generate_fallback_image(title, slug)
 
+# --- The Image Downloader (Anti-Hotlink Protection) ---
+def download_and_verify_image(url, slug, title):
+    # If the URL is already our generated fallback, skip downloading
+    if url.startswith("/images/"):
+        return url
+        
+    img_dir = "static/images"
+    os.makedirs(img_dir, exist_ok=True)
+    filepath = os.path.join(img_dir, f"{slug}.jpg")
+    
+    try:
+        # Spoof a standard web browser to bypass basic hotlink protection
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        r = requests.get(url, headers=headers, timeout=10)
+        
+        if r.status_code == 200:
+            # Save the raw image
+            with open(filepath, 'wb') as f:
+                f.write(r.content)
+            
+            # Verify it is actually an image and not a blocked HTML error page
+            try:
+                with Image.open(filepath) as img:
+                    img.verify()
+                return f"/images/{slug}.jpg"
+            except Exception:
+                print("  -> Downloaded file was corrupt/protected. Generating fallback...")
+    except Exception as e:
+        print(f"  -> Could not download image: {e}")
+        
+    # If the download failed or was blocked by a firewall, generate the custom text image
+    return generate_fallback_image(title, slug)
+
 # 3. Main Loop
 for current_feed in RSS_FEEDS:
     print(f"\nChecking {current_feed}...")
@@ -210,9 +250,9 @@ for current_feed in RSS_FEEDS:
         print(f"Found NEW article: {news_title}")
         news_summary = html.unescape(entry.get('summary', ''))
 
-        # Pass the title and slug to our new image engine
+        # Pass the title and slug to our image engine, then DOWNLOAD it safely
         raw_image_url = extract_image(entry, news_title, filename_slug)
-        image_url = html.unescape(raw_image_url)
+        image_url = download_and_verify_image(html.unescape(raw_image_url), filename_slug, news_title)
 
         # ... (rest of your existing code for prompt, Groq call, saving file, etc.)
 
@@ -236,7 +276,7 @@ tags: ["Insert 3 to 5 relevant tags here based on the text"]
 ---
 
 IMPORTANT RULE FOR CATEGORIES: 
-You must evaluate the article and pick EXACTLY ONE category that most closely matches the content from this exact list: Artificial Intelligence, Hardware, Software, Security, Business, Cloud Computing, Data Science, Networking, Mobile Development, Web Development, Gaming, Robotics, Open Source, Education, Healthcare Tech, Finance/FinTech, Legal/Compliance, Creative/Design, Other. 
+You must evaluate the article and pick EXACTLY ONE category that most closely matches the content from this exact list: Artificial Intelligence, Hardware, Software, Space, Security, Business, Cloud Computing, Data Science, Networking, Mobile Development, Web Development, Gaming, Robotics, Open Source, Education, Healthcare Tech, Finance/FinTech, Legal/Compliance, Movie, Promo Code, Creative/Design, Other. 
 Do not invent new categories.
 
 ![Featured Image]({image_url})
@@ -273,6 +313,22 @@ Do not invent new categories.
                 fallback_yaml = f"---\ntitle: \"{news_title}\"\ndate: {datetime.now(timezone.utc).isoformat()}\ndraft: false\nimages: [\"{image_url}\"]\n---\n\n"
                 article_content = fallback_yaml + article_content
 
+        cat_match = re.search(r'categories:\s*\["([^"]+)"\]', article_content)
+        if cat_match:
+            ai_category = cat_match.group(1)
+            # If the AI invented a category not in our master list
+            if ai_category not in VALID_CATEGORIES:
+                # Find the closest match in our list (e.g., "AI" -> "Artificial Intelligence")
+                from difflib import get_close_matches
+                closest = get_close_matches(ai_category, VALID_CATEGORIES, n=1, cutoff=0.4)
+                safe_category = closest[0] if closest else "Other"
+                
+                print(f"  -> Fixed AI Hallucination: Changed '{ai_category}' to '{safe_category}'")
+                
+                # Overwrite the AI's mistake in the raw markdown string
+                article_content = article_content.replace(f'categories: ["{ai_category}"]', f'categories: ["{safe_category}"]')
+
+        # --- SAVE THE FILE ---
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(article_content)
 
