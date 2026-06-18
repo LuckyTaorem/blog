@@ -3,12 +3,16 @@ import feedparser
 from groq import Groq
 import re
 from datetime import datetime, timezone
-import html # NEW: Added to clean up messy RSS titles
+import html
+import requests
+from PIL import Image, ImageDraw, ImageFont
+import textwrap
 
-# 1. Initialize Groq Client
+# 1. Initialize API Keys
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+UNSPLASH_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
 
-# 2. List of Top Tech RSS Feeds
+# 2. Feed & Directory Setup
 RSS_FEEDS = [
     "https://techcrunch.com/feed/",
     "https://www.theverge.com/rss/index.xml",
@@ -20,15 +24,72 @@ RSS_FEEDS = [
 output_dir = "content/posts"
 os.makedirs(output_dir, exist_ok=True)
 
-# --- BULLETPROOF IMAGE EXTRACTOR ---
-def extract_image(entry):
-    # Method A: Safely check official media tags
+# --- NEW: Custom Image Generator ---
+def generate_fallback_image(title, slug):
+    # Hugo looks for images in the 'static' folder
+    img_dir = "static/images"
+    os.makedirs(img_dir, exist_ok=True)
+    filepath = os.path.join(img_dir, f"{slug}.jpg")
+
+    # Create a sleek dark background (1200x630 is standard SEO size)
+    W, H = 1200, 630
+    img = Image.new('RGB', (W, H), color=(30, 30, 46))
+    draw = ImageDraw.Draw(img)
+
+    # Download a professional Google Font so the text looks great
+    font_path = "Roboto-Bold.ttf"
+    if not os.path.exists(font_path):
+        font_url = "https://github.com/google/fonts/raw/main/apache/roboto/Roboto-Bold.ttf"
+        r = requests.get(font_url)
+        with open(font_path, "wb") as f:
+            f.write(r.content)
+
+    font = ImageFont.truetype(font_path, 60)
+
+    # Wrap the title text so it doesn't overflow
+    wrapper = textwrap.TextWrapper(width=35)
+    wrapped_text = wrapper.fill(text=title)
+
+    # Calculate text position to perfectly center it
+    bbox = draw.textbbox((0, 0), wrapped_text, font=font)
+    w = bbox[2] - bbox[0]
+    h = bbox[3] - bbox[1]
+
+    # Draw the text in white
+    draw.text(((W-w)/2, (H-h)/2), wrapped_text, font=font, fill=(255, 255, 255), align="center")
+
+    # Save and return the relative path for Hugo
+    img.save(filepath)
+    return f"/images/{slug}.jpg"
+
+# --- NEW: Unsplash Fetcher ---
+def get_unsplash_image(title):
+    if not UNSPLASH_KEY:
+        return None
+    
+    # Use the first few words of the title to get a good search match
+    search_query = " ".join(title.split()[:4])
+    url = f"https://api.unsplash.com/search/photos?page=1&query={search_query}&client_id={UNSPLASH_KEY}"
+    
+    try:
+        res = requests.get(url).json()
+        if res.get('results'):
+            # Return the URL of the first resulting image
+            return res['results'][0]['urls']['regular']
+    except Exception as e:
+        print(f"Unsplash search failed: {e}")
+        
+    return None
+
+# --- UPDATED: The Image Extractor Engine ---
+def extract_image(entry, title, slug):
+    # Method A: Safely check official RSS media tags
     if 'media_content' in entry:
         for media in entry.media_content:
-            if 'url' in media:  # Explicitly check if the 'url' key exists
+            if 'url' in media:
                 return media['url']
                 
-    # Method B: Check enclosures (common in podcast/news feeds)
+    # Method B: Check enclosures
     if 'links' in entry:
         for link in entry.links:
             if link.get('rel') == 'enclosure' and 'image' in link.get('type', ''):
@@ -39,22 +100,28 @@ def extract_image(entry):
     if match:
         return match.group(1)
         
-    # Method D: Fallback high-quality tech image if the feed has no image
-    return "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+    # Method D: Try Unsplash API
+    print("No native image found. Checking Unsplash...")
+    unsplash_url = get_unsplash_image(title)
+    if unsplash_url:
+        return unsplash_url
+        
+    # Method E: Generate the beautiful fallback title image!
+    print("Unsplash failed. Generating custom title image...")
+    return generate_fallback_image(title, slug)
 
-# 3. Loop through EVERY site in the list
+# 3. Main Loop
 for current_feed in RSS_FEEDS:
     print(f"\nChecking {current_feed}...")
     feed = feedparser.parse(current_feed)
     
-    # Check the top 5 recent articles in this feed to find a new one
     for entry in feed.entries[:5]:
-        # NEW: Clean up HTML entities (like &#8216;) before using the title
         news_title = html.unescape(entry.title) 
         
-        # Generate the clean filename
-        filename = re.sub(r'[^\w\s-]', '', news_title).strip().lower()
-        filename = re.sub(r'[-\s]+', '-', filename) + ".md"
+        filename_slug = re.sub(r'[^\w\s-]', '', news_title).strip().lower()
+        filename_slug = re.sub(r'[-\s]+', '-', filename_slug)
+        filename = filename_slug + ".md"
+        
         file_path = os.path.join(output_dir, filename)
         
         if os.path.exists(file_path):
@@ -64,8 +131,8 @@ for current_feed in RSS_FEEDS:
         print(f"Found NEW article: {news_title}")
         news_summary = html.unescape(entry.summary)
         
-        # Extract the image AND clean out any HTML entities like &#038;
-        raw_image_url = extract_image(entry)
+        # Pass the title and slug to our new image engine
+        raw_image_url = extract_image(entry, news_title, filename_slug)
         image_url = html.unescape(raw_image_url)
         
         prompt = f"""
@@ -91,7 +158,6 @@ tags: ["Insert 3 to 5 relevant tags here based on the text"]
 (Write the rest of the markdown article here. Do not wrap the whole output in markdown code blocks, just output the raw text starting with the ---.)
 """
 
-        # 4. Generate Content with Groq
         print("Sending to Groq...")
         response = client.chat.completions.create(
             messages=[
@@ -104,12 +170,12 @@ tags: ["Insert 3 to 5 relevant tags here based on the text"]
         )
 
         article_content = response.choices[0].message.content
+        
+        # Clean AI markdown blocks
+        article_content = re.sub(r"\n```\s*$", "", article_content)
 
-        # 5. Save the Output
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(article_content)
 
         print(f"Success! Blog post saved to: {file_path}")
-        
-        # Break out so we move on to the next website (1 per site)
-        break
+        break 
