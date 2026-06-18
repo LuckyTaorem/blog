@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Productivity Hacks on LT Developer</title>
+		<link>http://localhost:1313/blog/tags/productivity-hacks/</link>
+		<description>Recent content in Productivity Hacks on LT Developer</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Thu, 18 Jun 2026 04:41:28 +0000</lastBuildDate>
+		
+			<atom:link href="http://localhost:1313/blog/tags/productivity-hacks/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>How to turn off AI in your Google Docs</title>
+				<link>http://localhost:1313/blog/posts/how-to-turn-off-ai-in-your-google-docs/</link>
+				<pubDate>Thu, 18 Jun 2026 04:41:28 +0000</pubDate>
+				<guid>http://localhost:1313/blog/posts/how-to-turn-off-ai-in-your-google-docs/</guid>
+				<description>&lt;p&gt;&#xA;&#xA;&lt;img class=&#34;img-fluid &#34;&#xA;            src=&#34;http://localhost:1313/blog/blog/img/photo-1631551045549-9a735b8e4ea3-2800x4197.png&#34;&#xA;             srcset=&#34;http://localhost:1313/blog/blog/img/photo-1631551045549-9a735b8e4ea3-576x863.webp 576w, http://localhost:1313/blog/blog/img/photo-1631551045549-9a735b8e4ea3-768x1151.webp 768w, http://localhost:1313/blog/blog/img/photo-1631551045549-9a735b8e4ea3-992x1487.webp 992w, http://localhost:1313/blog/blog/img/photo-1631551045549-9a735b8e4ea3-1200x1799.webp 1200w, http://localhost:1313/blog/blog/img/photo-1631551045549-9a735b8e4ea3-1400x2099.webp 1400w, http://localhost:1313/blog/blog/img/photo-1631551045549-9a735b8e4ea3-2800x4197.webp 2800w&#34; sizes=&#34;100vw&#34; height=&#34;4197&#34; width=&#34;2800&#34; alt=&#34;Featured Image&#34;&gt;&#xA;&lt;/p&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;h2 id=&#34;introduction&#34; class=&#34;heading &#34;&gt;Introduction&lt;a href=&#34;#introduction&#34; aria-labelledby=&#34;introduction&#34;&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;!-- &lt;i class=&#34;fas fa-link anchor&#34;&gt;&lt;/i&gt; --&gt;&#xA;        &lt;svg class=&#34;svg-inline--fa fas fa-link anchor&#34; fill=&#34;currentColor&#34; aria-hidden=&#34;true&#34; role=&#34;img&#34; viewBox=&#34;0 0 576 512&#34;&gt;&lt;use href=&#34;#fas-link&#34;&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;&#xA;    &lt;/a&gt;&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Are you tired of seeing &amp;ldquo;write with Gemini&amp;rdquo; pop-ups in your Google Docs? You&amp;rsquo;re not alone. Many users have been experiencing this issue, and it can be frustrating, especially when you&amp;rsquo;re in the middle of an important project. In this article, we&amp;rsquo;ll show you how to turn off AI-powered features in Google Docs and get rid of those pesky pop-ups.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

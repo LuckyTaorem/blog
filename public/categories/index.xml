@@ -10,6 +10,64 @@
 		
 		
 		
+			<lastBuildDate>Thu, 18 Jun 2026 04:41:53 +0000</lastBuildDate>
+		
 			<atom:link href="http://localhost:1313/blog/categories/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Health Technology</title>
+				<link>http://localhost:1313/blog/categories/health-technology/</link>
+				<pubDate>Thu, 18 Jun 2026 04:41:53 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/health-technology/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Medical Innovations</title>
+				<link>http://localhost:1313/blog/categories/medical-innovations/</link>
+				<pubDate>Thu, 18 Jun 2026 04:41:53 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/medical-innovations/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Artificial Intelligence</title>
+				<link>http://localhost:1313/blog/categories/artificial-intelligence/</link>
+				<pubDate>Thu, 18 Jun 2026 04:41:36 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/artificial-intelligence/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Tech News</title>
+				<link>http://localhost:1313/blog/categories/tech-news/</link>
+				<pubDate>Thu, 18 Jun 2026 04:41:36 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/tech-news/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Healthcare</title>
+				<link>http://localhost:1313/blog/categories/healthcare/</link>
+				<pubDate>Thu, 18 Jun 2026 04:41:33 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/healthcare/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Technology</title>
+				<link>http://localhost:1313/blog/categories/technology/</link>
+				<pubDate>Thu, 18 Jun 2026 04:41:33 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/technology/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Google Docs</title>
+				<link>http://localhost:1313/blog/categories/google-docs/</link>
+				<pubDate>Thu, 18 Jun 2026 04:41:28 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/google-docs/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Productivity</title>
+				<link>http://localhost:1313/blog/categories/productivity/</link>
+				<pubDate>Thu, 18 Jun 2026 04:41:28 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/productivity/</guid>
+				<description></description>
+			</item>
 	</channel>
 </rss>

@@ -547,7 +547,7 @@
     <small class="text-body-secondary text-uppercase">
         
         1&nbsp;min read &bull;
-        26&nbsp;words
+        42&nbsp;words
     </small>
 
 
@@ -824,7 +824,14 @@
 <div class="card-body p-5">
 <h2 id="drop-us-a-line" class="fw-bold mb-4 text-body text-center">Drop us a line</h2>
 <p class="text-center text-body-secondary mb-5">Have a question about our AI setup, or want to collaborate? Send us a message.</p>
-<form action="https://formspree.io/f/mzdqkvog" method="POST">
+<form id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+<input type="hidden" name="access_key" value="c8c0dcd0-b544-46a8-a217-8720aa943c44">
+<input type="hidden" name="redirect" value="https://luckytaorem.github.io/blog/thanks/">
+<input type="checkbox" name="botcheck" class="d-none" style="display: none;">
+<input type="hidden" name="subject" value="New Contact Message from LT Developer">
+<input type="hidden" name="from_name" value="LT Developer">
+<input type="hidden" name="replyto" value="YOUR_ACTUAL_EMAIL@gmail.com">
+<input type="hidden" name="autoresponse" value="Thank you for reaching out to the LT Developer! We have received your message and will get back to you shortly.">
 <div class="mb-4">
 <label for="name" class="form-label text-body-secondary fw-semibold">Your Name</label>
 <input type="text" class="form-control bg-body text-body border-secondary-subtle py-2" id="name" name="name" required>
@@ -837,6 +844,15 @@
 <label for="message" class="form-label text-body-secondary fw-semibold">Message</label>
 <textarea class="form-control bg-body text-body border-secondary-subtle" id="message" name="message" rows="6" required></textarea>
 </div>
+<div class="mb-4 p-4 border border-secondary-subtle rounded bg-body">
+<label for="captcha-answer" class="form-label text-body-secondary fw-bold mb-3">
+  Security Check: What is <span id="num1" class="text-primary fs-5"></span> + <span id="num2" class="text-primary fs-5"></span>?
+</label>
+<input type="number" class="form-control bg-body text-body border-secondary-subtle py-2" id="captcha-answer" placeholder="Enter the sum..." required>
+<div class="invalid-feedback fw-semibold mt-2">
+  Incorrect answer. Please try again to prove you are human.
+</div>
+</div>
 <div class="d-grid mt-5">
 <button type="submit" class="btn btn-primary py-3 rounded-pill fw-bold fs-5">Send Message</button>
 </div>
@@ -845,6 +861,50 @@
 </div>
 </div>
 </div>
+<!-- CAPTCHA LOGIC SCRIPT -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  let expectedAnswer = 0;
+  const num1El = document.getElementById("num1");
+  const num2El = document.getElementById("num2");
+  const form = document.getElementById("contact-form");
+  const captchaInput = document.getElementById("captcha-answer");
+
+  // Wrap the math generator in a function so we can reuse it
+  function generateCaptcha() {
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    expectedAnswer = num1 + num2;
+    
+    num1El.innerText = num1;
+    num2El.innerText = num2;
+    captchaInput.value = ""; // Clear the wrong answer from the box
+  }
+
+  // Generate the first math problem when the page loads
+  generateCaptcha();
+
+  form.addEventListener("submit", function(event) {
+    if (parseInt(captchaInput.value) !== expectedAnswer) {
+      // Stop the form from submitting
+      event.preventDefault();
+      
+      // Show the red error styling
+      captchaInput.classList.add("is-invalid");
+      
+      // Generate a brand new math question
+      generateCaptcha();
+    } else {
+      captchaInput.classList.remove("is-invalid");
+    }
+  });
+
+  // Remove the red error state when the user starts typing again
+  captchaInput.addEventListener("input", function() {
+    captchaInput.classList.remove("is-invalid");
+  });
+});
+</script>
 
                 
                 
@@ -863,7 +923,19 @@
         <svg class="svg-inline--fa fas fa-arrow-left " fill="currentColor" aria-hidden="true" role="img" viewBox="0 0 512 512"><use href="#fas-arrow-left"></use></svg>&nbsp;About Us
                 </a></div>
     <div class="col text-end">
-        </div>
+        <a class="previous" href="/blog/thanks/">
+                    Message Sent&nbsp;
+
+
+
+
+
+
+
+
+<!-- <i class="fas fa-arrow-right "></i> -->
+        <svg class="svg-inline--fa fas fa-arrow-right " fill="currentColor" aria-hidden="true" role="img" viewBox="0 0 512 512"><use href="#fas-arrow-right"></use></svg>
+                </a></div>
 </div>
 
             </div>
@@ -951,6 +1023,7 @@
 <symbol id="fas-link" ><path fill="currentColor" d="M419.5 96c-16.6 0-32.7 4.5-46.8 12.7-15.8-16-34.2-29.4-54.5-39.5 28.2-24 64.1-37.2 101.3-37.2 86.4 0 156.5 70 156.5 156.5 0 41.5-16.5 81.3-45.8 110.6l-71.1 71.1c-29.3 29.3-69.1 45.8-110.6 45.8-86.4 0-156.5-70-156.5-156.5 0-1.5 0-3 .1-4.5 .5-17.7 15.2-31.6 32.9-31.1s31.6 15.2 31.1 32.9c0 .9 0 1.8 0 2.6 0 51.1 41.4 92.5 92.5 92.5 24.5 0 48-9.7 65.4-27.1l71.1-71.1c17.3-17.3 27.1-40.9 27.1-65.4 0-51.1-41.4-92.5-92.5-92.5zM275.2 173.3c-1.9-.8-3.8-1.9-5.5-3.1-12.6-6.5-27-10.2-42.1-10.2-24.5 0-48 9.7-65.4 27.1L91.1 258.2c-17.3 17.3-27.1 40.9-27.1 65.4 0 51.1 41.4 92.5 92.5 92.5 16.5 0 32.6-4.4 46.7-12.6 15.8 16 34.2 29.4 54.6 39.5-28.2 23.9-64 37.2-101.3 37.2-86.4 0-156.5-70-156.5-156.5 0-41.5 16.5-81.3 45.8-110.6l71.1-71.1c29.3-29.3 69.1-45.8 110.6-45.8 86.6 0 156.5 70.6 156.5 156.9 0 1.3 0 2.6 0 3.9-.4 17.7-15.1 31.6-32.8 31.2s-31.6-15.1-31.2-32.8c0-.8 0-1.5 0-2.3 0-33.7-18-63.3-44.8-79.6z"/></symbol>
 <symbol id="fas-share-nodes" ><path fill="currentColor" d="M384 192c53 0 96-43 96-96s-43-96-96-96-96 43-96 96c0 5.4 .5 10.8 1.3 16L159.6 184.1c-16.9-15-39.2-24.1-63.6-24.1-53 0-96 43-96 96s43 96 96 96c24.4 0 46.6-9.1 63.6-24.1L289.3 400c-.9 5.2-1.3 10.5-1.3 16 0 53 43 96 96 96s96-43 96-96-43-96-96-96c-24.4 0-46.6 9.1-63.6 24.1L190.7 272c.9-5.2 1.3-10.5 1.3-16s-.5-10.8-1.3-16l129.7-72.1c16.9 15 39.2 24.1 63.6 24.1z"/></symbol>
 <symbol id="fas-arrow-left" ><path fill="currentColor" d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288 480 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-370.7 0 105.4-105.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></symbol>
+<symbol id="fas-arrow-right" ><path fill="currentColor" d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l370.7 0-105.4 105.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></symbol>
     </svg>
 
   

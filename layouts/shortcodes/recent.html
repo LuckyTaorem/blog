@@ -1,11 +1,11 @@
-<div class="row row-cols-1 row-cols-md-2 g-4 mt-4">
+<div class="row row-cols-1 row-cols-md-3 g-4 mt-4">
   {{ range first 6 (where site.RegularPages "Section" "posts") }}
     <div class="col">
       <div class="card h-100 shadow-sm border-0">
         
         {{ if .Params.images }}
-          <img src="{{ index .Params.images 0 }}" class="card-img-top" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
-        {{ end }}
+            <img src="{{ index .Params.images 0 | absURL }}" class="card-img-top" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
+          {{ end }}
 
         <div class="card-body">
           <h3 class="card-title h5 mb-3">

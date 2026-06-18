@@ -1,31 +1,24 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 	<channel>
-		<title>AI on My Tech Blog</title>
+		<title>AI on LT Developer</title>
 		<link>http://localhost:1313/blog/tags/ai/</link>
-		<description>Recent content in AI on My Tech Blog</description>
+		<description>Recent content in AI on LT Developer</description>
 		<generator>Hugo</generator>
 		<language>en-us</language>
 		
 		
 		
 		
-			<lastBuildDate>Thu, 18 Jun 2026 02:57:59 +0000</lastBuildDate>
+			<lastBuildDate>Thu, 18 Jun 2026 04:41:33 +0000</lastBuildDate>
 		
 			<atom:link href="http://localhost:1313/blog/tags/ai/index.xml" rel="self" type="application/rss+xml" />
 			<item>
-				<title>How to turn off AI in your Google Docs</title>
-				<link>http://localhost:1313/blog/posts/how-to-turn-off-ai-in-your-google-docs/</link>
-				<pubDate>Thu, 18 Jun 2026 02:57:59 +0000</pubDate>
-				<guid>http://localhost:1313/blog/posts/how-to-turn-off-ai-in-your-google-docs/</guid>
-				<description>&lt;p&gt;&#xA;&#xA;&lt;img class=&#34;img-fluid &#34;&#xA;            src=&#34;http://localhost:1313/blog/blog/img/photo-1518770660439-4636190af475-2800x1867.png&#34;&#xA;             srcset=&#34;http://localhost:1313/blog/blog/img/photo-1518770660439-4636190af475-576x384.webp 576w, http://localhost:1313/blog/blog/img/photo-1518770660439-4636190af475-768x512.webp 768w, http://localhost:1313/blog/blog/img/photo-1518770660439-4636190af475-992x661.webp 992w, http://localhost:1313/blog/blog/img/photo-1518770660439-4636190af475-1200x800.webp 1200w, http://localhost:1313/blog/blog/img/photo-1518770660439-4636190af475-1400x933.webp 1400w, http://localhost:1313/blog/blog/img/photo-1518770660439-4636190af475-2800x1867.webp 2800w&#34; sizes=&#34;100vw&#34; height=&#34;1867&#34; width=&#34;2800&#34; alt=&#34;Featured Image&#34;&gt;&#xA;&lt;/p&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;h2 id=&#34;introduction&#34; class=&#34;heading &#34;&gt;Introduction&lt;a href=&#34;#introduction&#34; aria-labelledby=&#34;introduction&#34;&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;!-- &lt;i class=&#34;fas fa-link anchor&#34;&gt;&lt;/i&gt; --&gt;&#xA;        &lt;svg class=&#34;svg-inline--fa fas fa-link anchor&#34; fill=&#34;currentColor&#34; aria-hidden=&#34;true&#34; role=&#34;img&#34; viewBox=&#34;0 0 576 512&#34;&gt;&lt;use href=&#34;#fas-link&#34;&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;&#xA;    &lt;/a&gt;&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Google Docs has become an essential tool for many of us, providing a convenient and collaborative way to create and edit documents. However, some users have been experiencing a new feature that can be more of a nuisance than a help: the &amp;ldquo;Write with Gemini&amp;rdquo; pop-ups. These AI-powered suggestions are designed to assist with writing, but they can be distracting and disrupt the creative flow. In this article, we&amp;rsquo;ll explore how to turn off these AI pop-ups and restore a distraction-free writing experience in Google Docs.&lt;/p&gt;</description>
-			</item>
-			<item>
-				<title>Corporate Venture Arm Closes After 10 Years: What Does This Mean for Tech?</title>
-				<link>http://localhost:1313/blog/posts/paypal-ventures-shutters-as-company-restructuring-continues/</link>
-				<pubDate>Wed, 17 Jun 2026 16:25:27 +0000</pubDate>
-				<guid>http://localhost:1313/blog/posts/paypal-ventures-shutters-as-company-restructuring-continues/</guid>
-				<description>&lt;h2 id=&#34;introduction-to-corporate-venture-arms&#34; class=&#34;heading &#34;&gt;Introduction to Corporate Venture Arms&lt;a href=&#34;#introduction-to-corporate-venture-arms&#34; aria-labelledby=&#34;introduction-to-corporate-venture-arms&#34;&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;!-- &lt;i class=&#34;fas fa-link anchor&#34;&gt;&lt;/i&gt; --&gt;&#xA;        &lt;svg class=&#34;svg-inline--fa fas fa-link anchor&#34; fill=&#34;currentColor&#34; aria-hidden=&#34;true&#34; role=&#34;img&#34; viewBox=&#34;0 0 576 512&#34;&gt;&lt;use href=&#34;#fas-link&#34;&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;&#xA;    &lt;/a&gt;&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Corporate venture arms are the investment divisions of large corporations that focus on putting money into external startups and early-stage companies. These ventures allow corporations to stay ahead of the curve in terms of innovation and technology, often leading to strategic partnerships, acquisitions, or the development of new products and services. After a decade of operation and over 80 investments, a notable corporate venture arm has announced its closure. This move raises several questions about the future of tech innovation and the role of corporate venture arms in driving it.&lt;/p&gt;</description>
+				<title>Midjourney Medical goes from generating ‘cat images’ to full-body ultrasound scans</title>
+				<link>http://localhost:1313/blog/posts/midjourney-medical-goes-from-generating-cat-images-to-full-body-ultrasound-scans/</link>
+				<pubDate>Thu, 18 Jun 2026 04:41:33 +0000</pubDate>
+				<guid>http://localhost:1313/blog/posts/midjourney-medical-goes-from-generating-cat-images-to-full-body-ultrasound-scans/</guid>
+				<description>&lt;p&gt;&#xA;&#xA;&lt;img class=&#34;img-fluid &#34;&#xA;            src=&#34;http://localhost:1313/blog/blog/img/06ultrasound_phantom_segmentation-b254a71d083eb5c9-2800x1031.png&#34;&#xA;             srcset=&#34;http://localhost:1313/blog/blog/img/06ultrasound_phantom_segmentation-b254a71d083eb5c9-576x212.webp 576w, http://localhost:1313/blog/blog/img/06ultrasound_phantom_segmentation-b254a71d083eb5c9-768x283.webp 768w, http://localhost:1313/blog/blog/img/06ultrasound_phantom_segmentation-b254a71d083eb5c9-992x365.webp 992w, http://localhost:1313/blog/blog/img/06ultrasound_phantom_segmentation-b254a71d083eb5c9-1200x442.webp 1200w, http://localhost:1313/blog/blog/img/06ultrasound_phantom_segmentation-b254a71d083eb5c9-1400x515.webp 1400w, http://localhost:1313/blog/blog/img/06ultrasound_phantom_segmentation-b254a71d083eb5c9-2800x1031.webp 2800w&#34; sizes=&#34;100vw&#34; height=&#34;1031&#34; width=&#34;2800&#34; alt=&#34;Featured Image&#34;&gt;&#xA;&lt;/p&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;h2 id=&#34;introduction-to-midjourneys-new-venture&#34; class=&#34;heading &#34;&gt;Introduction to Midjourney&amp;rsquo;s New Venture&lt;a href=&#34;#introduction-to-midjourneys-new-venture&#34; aria-labelledby=&#34;introduction-to-midjourneys-new-venture&#34;&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;!-- &lt;i class=&#34;fas fa-link anchor&#34;&gt;&lt;/i&gt; --&gt;&#xA;        &lt;svg class=&#34;svg-inline--fa fas fa-link anchor&#34; fill=&#34;currentColor&#34; aria-hidden=&#34;true&#34; role=&#34;img&#34; viewBox=&#34;0 0 576 512&#34;&gt;&lt;use href=&#34;#fas-link&#34;&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;&#xA;    &lt;/a&gt;&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Midjourney, a company known for its AI image generator that can produce stunning images, including &amp;ldquo;cat pictures,&amp;rdquo; has recently announced its first hardware product. The Midjourney Scanner, an ultrasound-based full-body scanner, marks a significant departure from the company&amp;rsquo;s traditional focus on AI-generated art. In this article, we will delve into the details of this new product, its potential applications, and what this means for the future of medical technology.&lt;/p&gt;</description>
 			</item>
 	</channel>
 </rss>
