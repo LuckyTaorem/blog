@@ -12,7 +12,7 @@ type: "page"
 <p class="text-center text-body-secondary mb-5">Have a question about our AI setup, or want to collaborate? Send us a message.</p>
 
 <form id="contact-form" action="https://api.web3forms.com/submit" method="POST">
-<input type="hidden" name="access_key" value="7fc126fc-3c13-463a-973a-058ba826603f">
+<input type="hidden" name="access_key" value="0b342e68-dbf4-4664-9ae6-1cd233e0acb2">
 <input type="hidden" name="redirect" value="https://luckytaorem.github.io/blog/thanks/">
 <input type="checkbox" name="botcheck" class="d-none" style="display: none;">
 <input type="hidden" name="subject" value="New Contact Message from LT Developer">
