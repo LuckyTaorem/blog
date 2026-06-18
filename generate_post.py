@@ -24,7 +24,7 @@ RSS_FEEDS = [
 output_dir = "content/posts"
 os.makedirs(output_dir, exist_ok=True)
 
-# --- NEW: Custom Image Generator ---
+# --- Custom Image Generator ---
 def generate_fallback_image(title, slug):
     # Hugo looks for images in the 'static' folder
     img_dir = "static/images"
@@ -62,7 +62,7 @@ def generate_fallback_image(title, slug):
     img.save(filepath)
     return f"/images/{slug}.jpg"
 
-# --- NEW: Unsplash Fetcher ---
+# --- Unsplash Fetcher ---
 def get_unsplash_image(title):
     if not UNSPLASH_KEY:
         return None
@@ -81,7 +81,7 @@ def get_unsplash_image(title):
         
     return None
 
-# --- UPDATED: The Image Extractor Engine ---
+# --- The Image Extractor Engine ---
 def extract_image(entry, title, slug):
     # Method A: Safely check official RSS media tags
     if 'media_content' in entry:
@@ -106,7 +106,7 @@ def extract_image(entry, title, slug):
     if unsplash_url:
         return unsplash_url
         
-    # Method E: Generate the beautiful fallback title image!
+    # Method E: Generate the beautiful fallback title image
     print("Unsplash failed. Generating custom title image...")
     return generate_fallback_image(title, slug)
 
@@ -169,13 +169,8 @@ tags: ["Insert 3 to 5 relevant tags here based on the text"]
             max_tokens=4000,
         )
 
-        article_content = response.choices[0].message.content
+        article_content = response.choices[0].message.content.strip()
         
-        # Clean AI markdown blocks
-        article_content = re.sub(r"\n```\s*$", "", article_content)
-
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write(article_content)
-
-        print(f"Success! Blog post saved to: {file_path}")
-        break 
+        # Strip markdown block tags if the AI accidentally added them
+        article_content = re.sub(r"^
+http://googleusercontent.com/immersive_entry_chip/0
