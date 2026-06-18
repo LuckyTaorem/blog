@@ -2,8 +2,8 @@
 title: "13 Best Essential Oil Diffusers 2026: Tested and Reviewed"
 date: 2026-06-18T13:29:28.849918+00:00
 draft: false
-images: ["/images/13-best-essential-oil-diffusers-2026-tested-and-reviewed.jpg"]
-thumbnail: "/images/13-best-essential-oil-diffurers-2026-tested-and-reviewed.jpg"
+images: ["/blog/images/13-best-essential-oil-diffusers-2026-tested-and-reviewed.jpg"]
+thumbnail: "/blog/images/13-best-essential-oil-diffurers-2026-tested-and-reviewed.jpg"
 description: "Discover the top essential oil diffusers for a pleasant and healthy home environment. Our comprehensive review covers scent strength, longevity, and special features."
 categories: ["Healthcare Tech"]
 tags: ["essential oil diffusers", "home decor", "air purification", "wellness", "relaxation"]

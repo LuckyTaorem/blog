@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>InDesign on LT Developer</title>
+		<link>http://localhost:1313/blog/tags/indesign/</link>
+		<description>Recent content in InDesign on LT Developer</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Thu, 18 Jun 2026 13:27:20 +0000</lastBuildDate>
+		
+			<atom:link href="http://localhost:1313/blog/tags/indesign/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Photoshop and Premiere now have AI assistants</title>
+				<link>http://localhost:1313/blog/posts/photoshop-and-premiere-now-have-ai-assistants/</link>
+				<pubDate>Thu, 18 Jun 2026 13:27:20 +0000</pubDate>
+				<guid>http://localhost:1313/blog/posts/photoshop-and-premiere-now-have-ai-assistants/</guid>
+				<description>&lt;p&gt;Adobe&amp;rsquo;s plan to integrate its AI-powered chatbots into all its Creative Cloud suite applications has finally come to fruition. The tech giant has officially launched a public beta for its AI Assistants, giving users access to AI-powered chatbots in Photoshop, Premiere, Illustrator, InDesign, and Frame.io. This move aims to revolutionize the way designers and editors work, making tasks easier, faster, and more efficient.&lt;/p&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;h3 id=&#34;what-are-ai-assistants-in-adobe-creative-cloud&#34; class=&#34;heading &#34;&gt;What are AI Assistants in Adobe Creative Cloud?&lt;a href=&#34;#what-are-ai-assistants-in-adobe-creative-cloud&#34; aria-labelledby=&#34;what-are-ai-assistants-in-adobe-creative-cloud&#34;&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;!-- &lt;i class=&#34;fas fa-link anchor&#34;&gt;&lt;/i&gt; --&gt;&#xA;        &lt;svg class=&#34;svg-inline--fa fas fa-link anchor&#34; fill=&#34;currentColor&#34; aria-hidden=&#34;true&#34; role=&#34;img&#34; viewBox=&#34;0 0 576 512&#34;&gt;&lt;use href=&#34;#fas-link&#34;&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;&#xA;    &lt;/a&gt;&#xA;&lt;/h3&gt;&#xA;&lt;p&gt;Adobe&amp;rsquo;s AI Assistants are bespoke chatbots designed to aid users in their creative workflows. These AI-powered tools can perform a wide range of tasks, from automating repetitive tasks to offering expert-level advice and guidance. With the AI Assistants, users can now focus on the creative aspects of their work, leaving the mundane tasks to the AI.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

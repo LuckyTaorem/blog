@@ -2,8 +2,8 @@
 title: "Dell Coupon Codes: 20% Off for June 2026"
 date: 2026-06-18T13:32:41.322820+00:00
 draft: false
-images: ["/images/dell-coupon-codes-20-off-for-june-2026.jpg"]
-thumbnail: "/images/dell-coupon-codes-20-off-for-june-2026.jpg"
+images: ["/blog/images/dell-coupon-codes-20-off-for-june-2026.jpg"]
+thumbnail: "/blog/images/dell-coupon-codes-20-off-for-june-2026.jpg"
 description: "Get up to $600 off laptops, Alienware monitors, and more with verified Dell promo codes."
 categories: ["Hardware"]
 tags: ["Dell promo codes", "coupon codes", "laptop deals", "Alienware discount"]

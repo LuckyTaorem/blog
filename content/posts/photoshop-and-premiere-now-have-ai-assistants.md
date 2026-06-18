@@ -2,8 +2,8 @@
 title: "Photoshop and Premiere now have AI assistants"
 date: 2026-06-18T13:27:20.332371+00:00
 draft: false
-images: ["/images/photoshop-and-premiere-now-have-ai-assistants.jpg"]
-thumbnail: "/images/photoshop-and-premiere-now-have-ai-assistants.jpg"
+images: ["/blog/images/photoshop-and-premiere-now-have-ai-assistants.jpg"]
+thumbnail: "/blog/images/photoshop-and-premiere-now-have-ai-assistants.jpg"
 description: "Adobe's Creative Cloud suite gets AI-powered chatbots for all major editing and design apps."
 categories: ["Creative/Design"]
 tags: ["Adobe", "AI assistants", "Creative Cloud", "Photoshop", "Premiere", "Illustrator", "InDesign", "Frame.io", "AI"]

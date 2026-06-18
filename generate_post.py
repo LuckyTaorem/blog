@@ -96,7 +96,7 @@ def generate_fallback_image(title, slug):
     draw.multiline_text((x + 4, y + 4), wrapped_text, font=font, fill=(0, 0, 0), align="center")
     draw.multiline_text((x, y), wrapped_text, font=font, fill=(255, 255, 255), align="center")
     img.save(filepath)
-    return f"/images/{slug}.jpg"
+    return f"/blog/images/{slug}.jpg"
 
 def get_unsplash_image(title):
     if not UNSPLASH_KEY: return None
@@ -123,7 +123,7 @@ def extract_image(entry, title, slug):
     return generate_fallback_image(title, slug)
 
 def download_and_verify_image(url, slug, title, is_featured=True):
-    if url.startswith("/images/") or url.startswith("/assets/images/"): return url
+    if url.startswith("/blog/images/") or url.startswith("/images/"): return url
     img_dir = "static/images"
     filepath = os.path.join(img_dir, f"{slug}.jpg")
     try:
@@ -133,7 +133,7 @@ def download_and_verify_image(url, slug, title, is_featured=True):
             with open(filepath, 'wb') as f: f.write(r.content)
             try:
                 with Image.open(filepath) as img: img.verify()
-                return f"/images/{slug}.jpg"
+                return f"/blog/images/{slug}.jpg"
             except Exception: pass 
     except Exception: pass 
     return generate_fallback_image(title, slug) if is_featured else url

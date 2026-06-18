@@ -2,8 +2,8 @@
 title: "Locked Out of the World Cup: A Year Marked by Barriers, Borders, and Broken Access"
 date: 2026-06-18T13:30:14.835885+00:00
 draft: false
-images: ["/images/locked-out-of-the-world-cup-a-year-marked-by-barriers-borders-and-broken-access.jpg"]
-thumbnail: "/images/locked-out-of-the-world-cup-a-year-marked-by-barriers-borders-and-broken-access.jpg"
+images: ["/blog/images/locked-out-of-the-world-cup-a-year-marked-by-barriers-borders-and-broken-access.jpg"]
+thumbnail: "/blog/images/locked-out-of-the-world-cup-a-year-marked-by-barriers-borders-and-broken-access.jpg"
 description: "The 2026 World Cup promises a global celebration, but not for all fans, especially those from Arab countries, who may find themselves locked out due to various barriers and restrictions."
 categories: ["Security"]
 tags: ["World Cup", "Access Restrictions", "Travel Barriers", "Arab Fans", "Global Celebration"]

@@ -2,14 +2,14 @@
 title: "How to turn off AI in your Google Docs"
 date: 2026-06-18T13:26:34.165709+00:00
 draft: false
-images: ["/images/how-to-turn-off-ai-in-your-google-docs.jpg"]
-thumbnail: "/images/how-to-turn-off-ai-in-your-google-docs.jpg"
+images: ["/blog/images/how-to-turn-off-ai-in-your-google-docs.jpg"]
+thumbnail: "/blog/images/how-to-turn-off-ai-in-your-google-docs.jpg"
 description: "Disable AI pop-ups in Google Docs with these simple steps."
 categories: ["Software"]
 tags: ["Google Docs", "AI", "Productivity"]
 ---
 
-![Featured Image](/images/how-to-turn-off-ai-in-your-google-docs.jpg)
+![Featured Image](/blog/images/how-to-turn-off-ai-in-your-google-docs.jpg)
 ## Introduction to AI in Google Docs
 Google Docs has become an essential tool for individuals and businesses alike, providing a convenient and collaborative way to create and edit documents. Recently, Google introduced a new feature called "Gemini" which utilizes artificial intelligence (AI) to assist with writing tasks. While this feature can be helpful, some users may find the frequent "write with Gemini" pop-ups to be annoying and distracting. In this article, we will explore the reasons behind these pop-ups and provide a step-by-step guide on how to turn them off.
 

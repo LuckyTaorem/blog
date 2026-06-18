@@ -2,8 +2,8 @@
 title: "Uplift Promo Codes: $570 Off"
 date: 2026-06-18T13:32:58.113413+00:00
 draft: false
-images: ["/images/uplift-promo-codes-570-off.jpg"]
-thumbnail: "/images/uplift-promo-codes-570-off.jpg"
+images: ["/blog/images/uplift-promo-codes-570-off.jpg"]
+thumbnail: "/blog/images/uplift-promo-codes-570-off.jpg"
 description: "Upgrade your home office with the best Uplift Desk discount codes. Save on standing desks, ergonomic chairs, and accessories during the Spring Setup Sale."
 categories: ["Hardware"]
 tags: ["Home Office", "Standing Desks", "Ergonomic Chairs", "Promo Codes", "Home Decor"]

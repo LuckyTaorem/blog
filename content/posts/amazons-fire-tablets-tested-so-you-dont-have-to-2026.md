@@ -2,8 +2,8 @@
 title: "Amazon’s Fire Tablets, Tested, So You Don’t Have To (2026)"
 date: 2026-06-18T13:29:13.568285+00:00
 draft: false
-images: ["/images/amazons-fire-tablets-tested-so-you-dont-have-to-2026.jpg"]
-thumbnail: "/images/amazons-fire-tablets-tested-so-you-dont-have-to-2026.jpg"
+images: ["/blog/images/amazons-fire-tablets-tested-so-you-dont-have-to-2026.jpg"]
+thumbnail: "/blog/images/amazons-fire-tablets-tested-so-you-dont-have-to-2026.jpg"
 description: "Discover the best Amazon Fire Tablets for travel and kids, based on our rigorous testing and reviews of the latest models."
 categories: ["Hardware"]
 tags: ["Amazon Fire Tablets", "Tablet Reviews", "Travel Tablets", "Kids Tablets", "Gaming Tablets"]

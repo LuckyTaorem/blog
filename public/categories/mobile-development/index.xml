@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Mobile Development on LT Developer</title>
+		<link>http://localhost:1313/blog/categories/mobile-development/</link>
+		<description>Recent content in Mobile Development on LT Developer</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Thu, 18 Jun 2026 13:25:51 +0000</lastBuildDate>
+		
+			<atom:link href="http://localhost:1313/blog/categories/mobile-development/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Pixi’s new iOS app turns text messages into interactive AR experiences</title>
+				<link>http://localhost:1313/blog/posts/pixis-new-ios-app-turns-text-messages-into-interactive-ar-experiences/</link>
+				<pubDate>Thu, 18 Jun 2026 13:25:51 +0000</pubDate>
+				<guid>http://localhost:1313/blog/posts/pixis-new-ios-app-turns-text-messages-into-interactive-ar-experiences/</guid>
+				<description>&lt;p&gt;&#xA;&#xA;&lt;img class=&#34;img-fluid &#34;&#xA;            src=&#34;&#34;&#xA;             alt=&#34;Featured Image&#34;&gt;&#xA;&lt;/p&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;h2 id=&#34;introduction-to-pixis-innovative-approach&#34; class=&#34;heading &#34;&gt;Introduction to Pixi&amp;rsquo;s Innovative Approach&lt;a href=&#34;#introduction-to-pixis-innovative-approach&#34; aria-labelledby=&#34;introduction-to-pixis-innovative-approach&#34;&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;!-- &lt;i class=&#34;fas fa-link anchor&#34;&gt;&lt;/i&gt; --&gt;&#xA;        &lt;svg class=&#34;svg-inline--fa fas fa-link anchor&#34; fill=&#34;currentColor&#34; aria-hidden=&#34;true&#34; role=&#34;img&#34; viewBox=&#34;0 0 576 512&#34;&gt;&lt;use href=&#34;#fas-link&#34;&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;&#xA;    &lt;/a&gt;&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;The world of messaging has undergone significant transformations over the years, from simple text messages to the use of stickers, GIFs, and emoji reactions. However, Pixi, a pioneering company in the tech industry, is now betting on the next evolution of messaging: interactive augmented reality (AR). This novel approach promises to redefine how we interact with each other through our mobile devices. In this article, we will delve into the details of Pixi&amp;rsquo;s new iOS app, exploring its features, potential impact, and what this means for the future of messaging.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>
