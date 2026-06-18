@@ -1,23 +1,5 @@
 [
     {
-        "title": "\u2018Queer Eye\u2019s\u2019 life coach Karamo Brown launches K\u0113, a wellness app featuring his AI digital clone",
-        "slug": "queer-eyes-life-coach-karamo-brown-launches-k\u0113-a-wellness-app-featuring-his-ai-digital-clone",
-        "summary": "Karamo Brown, famous for his pep talks on Netflix\u2019s \u201cQueer Eye,\u201d has jumped into the wellness and AI space with his new app, K\u0113. After spending a year and a half focusing on his own journey\u2014from fitness and nutrition to meditation, sobriety, relationships, and personal growth\u2014Brown wants to help others do the same.\u00a0 K\u0113 offers [\u2026]",
-        "raw_image_url": null
-    },
-    {
-        "title": "Apple opens up App Store to new competition in Brazil",
-        "slug": "apple-opens-up-app-store-to-new-competition-in-brazil",
-        "summary": "Apple\u2019s grip on iPhone app distribution is loosening in another major market: Brazil.",
-        "raw_image_url": null
-    },
-    {
-        "title": "MapTap, a daily geography game, is my new Wordle",
-        "slug": "maptap-a-daily-geography-game-is-my-new-wordle",
-        "summary": "MapTap is a phone game that will make you feel smarter after you play it.",
-        "raw_image_url": null
-    },
-    {
         "title": "General Intuition in talks to raise $300M at around $2B valuation",
         "slug": "general-intuition-in-talks-to-raise-300m-at-around-2b-valuation",
         "summary": "The startup trains embodied AI and world models using Medal\u2019s dataset of 2 billion videos per year from 10 million monthly active users.",
@@ -220,5 +202,11 @@
         "slug": "hulk-punisher-join-peter-parker-in-spider-man-brand-new-day-trailer",
         "summary": "Peter Parker to Bruce Banner: \"I didn't know you could get that big.\"",
         "raw_image_url": "https://cdn.arstechnica.net/wp-content/uploads/2026/06/brandnewday-1152x648.jpg"
+    },
+    {
+        "title": "MapTap, a daily geography game, is my new Wordle",
+        "slug": "maptap-a-daily-geography-game-is-my-new-wordle",
+        "summary": "MapTap is a phone game that will make you feel smarter after you play it.",
+        "raw_image_url": null
     }
 ]
