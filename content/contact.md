@@ -34,6 +34,7 @@ type: "page"
 <textarea class="form-control bg-body text-body border-secondary-subtle" id="message" name="message" rows="6" required></textarea>
 </div>
 
+<!-- Load hCaptcha -->
 <script src="https://hcaptcha.com/1/api.js" async defer></script>
 
 <div class="mb-4 text-center">
@@ -41,25 +42,35 @@ type: "page"
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+function renderCaptcha() {
   const htmlTheme = document.documentElement.getAttribute("data-bs-theme");
   const container = document.getElementById("hcaptcha-container");
 
-  // Render hCaptcha dynamically with correct theme
-  function renderCaptcha(theme) {
-    hcaptcha.render(container, {
-      sitekey: "355e4da0-3d78-491c-b18a-6dcc3afca796",
-      theme: theme
-    });
-  }
+  // Clear any previous widget
+  container.innerHTML = "";
 
-  if (htmlTheme === "dark") {
-    renderCaptcha("dark");
+  hcaptcha.render(container, {
+    sitekey: "355e4da0-3d78-491c-b18a-6dcc3afca796",
+    theme: htmlTheme === "dark" ? "dark" : "light"
+  });
+}
+
+// Wait until hCaptcha script is ready
+window.onload = function() {
+  if (typeof hcaptcha !== "undefined") {
+    renderCaptcha();
   } else {
-    renderCaptcha("light"); // default
+    // Retry until hCaptcha is available
+    const interval = setInterval(() => {
+      if (typeof hcaptcha !== "undefined") {
+        clearInterval(interval);
+        renderCaptcha();
+      }
+    }, 200);
   }
-});
+};
 </script>
+
 
 
 <div class="d-grid mt-5">
