@@ -1,5 +1,5 @@
 ---
-title: "NASA picks Eric Schmidt’s rocket company for Mars mission, setting up a race with SpaceX"
+title: "NASA Backs Schmidt's Rocket Revolution"
 date: 2026-06-18T13:25:56.148393+00:00
 draft: false
 images: ["images/nasa-picks-eric-schmidts-rocket-company-for-mars-mission-setting-up-a-race-with-spacex.jpg"]
@@ -9,7 +9,7 @@ categories: ["Space"]
 tags: ["SpaceX", "Relativity Space", "Eric Schmidt", "Mars Mission", "Private Space Exploration", "Space Technology"]
 ---
 
-# NASA Picks Eric Schmidt’s Rocket Company for Mars Mission, Setting Up a Thrilling Competition with SpaceX
+## NASA Picks Eric Schmidt’s Rocket Company for Mars Mission, Setting Up a Thrilling Competition with SpaceX
 
 In a groundbreaking move, NASA has chosen Relativity Space, a private rocket manufacturer backed by former Google executive chair Eric Schmidt, to join the Mars mission. This development marks a significant milestone in the ongoing efforts of private space companies to push the boundaries of space exploration. With SpaceX, led by Elon Musk, already making headlines for its ambitious Mars ambitions, this latest announcement sets the stage for a thrilling competition between two of the most influential players in the space industry.
 

@@ -4,7 +4,7 @@ date: 2026-06-18T13:26:34.165709+00:00
 draft: false
 images: ["images/how-to-turn-off-ai-in-your-google-docs.jpg"]
 thumbnail: "images/how-to-turn-off-ai-in-your-google-docs.jpg"
-description: "Disable AI pop-ups in Google Docs with these simple steps."
+description: "Learn how to turn off AI in Google Docs and eliminate Gemini pop-ups, giving you full control over your writing experience in this step-by-step guide."
 categories: ["Software"]
 tags: ["Google Docs", "AI", "Productivity"]
 ---

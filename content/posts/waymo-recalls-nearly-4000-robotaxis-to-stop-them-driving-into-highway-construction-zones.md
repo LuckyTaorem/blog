@@ -1,15 +1,15 @@
 ---
-title: "Waymo recalls nearly 4,000 robotaxis to stop them driving into highway construction zones"
+title: "Waymo Robotaxi Recall: 4,000 Vehicles Grounded"
 date: 2026-06-18T13:25:54.727821+00:00
 draft: false
 images: ["images/waymo-recalls-nearly-4000-robotaxis-to-stop-them-driving-into-highway-construction-zones.jpg"]
 thumbnail: "images/waymo-recalls-nearly-4000-robotaxis-to-stop-them-driving-into-highway-construction-zones.jpg"
-description: "Autonomous robotaxis from Waymo are driving into closed highway construction zones, prompting a massive recall."
+description: "Waymo recalls nearly 4,000 robotaxis to prevent highway construction zone accidents and address industry safety concerns."
 categories: ["Robotics"]
 tags: ["Waymo", "Autonomous Vehicles", "Robotaxis", "Recall"]
 ---
 
-# Waymo Recalls Nearly 4,000 Robotaxis to Stop Them Driving into Highway Construction Zones
+## Waymo Recalls Nearly 4,000 Robotaxis to Stop Them Driving into Highway Construction Zones
 
 **Updated**: June 18, 2026
 

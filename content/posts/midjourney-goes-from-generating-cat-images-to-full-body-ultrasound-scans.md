@@ -1,15 +1,15 @@
 ---
-title: "Midjourney goes from generating cat images to full-body ultrasound scans"
+title: "Midjourney Revolutionizes AI Art"
 date: 2026-06-18T13:29:06.699374+00:00
 draft: false
 images: ["images/midjourney-goes-from-generating-cat-images-to-full-body-ultrasound-scans.jpg"]
 thumbnail: "images/midjourney-goes-from-generating-cat-images-to-full-body-ultrasound-scans.jpg"
-description: "Midjourney, known for its AI-powered image generation, has unveiled its first hardware product - an ultrasound-based full-body scanner. This is a drastic departure from its previous focus on generating cat pictures. Learn more about The Midjourney Scanner and what it means for the future of healthcare technology."
+description: "Midjourney introduces The Midjourney Scanner, an ultrasound-based full-body scanner, marking a significant shift from AI-generated cat images to cutting-edge healthcare tech innovations."
 categories: ["Healthcare Tech"]
 tags: ["AI", "Healthcare Technology", "Midjourney", "Ultrasound Scanner"]
 ---
 
-# Midjourney goes from generating cat images to full-body ultrasound scans
+## Midjourney goes from generating cat images to full-body ultrasound scans
 
 In a surprising move, Midjourney CEO David Holz has announced the company's first hardware product - The Midjourney Scanner, an ultrasound-based full-body scanner. This is a significant departure from the company's previous focus on generating cat pictures using its AI image generator. But what does this new development mean for the future of healthcare technology?
 

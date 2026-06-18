@@ -1,10 +1,10 @@
 ---
-title: "Adobe adds its AI assistant to Premiere, Illustrator and InDesign"
+title: "Adobe Brings AI to Premiere"
 date: 2026-06-18T13:25:48.365374+00:00
 draft: false
 images: ["images/adobe-adds-its-ai-assistant-to-premiere-illustrator-and-indesign.jpg"]
 thumbnail: "images/adobe-adds-its-ai-assistant-to-premiere-illustrator-and-indesign.jpg"
-description: "Adobe updates Firefly AI assistant and integrates it with Premiere, Illustrator, InDesign, and Frame.io"
+description: "Adobe Firefly AI assistant integrated into Premiere, Illustrator, InDesign and Frame.io to revolutionize creative workflows and enhance user experience."
 categories: ["Software"]
 tags: ["Adobe", "AI Assistant", "Creative Cloud"]
 ---

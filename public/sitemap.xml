@@ -254,17 +254,14 @@
     <loc>http://localhost:1313/blog/tags/gadget-review/</loc>
     <lastmod>2026-06-18T13:30:13+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/posts/halo-stops-bedtime-scrolling-so-you-can-go-the-f-to-sleep/</loc>
-    <lastmod>2026-06-18T13:30:13+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/blog/tags/productivity/</loc>
     <lastmod>2026-06-18T13:30:13+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/sleep-tech/</loc>
     <lastmod>2026-06-18T13:30:13+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/posts/how-to-watch-the-knicks-parade-on-nyc-traffic-surveillance-cameras/</loc>
-    <lastmod>2026-06-18T13:29:44+00:00</lastmod>
+    <loc>http://localhost:1313/blog/posts/halo-stops-bedtime-scrolling-so-you-can-go-the-f-to-sleep/</loc>
+    <lastmod>2026-06-18T13:30:13+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/knicks/</loc>
     <lastmod>2026-06-18T13:29:44+00:00</lastmod>
@@ -284,10 +281,13 @@
     <loc>http://localhost:1313/blog/categories/software/</loc>
     <lastmod>2026-06-18T13:29:44+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/posts/13-best-essential-oil-diffusers-2026-tested-and-reviewed/</loc>
-    <lastmod>2026-06-18T13:29:28+00:00</lastmod>
+    <loc>http://localhost:1313/blog/posts/how-to-watch-the-knicks-parade-on-nyc-traffic-surveillance-cameras/</loc>
+    <lastmod>2026-06-18T13:29:44+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/air-purification/</loc>
+    <lastmod>2026-06-18T13:29:28+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/13-best-essential-oil-diffusers-2026-tested-and-reviewed/</loc>
     <lastmod>2026-06-18T13:29:28+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/essential-oil-diffusers/</loc>
@@ -299,10 +299,10 @@
     <loc>http://localhost:1313/blog/tags/wellness/</loc>
     <lastmod>2026-06-18T13:29:28+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/tags/amazon-fire-tablets/</loc>
+    <loc>http://localhost:1313/blog/posts/amazons-fire-tablets-tested-so-you-dont-have-to-2026/</loc>
     <lastmod>2026-06-18T13:29:13+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/posts/amazons-fire-tablets-tested-so-you-dont-have-to-2026/</loc>
+    <loc>http://localhost:1313/blog/tags/amazon-fire-tablets/</loc>
     <lastmod>2026-06-18T13:29:13+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/gaming-tablets/</loc>
@@ -416,9 +416,6 @@
     <loc>http://localhost:1313/blog/tags/amazon/</loc>
     <lastmod>2026-06-18T13:26:37+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/posts/amazons-kindle-colorsoft-bundle-is-almost-half-off-for-prime-day/</loc>
-    <lastmod>2026-06-18T13:26:37+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/blog/tags/colorsoft/</loc>
     <lastmod>2026-06-18T13:26:37+00:00</lastmod>
   </url><url>
@@ -426,6 +423,9 @@
     <lastmod>2026-06-18T13:26:37+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/kindle/</loc>
+    <lastmod>2026-06-18T13:26:37+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/amazons-kindle-colorsoft-bundle-is-almost-half-off-for-prime-day/</loc>
     <lastmod>2026-06-18T13:26:37+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/prime-day/</loc>

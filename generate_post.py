@@ -271,6 +271,7 @@ for current_feed in RSS_FEEDS:
         raw_image_url = extract_image(entry, news_title, filename_slug)
         image_url = download_and_verify_image(html.unescape(raw_image_url), filename_slug, news_title, is_featured=True)
 
+        # 3. Generate the Prompt
         prompt = f"""
 Act as an expert tech journalist and SEO specialist. Read this short news summary: {news_summary}
 
@@ -278,25 +279,30 @@ Write a comprehensive, highly engaging 1500-word blog post about this topic.
 Include headings, bullet points, and an FAQ section. 
 Output the final result in pure Markdown format. 
 
+CRITICAL SEO RULES:
+1. Title Limit: The title in the frontmatter MUST be catchy, click-optimized, and strictly under 50 characters.
+2. Description Limit: The description in the frontmatter MUST be highly engaging and strictly between 140 and 150 characters.
+3. Heading Tags: DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for main sections and H3 (`###`) for subsections. 
+
 At the very top of the file, include YAML frontmatter formatted EXACTLY like this:
 ---
-title: "{news_title}"
+title: "[Insert <50 Char Title Here]"
 date: {datetime.now(timezone.utc).isoformat()}
 draft: false
 images: ["{image_url}"]
 thumbnail: "{image_url}"
-description: "A 155-character SEO meta description here."
+description: "[Insert 140-150 Char Description Here]"
 categories: ["Insert EXACTLY ONE category here"]
 tags: ["Insert 3 to 5 relevant tags here based on the text"]
 ---
 
 IMPORTANT RULE FOR CATEGORIES: 
-You must evaluate the article and pick EXACTLY ONE category that most closely matches the content from this exact list: Artificial Intelligence, Hardware, Software, Space, Security, Business, Cloud Computing, Data Science, Networking, Mobile Development, Web Development, Gaming, Robotics, Open Source, Education, Healthcare Tech, Finance/FinTech, Legal/Compliance, Movie, Promo Code, Creative/Design, Other. 
+You must evaluate the article and pick EXACTLY ONE category that most closely matches the content from this exact list: {', '.join(VALID_CATEGORIES)}.
 Do not invent new categories.
 
 ![Featured Image]({image_url})
 
-(Write the rest of the markdown article here. Do not wrap the whole output in markdown code blocks, just output the raw text starting with the ---.)
+(Write the rest of the markdown article here starting with an introductory paragraph. Remember, no H1 tags!)
 """
 
         print("Sending to Groq...")

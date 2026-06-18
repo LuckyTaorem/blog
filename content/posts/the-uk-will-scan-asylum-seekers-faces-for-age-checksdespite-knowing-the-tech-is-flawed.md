@@ -1,10 +1,10 @@
 ---
-title: "The UK Will Scan Asylum-Seekers’ Faces for Age Checks—Despite Knowing the Tech Is Flawed"
+title: "UK to Scan Asylum-Seekers' Faces for Age"
 date: 2026-06-18T13:30:44.768561+00:00
 draft: false
 images: ["images/the-uk-will-scan-asylum-seekers-faces-for-age-checksdespite-knowing-the-tech-is-flawed.jpg"]
 thumbnail: "images/the-uk-will-scan-asylum-seekers-faces-for-age-checksdespite-knowing-the-tech-is-flawed.jpg"
-description: "The UK government will proceed with age-checking technology despite internal tests showing life-altering errors."
+description: "UK's Biometric Blunder: Age-verification technology raises security concerns among asylum-seekers with flawed Home Office tests revealing life-altering errors and significant risks."
 categories: ["Security"]
 tags: ["Age Verification", "Biometric Technology", "Security Risk", "Asylum Seekers"]
 ---

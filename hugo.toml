@@ -1,4 +1,13 @@
+# 1. This generates perfect Canonical Tags and Sitemap URLs
 baseURL = "https://luckytaorem.github.io/blog/"
+
+
+# 2. This tells Hugo to automatically generate a robots.txt file
+enableRobotsTXT = true
+
+# 3. Optional: Ensures your URLs are clean (no ugly .html at the end)
+uglyURLs = false
+
 title = "LT Developer"
 locale = "en-us"
 

@@ -1,6 +1,6 @@
 ---
 title: "Latest Tech Articles"
-description: "Read our latest deep dives into AI and technology."
+description: "Discover the importance of SEO copywriting, learn how to optimize your content for search engines, and boost your online visibility with expert tips and strategies."
 type: "posts"
 layout: "category-groups"
 ---

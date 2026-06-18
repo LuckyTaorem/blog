@@ -1,10 +1,10 @@
 ---
-title: "Pixi’s new iOS app turns text messages into interactive AR experiences"
+title: "Unlock Hidden Text Secrets in Pixi's iOS App"
 date: 2026-06-18T13:25:51.053697+00:00
 draft: false
 images: ["images/pixis-new-ios-app-turns-text-messages-into-interactive-ar-experiences.jpg"]
 thumbnail: "images/pixis-new-ios-app-turns-text-messages-into-interactive-ar-experiences.jpg"
-description: "Discover how Pixi's new iOS app is revolutionizing messaging with interactive AR experiences"
+description: "Discover Pixi's groundbreaking iOS app turning text messages into immersive AR experiences, revolutionizing the future of messaging."
 categories: ["Mobile Development"]
 tags: ["Augmented Reality", "iOS App", "Interactive Messaging"]
 ---
