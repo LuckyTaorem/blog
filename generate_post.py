@@ -43,14 +43,14 @@ for directory in REQUIRED_DIRS:
 
 output_dir = "content/posts"
 
-def post_exists(entry, news_title, output_dir):
+def get_existing_post_path(entry, news_title, output_dir):
     """
-    Return True if any existing markdown file in output_dir references
-    this entry's link/id, or if a highly similar title already exists.
+    Returns the file path of an existing post if it matches the link, id, or has a highly similar title.
     """
     if not os.path.exists(output_dir):
         os.makedirs(output_dir, exist_ok=True)
-        return False
+        return None
+        
     entry_link = entry.get('link', '').strip()
     entry_id = entry.get('id', '').strip()
 
@@ -64,23 +64,21 @@ def post_exists(entry, news_title, output_dir):
                 
                 # 1. Exact Link or ID Match
                 if entry_link and entry_link in content:
-                    return True
+                    return path
                 if entry_id and entry_id in content:
-                    return True
+                    return path
                     
-                # 2. Fuzzy Title Match (Protects against slightly altered titles)
+                # 2. Fuzzy Title Match
                 title_match = re.search(r'^title:\s*"(.*?)"', content, re.MULTILINE)
                 if title_match:
                     existing_title = title_match.group(1)
-                    # Compare similarity (0.80 = 80% similar)
                     similarity = SequenceMatcher(None, news_title.lower(), existing_title.lower()).ratio()
-                    if similarity >= 0.80:
-                        print(f"  -> DUPLICATE BLOCKED: '{news_title}' is {int(similarity*100)}% similar to '{existing_title}'")
-                        return True
+                    if similarity >= 0.85:
+                        print(f"  -> DUPLICATE FOUND: '{news_title}' matches '{existing_title}'")
+                        return path
         except Exception:
-            # ignore unreadable files
             continue
-    return False
+    return None
 
 
 # --- Custom Image Generator ---
@@ -207,74 +205,46 @@ def extract_image(entry, title, slug):
     return generate_fallback_image(title, slug)
 
 def update_today_post_images(output_dir):
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir, exist_ok=True)
-        print(f"Created missing directory: {output_dir}")
-        return
-    
+    if not os.path.exists(output_dir): return
     today = datetime.now(timezone.utc).date()
 
     for fname in os.listdir(output_dir):
-        if not fname.endswith(".md"):
-            continue
-
+        if not fname.endswith(".md"): continue
         file_path = os.path.join(output_dir, fname)
-
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 content = f.read()
 
-            # Extract date from frontmatter
             date_match = re.search(r"date:\s*([^\n]+)", content)
-            if not date_match:
-                continue
+            if not date_match: continue
 
-            post_date = datetime.fromisoformat(
-                date_match.group(1).strip().replace("Z", "+00:00")
-            ).date()
-
-            if post_date != today:
-                continue
+            post_date = datetime.fromisoformat(date_match.group(1).strip().replace("Z", "+00:00")).date()
+            if post_date != today: continue
 
             slug = os.path.splitext(fname)[0]
+            
+            # FIX: Get real title for the fallback image
+            title_match = re.search(r'^title:\s*"(.*?)"', content, re.MULTILINE)
+            post_title = title_match.group(1) if title_match else slug
 
-            # Extract thumbnail
             thumb_match = re.search(r'thumbnail:\s*"([^"]+)"', content)
-
             if thumb_match:
                 thumb_url = thumb_match.group(1)
-
                 if thumb_url.startswith("http"):
                     local_thumb = download_and_verify_image(
-                        thumb_url,
-                        f"{slug}-thumb",
-                        slug
+                        thumb_url, f"{slug}-thumb", post_title, is_featured=True
                     )
-
-                    content = re.sub(
-                        r'thumbnail:\s*"([^"]+)"',
-                        f'thumbnail: "{local_thumb}"',
-                        content
-                    )
-
-                    content = re.sub(
-                        r'images:\s*\[[^\]]*\]',
-                        f'images: ["{local_thumb}"]',
-                        content
-                    )
+                    content = re.sub(r'thumbnail:\s*"([^"]+)"', f'thumbnail: "{local_thumb}"', content)
+                    content = re.sub(r'images:\s*\[[^\]]*\]', f'images: ["{local_thumb}"]', content)
 
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content)
-
-            print(f"Updated images: {fname}")
-
-        except Exception as e:
-            print(f"Error processing {fname}: {e}")
+        except Exception:
+            pass
 
 # --- The Image Downloader (Anti-Hotlink Protection) ---
-def download_and_verify_image(url, slug, title):
-    print(f"Downloading image: {url}")
-    # If the URL is already our generated fallback, skip downloading
+# --- The Image Downloader (Anti-Hotlink Protection) ---
+def download_and_verify_image(url, slug, title, is_featured=True):
     if url.startswith("/images/") or url.startswith("/assets/images/"):
         return url
         
@@ -283,38 +253,26 @@ def download_and_verify_image(url, slug, title):
     filepath = os.path.join(img_dir, f"{slug}.jpg")
     
     try:
-        # Spoof a standard web browser to bypass basic hotlink protection
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
         r = requests.get(url, headers=headers, timeout=10)
-        print("Status Code:", r.status_code)
-        print("Content-Type:", r.headers.get("Content-Type"))
         
         if r.status_code == 200:
-            # Save the raw image
             with open(filepath, 'wb') as f:
                 f.write(r.content)
-            
-            # Verify it is actually an image and not a blocked HTML error page
             try:
                 with Image.open(filepath) as img:
                     img.verify()
-                print("Image saved successfully:", filepath)
-                print("File exists:", os.path.exists(filepath))
-                print("Absolute path:", os.path.abspath(filepath))
                 return f"/images/{slug}.jpg"
             except Exception:
-                print("  -> Downloaded file was corrupt/protected. Generating fallback...")
+                pass # Corrupt file, move to fallback
     except Exception as e:
-        print(f"  -> Could not download image: {e}")
+        pass # Download failed, move to fallback
         
-    print(
-    "Saved:",
-    os.path.abspath(filepath),
-    os.path.getsize(filepath),
-    "bytes"
-)
-    # If the download failed or was blocked by a firewall, generate the custom text image
-    return generate_fallback_image(title, slug)
+    # THE FIX: Only generate banners for the main thumbnail
+    if is_featured:
+        return generate_fallback_image(title, slug)
+    else:
+        return url # Return the original remote URL for body images
 
 update_today_post_images(output_dir)
 print("STATIC IMAGES:")
@@ -328,109 +286,57 @@ def update_post_images(file_path, slug, title):
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
 
-        # Find all markdown images
-        image_matches = re.findall(
-            r'!\[[^\]]*\]\((.*?)\)',
-            content
-        )
-
+        image_matches = re.findall(r'!\[[^\]]*\]\((.*?)\)', content)
         for idx, img_url in enumerate(image_matches, start=1):
-
-            if (
-                img_url.startswith("/images/")
-                or img_url.startswith("/assets/images/")
-            ):
+            if img_url.startswith("/images/") or img_url.startswith("/assets/images/"):
                 continue
-
+            
+            # is_featured=False prevents generating a giant title banner inside the article
             local_img = download_and_verify_image(
-                html.unescape(img_url),
-                f"{slug}-{idx}",
-                title
+                html.unescape(img_url), f"{slug}-{idx}", title, is_featured=False 
             )
-
             content = content.replace(img_url, local_img)
 
-        # Fix thumbnail
-        thumb_match = re.search(
-            r'thumbnail:\s*"([^"]+)"',
-            content
-        )
-
+        thumb_match = re.search(r'thumbnail:\s*"([^"]+)"', content)
         if thumb_match:
             thumb_url = thumb_match.group(1)
-
             if thumb_url.startswith("http"):
                 local_thumb = download_and_verify_image(
-                    thumb_url,
-                    f"{slug}-thumb",
-                    title
+                    thumb_url, f"{slug}-thumb", title, is_featured=True
                 )
-
-                content = re.sub(
-                    r'thumbnail:\s*"([^"]+)"',
-                    f'thumbnail: "{local_thumb}"',
-                    content
-                )
-
-                content = re.sub(
-                    r'images:\s*\[[^\]]*\]',
-                    f'images: ["{local_thumb}"]',
-                    content
-                )
+                content = re.sub(r'thumbnail:\s*"([^"]+)"', f'thumbnail: "{local_thumb}"', content)
+                content = re.sub(r'images:\s*\[[^\]]*\]', f'images: ["{local_thumb}"]', content)
 
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(content)
-
         print(f"Updated image paths in {file_path}")
 
     except Exception as e:
         print(f"Failed updating images: {e}")
 
 # 3. Main Loop
-for current_feed in RSS_FEEDS:
-    print(f"\nChecking {current_feed}...")
-    feed = feedparser.parse(current_feed)
-
-    # skip if feed parsing failed or no entries
-    if not getattr(feed, "entries", None):
-        print("No entries found for this feed.")
-        continue
-
-    for entry in feed.entries:
-        # Determine published date (try published, then updated)
+for entry in feed.entries:
         published_struct = entry.get('published_parsed') or entry.get('updated_parsed')
-        if not published_struct:
-            # If no date available, skip (or optionally treat as today)
-            print(f"Skipping (no publish date): {entry.get('title', 'NO TITLE')}")
-            continue
+        if not published_struct: continue
 
-        # Convert struct_time to UTC date
         published_dt = datetime.fromtimestamp(time.mktime(published_struct), tz=timezone.utc)
-        if published_dt.date() != datetime.now(timezone.utc).date():
-            print(f"Skipping (not today): {entry.get('title', 'NO TITLE')} (published {published_dt.date()})")
-            continue
+        if published_dt.date() != datetime.now(timezone.utc).date(): continue
 
-        # NEW: Extract the title FIRST so we can use it for fuzzy matching
         news_title = html.unescape(entry.get('title', 'NO TITLE'))
 
-        # NEW: Pass the title into our updated post_exists function
-        if post_exists(entry, news_title, output_dir):
-            print(f"Post exists. Will update images only: {news_title}")
-
-        # Keep your existing slug logic below this point
         filename_slug = re.sub(r'[^\w\s-]', '', news_title).strip().lower()
         filename_slug = re.sub(r'[-\s]+', '-', filename_slug)
         filename = filename_slug + ".md"
-
         file_path = os.path.join(output_dir, filename)
 
-        if os.path.exists(file_path):
-            print(f"Updating images for existing post: {news_title}")
-
-            update_post_images(file_path, filename_slug, news_title)
-
+        # Check if the post already exists (either exact file, or fuzzy match)
+        existing_path = get_existing_post_path(entry, news_title, output_dir)
+        
+        if existing_path:
+            print(f"Post already exists at {existing_path}. Updating images only.")
+            update_post_images(existing_path, filename_slug, news_title)
             continue
-
+            
         print(f"Found NEW article: {news_title}")
         news_summary = html.unescape(entry.get('summary', ''))
 
