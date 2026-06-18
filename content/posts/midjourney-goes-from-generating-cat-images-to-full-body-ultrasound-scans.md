@@ -2,13 +2,13 @@
 title: "Midjourney goes from generating ‘cat images’ to full-body ultrasound scans"
 date: 2026-06-18T06:22:39.834835+00:00
 draft: false
-images: ["https://platform.theverge.com/wp-content/uploads/sites/2/2026/06/ultrasound_phantom_segmentation-b254a71d083eb5c9.png?quality=90&strip=all&crop=0,0,100,100"]
+images: ["/images/midjourney-goes-from-generating-cat-images-to-full-body-ultrasound-scans-1.jpg"]
 description: "Midjourney's new ultrasound scanner marks a significant shift from AI image generation to medical tech"
 categories: ["Healthcare Tech"]
 tags: ["Midjourney", "Ultrasound Scanner", "AI Image Generation", "Medical Technology", "Healthcare Innovation"]
 ---
 
-![Featured Image](https://platform.theverge.com/wp-content/uploads/sites/2/2026/06/ultrasound_phantom_segmentation-b254a71d083eb5c9.png?quality=90&strip=all&crop=0,0,100,100)
+![Featured Image](/images/midjourney-goes-from-generating-cat-images-to-full-body-ultrasound-scans-1.jpg)
 ## Introduction to Midjourney's New Venture
 Midjourney, a company known for its AI image generator that can produce stunning "cat pictures" and other artistic creations, has recently unveiled its first hardware product. The Midjourney Scanner, an ultrasound-based full-body scanner, marks a significant shift in the company's focus from artificial intelligence to medical technology. In this article, we will delve into the details of this new product, its potential applications, and what this means for the future of Midjourney.
 

@@ -2,13 +2,13 @@
 title: "The UK Will Scan Asylum-Seekers’ Faces for Age Checks—Despite Knowing the Tech Is Flawed"
 date: 2026-06-18T06:22:43.774408+00:00
 draft: false
-images: ["https://images.unsplash.com/photo-1593781493314-ee47b5274316?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MzUzNzR8MHwxfHNlYXJjaHwxfHxUaGUlMjBVSyUyMFdpbGwlMjBTY2FufGVufDB8fHx8MTc4MTc2Mzc2M3ww&ixlib=rb-4.1.0&q=80&w=1080"]
+images: ["/images/the-uk-will-scan-asylum-seekers-faces-for-age-checksdespite-knowing-the-tech-is-flawed-1.jpg"]
 description: "UK to use flawed age-verification tech on asylum seekers despite risks"
 categories: ["Legal/Compliance"]
 tags: ["Age Verification", "Facial Recognition", "Asylum Seekers", "UK Home Office", "Biometric Technology"]
 ---
 
-![Featured Image](https://images.unsplash.com/photo-1593781493314-ee47b5274316?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MzUzNzR8MHwxfHNlYXJjaHwxfHxUaGUlMjBVSyUyMFdpbGwlMjBTY2FufGVufDB8fHx8MTc4MTc2Mzc2M3ww&ixlib=rb-4.1.0&q=80&w=1080)
+![Featured Image](/images/the-uk-will-scan-asylum-seekers-faces-for-age-checksdespite-knowing-the-tech-is-flawed-1.jpg)
 
 ## Introduction
 The UK Home Office has been testing age-verification technology to determine the age of asylum seekers. However, internal tests have revealed that the technology is prone to life-altering errors. Despite these risks, the Home Office is moving forward with the plan to use this technology, raising concerns about the potential consequences for asylum seekers.
