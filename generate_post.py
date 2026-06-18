@@ -87,7 +87,7 @@ def post_exists(entry, news_title, output_dir):
 def generate_fallback_image(title, slug):
     print(f"GENERATING FALLBACK IMAGE: {slug}")
     # Hugo looks for images in the 'static' folder
-    img_dir = "assets/images"
+    img_dir = "static/images"
     os.makedirs(img_dir, exist_ok=True)
     filepath = os.path.join(img_dir, f"{slug}.jpg")
 
@@ -156,7 +156,7 @@ def generate_fallback_image(title, slug):
     # Save and return the relative path for Hugo
     img.save(filepath)
     print("Fallback image exists:", os.path.exists(filepath))
-    return f"/assets/images/{slug}.jpg"
+    return f"/images/{slug}.jpg"
 
 # --- Unsplash Fetcher ---
 def get_unsplash_image(title):
