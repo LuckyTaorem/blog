@@ -3,6 +3,7 @@ import feedparser
 from groq import Groq
 import re
 from datetime import datetime, timezone
+import html # NEW: Added to clean up messy RSS titles
 
 # 1. Initialize Groq Client
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
@@ -19,17 +20,26 @@ RSS_FEEDS = [
 output_dir = "content/posts"
 os.makedirs(output_dir, exist_ok=True)
 
-# Image Extractor Function
+# --- BULLETPROOF IMAGE EXTRACTOR ---
 def extract_image(entry):
-    if 'media_content' in entry and len(entry.media_content) > 0:
-        return entry.media_content[0]['url']
+    # Method A: Safely check official media tags
+    if 'media_content' in entry:
+        for media in entry.media_content:
+            if 'url' in media:  # Explicitly check if the 'url' key exists
+                return media['url']
+                
+    # Method B: Check enclosures (common in podcast/news feeds)
     if 'links' in entry:
         for link in entry.links:
             if link.get('rel') == 'enclosure' and 'image' in link.get('type', ''):
                 return link.get('href')
+                
+    # Method C: Hunt for raw HTML image tags hidden in the summary
     match = re.search(r'<img[^>]+src="([^">]+)"', entry.get('summary', '') + str(entry.get('content', '')))
     if match:
         return match.group(1)
+        
+    # Method D: Fallback high-quality tech image if the feed has no image
     return "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
 
 # 3. Loop through EVERY site in the list
@@ -39,23 +49,22 @@ for current_feed in RSS_FEEDS:
     
     # Check the top 5 recent articles in this feed to find a new one
     for entry in feed.entries[:5]:
-        news_title = entry.title
+        # NEW: Clean up HTML entities (like &#8216;) before using the title
+        news_title = html.unescape(entry.title) 
         
-        # Generate the filename
+        # Generate the clean filename
         filename = re.sub(r'[^\w\s-]', '', news_title).strip().lower()
         filename = re.sub(r'[-\s]+', '-', filename) + ".md"
         file_path = os.path.join(output_dir, filename)
         
-        # --- FIX 1: PREVENT OVERWRITING ---
         if os.path.exists(file_path):
             print(f"Skipping (Already published): {news_title}")
-            continue # Move down the list to the next article
+            continue
             
         print(f"Found NEW article: {news_title}")
-        news_summary = entry.summary
+        news_summary = html.unescape(entry.summary)
         image_url = extract_image(entry)
         
-        # --- FIX 2 & 3: DYNAMIC TAGS AND EMBEDDED IMAGES ---
         prompt = f"""
 Act as an expert tech journalist and SEO specialist. Read this short news summary: {news_summary}
 
@@ -65,7 +74,7 @@ Output the final result in pure Markdown format.
 
 At the very top of the file, include YAML frontmatter formatted EXACTLY like this:
 ---
-title: "Your Catchy SEO Title Here"
+title: "{news_title}"
 date: {datetime.now(timezone.utc).isoformat()}
 draft: false
 images: ["{image_url}"]
@@ -99,7 +108,5 @@ tags: ["Insert 3 to 5 relevant tags here based on the text"]
 
         print(f"Success! Blog post saved to: {file_path}")
         
-        # --- FIX 4: ONLY ONE PER SITE ---
-        # Break out of the 'entry' loop so we move on to the next website
-        # This ensures we get exactly 1 new article per site, per run.
+        # Break out so we move on to the next website (1 per site)
         break
