@@ -8,6 +8,7 @@ import html
 import requests
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
+from difflib import SequenceMatcher
 
 # 1. Initialize API Keys
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
@@ -25,16 +26,13 @@ RSS_FEEDS = [
 output_dir = "content/posts"
 os.makedirs(output_dir, exist_ok=True)
 
-def post_exists(entry, output_dir):
+def post_exists(entry, news_title, output_dir):
     """
     Return True if any existing markdown file in output_dir references
-    this entry's link or id in its content.
+    this entry's link/id, or if a highly similar title already exists.
     """
     entry_link = entry.get('link', '').strip()
     entry_id = entry.get('id', '').strip()
-
-    if not entry_link and not entry_id:
-        return False
 
     for fname in os.listdir(output_dir):
         if not fname.endswith('.md'):
@@ -43,10 +41,22 @@ def post_exists(entry, output_dir):
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 content = f.read()
+                
+                # 1. Exact Link or ID Match
                 if entry_link and entry_link in content:
                     return True
                 if entry_id and entry_id in content:
                     return True
+                    
+                # 2. Fuzzy Title Match (Protects against slightly altered titles)
+                title_match = re.search(r'^title:\s*"(.*?)"', content, re.MULTILINE)
+                if title_match:
+                    existing_title = title_match.group(1)
+                    # Compare similarity (0.80 = 80% similar)
+                    similarity = SequenceMatcher(None, news_title.lower(), existing_title.lower()).ratio()
+                    if similarity >= 0.80:
+                        print(f"  -> DUPLICATE BLOCKED: '{news_title}' is {int(similarity*100)}% similar to '{existing_title}'")
+                        return True
         except Exception:
             # ignore unreadable files
             continue
@@ -149,7 +159,7 @@ for current_feed in RSS_FEEDS:
         print("No entries found for this feed.")
         continue
 
-    for entry in feed.entries[:5]:
+    for entry in feed.entries:
         # Determine published date (try published, then updated)
         published_struct = entry.get('published_parsed') or entry.get('updated_parsed')
         if not published_struct:
@@ -163,13 +173,15 @@ for current_feed in RSS_FEEDS:
             print(f"Skipping (not today): {entry.get('title', 'NO TITLE')} (published {published_dt.date()})")
             continue
 
-        # Skip if this entry already exists in the site's posts
-        if post_exists(entry, output_dir):
-            print(f"Skipping (Already exists on site): {entry.get('title', 'NO TITLE')}")
+        # NEW: Extract the title FIRST so we can use it for fuzzy matching
+        news_title = html.unescape(entry.get('title', 'NO TITLE'))
+
+        # NEW: Pass the title into our updated post_exists function
+        if post_exists(entry, news_title, output_dir):
+            print(f"Skipping (Already exists on site): {news_title}")
             continue
 
-        news_title = html.unescape(entry.title)
-
+        # Keep your existing slug logic below this point
         filename_slug = re.sub(r'[^\w\s-]', '', news_title).strip().lower()
         filename_slug = re.sub(r'[-\s]+', '-', filename_slug)
         filename = filename_slug + ".md"
@@ -250,6 +262,3 @@ Do not invent new categories.
             f.write(article_content)
 
         print(f"Success! Blog post saved to: {file_path}")
-
-        # Break out so we move on to the next website
-        break

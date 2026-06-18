@@ -1,0 +1,5 @@
+/* Adjust the header logo width */
+.navbar-brand img {
+    max-width: 250px !important; /* Change this number to your desired width */
+    height: auto !important;
+}
