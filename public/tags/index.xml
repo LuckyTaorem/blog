@@ -10,9 +10,79 @@
 		
 		
 		
-			<lastBuildDate>Thu, 18 Jun 2026 04:41:53 +0000</lastBuildDate>
+			<lastBuildDate>Thu, 18 Jun 2026 06:22:43 +0000</lastBuildDate>
 		
 			<atom:link href="http://localhost:1313/blog/tags/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Age Verification</title>
+				<link>http://localhost:1313/blog/tags/age-verification/</link>
+				<pubDate>Thu, 18 Jun 2026 06:22:43 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/age-verification/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Asylum Seekers</title>
+				<link>http://localhost:1313/blog/tags/asylum-seekers/</link>
+				<pubDate>Thu, 18 Jun 2026 06:22:43 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/asylum-seekers/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Biometric Technology</title>
+				<link>http://localhost:1313/blog/tags/biometric-technology/</link>
+				<pubDate>Thu, 18 Jun 2026 06:22:43 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/biometric-technology/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Facial Recognition</title>
+				<link>http://localhost:1313/blog/tags/facial-recognition/</link>
+				<pubDate>Thu, 18 Jun 2026 06:22:43 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/facial-recognition/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>UK Home Office</title>
+				<link>http://localhost:1313/blog/tags/uk-home-office/</link>
+				<pubDate>Thu, 18 Jun 2026 06:22:43 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/uk-home-office/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>AI Image Generation</title>
+				<link>http://localhost:1313/blog/tags/ai-image-generation/</link>
+				<pubDate>Thu, 18 Jun 2026 06:22:39 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/ai-image-generation/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Healthcare Innovation</title>
+				<link>http://localhost:1313/blog/tags/healthcare-innovation/</link>
+				<pubDate>Thu, 18 Jun 2026 06:22:39 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/healthcare-innovation/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Medical Technology</title>
+				<link>http://localhost:1313/blog/tags/medical-technology/</link>
+				<pubDate>Thu, 18 Jun 2026 06:22:39 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/medical-technology/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Midjourney</title>
+				<link>http://localhost:1313/blog/tags/midjourney/</link>
+				<pubDate>Thu, 18 Jun 2026 06:22:39 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/midjourney/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Ultrasound Scanner</title>
+				<link>http://localhost:1313/blog/tags/ultrasound-scanner/</link>
+				<pubDate>Thu, 18 Jun 2026 06:22:39 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/ultrasound-scanner/</guid>
+				<description></description>
+			</item>
 			<item>
 				<title>FDA Approval</title>
 				<link>http://localhost:1313/blog/tags/fda-approval/</link>
@@ -77,34 +147,6 @@
 				<description></description>
 			</item>
 			<item>
-				<title>AI</title>
-				<link>http://localhost:1313/blog/tags/ai/</link>
-				<pubDate>Thu, 18 Jun 2026 04:41:33 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/ai/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Medical Technology</title>
-				<link>http://localhost:1313/blog/tags/medical-technology/</link>
-				<pubDate>Thu, 18 Jun 2026 04:41:33 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/medical-technology/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Midjourney</title>
-				<link>http://localhost:1313/blog/tags/midjourney/</link>
-				<pubDate>Thu, 18 Jun 2026 04:41:33 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/midjourney/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Ultrasound Scanner</title>
-				<link>http://localhost:1313/blog/tags/ultrasound-scanner/</link>
-				<pubDate>Thu, 18 Jun 2026 04:41:33 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/ultrasound-scanner/</guid>
-				<description></description>
-			</item>
-			<item>
 				<title>AI-Powered Writing</title>
 				<link>http://localhost:1313/blog/tags/ai-powered-writing/</link>
 				<pubDate>Thu, 18 Jun 2026 04:41:28 +0000</pubDate>
@@ -137,6 +179,13 @@
 				<link>http://localhost:1313/blog/tags/tech-tips/</link>
 				<pubDate>Thu, 18 Jun 2026 04:41:28 +0000</pubDate>
 				<guid>http://localhost:1313/blog/tags/tech-tips/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>AI</title>
+				<link>http://localhost:1313/blog/tags/ai/</link>
+				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/ai/</guid>
 				<description></description>
 			</item>
 	</channel>

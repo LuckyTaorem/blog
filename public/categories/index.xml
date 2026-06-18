@@ -10,13 +10,34 @@
 		
 		
 		
-			<lastBuildDate>Thu, 18 Jun 2026 04:41:53 +0000</lastBuildDate>
+			<lastBuildDate>Thu, 18 Jun 2026 06:22:43 +0000</lastBuildDate>
 		
 			<atom:link href="http://localhost:1313/blog/categories/index.xml" rel="self" type="application/rss+xml" />
 			<item>
+				<title>Politics</title>
+				<link>http://localhost:1313/blog/categories/politics/</link>
+				<pubDate>Thu, 18 Jun 2026 06:22:43 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/politics/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Technology</title>
+				<link>http://localhost:1313/blog/categories/technology/</link>
+				<pubDate>Thu, 18 Jun 2026 06:22:43 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/technology/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Artificial Intelligence</title>
+				<link>http://localhost:1313/blog/categories/artificial-intelligence/</link>
+				<pubDate>Thu, 18 Jun 2026 06:22:39 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/artificial-intelligence/</guid>
+				<description></description>
+			</item>
+			<item>
 				<title>Health Technology</title>
 				<link>http://localhost:1313/blog/categories/health-technology/</link>
-				<pubDate>Thu, 18 Jun 2026 04:41:53 +0000</pubDate>
+				<pubDate>Thu, 18 Jun 2026 06:22:39 +0000</pubDate>
 				<guid>http://localhost:1313/blog/categories/health-technology/</guid>
 				<description></description>
 			</item>
@@ -28,31 +49,10 @@
 				<description></description>
 			</item>
 			<item>
-				<title>Artificial Intelligence</title>
-				<link>http://localhost:1313/blog/categories/artificial-intelligence/</link>
-				<pubDate>Thu, 18 Jun 2026 04:41:36 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/artificial-intelligence/</guid>
-				<description></description>
-			</item>
-			<item>
 				<title>Tech News</title>
 				<link>http://localhost:1313/blog/categories/tech-news/</link>
 				<pubDate>Thu, 18 Jun 2026 04:41:36 +0000</pubDate>
 				<guid>http://localhost:1313/blog/categories/tech-news/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Healthcare</title>
-				<link>http://localhost:1313/blog/categories/healthcare/</link>
-				<pubDate>Thu, 18 Jun 2026 04:41:33 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/healthcare/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Technology</title>
-				<link>http://localhost:1313/blog/categories/technology/</link>
-				<pubDate>Thu, 18 Jun 2026 04:41:33 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/technology/</guid>
 				<description></description>
 			</item>
 			<item>
@@ -67,6 +67,13 @@
 				<link>http://localhost:1313/blog/categories/productivity/</link>
 				<pubDate>Thu, 18 Jun 2026 04:41:28 +0000</pubDate>
 				<guid>http://localhost:1313/blog/categories/productivity/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Healthcare</title>
+				<link>http://localhost:1313/blog/categories/healthcare/</link>
+				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/healthcare/</guid>
 				<description></description>
 			</item>
 	</channel>

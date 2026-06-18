@@ -2,16 +2,67 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>http://localhost:1313/blog/tags/age-verification/</loc>
+    <lastmod>2026-06-18T06:22:43+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/asylum-seekers/</loc>
+    <lastmod>2026-06-18T06:22:43+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/biometric-technology/</loc>
+    <lastmod>2026-06-18T06:22:43+00:00</lastmod>
+  </url><url>
     <loc>http://localhost:1313/blog/categories/</loc>
-    <lastmod>2026-06-18T04:41:53+00:00</lastmod>
+    <lastmod>2026-06-18T06:22:43+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/tags/fda-approval/</loc>
-    <lastmod>2026-06-18T04:41:53+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/categories/health-technology/</loc>
-    <lastmod>2026-06-18T04:41:53+00:00</lastmod>
+    <loc>http://localhost:1313/blog/tags/facial-recognition/</loc>
+    <lastmod>2026-06-18T06:22:43+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/posts/</loc>
+    <lastmod>2026-06-18T06:22:43+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/politics/</loc>
+    <lastmod>2026-06-18T06:22:43+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/</loc>
+    <lastmod>2026-06-18T06:22:43+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/technology/</loc>
+    <lastmod>2026-06-18T06:22:43+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/</loc>
+    <lastmod>2026-06-18T06:22:43+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/the-uk-will-scan-asylum-seekers-faces-for-age-checksdespite-knowing-the-tech-is-flawed/</loc>
+    <lastmod>2026-06-18T06:22:43+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/uk-home-office/</loc>
+    <lastmod>2026-06-18T06:22:43+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/ai-image-generation/</loc>
+    <lastmod>2026-06-18T06:22:39+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/artificial-intelligence/</loc>
+    <lastmod>2026-06-18T06:22:39+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/health-technology/</loc>
+    <lastmod>2026-06-18T06:22:39+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/healthcare-innovation/</loc>
+    <lastmod>2026-06-18T06:22:39+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/medical-technology/</loc>
+    <lastmod>2026-06-18T06:22:39+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/midjourney/</loc>
+    <lastmod>2026-06-18T06:22:39+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/midjourney-goes-from-generating-cat-images-to-full-body-ultrasound-scans/</loc>
+    <lastmod>2026-06-18T06:22:39+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/ultrasound-scanner/</loc>
+    <lastmod>2026-06-18T06:22:39+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/fda-approval/</loc>
     <lastmod>2026-06-18T04:41:53+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/maggot-therapy/</loc>
@@ -26,12 +77,6 @@
     <loc>http://localhost:1313/blog/posts/second-carcass-eating-fly-species-cleared-by-fda-for-maggot-wound-therapy/</loc>
     <lastmod>2026-06-18T04:41:53+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/tags/</loc>
-    <lastmod>2026-06-18T04:41:53+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/</loc>
-    <lastmod>2026-06-18T04:41:53+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/blog/tags/wound-care/</loc>
     <lastmod>2026-06-18T04:41:53+00:00</lastmod>
   </url><url>
@@ -39,9 +84,6 @@
     <lastmod>2026-06-18T04:41:36+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/anthropic/</loc>
-    <lastmod>2026-06-18T04:41:36+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/categories/artificial-intelligence/</loc>
     <lastmod>2026-06-18T04:41:36+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/china/</loc>
@@ -58,27 +100,6 @@
   </url><url>
     <loc>http://localhost:1313/blog/posts/the-korean-telecom-giant-at-the-center-of-anthropics-mythos-controversy/</loc>
     <lastmod>2026-06-18T04:41:36+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/ai/</loc>
-    <lastmod>2026-06-18T04:41:33+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/categories/healthcare/</loc>
-    <lastmod>2026-06-18T04:41:33+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/medical-technology/</loc>
-    <lastmod>2026-06-18T04:41:33+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/midjourney/</loc>
-    <lastmod>2026-06-18T04:41:33+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/posts/midjourney-medical-goes-from-generating-cat-images-to-full-body-ultrasound-scans/</loc>
-    <lastmod>2026-06-18T04:41:33+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/categories/technology/</loc>
-    <lastmod>2026-06-18T04:41:33+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/ultrasound-scanner/</loc>
-    <lastmod>2026-06-18T04:41:33+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/ai-powered-writing/</loc>
     <lastmod>2026-06-18T04:41:28+00:00</lastmod>
@@ -106,7 +127,11 @@
   </url><url>
     <loc>http://localhost:1313/blog/about/</loc>
   </url><url>
+    <loc>http://localhost:1313/blog/tags/ai/</loc>
+  </url><url>
     <loc>http://localhost:1313/blog/contact/</loc>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/healthcare/</loc>
   </url><url>
     <loc>http://localhost:1313/blog/thanks/</loc>
   </url>
