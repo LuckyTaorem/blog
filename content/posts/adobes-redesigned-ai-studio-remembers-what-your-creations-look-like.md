@@ -2,8 +2,8 @@
 title: "Adobe’s redesigned AI studio remembers what your creations look like"
 date: 2026-06-18T13:28:06.894534+00:00
 draft: false
-images: ["/blog/images/adobes-redesigned-ai-studio-remembers-what-your-creations-look-like.jpg"]
-thumbnail: "/blog/images/adobes-redesigned-ai-studio-remembers-what-your-creations-look-like.jpg"
+images: ["/images/adobes-redesigned-ai-studio-remembers-what-your-creations-look-like.jpg"]
+thumbnail: "/images/adobes-redesigned-ai-studio-remembers-what-your-creations-look-like.jpg"
 description: "Adobe's Firefly AI assistant gets a major upgrade with a new 'reimagined' AI studio."
 categories: ["Creative/Design"]
 tags: ["Adobe Firefly AI", "AI Studio", "Artificial Intelligence", "Creative Design", "Adobe Creative Cloud"]

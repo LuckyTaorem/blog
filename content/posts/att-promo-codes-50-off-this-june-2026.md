@@ -2,8 +2,8 @@
 title: "AT&T Promo Codes: $50 Off This June 2026"
 date: 2026-06-18T13:33:24.764155+00:00
 draft: false
-images: ["/blog/images/att-promo-codes-50-off-this-june-2026.jpg"]
-thumbnail: "/blog/images/att-promo-codes-50-off-this-june-2026.jpg"
+images: ["/images/att-promo-codes-50-off-this-june-2026.jpg"]
+thumbnail: "/images/att-promo-codes-50-off-this-june-2026.jpg"
 description: "Save up to $50 on AT&T internet, phone, and other services with our exclusive promo codes and deals."
 categories: ["Promo Code"]
 tags: ["AT&T", "Promo Codes", "Deals", "Internet", "Phone", "Phone Contracts"]

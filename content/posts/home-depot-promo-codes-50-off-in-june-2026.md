@@ -2,8 +2,8 @@
 title: "Home Depot Promo Codes: 50% Off in June 2026"
 date: 2026-06-18T13:30:56.588275+00:00
 draft: false
-images: ["/blog/images/home-depot-promo-codes-50-off-in-june-2026.jpg"]
-thumbnail: "/blog/images/home-depot-promo-codes-50-off-in-june-2026.jpg"
+images: ["/images/home-depot-promo-codes-50-off-in-june-2026.jpg"]
+thumbnail: "/images/home-depot-promo-codes-50-off-in-june-2026.jpg"
 description: "Save big with Home Depot promo codes this June: appliances, power tools, and more."
 categories: ["Promo Code"]
 tags: ["Home Depot", "Promo Codes", "Discounts", "Appliances", "Power Tools"]

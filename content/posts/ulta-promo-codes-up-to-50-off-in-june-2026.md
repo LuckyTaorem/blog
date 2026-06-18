@@ -2,8 +2,8 @@
 title: "Ulta Promo Codes: Up to 50% Off in June 2026"
 date: 2026-06-18T13:31:41.077370+00:00
 draft: false
-images: ["/blog/images/ulta-promo-codes-up-to-50-off-in-june-2026.jpg"]
-thumbnail: "/blog/images/ulta-promo-codes-up-to-50-off-in-june-2026.jpg"
+images: ["/images/ulta-promo-codes-up-to-50-off-in-june-2026.jpg"]
+thumbnail: "/images/ulta-promo-codes-up-to-50-off-in-june-2026.jpg"
 description: "Get up to 50% off at Ulta with the latest promo codes in June 2026."
 categories: ["Promo Code"]
 tags: ["Ulta", "beauty products", "makeup", "beauty tech", "promotional codes"]

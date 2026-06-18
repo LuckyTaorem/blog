@@ -2,8 +2,8 @@
 title: "NASA picks Eric Schmidt’s rocket company for Mars mission, setting up a race with SpaceX"
 date: 2026-06-18T13:25:56.148393+00:00
 draft: false
-images: ["/blog/images/nasa-picks-eric-schmidts-rocket-company-for-mars-mission-setting-up-a-race-with-spacex.jpg"]
-thumbnail: "/blog/images/nasa-picks-eric-schmidts-rocket-company-for-mars-mission-setting-up-a-race-with-spacex.jpg"
+images: ["/images/nasa-picks-eric-schmidts-rocket-company-for-mars-mission-setting-up-a-race-with-spacex.jpg"]
+thumbnail: "/images/nasa-picks-eric-schmidts-rocket-company-for-mars-mission-setting-up-a-race-with-spacex.jpg"
 description: "NASA has selected Eric Schmidt's Relativity Space to take part in a Mars mission, setting up a thrilling competition with Elon Musk's SpaceX."
 categories: ["Space"]
 tags: ["SpaceX", "Relativity Space", "Eric Schmidt", "Mars Mission", "Private Space Exploration", "Space Technology"]

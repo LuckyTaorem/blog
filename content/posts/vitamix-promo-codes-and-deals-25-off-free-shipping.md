@@ -2,8 +2,8 @@
 title: "Vitamix Promo Codes and Deals: $25 Off + Free Shipping"
 date: 2026-06-18T13:33:36.352944+00:00
 draft: false
-images: ["/blog/images/vitamix-promo-codes-and-deals-25-off-free-shipping.jpg"]
-thumbnail: "/blog/images/vitamix-promo-codes-and-deals-25-off-free-shipping.jpg"
+images: ["/images/vitamix-promo-codes-and-deals-25-off-free-shipping.jpg"]
+thumbnail: "/images/vitamix-promo-codes-and-deals-25-off-free-shipping.jpg"
 description: "Save up to $25 on Vitamix blenders, food processors, and more with our exclusive promo codes and deals. Plus, get free shipping on select items."
 categories: ["Promo Code"]
 tags: ["Vitamix", "Promo Codes", "Deals", "Kitchen Appliances", "Blenders", "Food Processors"]

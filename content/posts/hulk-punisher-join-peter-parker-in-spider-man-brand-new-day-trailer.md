@@ -2,8 +2,8 @@
 title: "Hulk, Punisher join Peter Parker in Spider-Man: Brand New Day trailer"
 date: 2023-01-01T13:33:49.186072+00:00
 draft: false
-images: ["/blog/images/hulk-punisher-join-peter-parker-in-spider-man-brand-new-day-trailer.jpg"]
-thumbnail: "/blog/images/hulk-punisher-join-peter-parker-in-spider-man-brand-new-day-trailer.jpg"
+images: ["/images/hulk-punisher-join-peter-parker-in-spider-man-brand-new-day-trailer.jpg"]
+thumbnail: "/images/hulk-punisher-join-peter-parker-in-spider-man-brand-new-day-trailer.jpg"
 description: "Marvel Cinematic Universe fans, get ready for a thrilling new development in the Spider-Man franchise!"
 categories: ["Gaming"]
 tags: ["Marvel", "Spider-Man", "Gaming News", "Trailers"]

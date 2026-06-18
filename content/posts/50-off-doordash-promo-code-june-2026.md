@@ -2,8 +2,8 @@
 title: "50% Off DoorDash Promo Code | June 2026"
 date: 2026-06-18T13:31:55.638696+00:00
 draft: false
-images: ["/blog/images/50-off-doordash-promo-code-june-2026.jpg"]
-thumbnail: "/blog/images/50-off-doordash-promo-code-june-2026.jpg"
+images: ["/images/50-off-doordash-promo-code-june-2026.jpg"]
+thumbnail: "/images/50-off-doordash-promo-code-june-2026.jpg"
 description: "Get exclusive DoorDash promo codes for up to 50% off DashPass, $25 off your first order, and free delivery in June 2026."
 categories: ["Promo Code"]
 tags: ["Food Delivery", "Foodie", "Food Online Ordering", "DoorDash Promo Code"]

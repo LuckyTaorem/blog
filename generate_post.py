@@ -34,7 +34,7 @@ RSS_FEEDS = [
 ]
 
 output_dir = "content/posts"
-REQUIRED_DIRS = ["assets/images", "static/images", output_dir]
+REQUIRED_DIRS = ["assets/images", "assets/images", output_dir]
 for directory in REQUIRED_DIRS:
     os.makedirs(directory, exist_ok=True)
 
@@ -66,7 +66,7 @@ def get_existing_post_path(entry, news_title, output_dir):
 
 def generate_fallback_image(title, slug):
     print(f"  -> Generating fallback image for: {slug}")
-    img_dir = "static/images"
+    img_dir = "assets/images"
     filepath = os.path.join(img_dir, f"{slug}.jpg")
     W, H = 1200, 630
     img = Image.new('RGB', (W, H), color=(30, 30, 46))
@@ -124,7 +124,7 @@ def extract_image(entry, title, slug):
 
 def download_and_verify_image(url, slug, title, is_featured=True):
     if url.startswith("/blog/images/") or url.startswith("/images/"): return url
-    img_dir = "static/images"
+    img_dir = "assets/images"
     filepath = os.path.join(img_dir, f"{slug}.jpg")
     try:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
@@ -140,7 +140,7 @@ def download_and_verify_image(url, slug, title, is_featured=True):
 
 def heal_all_broken_images(output_dir):
     print("\n--- RUNNING IMAGE HEALER ---")
-    img_dir = "static/images"
+    img_dir = "assets/images"
     for fname in os.listdir(output_dir):
         if not fname.endswith(".md"): continue
         slug = fname.replace(".md", "")
@@ -355,6 +355,6 @@ Do not invent new categories.
 
 print("\nFINAL IMAGE LIST")
 
-for root, dirs, files in os.walk("static/images"):
+for root, dirs, files in os.walk("assets/images"):
     for file in files:
         print(os.path.join(root, file))

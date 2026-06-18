@@ -2,8 +2,8 @@
 title: "Peacock Promo Codes: 40% Off June 2026"
 date: 2026-06-18T13:32:00.820367+00:00
 draft: false
-images: ["/blog/images/peacock-promo-codes-40-off-june-2026.jpg"]
-thumbnail: "/blog/images/peacock-promo-codes-40-off-june-2026.jpg"
+images: ["/images/peacock-promo-codes-40-off-june-2026.jpg"]
+thumbnail: "/images/peacock-promo-codes-40-off-june-2026.jpg"
 description: "Get 40% off Peacock TV subscription with exclusive promo codes"
 categories: ["Data Science"]
 tags: ["Peacock TV", "Streaming Services", "Promo Codes", "Streaming Deals"]

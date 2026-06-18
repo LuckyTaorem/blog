@@ -2,8 +2,8 @@
 title: "NordVPN Coupons: 75% Off, Plus 3 Months Free in June 2026"
 date: 2026-06-18T13:31:54.170339+00:00
 draft: false
-images: ["/blog/images/nordvpn-coupons-75-off-plus-3-months-free-in-june-2026.jpg"]
-thumbnail: "/blog/images/nordvpn-coupons-75-off-plus-3-months-free-in-june-2026.jpg"
+images: ["/images/nordvpn-coupons-75-off-plus-3-months-free-in-june-2026.jpg"]
+thumbnail: "/images/nordvpn-coupons-75-off-plus-3-months-free-in-june-2026.jpg"
 description: "Get the latest NordVPN coupons and discounts in June 2026, with up to 77% off 2-year plans and 3 free months."
 categories: ["Security"]
 tags: ["NordVPN", "VPN", "Coupons", "Discounts", "Security", "Online Protection"]
