@@ -32,11 +32,24 @@ jobs:
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
         run: python generate_post.py
 
+      - name: Debug Generated Files
+        run: |
+          echo "POSTS:"
+          find content/posts -type f
+
+          echo "STATIC IMAGES:"
+          find static/images -type f
+
+          echo "ASSET IMAGES:"
+          find assets/images -type f
+
       - name: Commit and Push New Article
         run: |
           git config --global user.name "AI Automation Bot"
           git config --global user.email "actions@github.com"
           git add content/posts/*
+          git add static/images/
+          git add assets/images/
           git commit -m "Auto-published new tech article via Groq" || exit 0
           git pull --rebase origin main
           git push
