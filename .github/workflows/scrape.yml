@@ -15,11 +15,18 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+      
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
+      
+      # FIX 1: Added groq to the pip install list
       - name: Install Dependencies
-        run: pip install feedparser pillow requests
+        run: pip install feedparser groq requests pillow
+      
+      # FIX 2: Added the API key environment variable so the Groq client can initialize
       - name: Run Scraper
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: python generate_post.py --scrape
