@@ -75,27 +75,42 @@ def generate_fallback_image(title, slug):
     img = Image.new('RGB', (W, H), color=(30, 30, 46))
     draw = ImageDraw.Draw(img)
 
-    # Download a professional Google Font so the text looks great
+    # Bulletproof Font Loading
+    font = None
     font_path = "Roboto-Bold.ttf"
-    if not os.path.exists(font_path):
-        font_url = "https://github.com/google/fonts/raw/main/apache/roboto/Roboto-Bold.ttf"
-        r = requests.get(font_url)
-        with open(font_path, "wb") as f:
-            f.write(r.content)
-
-    font = ImageFont.truetype(font_path, 60)
+    try:
+        if not os.path.exists(font_path):
+            # Updated, highly reliable URL
+            font_url = "https://raw.githubusercontent.com/google/fonts/main/ofl/roboto/Roboto-Bold.ttf"
+            r = requests.get(font_url, timeout=10)
+            if r.status_code == 200:
+                with open(font_path, "wb") as f:
+                    f.write(r.content)
+            else:
+                raise Exception(f"HTTP Status {r.status_code}")
+        
+        # Load the downloaded font
+        font = ImageFont.truetype(font_path, 60)
+    except Exception as e:
+        print(f"Warning: Custom font failed to load ({e}). Using system default.")
+        font = ImageFont.load_default()
 
     # Wrap the title text so it doesn't overflow
     wrapper = textwrap.TextWrapper(width=35)
     wrapped_text = wrapper.fill(text=title)
 
-    # Calculate text position to perfectly center it
-    bbox = draw.textbbox((0, 0), wrapped_text, font=font)
-    w = bbox[2] - bbox[0]
-    h = bbox[3] - bbox[1]
+    # Safely calculate text dimensions for multi-line text
+    try:
+        # For newer Pillow versions
+        bbox = draw.multiline_textbbox((0, 0), wrapped_text, font=font)
+        w = bbox[2] - bbox[0]
+        h = bbox[3] - bbox[1]
+    except AttributeError:
+        # Fallback for older Pillow versions
+        w, h = draw.textsize(wrapped_text, font=font)
 
-    # Draw the text in white
-    draw.text(((W-w)/2, (H-h)/2), wrapped_text, font=font, fill=(255, 255, 255), align="center")
+    # Draw the text in white perfectly centered
+    draw.multiline_text(((W-w)/2, (H-h)/2), wrapped_text, font=font, fill=(255, 255, 255), align="center")
 
     # Save and return the relative path for Hugo
     img.save(filepath)
