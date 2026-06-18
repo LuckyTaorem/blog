@@ -2,8 +2,8 @@
 title: "30% Off Samsung Promo Code | June 2026"
 date: 2026-06-18T13:33:22.985507+00:00
 draft: false
-images: ["/images/30-off-samsung-promo-code-june-2026.jpg"]
-thumbnail: "/images/30-off-samsung-promo-code-june-2026.jpg"
+images: ["images/30-off-samsung-promo-code-june-2026.jpg"]
+thumbnail: "images/30-off-samsung-promo-code-june-2026.jpg"
 description: "Save big on Samsung appliances and latest smartphones with exclusive promo codes, limited-time deals, and cashback offers."
 categories: ["Promo Code"]
 tags: ["Samsung promo code", "Samsung deals", "Galaxy Z Fold7", "Galaxy S25"]

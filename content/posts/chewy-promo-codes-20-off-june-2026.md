@@ -2,8 +2,8 @@
 title: "Chewy Promo Codes: $20 Off June 2026"
 date: 2026-06-18T13:31:52.545189+00:00
 draft: false
-images: ["/images/chewy-promo-codes-20-off-june-2026.jpg"]
-thumbnail: "/images/chewy-promo-codes-20-off-june-2026.jpg"
+images: ["images/chewy-promo-codes-20-off-june-2026.jpg"]
+thumbnail: "images/chewy-promo-codes-20-off-june-2026.jpg"
 description: "Get up to $20 off your first order and more discounts with Chewy promo codes in June 2026."
 categories: ["Promo Code"]
 tags: ["chewy promo codes", "pet food discounts", "online shopping"]

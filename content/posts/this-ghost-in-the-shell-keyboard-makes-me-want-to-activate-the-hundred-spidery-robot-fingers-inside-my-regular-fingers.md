@@ -2,8 +2,8 @@
 title: "This Ghost in the Shell keyboard makes me want to activate the hundred spidery robot fingers inside my regular fingers"
 date: 2026-06-18T13:28:22.312864+00:00
 draft: false
-images: ["/images/this-ghost-in-the-shell-keyboard-makes-me-want-to-activate-the-hundred-spidery-robot-fingers-inside-my-regular-fingers.jpg"]
-thumbnail: "/images/this-ghost-in-the-shell-keyboard-makes-me-want-to-activate-the-hundred-spidery-robot-fingers-inside-my-regular-fingers.jpg"
+images: ["images/this-ghost-in-the-shell-keyboard-makes-me-want-to-activate-the-hundred-spidery-robot-fingers-inside-my-regular-fingers.jpg"]
+thumbnail: "images/this-ghost-in-the-shell-keyboard-makes-me-want-to-activate-the-hundred-spidery-robot-fingers-inside-my-regular-fingers.jpg"
 description: "Anime collaborations are taking over the tech world, but Iqunix's Ghost in the Shell keyboards are some of the coolest examples I've seen yet."
 categories: ["Hardware"]
 tags: ["Anime Collaboration", "Gaming Keyboards", "Iqunix", "Ghost in the Shell"]

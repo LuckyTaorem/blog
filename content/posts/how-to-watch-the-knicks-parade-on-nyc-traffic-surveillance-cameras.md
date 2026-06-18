@@ -2,8 +2,8 @@
 title: "How to Watch the Knicks Parade on NYC Traffic Surveillance Cameras"
 date: 2026-06-18T13:29:44.907962+00:00
 draft: false
-images: ["/images/how-to-watch-the-knicks-parade-on-nyc-traffic-surveillance-cameras.jpg"]
-thumbnail: "/images/how-to-watch-the-knicks-parade-on-nyc-traffic-surveillance-cameras.jpg"
+images: ["images/how-to-watch-the-knicks-parade-on-nyc-traffic-surveillance-cameras.jpg"]
+thumbnail: "images/how-to-watch-the-knicks-parade-on-nyc-traffic-surveillance-cameras.jpg"
 description: "Catch the excitement of the Knicks parade on NYC traffic surveillance cameras, no need to request permission."
 categories: ["Software"]
 tags: ["NYC", "Knicks", "NBA", "Live Streaming", "Parade"]

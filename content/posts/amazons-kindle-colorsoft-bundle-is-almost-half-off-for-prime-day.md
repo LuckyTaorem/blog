@@ -2,8 +2,8 @@
 title: "Amazon’s Kindle Colorsoft bundle is almost half off for Prime Day"
 date: 2026-06-18T13:26:37.695450+00:00
 draft: false
-images: ["/images/amazons-kindle-colorsoft-bundle-is-almost-half-off-for-prime-day.jpg"]
-thumbnail: "/images/amazons-kindle-colorsoft-bundle-is-almost-half-off-for-prime-day.jpg"
+images: ["images/amazons-kindle-colorsoft-bundle-is-almost-half-off-for-prime-day.jpg"]
+thumbnail: "images/amazons-kindle-colorsoft-bundle-is-almost-half-off-for-prime-day.jpg"
 description: "A 155-character SEO meta description here."
 categories: ["Hardware"]
 tags: ["Amazon", "Kindle", "Prime Day", "E Ink", "Colorsoft"]

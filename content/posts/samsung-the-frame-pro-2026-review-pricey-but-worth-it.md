@@ -2,8 +2,8 @@
 title: "Samsung The Frame Pro 2026 Review: Pricey But Worth It"
 date: 2026-06-18T13:29:09.831551+00:00
 draft: false
-images: ["/images/samsung-the-frame-pro-2026-review-pricey-but-worth-it.jpg"]
-thumbnail: "/images/samsung-the-frame-pro-2026-review-pricey-but-worth-it.jpg"
+images: ["images/samsung-the-frame-pro-2026-review-pricey-but-worth-it.jpg"]
+thumbnail: "images/samsung-the-frame-pro-2026-review-pricey-but-worth-it.jpg"
 description: "Experience immersive visuals and enhanced audio with the Samsung The Frame Pro 2026. Discover whether it's worth the investment in this in-depth review."
 categories: ["Hardware"]
 tags: ["Samsung", "The Frame Pro 2026", "AI Audio", "Picture Tuning", "Anti-Glare Coating"]

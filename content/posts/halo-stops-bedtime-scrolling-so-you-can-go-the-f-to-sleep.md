@@ -2,8 +2,8 @@
 title: "Halo Stops Bedtime Scrolling so You Can Go the F to Sleep"
 date: 2026-06-18T13:30:13.058818+00:00
 draft: false
-images: ["/images/halo-stops-bedtime-scrolling-so-you-can-go-the-f-to-sleep.jpg"]
-thumbnail: "/images/halo-stops-bedtime-scrolling-so-you-can-go-the-f-to-sleep.jpg"
+images: ["images/halo-stops-bedtime-scrolling-so-you-can-go-the-f-to-sleep.jpg"]
+thumbnail: "images/halo-stops-bedtime-scrolling-so-you-can-go-the-f-to-sleep.jpg"
 description: "ScreenZen's Halo gadget blocks distracting apps to help you sleep better"
 categories: ["Hardware"]
 tags: ["sleep tech", "productivity", "gadget review", "app blocker"]
