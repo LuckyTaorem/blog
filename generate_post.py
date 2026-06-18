@@ -84,6 +84,7 @@ def post_exists(entry, news_title, output_dir):
 
 # --- Custom Image Generator ---
 def generate_fallback_image(title, slug):
+    print(f"GENERATING FALLBACK IMAGE: {slug}")
     # Hugo looks for images in the 'static' folder
     img_dir = "assets/images"
     os.makedirs(img_dir, exist_ok=True)
@@ -102,6 +103,7 @@ def generate_fallback_image(title, slug):
             # Updated, highly reliable URL
             font_url = "https://raw.githubusercontent.com/google/fonts/main/ofl/roboto/Roboto-Bold.ttf"
             r = requests.get(font_url, timeout=10)
+            print("Font download status:", r.status_code)
             if r.status_code == 200:
                 with open(font_path, "wb") as f:
                     f.write(r.content)
@@ -149,9 +151,10 @@ def generate_fallback_image(title, slug):
         fill=(255, 255, 255),
         align="center"
     )
-
+    print("Saving fallback image to:", filepath)
     # Save and return the relative path for Hugo
     img.save(filepath)
+    print("Fallback image exists:", os.path.exists(filepath))
     return f"/assets/images/{slug}.jpg"
 
 # --- Unsplash Fetcher ---
@@ -269,6 +272,7 @@ def update_today_post_images(output_dir):
 
 # --- The Image Downloader (Anti-Hotlink Protection) ---
 def download_and_verify_image(url, slug, title):
+    print(f"Downloading image: {url}")
     # If the URL is already our generated fallback, skip downloading
     if url.startswith("/images/") or url.startswith("/assets/images/"):
         return url
@@ -281,6 +285,8 @@ def download_and_verify_image(url, slug, title):
         # Spoof a standard web browser to bypass basic hotlink protection
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
         r = requests.get(url, headers=headers, timeout=10)
+        print("Status Code:", r.status_code)
+        print("Content-Type:", r.headers.get("Content-Type"))
         
         if r.status_code == 200:
             # Save the raw image
@@ -291,6 +297,7 @@ def download_and_verify_image(url, slug, title):
             try:
                 with Image.open(filepath) as img:
                     img.verify()
+                print("Image saved successfully:", filepath)
                 return f"/images/{slug}.jpg"
             except Exception:
                 print("  -> Downloaded file was corrupt/protected. Generating fallback...")
@@ -301,6 +308,11 @@ def download_and_verify_image(url, slug, title):
     return generate_fallback_image(title, slug)
 
 update_today_post_images(output_dir)
+print("STATIC IMAGES:")
+print(os.listdir("static/images"))
+
+print("ASSET IMAGES:")
+print(os.listdir("assets/images"))
 
 # 3. Main Loop
 for current_feed in RSS_FEEDS:
@@ -349,6 +361,7 @@ for current_feed in RSS_FEEDS:
 
         # Pass the title and slug to our image engine, then DOWNLOAD it safely
         raw_image_url = extract_image(entry, news_title, filename_slug)
+        print("RAW IMAGE URL:", raw_image_url)
         image_url = download_and_verify_image(html.unescape(raw_image_url), filename_slug, news_title)
 
         # ... (rest of your existing code for prompt, Groq call, saving file, etc.)
