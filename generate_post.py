@@ -171,6 +171,26 @@ tags: ["Insert 3 to 5 relevant tags here based on the text"]
 
         article_content = response.choices[0].message.content.strip()
         
-        # Strip markdown block tags if the AI accidentally added them
-        article_content = re.sub(r"^
-http://googleusercontent.com/immersive_entry_chip/0
+        # Strip markdown block tags safely (using chr(96) to prevent chat UI bugs)
+        start_pattern = r"^" + chr(96)*3 + r"(?:markdown)?\s*\n"
+        end_pattern = r"\n" + chr(96)*3 + r"\s*$"
+        
+        article_content = re.sub(start_pattern, "", article_content, flags=re.IGNORECASE)
+        article_content = re.sub(end_pattern, "", article_content)
+
+        # FOOLPROOF FRONTMATTER FIX
+        if not article_content.startswith("---"):
+            first_dash_idx = article_content.find("---")
+            if first_dash_idx != -1:
+                article_content = article_content[first_dash_idx:]
+            else:
+                fallback_yaml = f"---\ntitle: \"{news_title}\"\ndate: {datetime.now(timezone.utc).isoformat()}\ndraft: false\nimages: [\"{image_url}\"]\n---\n\n"
+                article_content = fallback_yaml + article_content
+
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(article_content)
+
+        print(f"Success! Blog post saved to: {file_path}")
+        
+        # Break out so we move on to the next website
+        break
