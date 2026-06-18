@@ -11,7 +11,8 @@ type: "page"
 <h2 id="drop-us-a-line" class="fw-bold mb-4 text-body text-center">Drop us a line</h2>
 <p class="text-center text-body-secondary mb-5">Have a question about our AI setup, or want to collaborate? Send us a message.</p>
 
-<form id="contact-form" action="https://api.web3forms.com/submit" method="POST"><input type="hidden" name="access_key" value="7fc126fc-3c13-463a-973a-058ba826603f">
+<form id="contact-form" action="https://api.web3forms.com/submit" method="POST">
+<input type="hidden" name="access_key" value="7fc126fc-3c13-463a-973a-058ba826603f">
 <input type="hidden" name="redirect" value="https://luckytaorem.github.io/blog/thanks/">
 <input type="checkbox" name="botcheck" class="d-none" style="display: none;">
 <input type="hidden" name="subject" value="New Contact Message from LT Developer">
@@ -34,48 +35,58 @@ type: "page"
 <textarea class="form-control bg-body text-body border-secondary-subtle" id="message" name="message" rows="6" required></textarea>
 </div>
 
-<!-- Load hCaptcha -->
-<script src="https://hcaptcha.com/1/api.js" async defer></script>
+<script src="https://hcaptcha.com/1/api.js?onload=onCaptchaLoad&render=explicit" async defer></script>
 
 <div class="mb-4 text-center">
   <div id="hcaptcha-container" class="d-inline-block"></div>
 </div>
 
+<div class="d-grid mt-5">
+  <button id="submit-btn" type="submit" class="btn btn-primary py-3 rounded-pill fw-bold fs-5" disabled>
+    Send Message
+  </button>
+</div>
+
 <script>
+let captchaWidgetId;
+
 function renderCaptcha() {
   const htmlTheme = document.documentElement.getAttribute("data-bs-theme");
   const container = document.getElementById("hcaptcha-container");
 
-  // Clear any previous widget
+  // Wipe the container clean for theme switches
   container.innerHTML = "";
 
-  hcaptcha.render(container, {
+  captchaWidgetId = hcaptcha.render(container, {
     sitekey: "355e4da0-3d78-491c-b18a-6dcc3afca796",
-    theme: htmlTheme === "dark" ? "dark" : "light"
+    theme: htmlTheme === "dark" ? "dark" : "light",
+    callback: function(token) {
+      document.getElementById("submit-btn").disabled = false;
+    },
+    "expired-callback": function() {
+      document.getElementById("submit-btn").disabled = true;
+    }
   });
 }
 
-// Wait until hCaptcha script is ready
-window.onload = function() {
+// hCaptcha will call this specific function the exact millisecond it is ready
+window.onCaptchaLoad = function() {
+  renderCaptcha();
+};
+
+// Cleanly destroy and rebuild the CAPTCHA when the user toggles dark mode
+const observer = new MutationObserver(() => {
   if (typeof hcaptcha !== "undefined") {
     renderCaptcha();
-  } else {
-    // Retry until hCaptcha is available
-    const interval = setInterval(() => {
-      if (typeof hcaptcha !== "undefined") {
-        clearInterval(interval);
-        renderCaptcha();
-      }
-    }, 200);
   }
-};
+});
+
+observer.observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ["data-bs-theme"]
+});
 </script>
 
-
-
-<div class="d-grid mt-5">
-<button type="submit" class="btn btn-primary py-3 rounded-pill fw-bold fs-5">Send Message</button>
-</div>
 </form>
 </div>
 </div>
