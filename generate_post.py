@@ -156,6 +156,51 @@ def generate_fallback_image(title, slug):
     print("Fallback image exists:", os.path.exists(filepath))
     return f"/images/{slug}.jpg"
 
+# --- THE IMAGE HEALER ---
+def heal_all_broken_images(output_dir):
+    print("\n--- RUNNING IMAGE HEALER ---")
+    img_dir = "static/images"
+    os.makedirs(img_dir, exist_ok=True)
+    
+    for fname in os.listdir(output_dir):
+        if not fname.endswith(".md"): 
+            continue
+            
+        slug = fname.replace(".md", "")
+        file_path = os.path.join(output_dir, fname)
+        
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                content = f.read()
+                
+            # Extract the actual title of the post
+            title_match = re.search(r'^title:\s*"(.*?)"', content, re.MULTILINE)
+            if not title_match: 
+                continue
+            title = title_match.group(1)
+            
+            # The exact paths where the image SHOULD be
+            expected_img_path = os.path.join(img_dir, f"{slug}.jpg")
+            expected_img_url = f"/images/{slug}.jpg"
+            
+            # 1. If the image doesn't exist on disk, create the fallback banner!
+            if not os.path.exists(expected_img_path):
+                print(f"Missing image for: {slug}. Generating banner...")
+                generate_fallback_image(title, slug)
+            
+            # 2. Force the markdown file to point to this exact image
+            content = re.sub(r'thumbnail:\s*"([^"]+)"', f'thumbnail: "{expected_img_url}"', content)
+            content = re.sub(r'images:\s*\[[^\]]*\]', f'images: ["{expected_img_url}"]', content)
+            
+            # Save the healed markdown file
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(content)
+                
+        except Exception as e:
+            print(f"Failed to heal {fname}: {e}")
+            
+    print("--- IMAGE HEALER COMPLETE ---\n")
+
 # --- Unsplash Fetcher ---
 def get_unsplash_image(title):
     if not UNSPLASH_KEY:
@@ -243,7 +288,6 @@ def update_today_post_images(output_dir):
             pass
 
 # --- The Image Downloader (Anti-Hotlink Protection) ---
-# --- The Image Downloader (Anti-Hotlink Protection) ---
 def download_and_verify_image(url, slug, title, is_featured=True):
     if url.startswith("/images/") or url.startswith("/assets/images/"):
         return url
@@ -314,6 +358,8 @@ def update_post_images(file_path, slug, title):
     except Exception as e:
         print(f"Failed updating images: {e}")
 
+
+heal_all_broken_images(output_dir)
 # 3. Main Loop
 for current_feed in RSS_FEEDS:
     print(f"\nChecking {current_feed}...")
