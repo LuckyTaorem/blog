@@ -65,25 +65,46 @@ def get_existing_post_path(entry, news_title, output_dir):
     return None
 
 def generate_fallback_image(title, slug):
-    print(f"  -> Generating fallback image for: {slug}")
+    print(f"  -> Generating SPACE fallback image for: {slug}")
     img_dir = "assets/images"
+    os.makedirs(img_dir, exist_ok=True)
     filepath = os.path.join(img_dir, f"{slug}.jpg")
+    
     W, H = 1200, 630
-    img = Image.new('RGB', (W, H), color=(30, 30, 46))
+    
+    # 1. Generate Space Background
+    img = Image.new('RGB', (W, H), color=(12, 14, 25))
     draw = ImageDraw.Draw(img)
+    import random
+    for _ in range(250):
+        x = random.randint(0, W)
+        y = random.randint(0, H)
+        size = random.choice([1, 1, 2, 2, 3])
+        color = random.choice([(255, 255, 255), (200, 220, 255), (255, 250, 200)])
+        if random.random() > 0.5: color = tuple(int(c * 0.6) for c in color)
+        draw.ellipse((x, y, x+size, y+size), fill=color)
 
+    # 2. Bulletproof Font Loader
     font_path = "Roboto-Bold.ttf"
-    try:
-        if not os.path.exists(font_path):
-            r = requests.get("https://raw.githubusercontent.com/google/fonts/main/ofl/roboto/Roboto-Bold.ttf", timeout=10)
-            if r.status_code == 200:
-                with open(font_path, "wb") as f: f.write(r.content)
-            else: raise Exception("Download failed")
-        font = ImageFont.truetype(font_path, 60)
-    except Exception:
-        font = ImageFont.load_default()
+    if os.path.exists(font_path) and os.path.getsize(font_path) < 10000:
+        os.remove(font_path) # Destroy corrupt font files
 
-    wrapper = textwrap.TextWrapper(width=35)
+    if not os.path.exists(font_path):
+        url = "https://raw.githubusercontent.com/googlefonts/roboto/main/src/hinted/Roboto-Bold.ttf"
+        r = requests.get(url, timeout=10)
+        if r.status_code == 200:
+            with open(font_path, "wb") as f: f.write(r.content)
+
+    try:
+        font = ImageFont.truetype(font_path, 90) # Size 90!
+    except Exception:
+        try:
+            font = ImageFont.truetype("arial.ttf", 90) # Windows Fallback
+        except Exception:
+            font = ImageFont.load_default()
+
+    # 3. Text Wrapping and Drawing
+    wrapper = textwrap.TextWrapper(width=26)
     wrapped_text = wrapper.fill(text=title)
     
     try:
@@ -93,10 +114,14 @@ def generate_fallback_image(title, slug):
         w, h = draw.textsize(wrapped_text, font=font)
 
     x, y = (W - w) / 2, (H - h) / 2
-    draw.multiline_text((x + 4, y + 4), wrapped_text, font=font, fill=(0, 0, 0), align="center")
+    
+    # Heavy shadow
+    draw.multiline_text((x + 6, y + 6), wrapped_text, font=font, fill=(0, 0, 0), align="center")
+    # Bright text
     draw.multiline_text((x, y), wrapped_text, font=font, fill=(255, 255, 255), align="center")
+    
     img.save(filepath)
-    return f"/blog/images/{slug}.jpg"
+    return f"images/{slug}.jpg"
 
 def get_unsplash_image(title):
     if not UNSPLASH_KEY: return None
@@ -123,7 +148,7 @@ def extract_image(entry, title, slug):
     return generate_fallback_image(title, slug)
 
 def download_and_verify_image(url, slug, title, is_featured=True):
-    if url.startswith("/blog/images/") or url.startswith("/images/"): return url
+    if url.startswith("images/") or url.startswith("/images/"): return url
     img_dir = "assets/images"
     filepath = os.path.join(img_dir, f"{slug}.jpg")
     try:
@@ -133,7 +158,7 @@ def download_and_verify_image(url, slug, title, is_featured=True):
             with open(filepath, 'wb') as f: f.write(r.content)
             try:
                 with Image.open(filepath) as img: img.verify()
-                return f"/blog/images/{slug}.jpg"
+                return f"images/{slug}.jpg"
             except Exception: pass 
     except Exception: pass 
     return generate_fallback_image(title, slug) if is_featured else url
@@ -151,7 +176,7 @@ def heal_all_broken_images(output_dir):
             if not title_match: continue
             
             expected_img_path = os.path.join(img_dir, f"{slug}.jpg")
-            expected_img_url = f"/images/{slug}.jpg"
+            expected_img_url = f"images/{slug}.jpg"
             
             if not os.path.exists(expected_img_path):
                 generate_fallback_image(title_match.group(1), slug)
