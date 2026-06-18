@@ -9,7 +9,8 @@ import requests
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
 from difflib import SequenceMatcher
-
+print(os.getcwd())
+print("WORKDIR:", os.getcwd())
 # 1. Initialize API Keys
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 UNSPLASH_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
@@ -298,12 +299,20 @@ def download_and_verify_image(url, slug, title):
                 with Image.open(filepath) as img:
                     img.verify()
                 print("Image saved successfully:", filepath)
+                print("File exists:", os.path.exists(filepath))
+                print("Absolute path:", os.path.abspath(filepath))
                 return f"/images/{slug}.jpg"
             except Exception:
                 print("  -> Downloaded file was corrupt/protected. Generating fallback...")
     except Exception as e:
         print(f"  -> Could not download image: {e}")
         
+    print(
+    "Saved:",
+    os.path.abspath(filepath),
+    os.path.getsize(filepath),
+    "bytes"
+)
     # If the download failed or was blocked by a firewall, generate the custom text image
     return generate_fallback_image(title, slug)
 
@@ -313,6 +322,69 @@ print(os.listdir("static/images"))
 
 print("ASSET IMAGES:")
 print(os.listdir("assets/images"))
+
+def update_post_images(file_path, slug, title):
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Find all markdown images
+        image_matches = re.findall(
+            r'!\[[^\]]*\]\((.*?)\)',
+            content
+        )
+
+        for idx, img_url in enumerate(image_matches, start=1):
+
+            if (
+                img_url.startswith("/images/")
+                or img_url.startswith("/assets/images/")
+            ):
+                continue
+
+            local_img = download_and_verify_image(
+                html.unescape(img_url),
+                f"{slug}-{idx}",
+                title
+            )
+
+            content = content.replace(img_url, local_img)
+
+        # Fix thumbnail
+        thumb_match = re.search(
+            r'thumbnail:\s*"([^"]+)"',
+            content
+        )
+
+        if thumb_match:
+            thumb_url = thumb_match.group(1)
+
+            if thumb_url.startswith("http"):
+                local_thumb = download_and_verify_image(
+                    thumb_url,
+                    f"{slug}-thumb",
+                    title
+                )
+
+                content = re.sub(
+                    r'thumbnail:\s*"([^"]+)"',
+                    f'thumbnail: "{local_thumb}"',
+                    content
+                )
+
+                content = re.sub(
+                    r'images:\s*\[[^\]]*\]',
+                    f'images: ["{local_thumb}"]',
+                    content
+                )
+
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(content)
+
+        print(f"Updated image paths in {file_path}")
+
+    except Exception as e:
+        print(f"Failed updating images: {e}")
 
 # 3. Main Loop
 for current_feed in RSS_FEEDS:
@@ -353,7 +425,10 @@ for current_feed in RSS_FEEDS:
         file_path = os.path.join(output_dir, filename)
 
         if os.path.exists(file_path):
-            print(f"Skipping (Already published): {news_title}")
+            print(f"Updating images for existing post: {news_title}")
+
+            update_post_images(file_path, filename_slug, news_title)
+
             continue
 
         print(f"Found NEW article: {news_title}")
@@ -504,3 +579,9 @@ Do not invent new categories.
             f.write(article_content)
 
         print(f"Success! Blog post saved to: {file_path}")
+
+print("\nFINAL IMAGE LIST")
+
+for root, dirs, files in os.walk("static/images"):
+    for file in files:
+        print(os.path.join(root, file))
