@@ -109,7 +109,9 @@ document.getElementById('contact-form').addEventListener('submit', function(even
     // Send the data through EmailJS
     emailjs.sendForm('service_s36gjmx', 'template_4d7ob54', this)
         .then(() => {
-            // Success! Send them to the Thank You page
+            sessionStorage.setItem('formSubmitted', 'true');
+
+            // Send them to the Thank You page
             window.location.href = "https://luckytaorem.github.io/blog/thanks/";
         }, (error) => {
             // Failed. Show error, reset the button and the CAPTCHA
