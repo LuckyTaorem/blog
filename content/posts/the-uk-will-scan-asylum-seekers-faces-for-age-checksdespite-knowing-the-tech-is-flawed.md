@@ -52,3 +52,5 @@ A: Biometric technology is not foolproof, and accuracy issues can occur due to v
 
 **Q: What can be done to mitigate the risks associated with biometric technology?**
 A: Alternative methods, such as documentary evidence or expert assessments, should be explored, and the government must increase transparency and accountability while ensuring data protection.
+
+{{< comments >}}

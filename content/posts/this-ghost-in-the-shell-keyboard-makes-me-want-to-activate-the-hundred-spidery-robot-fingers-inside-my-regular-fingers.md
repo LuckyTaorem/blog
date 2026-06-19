@@ -47,3 +47,5 @@ A: Yes, the keycaps are removable and can be customized with custom keycap desig
 A: Yes, the keyboard is compatible with most computers, including PC and Mac.
 * **Q: What is the keyboard's warranty?**
 A: The keyboard comes with a 1-year warranty for defects in materials and workmanship.
+
+{{< comments >}}

@@ -45,3 +45,5 @@ Q: **Can I expect any cameos from other MCU characters?**
 A: While we can't confirm any cameos just yet, the trailer suggests that the stakes are high and the heroes are ready to assemble.
 
 The wait is almost over, folks! Get ready to join the action-packed world of Spider-Man: Brand New Day, featuring the Hulk and Punisher in a thrilling new adventure. Mark your calendars and stay tuned for more updates on this highly anticipated film!
+
+{{< comments >}}

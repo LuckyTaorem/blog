@@ -4,3 +4,5 @@ description: "Discover the importance of SEO copywriting, learn how to optimize 
 type: "posts"
 layout: "category-groups"
 ---
+
+{{< comments >}}

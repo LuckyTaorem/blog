@@ -69,3 +69,5 @@ A: Halo tracks your sleep patterns using a combination of accelerometer data and
 A: Yes, Halo can be used in conjunction with other sleep aids, such as white noise machines or weighted blankets.
 
 In conclusion, Halo is a game-changing gadget that can help you break the cycle of bedtime scrolling and wake up feeling refreshed and rejuvenated. With its customizable app blocking, sleep tracking, and notification system, Halo is the perfect solution for anyone looking to improve their sleep quality and productivity.
+
+{{< comments >}}

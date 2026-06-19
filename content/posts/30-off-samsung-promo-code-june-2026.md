@@ -68,3 +68,5 @@ A: Yes, you can get a refund if you don't like the product. However, you must re
 
 ### Q: How long is the Samsung promo code valid for?
 A: The Samsung promo code is valid for a limited time only. However, we will update this article with the latest promo code and expiration date.
+
+{{< comments >}}

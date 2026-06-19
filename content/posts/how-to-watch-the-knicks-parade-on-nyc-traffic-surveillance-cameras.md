@@ -72,3 +72,5 @@ A: No, the parade feed is not available on social media platforms, but you can f
 
 ### Q: Can I watch the parade feed on multiple platforms simultaneously?
 A: Yes, you can watch the parade feed on multiple platforms simultaneously, but you may need to check the terms and conditions of each platform for any restrictions.
+
+{{< comments >}}

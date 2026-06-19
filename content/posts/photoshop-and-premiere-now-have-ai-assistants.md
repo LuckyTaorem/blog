@@ -57,3 +57,5 @@ A: Users can access AI Assistants by updating their Creative Cloud applications,
 A: Yes, AI Assistants are now available for public beta, giving users access to these AI-powered tools.
 
 By integrating AI Assistants into its Creative Cloud suite, Adobe is revolutionizing the way designers and editors work. With AI Assistants, users can now focus on the creative aspects of their work, leaving the mundane tasks to the AI. This move is set to transform the creative industry, making tasks easier, faster, and more efficient.
+
+{{< comments >}}

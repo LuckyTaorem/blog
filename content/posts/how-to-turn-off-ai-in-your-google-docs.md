@@ -61,3 +61,5 @@ A: Yes, you can re-enable Gemini suggestions at any time by following the same s
 
 ## Conclusion
 The "write with Gemini" pop-ups in Google Docs can be annoying and distracting, but fortunately, they can be easily disabled. By following the simple steps outlined in this article, you can turn off the pop-ups and enjoy a more focused and productive writing experience. While disabling Gemini suggestions may have some drawbacks, it's essential to weigh the benefits and make an informed decision that suits your writing needs.
+
+{{< comments >}}

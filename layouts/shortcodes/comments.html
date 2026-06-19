@@ -1,0 +1,121 @@
+<hr class="my-5" style="opacity: 0.15;">
+
+<div class="card border-0 shadow-sm bg-body-tertiary w-100" style="border-radius: 12px; margin-bottom: 3rem;">
+  <div class="card-body p-4 p-md-5 text-start">
+    
+    <div class="mb-4 border-bottom pb-3">
+      <h3 class="fw-bold mb-2 text-body" id="discussion-title">Discussion</h3>
+      <p class="text-body-secondary mb-0" style="font-size: 0.95rem;">
+        Leave an anonymous comment below. No login required.
+      </p>
+    </div>
+    
+    <!-- Comment Submission Form -->
+    <form id="custom-comment-form" class="mb-5">
+      <div class="mb-3">
+        <input type="text" id="comment-name" class="form-control bg-body" placeholder="Your Name (Optional - Defaults to Anonymous)" maxlength="50">
+      </div>
+      <div class="mb-3">
+        <textarea id="comment-text" class="form-control bg-body" rows="3" placeholder="Write your comment..." required></textarea>
+      </div>
+      <button type="submit" id="submit-comment-btn" class="btn btn-primary fw-bold px-4 rounded-pill">
+        Post Comment
+      </button>
+    </form>
+
+    <!-- Comments Display Area -->
+    <div id="comments-list" class="d-flex flex-column gap-3">
+      <p class="text-muted" id="loading-comments">Loading comments...</p>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Extract the exact path for the current article to use as a unique ID
+    let articleSlug = window.location.pathname.replace(/\/$/, "").replace(/^\//, ""); 
+    const commentsList = document.getElementById("comments-list");
+    const commentForm = document.getElementById("custom-comment-form");
+    const submitBtn = document.getElementById("submit-comment-btn");
+
+    // ⚠️ REPLACE THIS WITH YOUR NEW RENDER URL ⚠️
+    const API_BASE_URL = "https://comments-api-72xk.onrender.com";
+
+    // 1. Fetch existing comments when the page loads
+    fetch(`${API_BASE_URL}/comments/${articleSlug}`)
+        .then(response => response.json())
+        .then(data => {
+            commentsList.innerHTML = ""; // Clear loading text
+            if (data.comments.length === 0) {
+                commentsList.innerHTML = "<p class='text-muted'>Be the first to comment!</p>";
+                return;
+            }
+            
+            data.comments.forEach(c => {
+                const commentHTML = `
+                    <div class="p-3 bg-body rounded border">
+                        <div class="d-flex justify-content-between mb-2">
+                            <strong class="text-body">${c.name}</strong>
+                            <small class="text-muted">${c.timestamp}</small>
+                        </div>
+                        <p class="mb-0 text-body-secondary">${c.text}</p>
+                    </div>
+                `;
+                commentsList.insertAdjacentHTML('beforeend', commentHTML);
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            commentsList.innerHTML = "<p class='text-danger'>Failed to load comments.</p>";
+        });
+
+    // 2. Handle new comment submission
+    commentForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Posting...";
+
+        const nameInput = document.getElementById("comment-name").value.trim() || "Anonymous";
+        const textInput = document.getElementById("comment-text").value.trim();
+
+        fetch(`${API_BASE_URL}/comments`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                slug: articleSlug,
+                name: nameInput,
+                text: textInput
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Instantly add the new comment to the top of the UI
+            const newCommentHTML = `
+                <div class="p-3 bg-body rounded border border-primary border-opacity-50 shadow-sm">
+                    <div class="d-flex justify-content-between mb-2">
+                        <strong class="text-body">${nameInput}</strong>
+                        <small class="text-primary fw-semibold">Just now</small>
+                    </div>
+                    <p class="mb-0 text-body-secondary">${textInput}</p>
+                </div>
+            `;
+            
+            // Remove the "Be the first to comment" message if it exists
+            if (commentsList.innerHTML.includes("Be the first")) {
+                commentsList.innerHTML = "";
+            }
+            
+            commentsList.insertAdjacentHTML('afterbegin', newCommentHTML);
+            commentForm.reset();
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Post Comment";
+        })
+        .catch(err => {
+            alert("Failed to post comment. Please try again.");
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Post Comment";
+        });
+    });
+});
+</script>

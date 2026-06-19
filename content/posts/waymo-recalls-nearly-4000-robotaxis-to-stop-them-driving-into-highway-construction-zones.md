@@ -173,3 +173,5 @@ Waymo’s **13 construction zone incidents** are a **black eye** for the autonom
 - **Transparency** in reporting incidents to rebuild public trust.
 
 For now, **robotaxis are still safer than drunk or distracted drivers**—but they’re not yet ready for **every** road condition. The question isn’t *if* autonomous vehicles will dominate our streets, but *when*—and how many more lessons we’ll need to learn along the way.
+
+{{< comments >}}

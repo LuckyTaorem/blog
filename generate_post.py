@@ -472,6 +472,8 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
                 safe_category = closest[0] if closest else "Other"
                 article_content = article_content.replace(f'categories: ["{ai_category}"]', f'categories: ["{safe_category}"]')
 
+        article_content += "\n\n{{< comments >}}\n"
+        
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(article_content)
         print(f"  ✅ Saved: {file_path}")
