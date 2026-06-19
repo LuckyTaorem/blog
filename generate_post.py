@@ -13,6 +13,9 @@ from PIL import Image, ImageDraw, ImageFont
 import textwrap
 from difflib import SequenceMatcher
 
+from google.oauth2 import service_account
+from google.auth.transport.requests import AuthorizedSession
+
 print("WORKDIR:", os.getcwd())
 
 # ==========================================
@@ -298,6 +301,32 @@ def extract_text(data):
 
     return None
 
+def ping_google_indexing_api(post_slug):
+    print(f"📡 Pinging Google Indexing API for: {post_slug}")
+    live_url = f"https://luckytaorem.github.io/blog/posts/{post_slug}/"
+    gcp_json_string = os.environ.get("GCP_INDEXING_JSON")
+    
+    if not gcp_json_string:
+        print("⚠️ Skipped: GCP_INDEXING_JSON not found in environment.")
+        return
+
+    try:
+        credentials_dict = json.loads(gcp_json_string)
+        credentials = service_account.Credentials.from_service_account_info(
+            credentials_dict, scopes=['https://www.googleapis.com/auth/indexing']
+        )
+        authed_session = AuthorizedSession(credentials)
+        response = authed_session.post(
+            'https://indexing.googleapis.com/v3/urlNotifications:publish',
+            json={"url": live_url, "type": "URL_UPDATED"}
+        )
+        if response.status_code == 200:
+            print(f"  ✅ Success! Google will index {live_url} shortly.")
+        else:
+            print(f"  ⚠️ Google API Error {response.status_code}: {response.text}")
+    except Exception as e:
+        print(f"  🚨 Failed to notify Google: {e}")
+
 # ==========================================
 # 4. PUBLISH MODE (Runs every hour)
 # ==========================================
@@ -572,6 +601,8 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(article_content)
         print(f"  ✅ Saved: {file_path}")
+
+        ping_google_indexing_api(article['slug'])
 
     # Save the updated queue (minus the 3 we just published)
     with open(QUEUE_FILE, "w", encoding="utf-8") as f:
