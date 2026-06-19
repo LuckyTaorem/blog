@@ -1,5 +1,5 @@
 ---
-title: " "Photoshop and Premiere now have AI assistants""
+title: "Photoshop and Premiere now have AI assistants"
 date: 2026-06-18T13:27:20.332371+00:00
 draft: false
 images: ["images/photoshop-and-premiere-now-have-ai-assistants.jpg"]

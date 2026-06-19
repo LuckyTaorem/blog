@@ -1,5 +1,5 @@
 ---
-title: " "Kindle Colorsoft Bundle Deal Alert""
+title: "Kindle Colorsoft Bundle Deal Alert"
 date: 2026-06-18T13:26:37.695450+00:00
 draft: false
 images: ["images/amazons-kindle-colorsoft-bundle-is-almost-half-off-for-prime-day.jpg"]

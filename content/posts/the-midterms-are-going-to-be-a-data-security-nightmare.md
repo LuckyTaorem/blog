@@ -1,5 +1,5 @@
 ---
-title: " "MidtermElection Data Security Crisis""
+title: "MidtermElection Data Security Crisis"
 date: 2026-06-19T12:49:16.670402+00:00
 draft: false
 images: ["images/the-midterms-are-going-to-be-a-data-security-nightmare.jpg"]

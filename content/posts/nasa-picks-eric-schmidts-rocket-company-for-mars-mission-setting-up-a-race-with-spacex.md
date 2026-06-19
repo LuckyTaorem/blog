@@ -1,5 +1,5 @@
 ---
-title: " "Mars Race""
+title: "Mars Race"
 date: 2026-06-19T07:07:37.032657+00:00
 draft: false
 images: ["images/nasa-picks-eric-schmidts-rocket-company-for-mars-mission-setting-up-a-race-with-spacex.jpg"]

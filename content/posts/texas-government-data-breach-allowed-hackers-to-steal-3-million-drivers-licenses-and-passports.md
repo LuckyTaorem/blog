@@ -1,5 +1,5 @@
 ---
-title: " "Texas Breach""
+title: "Texas Breach"
 date: 2026-06-18T20:27:10.437209+00:00
 draft: false
 images: ["images/texas-government-data-breach-allowed-hackers-to-steal-3-million-drivers-licenses-and-passports.jpg"]

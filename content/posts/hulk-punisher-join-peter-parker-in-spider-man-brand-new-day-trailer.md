@@ -1,5 +1,5 @@
 ---
-title: " "Hulk Meets Punisher: Spider-Man's Deadliest Alliance""
+title: "Hulk Meets Punisher: Spider-Man's Deadliest Alliance"
 date: 2023-01-01T13:33:49.186072+00:00
 draft: false
 images: ["images/hulk-punisher-join-peter-parker-in-spider-man-brand-new-day-trailer.jpg"]

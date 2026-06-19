@@ -1,5 +1,5 @@
 ---
-title: " "Unlock Better Sleep: Stop Bedtime Scrolling Now""
+title: "Unlock Better Sleep: Stop Bedtime Scrolling Now"
 date: 2026-06-18T13:30:13.058818+00:00
 draft: false
 images: ["images/halo-stops-bedtime-scrolling-so-you-can-go-the-f-to-sleep.jpg"]
