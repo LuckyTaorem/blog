@@ -2,8 +2,74 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>http://localhost:1313/blog/tags/ai-safety/</loc>
+    <lastmod>2026-06-19T04:06:46+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/autonomous-vehicles/</loc>
+    <lastmod>2026-06-19T04:06:46+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/</loc>
+    <lastmod>2026-06-19T04:06:46+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/</loc>
+    <lastmod>2026-06-19T04:06:46+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/robotaxis/</loc>
+    <lastmod>2026-06-19T04:06:46+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/waymo-recalls-nearly-4000-robotaxis-to-stop-them-driving-into-highway-construction-zones/</loc>
+    <lastmod>2026-06-19T04:06:46+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/robotics/</loc>
+    <lastmod>2026-06-19T04:06:46+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/self-driving-cars/</loc>
+    <lastmod>2026-06-19T04:06:46+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/</loc>
+    <lastmod>2026-06-19T04:06:46+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/</loc>
+    <lastmod>2026-06-19T04:06:46+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/waymo/</loc>
+    <lastmod>2026-06-19T04:06:46+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/augmented-reality/</loc>
+    <lastmod>2026-06-19T04:05:51+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/digital-communication/</loc>
+    <lastmod>2026-06-19T04:05:51+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/ios-development/</loc>
+    <lastmod>2026-06-19T04:05:51+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/messaging-apps/</loc>
+    <lastmod>2026-06-19T04:05:51+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/mobile-development/</loc>
+    <lastmod>2026-06-19T04:05:51+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/pixis-new-ios-app-turns-text-messages-into-interactive-ar-experiences/</loc>
+    <lastmod>2026-06-19T04:05:51+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/tech-innovation/</loc>
+    <lastmod>2026-06-19T04:05:51+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/adobe/</loc>
+    <lastmod>2026-06-19T04:05:46+00:00</lastmod>
+  </url><url>
     <loc>http://localhost:1313/blog/tags/ai/</loc>
-    <lastmod>2026-06-19T01:45:32+00:00</lastmod>
+    <lastmod>2026-06-19T04:05:46+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/adobe-adds-its-ai-assistant-to-premiere-illustrator-and-indesign/</loc>
+    <lastmod>2026-06-19T04:05:46+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/firefly/</loc>
+    <lastmod>2026-06-19T04:05:46+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/software/</loc>
+    <lastmod>2026-06-19T04:05:46+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/posts/general-intuition-in-talks-to-raise-300m-at-around-2b-valuation/</loc>
     <lastmod>2026-06-19T01:45:32+00:00</lastmod>
@@ -11,22 +77,10 @@
     <loc>http://localhost:1313/blog/categories/artificial-intelligence/</loc>
     <lastmod>2026-06-19T01:45:32+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/categories/</loc>
-    <lastmod>2026-06-19T01:45:32+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/blog/tags/embodied-intelligence/</loc>
     <lastmod>2026-06-19T01:45:32+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/posts/</loc>
-    <lastmod>2026-06-19T01:45:32+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/blog/tags/machine-learning/</loc>
-    <lastmod>2026-06-19T01:45:32+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/</loc>
-    <lastmod>2026-06-19T01:45:32+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/</loc>
     <lastmod>2026-06-19T01:45:32+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/app-store/</loc>
@@ -42,9 +96,6 @@
     <lastmod>2026-06-18T22:56:30+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/iphone/</loc>
-    <lastmod>2026-06-18T22:56:30+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/categories/mobile-development/</loc>
     <lastmod>2026-06-18T22:56:30+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/artificial-intelligence/</loc>
@@ -87,9 +138,6 @@
     <lastmod>2026-06-18T20:26:56+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/slow-tech/</loc>
-    <lastmod>2026-06-18T20:26:56+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/categories/software/</loc>
     <lastmod>2026-06-18T20:26:56+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/categories/cloud-computing/</loc>
@@ -458,9 +506,6 @@
     <loc>http://localhost:1313/blog/categories/creative/design/</loc>
     <lastmod>2026-06-18T13:28:06+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/tags/adobe/</loc>
-    <lastmod>2026-06-18T13:27:20+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/blog/tags/ai-assistants/</loc>
     <lastmod>2026-06-18T13:27:20+00:00</lastmod>
   </url><url>
@@ -532,42 +577,6 @@
   </url><url>
     <loc>http://localhost:1313/blog/tags/spacex/</loc>
     <lastmod>2026-06-18T13:25:56+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/autonomous-vehicles/</loc>
-    <lastmod>2026-06-18T13:25:54+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/recall/</loc>
-    <lastmod>2026-06-18T13:25:54+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/robotaxis/</loc>
-    <lastmod>2026-06-18T13:25:54+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/categories/robotics/</loc>
-    <lastmod>2026-06-18T13:25:54+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/waymo/</loc>
-    <lastmod>2026-06-18T13:25:54+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/posts/waymo-recalls-nearly-4000-robotaxis-to-stop-them-driving-into-highway-construction-zones/</loc>
-    <lastmod>2026-06-18T13:25:54+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/augmented-reality/</loc>
-    <lastmod>2026-06-18T13:25:51+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/interactive-messaging/</loc>
-    <lastmod>2026-06-18T13:25:51+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/ios-app/</loc>
-    <lastmod>2026-06-18T13:25:51+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/posts/pixis-new-ios-app-turns-text-messages-into-interactive-ar-experiences/</loc>
-    <lastmod>2026-06-18T13:25:51+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/posts/adobe-adds-its-ai-assistant-to-premiere-illustrator-and-indesign/</loc>
-    <lastmod>2026-06-18T13:25:48+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/ai-assistant/</loc>
-    <lastmod>2026-06-18T13:25:48+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/categories/gaming/</loc>
     <lastmod>2023-01-01T13:33:49+00:00</lastmod>

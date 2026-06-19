@@ -10,9 +10,16 @@
 		
 		
 		
-			<lastBuildDate>Thu, 18 Jun 2026 20:26:56 +0000</lastBuildDate>
+			<lastBuildDate>Fri, 19 Jun 2026 04:05:46 +0000</lastBuildDate>
 		
 			<atom:link href="http://localhost:1313/blog/categories/software/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>AI Boost</title>
+				<link>http://localhost:1313/blog/posts/adobe-adds-its-ai-assistant-to-premiere-illustrator-and-indesign/</link>
+				<pubDate>Fri, 19 Jun 2026 04:05:46 +0000</pubDate>
+				<guid>http://localhost:1313/blog/posts/adobe-adds-its-ai-assistant-to-premiere-illustrator-and-indesign/</guid>
+				<description>&lt;h2 id=&#34;introduction-to-adobes-ai-powered-firefly&#34; class=&#34;heading &#34;&gt;Introduction to Adobe&amp;rsquo;s AI-Powered Firefly&lt;a href=&#34;#introduction-to-adobes-ai-powered-firefly&#34; aria-labelledby=&#34;introduction-to-adobes-ai-powered-firefly&#34;&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;!-- &lt;i class=&#34;fas fa-link anchor&#34;&gt;&lt;/i&gt; --&gt;&#xA;        &lt;svg class=&#34;svg-inline--fa fas fa-link anchor&#34; fill=&#34;currentColor&#34; aria-hidden=&#34;true&#34; role=&#34;img&#34; viewBox=&#34;0 0 576 512&#34;&gt;&lt;use href=&#34;#fas-link&#34;&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;&#xA;    &lt;/a&gt;&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Adobe has been at the forefront of innovation in the creative industry, and its latest move is a testament to this commitment. The company is updating its Firefly AI assistant with new capabilities and integrating it into some of its most popular applications, including Premiere, Illustrator, InDesign, and Frame.io. This integration is set to revolutionize the way creatives work, offering them unprecedented levels of efficiency, inspiration, and precision.&lt;/p&gt;</description>
+			</item>
 			<item>
 				<title>Regain Control</title>
 				<link>http://localhost:1313/blog/posts/the-smartphone-era-created-an-attention-crisis-slowtech-is-fixing-it/</link>
@@ -33,13 +40,6 @@
 				<pubDate>Thu, 18 Jun 2026 13:26:34 +0000</pubDate>
 				<guid>http://localhost:1313/blog/posts/how-to-turn-off-ai-in-your-google-docs/</guid>
 				<description>&lt;h2 id=&#34;introduction-to-ai-in-google-docs&#34; class=&#34;heading &#34;&gt;Introduction to AI in Google Docs&lt;a href=&#34;#introduction-to-ai-in-google-docs&#34; aria-labelledby=&#34;introduction-to-ai-in-google-docs&#34;&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;!-- &lt;i class=&#34;fas fa-link anchor&#34;&gt;&lt;/i&gt; --&gt;&#xA;        &lt;svg class=&#34;svg-inline--fa fas fa-link anchor&#34; fill=&#34;currentColor&#34; aria-hidden=&#34;true&#34; role=&#34;img&#34; viewBox=&#34;0 0 576 512&#34;&gt;&lt;use href=&#34;#fas-link&#34;&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;&#xA;    &lt;/a&gt;&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Google Docs has become an essential tool for individuals and businesses alike, providing a convenient and collaborative way to create and edit documents. Recently, Google introduced a new feature called &amp;ldquo;Gemini&amp;rdquo; which utilizes artificial intelligence (AI) to assist with writing tasks. While this feature can be helpful, some users may find the frequent &amp;ldquo;write with Gemini&amp;rdquo; pop-ups to be annoying and distracting. In this article, we will explore the reasons behind these pop-ups and provide a step-by-step guide on how to turn them off.&lt;/p&gt;</description>
-			</item>
-			<item>
-				<title>Adobe Brings AI to Premiere</title>
-				<link>http://localhost:1313/blog/posts/adobe-adds-its-ai-assistant-to-premiere-illustrator-and-indesign/</link>
-				<pubDate>Thu, 18 Jun 2026 13:25:48 +0000</pubDate>
-				<guid>http://localhost:1313/blog/posts/adobe-adds-its-ai-assistant-to-premiere-illustrator-and-indesign/</guid>
-				<description>&lt;h2 id=&#34;introduction-to-adobes-firefly-ai-assistant&#34; class=&#34;heading &#34;&gt;Introduction to Adobe&amp;rsquo;s Firefly AI Assistant&lt;a href=&#34;#introduction-to-adobes-firefly-ai-assistant&#34; aria-labelledby=&#34;introduction-to-adobes-firefly-ai-assistant&#34;&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;!-- &lt;i class=&#34;fas fa-link anchor&#34;&gt;&lt;/i&gt; --&gt;&#xA;        &lt;svg class=&#34;svg-inline--fa fas fa-link anchor&#34; fill=&#34;currentColor&#34; aria-hidden=&#34;true&#34; role=&#34;img&#34; viewBox=&#34;0 0 576 512&#34;&gt;&lt;use href=&#34;#fas-link&#34;&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;&#xA;    &lt;/a&gt;&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Adobe has announced a significant update to its Firefly AI assistant, which is designed to revolutionize the way creatives work with Adobe&amp;rsquo;s suite of applications. The updated Firefly AI assistant will be integrated into several key Adobe apps, including Premiere, Illustrator, InDesign, and Frame.io. This move is expected to enhance the overall user experience and streamline workflows for creatives.&lt;/p&gt;</description>
 			</item>
 	</channel>
 </rss>
