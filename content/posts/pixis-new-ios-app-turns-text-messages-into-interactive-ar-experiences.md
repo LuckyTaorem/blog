@@ -9,7 +9,6 @@ categories: ["Mobile Development"]
 tags: ["Augmented Reality", "iOS App", "Interactive Messaging"]
 ---
 
-![Featured Image](images/pixis-new-ios-app-turns-text-messages-into-interactive-ar-experiences.jpg)
 ## Introduction to Pixi's Innovative Approach
 The world of messaging has undergone significant transformations over the years, from simple text messages to the use of stickers, GIFs, and emoji reactions. However, Pixi, a pioneering company in the tech industry, is now betting on the next evolution of messaging: interactive augmented reality (AR). This novel approach promises to redefine how we interact with each other through our mobile devices. In this article, we will delve into the details of Pixi's new iOS app, exploring its features, potential impact, and what this means for the future of messaging.
 

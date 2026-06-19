@@ -292,8 +292,6 @@ tags: ["Insert 3 to 5 relevant tags here based on the text"]
 
 IMPORTANT RULE FOR CATEGORIES: 
 You must evaluate the article and pick EXACTLY ONE category from this exact list: {', '.join(VALID_CATEGORIES)}.
-
-![Featured Image]({image_url})
 """
 
         model_settings = [

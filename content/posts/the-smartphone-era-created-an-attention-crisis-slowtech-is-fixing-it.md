@@ -9,8 +9,6 @@ categories: ["Software"]
 tags: ["Digital Wellness", "Productivity", "Slow Tech"]
 ---
 
-![Featured Image](images/the-smartphone-era-created-an-attention-crisis-slowtech-is-fixing-it.jpg)
-
 ## Introduction to the Era of Digital Overload
 In today's fast-paced, technology-driven world, it's easy to feel like we're losing control. Our lives are filled with constant notifications, endless social media feeds, and a never-ending stream of information. This has led to a sense of digital overload, where people feel like they're drowning in a sea of data. However, there's a growing trend of individuals seeking to regain control of their time, lives, and attention. This movement is driven by the desire to simplify, to focus on what's truly important, and to find a sense of balance in a world that often seems to value speed and efficiency above all else.
 

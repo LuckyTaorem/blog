@@ -2,10 +2,112 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/blog/tags/blenders/</loc>
-    <lastmod>2026-06-18T13:33:36+00:00</lastmod>
+    <loc>http://localhost:1313/blog/tags/ai/</loc>
+    <lastmod>2026-06-19T01:45:32+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/general-intuition-in-talks-to-raise-300m-at-around-2b-valuation/</loc>
+    <lastmod>2026-06-19T01:45:32+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/artificial-intelligence/</loc>
+    <lastmod>2026-06-19T01:45:32+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/categories/</loc>
+    <lastmod>2026-06-19T01:45:32+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/embodied-intelligence/</loc>
+    <lastmod>2026-06-19T01:45:32+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/</loc>
+    <lastmod>2026-06-19T01:45:32+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/machine-learning/</loc>
+    <lastmod>2026-06-19T01:45:32+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/</loc>
+    <lastmod>2026-06-19T01:45:32+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/</loc>
+    <lastmod>2026-06-19T01:45:32+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/app-store/</loc>
+    <lastmod>2026-06-18T22:56:30+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/apple/</loc>
+    <lastmod>2026-06-18T22:56:30+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/apple-opens-up-app-store-to-new-competition-in-brazil/</loc>
+    <lastmod>2026-06-18T22:56:30+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/brazil/</loc>
+    <lastmod>2026-06-18T22:56:30+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/iphone/</loc>
+    <lastmod>2026-06-18T22:56:30+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/mobile-development/</loc>
+    <lastmod>2026-06-18T22:56:30+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/artificial-intelligence/</loc>
+    <lastmod>2026-06-18T22:56:25+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/healthcare-tech/</loc>
+    <lastmod>2026-06-18T22:56:25+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/queer-eyes-life-coach-karamo-brown-launches-k%C4%93-a-wellness-app-featuring-his-ai-digital-clone/</loc>
+    <lastmod>2026-06-18T22:56:25+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/mental-health/</loc>
+    <lastmod>2026-06-18T22:56:25+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/wellness/</loc>
+    <lastmod>2026-06-18T22:56:25+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/cybersecurity/</loc>
+    <lastmod>2026-06-18T20:27:10+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/data-breach/</loc>
+    <lastmod>2026-06-18T20:27:10+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/identity-theft/</loc>
+    <lastmod>2026-06-18T20:27:10+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/security/</loc>
+    <lastmod>2026-06-18T20:27:10+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/texas-government-data-breach-allowed-hackers-to-steal-3-million-drivers-licenses-and-passports/</loc>
+    <lastmod>2026-06-18T20:27:10+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/digital-wellness/</loc>
+    <lastmod>2026-06-18T20:26:56+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/productivity/</loc>
+    <lastmod>2026-06-18T20:26:56+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/the-smartphone-era-created-an-attention-crisis-slowtech-is-fixing-it/</loc>
+    <lastmod>2026-06-18T20:26:56+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/slow-tech/</loc>
+    <lastmod>2026-06-18T20:26:56+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/software/</loc>
+    <lastmod>2026-06-18T20:26:56+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/categories/cloud-computing/</loc>
+    <lastmod>2026-06-18T20:26:49+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/data-centers/</loc>
+    <lastmod>2026-06-18T20:26:49+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/ferc/</loc>
+    <lastmod>2026-06-18T20:26:49+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/posts/ai-data-centers-just-got-a-government-mandated-fast-lane-to-the-grid/</loc>
+    <lastmod>2026-06-18T20:26:49+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/grid-operators/</loc>
+    <lastmod>2026-06-18T20:26:49+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/blog/tags/blenders/</loc>
     <lastmod>2026-06-18T13:33:36+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/deals/</loc>
@@ -17,19 +119,10 @@
     <loc>http://localhost:1313/blog/tags/kitchen-appliances/</loc>
     <lastmod>2026-06-18T13:33:36+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/posts/</loc>
-    <lastmod>2026-06-18T13:33:36+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/blog/categories/promo-code/</loc>
     <lastmod>2026-06-18T13:33:36+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/promo-codes/</loc>
-    <lastmod>2026-06-18T13:33:36+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/</loc>
-    <lastmod>2026-06-18T13:33:36+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/</loc>
     <lastmod>2026-06-18T13:33:36+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/vitamix/</loc>
@@ -146,9 +239,6 @@
     <loc>http://localhost:1313/blog/tags/online-protection/</loc>
     <lastmod>2026-06-18T13:31:54+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/categories/security/</loc>
-    <lastmod>2026-06-18T13:31:54+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/blog/tags/security/</loc>
     <lastmod>2026-06-18T13:31:54+00:00</lastmod>
   </url><url>
@@ -215,9 +305,6 @@
     <loc>http://localhost:1313/blog/tags/fertility/</loc>
     <lastmod>2026-06-18T13:30:42+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/categories/healthcare-tech/</loc>
-    <lastmod>2026-06-18T13:30:42+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/blog/tags/male-infertility/</loc>
     <lastmod>2026-06-18T13:30:42+00:00</lastmod>
   </url><url>
@@ -254,9 +341,6 @@
     <loc>http://localhost:1313/blog/tags/gadget-review/</loc>
     <lastmod>2026-06-18T13:30:13+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/tags/productivity/</loc>
-    <lastmod>2026-06-18T13:30:13+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/blog/tags/sleep-tech/</loc>
     <lastmod>2026-06-18T13:30:13+00:00</lastmod>
   </url><url>
@@ -278,9 +362,6 @@
     <loc>http://localhost:1313/blog/tags/parade/</loc>
     <lastmod>2026-06-18T13:29:44+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/categories/software/</loc>
-    <lastmod>2026-06-18T13:29:44+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/blog/posts/how-to-watch-the-knicks-parade-on-nyc-traffic-surveillance-cameras/</loc>
     <lastmod>2026-06-18T13:29:44+00:00</lastmod>
   </url><url>
@@ -294,9 +375,6 @@
     <lastmod>2026-06-18T13:29:28+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/relaxation/</loc>
-    <lastmod>2026-06-18T13:29:28+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/wellness/</loc>
     <lastmod>2026-06-18T13:29:28+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/posts/amazons-fire-tablets-tested-so-you-dont-have-to-2026/</loc>
@@ -335,9 +413,6 @@
     <loc>http://localhost:1313/blog/tags/the-frame-pro-2026/</loc>
     <lastmod>2026-06-18T13:29:09+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/blog/tags/ai/</loc>
-    <lastmod>2026-06-18T13:29:06+00:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/blog/tags/healthcare-technology/</loc>
     <lastmod>2026-06-18T13:29:06+00:00</lastmod>
   </url><url>
@@ -375,9 +450,6 @@
     <lastmod>2026-06-18T13:28:06+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/ai-studio/</loc>
-    <lastmod>2026-06-18T13:28:06+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/tags/artificial-intelligence/</loc>
     <lastmod>2026-06-18T13:28:06+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/creative-design/</loc>
@@ -486,9 +558,6 @@
     <lastmod>2026-06-18T13:25:51+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/tags/ios-app/</loc>
-    <lastmod>2026-06-18T13:25:51+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/blog/categories/mobile-development/</loc>
     <lastmod>2026-06-18T13:25:51+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/blog/posts/pixis-new-ios-app-turns-text-messages-into-interactive-ar-experiences/</loc>

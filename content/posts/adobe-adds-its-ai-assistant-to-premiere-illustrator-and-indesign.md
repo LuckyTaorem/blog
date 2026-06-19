@@ -9,7 +9,6 @@ categories: ["Software"]
 tags: ["Adobe", "AI Assistant", "Creative Cloud"]
 ---
 
-![Featured Image](images/adobe-adds-its-ai-assistant-to-premiere-illustrator-and-indesign.jpg)
 ## Introduction to Adobe's Firefly AI Assistant
 Adobe has announced a significant update to its Firefly AI assistant, which is designed to revolutionize the way creatives work with Adobe's suite of applications. The updated Firefly AI assistant will be integrated into several key Adobe apps, including Premiere, Illustrator, InDesign, and Frame.io. This move is expected to enhance the overall user experience and streamline workflows for creatives.
 

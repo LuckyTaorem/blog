@@ -10,9 +10,142 @@
 		
 		
 		
-			<lastBuildDate>Thu, 18 Jun 2026 13:33:36 +0000</lastBuildDate>
+			<lastBuildDate>Fri, 19 Jun 2026 01:45:32 +0000</lastBuildDate>
 		
 			<atom:link href="http://localhost:1313/blog/tags/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>AI</title>
+				<link>http://localhost:1313/blog/tags/ai/</link>
+				<pubDate>Fri, 19 Jun 2026 01:45:32 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/ai/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Embodied Intelligence</title>
+				<link>http://localhost:1313/blog/tags/embodied-intelligence/</link>
+				<pubDate>Fri, 19 Jun 2026 01:45:32 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/embodied-intelligence/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Machine Learning</title>
+				<link>http://localhost:1313/blog/tags/machine-learning/</link>
+				<pubDate>Fri, 19 Jun 2026 01:45:32 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/machine-learning/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>App Store</title>
+				<link>http://localhost:1313/blog/tags/app-store/</link>
+				<pubDate>Thu, 18 Jun 2026 22:56:30 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/app-store/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Apple</title>
+				<link>http://localhost:1313/blog/tags/apple/</link>
+				<pubDate>Thu, 18 Jun 2026 22:56:30 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/apple/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Brazil</title>
+				<link>http://localhost:1313/blog/tags/brazil/</link>
+				<pubDate>Thu, 18 Jun 2026 22:56:30 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/brazil/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>IPhone</title>
+				<link>http://localhost:1313/blog/tags/iphone/</link>
+				<pubDate>Thu, 18 Jun 2026 22:56:30 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/iphone/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Artificial Intelligence</title>
+				<link>http://localhost:1313/blog/tags/artificial-intelligence/</link>
+				<pubDate>Thu, 18 Jun 2026 22:56:25 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/artificial-intelligence/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Mental Health</title>
+				<link>http://localhost:1313/blog/tags/mental-health/</link>
+				<pubDate>Thu, 18 Jun 2026 22:56:25 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/mental-health/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Wellness</title>
+				<link>http://localhost:1313/blog/tags/wellness/</link>
+				<pubDate>Thu, 18 Jun 2026 22:56:25 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/wellness/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Cybersecurity</title>
+				<link>http://localhost:1313/blog/tags/cybersecurity/</link>
+				<pubDate>Thu, 18 Jun 2026 20:27:10 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/cybersecurity/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Data Breach</title>
+				<link>http://localhost:1313/blog/tags/data-breach/</link>
+				<pubDate>Thu, 18 Jun 2026 20:27:10 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/data-breach/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Identity Theft</title>
+				<link>http://localhost:1313/blog/tags/identity-theft/</link>
+				<pubDate>Thu, 18 Jun 2026 20:27:10 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/identity-theft/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Digital Wellness</title>
+				<link>http://localhost:1313/blog/tags/digital-wellness/</link>
+				<pubDate>Thu, 18 Jun 2026 20:26:56 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/digital-wellness/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Productivity</title>
+				<link>http://localhost:1313/blog/tags/productivity/</link>
+				<pubDate>Thu, 18 Jun 2026 20:26:56 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/productivity/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Slow Tech</title>
+				<link>http://localhost:1313/blog/tags/slow-tech/</link>
+				<pubDate>Thu, 18 Jun 2026 20:26:56 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/slow-tech/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Data Centers</title>
+				<link>http://localhost:1313/blog/tags/data-centers/</link>
+				<pubDate>Thu, 18 Jun 2026 20:26:49 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/data-centers/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>FERC</title>
+				<link>http://localhost:1313/blog/tags/ferc/</link>
+				<pubDate>Thu, 18 Jun 2026 20:26:49 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/ferc/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Grid Operators</title>
+				<link>http://localhost:1313/blog/tags/grid-operators/</link>
+				<pubDate>Thu, 18 Jun 2026 20:26:49 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/grid-operators/</guid>
+				<description></description>
+			</item>
 			<item>
 				<title>Blenders</title>
 				<link>http://localhost:1313/blog/tags/blenders/</link>
@@ -441,13 +574,6 @@
 				<description></description>
 			</item>
 			<item>
-				<title>Productivity</title>
-				<link>http://localhost:1313/blog/tags/productivity/</link>
-				<pubDate>Thu, 18 Jun 2026 13:30:13 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/productivity/</guid>
-				<description></description>
-			</item>
-			<item>
 				<title>Sleep Tech</title>
 				<link>http://localhost:1313/blog/tags/sleep-tech/</link>
 				<pubDate>Thu, 18 Jun 2026 13:30:13 +0000</pubDate>
@@ -508,13 +634,6 @@
 				<link>http://localhost:1313/blog/tags/relaxation/</link>
 				<pubDate>Thu, 18 Jun 2026 13:29:28 +0000</pubDate>
 				<guid>http://localhost:1313/blog/tags/relaxation/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Wellness</title>
-				<link>http://localhost:1313/blog/tags/wellness/</link>
-				<pubDate>Thu, 18 Jun 2026 13:29:28 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/wellness/</guid>
 				<description></description>
 			</item>
 			<item>
@@ -588,13 +707,6 @@
 				<description></description>
 			</item>
 			<item>
-				<title>AI</title>
-				<link>http://localhost:1313/blog/tags/ai/</link>
-				<pubDate>Thu, 18 Jun 2026 13:29:06 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/ai/</guid>
-				<description></description>
-			</item>
-			<item>
 				<title>Healthcare Technology</title>
 				<link>http://localhost:1313/blog/tags/healthcare-technology/</link>
 				<pubDate>Thu, 18 Jun 2026 13:29:06 +0000</pubDate>
@@ -662,13 +774,6 @@
 				<link>http://localhost:1313/blog/tags/ai-studio/</link>
 				<pubDate>Thu, 18 Jun 2026 13:28:06 +0000</pubDate>
 				<guid>http://localhost:1313/blog/tags/ai-studio/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Artificial Intelligence</title>
-				<link>http://localhost:1313/blog/tags/artificial-intelligence/</link>
-				<pubDate>Thu, 18 Jun 2026 13:28:06 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/artificial-intelligence/</guid>
 				<description></description>
 			</item>
 			<item>

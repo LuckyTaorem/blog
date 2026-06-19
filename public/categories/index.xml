@@ -10,9 +10,51 @@
 		
 		
 		
-			<lastBuildDate>Thu, 18 Jun 2026 13:33:36 +0000</lastBuildDate>
+			<lastBuildDate>Fri, 19 Jun 2026 01:45:32 +0000</lastBuildDate>
 		
 			<atom:link href="http://localhost:1313/blog/categories/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Artificial Intelligence</title>
+				<link>http://localhost:1313/blog/categories/artificial-intelligence/</link>
+				<pubDate>Fri, 19 Jun 2026 01:45:32 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/artificial-intelligence/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Mobile Development</title>
+				<link>http://localhost:1313/blog/categories/mobile-development/</link>
+				<pubDate>Thu, 18 Jun 2026 22:56:30 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/mobile-development/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Healthcare Tech</title>
+				<link>http://localhost:1313/blog/categories/healthcare-tech/</link>
+				<pubDate>Thu, 18 Jun 2026 22:56:25 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/healthcare-tech/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Security</title>
+				<link>http://localhost:1313/blog/categories/security/</link>
+				<pubDate>Thu, 18 Jun 2026 20:27:10 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/security/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Software</title>
+				<link>http://localhost:1313/blog/categories/software/</link>
+				<pubDate>Thu, 18 Jun 2026 20:26:56 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/software/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Cloud Computing</title>
+				<link>http://localhost:1313/blog/categories/cloud-computing/</link>
+				<pubDate>Thu, 18 Jun 2026 20:26:49 +0000</pubDate>
+				<guid>http://localhost:1313/blog/categories/cloud-computing/</guid>
+				<description></description>
+			</item>
 			<item>
 				<title>Promo Code</title>
 				<link>http://localhost:1313/blog/categories/promo-code/</link>
@@ -35,27 +77,6 @@
 				<description></description>
 			</item>
 			<item>
-				<title>Security</title>
-				<link>http://localhost:1313/blog/categories/security/</link>
-				<pubDate>Thu, 18 Jun 2026 13:31:54 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/security/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Healthcare Tech</title>
-				<link>http://localhost:1313/blog/categories/healthcare-tech/</link>
-				<pubDate>Thu, 18 Jun 2026 13:30:42 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/healthcare-tech/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Software</title>
-				<link>http://localhost:1313/blog/categories/software/</link>
-				<pubDate>Thu, 18 Jun 2026 13:29:44 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/software/</guid>
-				<description></description>
-			</item>
-			<item>
 				<title>Creative/Design</title>
 				<link>http://localhost:1313/blog/categories/creative/design/</link>
 				<pubDate>Thu, 18 Jun 2026 13:28:06 +0000</pubDate>
@@ -74,13 +95,6 @@
 				<link>http://localhost:1313/blog/categories/robotics/</link>
 				<pubDate>Thu, 18 Jun 2026 13:25:54 +0000</pubDate>
 				<guid>http://localhost:1313/blog/categories/robotics/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Mobile Development</title>
-				<link>http://localhost:1313/blog/categories/mobile-development/</link>
-				<pubDate>Thu, 18 Jun 2026 13:25:51 +0000</pubDate>
-				<guid>http://localhost:1313/blog/categories/mobile-development/</guid>
 				<description></description>
 			</item>
 			<item>
