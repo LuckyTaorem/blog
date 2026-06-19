@@ -21,7 +21,7 @@ type: "page"
   <div class="row g-0 align-items-stretch">
     <!-- Developer Image (Fixed Path) -->
     <div class="col-md-4 col-lg-3" style="background-color: var(--bg-color);">
-      <img src="images/lucky.jpg" alt="Lucky Taorem" class="img-fluid w-100 h-100" style="object-fit: cover; min-height: 300px;">
+      <img src="https://luckytaorem.github.io/blog/images/lucky.jpg" alt="Lucky Taorem" class="img-fluid w-100 h-100" style="object-fit: cover; min-height: 300px;">
     </div>
     <!-- Developer Info & Links -->
     <div class="col-md-8 col-lg-9">
