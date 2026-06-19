@@ -2,7 +2,7 @@
 title: "Prime Day Robot Vacuum Deals You Can't Miss"
 date: 2026-06-19T13:48:15.081904+00:00
 draft: false
-images: [\'images/the-best-robot-vacuum-deals-available-ahead-of-prime-day.jpg"]
+images: ["images/the-best-robot-vacuum-deals-available-ahead-of-prime-day.jpg"]
 thumbnail: "images/the-best-robot-vacuum-deals-available-ahead-of-prime-day.jpg"
 description: "Score unbeatable Prime Day robot vacuum deals with our deep dive on Roborock, iRobot, and more—save big, tech specs, and expert tips! early now!"
 categories: [\'Robotics"]

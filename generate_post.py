@@ -509,7 +509,7 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
             # Push the article to the back of the queue so it re-runs during the next automated invocation
             remaining_queue.append(article)
             continue
-        
+
         # ==========================================
         # ABORT AND APPEND BACK TO QUEUE LOGIC 
         # (Keep your existing abort logic here)
@@ -556,6 +556,16 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
                 closest = get_close_matches(ai_category, VALID_CATEGORIES, n=1, cutoff=0.4)
                 safe_category = closest[0] if closest else "Other"
                 article_content = article_content.replace(f'categories: ["{ai_category}"]', f'categories: ["{safe_category}"]')
+
+        img_line_match = re.search(r'^images:\s*\[(.*)\]', article_content, re.MULTILINE)
+        if img_line_match:
+            clean_img_path = re.sub(r'[\'\"\\\[\]]', '', img_line_match.group(1)).strip()
+            article_content = re.sub(r'^images:\s*\[.*\]', f'images: ["{clean_img_path}"]', article_content, flags=re.MULTILINE)
+
+        thumb_line_match = re.search(r'^thumbnail:\s*(.*)', article_content, re.MULTILINE)
+        if thumb_line_match:
+            clean_thumb_path = re.sub(r'[\'\"\\\[\]]', '', thumb_line_match.group(1)).strip()
+            article_content = re.sub(r'^thumbnail:\s*.*', f'thumbnail: "{clean_thumb_path}"', article_content, flags=re.MULTILINE)
 
         article_content += "\n\n{{< comments >}}\n"
         
