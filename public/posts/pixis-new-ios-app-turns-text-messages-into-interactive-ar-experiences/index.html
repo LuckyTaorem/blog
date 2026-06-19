@@ -2330,7 +2330,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             const token = await currentUser.getIdToken();
-            await fetch(`${API_BASE_URL}/comments`, {
+            const response = await fetch(`${API_BASE_URL}/comments`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
@@ -2344,11 +2344,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     parent_id: parentId 
                 })
             });
+
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || "Error posting reply.");
+            }
             
             loadComments(); 
         } catch (err) {
-            window.alert("Error posting reply.");
-            
+            window.alert(err.message); 
             btnElement.disabled = false;
             btnElement.innerHTML = originalText;
         }
@@ -2371,7 +2376,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             const token = await currentUser.getIdToken();
-            await fetch(`${API_BASE_URL}/comments`, {
+            const response = await fetch(`${API_BASE_URL}/comments`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
@@ -2386,17 +2391,18 @@ document.addEventListener("DOMContentLoaded", function() {
                 })
             });
             
-            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || "Error posting comment.");
+            }
+
             document.getElementById("comment-text").value = "";
             loadComments();
-            
-            
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
             
         } catch (err) {
-            window.alert("Error posting comment.");
-            
+            window.alert(err.message); 
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
         }

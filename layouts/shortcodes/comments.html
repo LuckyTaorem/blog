@@ -405,7 +405,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             const token = await currentUser.getIdToken();
-            await fetch(`${API_BASE_URL}/comments`, {
+            const response = await fetch(`${API_BASE_URL}/comments`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
@@ -419,11 +419,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     parent_id: parentId 
                 })
             });
-            // Success: Redraw comments (which automatically resets the UI)
+
+            // Check if the backend rejected the comment (e.g., profanity)
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || "Error posting reply.");
+            }
+            
             loadComments(); 
         } catch (err) {
-            window.alert("Error posting reply.");
-            // Failure: Reset the button so they can try again
+            window.alert(err.message); // This will now display the profanity warning!
             btnElement.disabled = false;
             btnElement.innerHTML = originalText;
         }
@@ -446,7 +451,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         try {
             const token = await currentUser.getIdToken();
-            await fetch(`${API_BASE_URL}/comments`, {
+            const response = await fetch(`${API_BASE_URL}/comments`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
@@ -461,17 +466,18 @@ document.addEventListener("DOMContentLoaded", function() {
                 })
             });
             
-            // Success: Clear the box and reload
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || "Error posting comment.");
+            }
+
             document.getElementById("comment-text").value = "";
             loadComments();
-            
-            // Reset button
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
             
         } catch (err) {
-            window.alert("Error posting comment.");
-            // Failure: Reset button
+            window.alert(err.message); // Displays the profanity warning!
             submitBtn.disabled = false;
             submitBtn.innerHTML = originalText;
         }
