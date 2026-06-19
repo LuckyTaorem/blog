@@ -1,5 +1,5 @@
 ---
-title: "Regain Control"
+title: " "Regain Control""
 date: 2026-06-18T20:26:56.472591+00:00
 draft: false
 images: ["images/the-smartphone-era-created-an-attention-crisis-slowtech-is-fixing-it.jpg"]

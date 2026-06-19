@@ -1,5 +1,5 @@
 ---
-title: "Colors Unleashed"
+title: " "Colors Unleashed""
 date: 2026-06-19T12:49:12.653337+00:00
 draft: false
 images: ["images/google-calendar-finally-has-more-color-options-for-events.jpg"]

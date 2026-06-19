@@ -1,5 +1,5 @@
 ---
-title: "Samsung The Frame Pro 2026: Worth the Hype?"
+title: " "Samsung The Frame Pro 2026: Worth the Hype?""
 date: 2026-06-18T13:29:09.831551+00:00
 draft: false
 images: ["images/samsung-the-frame-pro-2026-review-pricey-but-worth-it.jpg"]

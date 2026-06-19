@@ -1,5 +1,5 @@
 ---
-title: "Grid Boost"
+title: " "Grid Boost""
 date: 2026-06-18T20:26:49.913094+00:00
 draft: false
 images: ["images/ai-data-centers-just-got-a-government-mandated-fast-lane-to-the-grid.jpg"]
