@@ -235,6 +235,46 @@ def run_scraper():
         
     git_commit_and_push("Updated article queue")
 
+
+def safe_json(response):
+    try:
+        return response.json()
+    except Exception:
+        return None
+
+
+def extract_text(data):
+    if data is None:
+        return None
+
+    if isinstance(data, str):
+        data = data.strip()
+        return data if data else None
+
+    if isinstance(data, dict):
+        for key in (
+            "content", "text", "message",
+            "output", "outputs", "result",
+            "response", "reasoning"
+        ):
+            if key in data:
+                result = extract_text(data[key])
+                if result:
+                    return result
+
+        for value in data.values():
+            result = extract_text(value)
+            if result:
+                return result
+
+    elif isinstance(data, list):
+        for item in data:
+            result = extract_text(item)
+            if result:
+                return result
+
+    return None
+
 # ==========================================
 # 4. PUBLISH MODE (Runs every hour)
 # ==========================================
@@ -299,11 +339,10 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
         model_settings = [
             {"provider": "groq", "model": "llama-3.3-70b-versatile", "word_count": "1800"},
             {"provider": "groq", "model": "llama-3.1-8b-instant", "word_count": "1500"},
-            {"provider": "cerebras", "model": "llama-3.3-70b", "word_count": "1500"},
             {"provider": "mistral", "model": "mistral-large-latest", "word_count": "1500"},
-            {"provider": "openrouter", "model": "meta-llama/llama-3.3-70b-instruct:free", "word_count": "1500"},
-            {"provider": "cohere", "model": "command-r-plus", "word_count": "1500"},
-            {"provider": "deepseek", "model": "deepseek-chat", "word_count": "1500"}
+            {"provider": "gemini", "model": "gemini-2.5-flash", "word_count": "1500"},
+            {"provider": "openrouter", "model": "openrouter/free", "word_count": "1500"},
+            {"provider": "cohere", "model": "command-r-plus", "word_count": "1500"}
         ]
 
         article_content = None
@@ -328,26 +367,6 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
                         max_tokens=6000, 
                     )
                     article_content = response.choices[0].message.content.strip()
-
-                # 3. CEREBRAS
-                elif provider == "cerebras":
-                    key = os.environ.get("CEREBRAS_API_KEY")
-                    if not key: continue
-                    res = requests.post(
-                        "https://api.cerebras.ai/v1/chat/completions",
-                        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-                        json={
-                            "model": model_name,
-                            "messages": [
-                                {"role": "system", "content": "You are a professional tech blogger."},
-                                {"role": "user", "content": diet_prompt}
-                            ],
-                            "temperature": 0.7, "max_tokens": 6000
-                        },
-                        timeout=60
-                    )
-                    if res.status_code == 200: article_content = res.json()['choices'][0]['message']['content'].strip()
-                    else: print(f"     -> Provider error: {res.text}")
 
                 # 4. MISTRAL AI
                 elif provider == "mistral":
@@ -389,7 +408,7 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
                             ],
                             "temperature": 0.7, "max_tokens": 4000
                         },
-                        timeout=60
+                        timeout=120
                     )
                     if res.status_code == 200: article_content = res.json()['choices'][0]['message']['content'].strip()
                     else: print(f"     -> Provider error: {res.text}")
@@ -412,25 +431,42 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
                     if res.status_code == 200: article_content = res.json().get('text', '').strip()
                     else: print(f"     -> Provider error: {res.text}")
 
-                # 7. DEEPSEEK
-                elif provider == "deepseek":
-                    key = os.environ.get("DEEPSEEK_API_KEY")
-                    if not key: continue
+                # GEMINI
+                elif provider == "gemini":
+                    if not GEMINI_API_KEY:
+                        continue
+                    
                     res = requests.post(
-                        "https://api.deepseek.com/v1/chat/completions",
-                        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-                        json={
-                            "model": model_name,
-                            "messages": [
-                                {"role": "system", "content": "You are a professional tech blogger."},
-                                {"role": "user", "content": diet_prompt}
-                            ],
-                            "temperature": 0.7, "max_tokens": 4000
+                        f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}",
+                        headers={
+                            "Content-Type": "application/json"
                         },
-                        timeout=60
+                        json={
+                            "contents": [{
+                                "parts": [{
+                                    "text": (
+                                        "You are a professional tech blogger. "
+                                        "You write exceptionally long, detailed, and comprehensive technical articles.\n\n"
+                                        + diet_prompt
+                                    )
+                                }]
+                            }],
+                            "generationConfig": {
+                                "maxOutputTokens": 8192,
+                                "temperature": 0.7
+                            }
+                        },
+                        timeout=120
                     )
-                    if res.status_code == 200: article_content = res.json()['choices'][0]['message']['content'].strip()
-                    else: print(f"     -> Provider error: {res.text}")
+
+                    if res.status_code == 200:
+                        data = safe_json(res)
+                        article_content = extract_text(data)
+
+                        if article_content:
+                            article_content = article_content.strip()
+                    else:
+                        print(f"     -> Provider error: {res.text}")
 
                 # Verification: If we successfully captured text, end the fallback cascade
                 if article_content and len(article_content.split()) > 200:
