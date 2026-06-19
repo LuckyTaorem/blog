@@ -580,7 +580,7 @@
             &bull;
         
         3&nbsp;min read &bull;
-        578&nbsp;words
+        572&nbsp;words
     </small>
 
 
@@ -1181,9 +1181,6 @@
                         <a class="toc-item toc-level-2" href="/blog/posts/att-promo-codes-50-off-this-june-2026/#how-to-use-att-promo-codes">How to Use AT&amp;T Promo Codes &nbsp; </a>
                         <a class="toc-item toc-level-2" href="/blog/posts/att-promo-codes-50-off-this-june-2026/#tips-for-maximizing-your-savings">Tips for Maximizing Your Savings &nbsp; </a>
                         <a class="toc-item toc-level-2" href="/blog/posts/att-promo-codes-50-off-this-june-2026/#frequently-asked-questions">Frequently Asked Questions &nbsp; </a>
-                        <a class="toc-item toc-level-2" href="/blog/posts/att-promo-codes-50-off-this-june-2026/#discussion-title">
-        Join the Discussion
-</a>
                 </div>
             </small>
         </div>
@@ -1420,41 +1417,149 @@
 </h4>
 <p>A: To stay up-to-date with the latest AT&amp;T promo codes and deals, sign up for the AT&amp;T newsletter or follow AT&amp;T on social media.</p>
 <p>With these exclusive AT&amp;T promo codes and deals, you can save up to $50 on your next internet, phone, or other service plan. Don&rsquo;t miss out on this opportunity to upgrade your services and save money. Head to the AT&amp;T website to browse through the available plans and services, and apply the promo code at checkout to receive your discount.</p>
-<hr class="my-5" style="opacity: 0.15;">
+<hr class="my-4" style="opacity: 0.15;">
 
-<div class="card border-0 shadow-sm bg-body-tertiary w-100" style="border-radius: 12px; margin-bottom: 3rem;">
-  <div class="card-body p-4 p-md-5 text-start">
+
+<div class="card border-0 shadow-sm bg-body-tertiary w-100" style="border-radius: 8px; margin-bottom: 2rem;">
+  <div class="card-body p-3 p-md-4 text-start">
     
     
-    <div class="mb-4 border-bottom pb-3">
-      <h3 class="fw-bold mb-2 text-body" id="discussion-title">
-        Join the Discussion
-      </h3>
-      <p class="text-body-secondary mb-0" style="font-size: 0.95rem;">
-        Sign in with GitHub to share your thoughts, ask questions, or leave a reaction.
+    <div class="mb-3 border-bottom border-secondary border-opacity-25 pb-2">
+      <h4 class="fw-bold mb-1 text-body" id="discussion-title">Discussion</h4>
+      <p class="text-body-secondary mb-0" style="font-size: 0.85rem;">
+        Join the conversation. No login required.
       </p>
     </div>
-            <div class="giscus-wrapper w-100">
-            
-            <script src="https://giscus.app/client.js"
-        data-repo="luckytaorem/blog"
-        data-repo-id="R_kgDOS5RlGg"
-        data-category="General"
-        data-category-id="DIC_kwDOS5RlGs4C_dNj"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="preferred_color_scheme"
-        data-lang="en"
-        crossorigin="anonymous"
-        async>
-</script>
-            
-        </div>
+    
+    
+    <form id="custom-comment-form" class="mb-4">
+      <div class="mb-2">
+        
+        <input type="text" id="comment-name" class="form-control bg-body border-secondary border-opacity-25 shadow-sm form-control-sm py-2" placeholder="Your Name (Optional)" maxlength="50" style="border-radius: 6px;">
+      </div>
+      <div class="mb-2">
+        <textarea id="comment-text" class="form-control bg-body border-secondary border-opacity-25 shadow-sm form-control-sm py-2" rows="3" placeholder="Write your comment..." required style="border-radius: 6px;"></textarea>
+      </div>
+      <div class="d-flex justify-content-end mt-2">
+        <button type="submit" id="submit-comment-btn" class="btn btn-primary btn-sm fw-bold px-4 shadow-sm" style="border-radius: 6px;">
+          Post Comment
+        </button>
+      </div>
+    </form>
+
+    
+    <div id="comments-list" class="d-flex flex-column gap-3">
+      <div id="loading-indicator" class="text-muted text-center py-2" style="font-size: 0.9rem;">
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        Loading comments...
+      </div>
     </div>
+    
+  </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    let articleSlug = window.location.pathname.replace(/\/$/, "").replace(/^\//, ""); 
+    const commentsList = document.getElementById("comments-list");
+    const commentForm = document.getElementById("custom-comment-form");
+    const submitBtn = document.getElementById("submit-comment-btn");
+
+    
+    const API_BASE_URL = "https://comments-api-72xk.onrender.com";
+
+    
+    function getAvatarHTML(name) {
+        const initial = name ? name.charAt(0).toUpperCase() : 'A';
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const hue = Math.abs(hash % 360);
+        return `<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 40px; height: 40px; background-color: hsl(${hue}, 60%, 50%); font-size: 1.1rem; flex-shrink: 0;">${initial}</div>`;
+    }
+
+    
+    function buildCommentHTML(name, text, timestamp) {
+        const avatar = getAvatarHTML(name);
+        return `
+            <div class="d-flex w-100">
+                ${avatar}
+                <div class="flex-grow-1 ms-3">
+                    <div class="bg-body p-3 shadow-sm border border-secondary border-opacity-10" style="border-radius: 0px 12px 12px 12px;">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <strong class="text-body" style="font-size: 0.95rem;">${name}</strong>
+                            <small class="text-muted" style="font-size: 0.75rem;">${timestamp}</small>
+                        </div>
+                        <p class="mb-0 text-body-secondary" style="line-height: 1.4; font-size: 0.9rem;">${text}</p>
+                    </div>
+                    <div class="d-flex gap-3 mt-1 ms-2">
+                        <button class="btn btn-sm btn-link text-muted p-0 text-decoration-none d-flex align-items-center gap-1" style="font-size: 0.8rem;" onclick="this.classList.toggle('text-danger');">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/></svg> Like
+                        </button>
+                        <button class="btn btn-sm btn-link text-muted p-0 text-decoration-none d-flex align-items-center gap-1" style="font-size: 0.8rem;" onclick="alert('Replies coming soon!');">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/></svg> Reply
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    
+    fetch(`${API_BASE_URL}/comments/${articleSlug}`)
+        .then(response => {
+            if (!response.ok) throw new Error("Server asleep or unreachable");
+            return response.json();
+        })
+        .then(data => {
+            commentsList.innerHTML = ""; 
+            if (!data.comments || data.comments.length === 0) {
+                
+                commentsList.innerHTML = "<p class='text-muted text-center py-2' style='font-size: 0.9rem;'>Be the first to share your thoughts!</p>";
+                return;
+            }
+            data.comments.forEach(c => {
+                commentsList.insertAdjacentHTML('beforeend', buildCommentHTML(c.name, c.text, c.timestamp));
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            commentsList.innerHTML = "<p class='text-muted text-center py-2' style='font-size: 0.9rem;'>Be the first to share your thoughts!</p>";
+        });
+
+    
+    commentForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Posting...";
+
+        const nameInput = document.getElementById("comment-name").value.trim() || "Anonymous";
+        const textInput = document.getElementById("comment-text").value.trim();
+
+        fetch(`${API_BASE_URL}/comments`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ slug: articleSlug, name: nameInput, text: textInput })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (commentsList.innerHTML.includes("Be the first")) {
+                commentsList.innerHTML = "";
+            }
+            commentsList.insertAdjacentHTML('afterbegin', buildCommentHTML(nameInput, textInput, "Just now"));
+            commentForm.reset();
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Post Comment";
+        })
+        .catch(err => {
+            alert("Failed to post comment. Ensure your API is running.");
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Post Comment";
+        });
+    });
+});
+</script>
 
 
                 

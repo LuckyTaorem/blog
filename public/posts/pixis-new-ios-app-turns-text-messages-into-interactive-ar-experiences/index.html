@@ -580,7 +580,7 @@
             &bull;
         
         9&nbsp;min read &bull;
-        1,883&nbsp;words
+        1,881&nbsp;words
     </small>
 
 
@@ -1161,7 +1161,6 @@
                         <a class="toc-item toc-level-2" href="/blog/posts/pixis-new-ios-app-turns-text-messages-into-interactive-ar-experiences/#9-is-pixi-safe-for-kids">9. Is Pixi safe for kids? &nbsp; </a>
                         <a class="toc-item toc-level-2" href="/blog/posts/pixis-new-ios-app-turns-text-messages-into-interactive-ar-experiences/#10-whats-the-biggest-challenge-pixi-faces">10. What’s the biggest challenge Pixi faces? &nbsp; </a>
                         <a class="toc-item toc-level-1" href="/blog/posts/pixis-new-ios-app-turns-text-messages-into-interactive-ar-experiences/#final-verdict-is-pixi-the-future-of-messaging">Final Verdict: Is Pixi the Future of Messaging? &nbsp; </a>
-                        <a class="toc-item toc-level-2" href="/blog/posts/pixis-new-ios-app-turns-text-messages-into-interactive-ar-experiences/#discussion-title">Discussion</a>
                 </div>
             </small>
         </div>
@@ -1924,34 +1923,42 @@
 </ol>
 <p>For now, Pixi is a <em>glimpse</em> into the future—a future where messaging isn’t just about <em>words</em>, but about <em>shared experiences</em>. Whether that future arrives in 2026 or 2036 remains to be seen. But one thing is clear: <strong>the era of static texting is ending. The age of interactive AR communication has begun.</strong></p>
 <p>Will you be an early adopter? Or will you wait to see if Pixi’s vision catches on? Either way, the future of messaging is here—and it’s <em>far</em> more exciting than a simple 👍.</p>
-<hr class="my-5" style="opacity: 0.15;">
+<hr class="my-4" style="opacity: 0.15;">
 
-<div class="card border-0 shadow-sm bg-body-tertiary w-100" style="border-radius: 12px; margin-bottom: 3rem;">
-  <div class="card-body p-4 p-md-5 text-start">
+
+<div class="card border-0 shadow-sm bg-body-tertiary w-100" style="border-radius: 8px; margin-bottom: 2rem;">
+  <div class="card-body p-3 p-md-4 text-start">
     
-    <div class="mb-4 border-bottom pb-3">
-      <h3 class="fw-bold mb-2 text-body" id="discussion-title">Discussion</h3>
-      <p class="text-body-secondary mb-0" style="font-size: 0.95rem;">
-        Leave an anonymous comment below. No login required.
+    
+    <div class="mb-3 border-bottom border-secondary border-opacity-25 pb-2">
+      <h4 class="fw-bold mb-1 text-body" id="discussion-title">Discussion</h4>
+      <p class="text-body-secondary mb-0" style="font-size: 0.85rem;">
+        Join the conversation. No login required.
       </p>
     </div>
     
     
-    <form id="custom-comment-form" class="mb-5">
-      <div class="mb-3">
-        <input type="text" id="comment-name" class="form-control bg-body" placeholder="Your Name (Optional - Defaults to Anonymous)" maxlength="50">
+    <form id="custom-comment-form" class="mb-4">
+      <div class="mb-2">
+        
+        <input type="text" id="comment-name" class="form-control bg-body border-secondary border-opacity-25 shadow-sm form-control-sm py-2" placeholder="Your Name (Optional)" maxlength="50" style="border-radius: 6px;">
       </div>
-      <div class="mb-3">
-        <textarea id="comment-text" class="form-control bg-body" rows="3" placeholder="Write your comment..." required></textarea>
+      <div class="mb-2">
+        <textarea id="comment-text" class="form-control bg-body border-secondary border-opacity-25 shadow-sm form-control-sm py-2" rows="3" placeholder="Write your comment..." required style="border-radius: 6px;"></textarea>
       </div>
-      <button type="submit" id="submit-comment-btn" class="btn btn-primary fw-bold px-4 rounded-pill">
-        Post Comment
-      </button>
+      <div class="d-flex justify-content-end mt-2">
+        <button type="submit" id="submit-comment-btn" class="btn btn-primary btn-sm fw-bold px-4 shadow-sm" style="border-radius: 6px;">
+          Post Comment
+        </button>
+      </div>
     </form>
 
     
     <div id="comments-list" class="d-flex flex-column gap-3">
-      <p class="text-muted" id="loading-comments">Loading comments...</p>
+      <div id="loading-indicator" class="text-muted text-center py-2" style="font-size: 0.9rem;">
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        Loading comments...
+      </div>
     </div>
     
   </div>
@@ -1959,7 +1966,6 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    
     let articleSlug = window.location.pathname.replace(/\/$/, "").replace(/^\//, ""); 
     const commentsList = document.getElementById("comments-list");
     const commentForm = document.getElementById("custom-comment-form");
@@ -1969,31 +1975,63 @@ document.addEventListener("DOMContentLoaded", function() {
     const API_BASE_URL = "https://comments-api-72xk.onrender.com";
 
     
+    function getAvatarHTML(name) {
+        const initial = name ? name.charAt(0).toUpperCase() : 'A';
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const hue = Math.abs(hash % 360);
+        return `<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" style="width: 40px; height: 40px; background-color: hsl(${hue}, 60%, 50%); font-size: 1.1rem; flex-shrink: 0;">${initial}</div>`;
+    }
+
+    
+    function buildCommentHTML(name, text, timestamp) {
+        const avatar = getAvatarHTML(name);
+        return `
+            <div class="d-flex w-100">
+                ${avatar}
+                <div class="flex-grow-1 ms-3">
+                    <div class="bg-body p-3 shadow-sm border border-secondary border-opacity-10" style="border-radius: 0px 12px 12px 12px;">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <strong class="text-body" style="font-size: 0.95rem;">${name}</strong>
+                            <small class="text-muted" style="font-size: 0.75rem;">${timestamp}</small>
+                        </div>
+                        <p class="mb-0 text-body-secondary" style="line-height: 1.4; font-size: 0.9rem;">${text}</p>
+                    </div>
+                    <div class="d-flex gap-3 mt-1 ms-2">
+                        <button class="btn btn-sm btn-link text-muted p-0 text-decoration-none d-flex align-items-center gap-1" style="font-size: 0.8rem;" onclick="this.classList.toggle('text-danger');">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/></svg> Like
+                        </button>
+                        <button class="btn btn-sm btn-link text-muted p-0 text-decoration-none d-flex align-items-center gap-1" style="font-size: 0.8rem;" onclick="alert('Replies coming soon!');">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/></svg> Reply
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    
     fetch(`${API_BASE_URL}/comments/${articleSlug}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error("Server asleep or unreachable");
+            return response.json();
+        })
         .then(data => {
             commentsList.innerHTML = ""; 
-            if (data.comments.length === 0) {
-                commentsList.innerHTML = "<p class='text-muted'>Be the first to comment!</p>";
+            if (!data.comments || data.comments.length === 0) {
+                
+                commentsList.innerHTML = "<p class='text-muted text-center py-2' style='font-size: 0.9rem;'>Be the first to share your thoughts!</p>";
                 return;
             }
-            
             data.comments.forEach(c => {
-                const commentHTML = `
-                    <div class="p-3 bg-body rounded border">
-                        <div class="d-flex justify-content-between mb-2">
-                            <strong class="text-body">${c.name}</strong>
-                            <small class="text-muted">${c.timestamp}</small>
-                        </div>
-                        <p class="mb-0 text-body-secondary">${c.text}</p>
-                    </div>
-                `;
-                commentsList.insertAdjacentHTML('beforeend', commentHTML);
+                commentsList.insertAdjacentHTML('beforeend', buildCommentHTML(c.name, c.text, c.timestamp));
             });
         })
         .catch(err => {
             console.error(err);
-            commentsList.innerHTML = "<p class='text-danger'>Failed to load comments.</p>";
+            commentsList.innerHTML = "<p class='text-muted text-center py-2' style='font-size: 0.9rem;'>Be the first to share your thoughts!</p>";
         });
 
     
@@ -2008,37 +2046,20 @@ document.addEventListener("DOMContentLoaded", function() {
         fetch(`${API_BASE_URL}/comments`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                slug: articleSlug,
-                name: nameInput,
-                text: textInput
-            })
+            body: JSON.stringify({ slug: articleSlug, name: nameInput, text: textInput })
         })
         .then(response => response.json())
         .then(data => {
-            
-            const newCommentHTML = `
-                <div class="p-3 bg-body rounded border border-primary border-opacity-50 shadow-sm">
-                    <div class="d-flex justify-content-between mb-2">
-                        <strong class="text-body">${nameInput}</strong>
-                        <small class="text-primary fw-semibold">Just now</small>
-                    </div>
-                    <p class="mb-0 text-body-secondary">${textInput}</p>
-                </div>
-            `;
-            
-            
             if (commentsList.innerHTML.includes("Be the first")) {
                 commentsList.innerHTML = "";
             }
-            
-            commentsList.insertAdjacentHTML('afterbegin', newCommentHTML);
+            commentsList.insertAdjacentHTML('afterbegin', buildCommentHTML(nameInput, textInput, "Just now"));
             commentForm.reset();
             submitBtn.disabled = false;
             submitBtn.innerText = "Post Comment";
         })
         .catch(err => {
-            alert("Failed to post comment. Please try again.");
+            alert("Failed to post comment. Ensure your API is running.");
             submitBtn.disabled = false;
             submitBtn.innerText = "Post Comment";
         });
