@@ -580,7 +580,7 @@
             &bull;
         
         4&nbsp;min read &bull;
-        700&nbsp;words
+        699&nbsp;words
     </small>
 
 
@@ -1336,7 +1336,7 @@ A: Yes, the Fire OS operating system is designed with security in mind, featurin
       <form id="custom-comment-form">
         <div class="position-relative">
           <textarea id="comment-text" class="form-control bg-body border-secondary border-opacity-25 py-2 pe-5" rows="3" placeholder="What are your thoughts?" required style="border-radius: 6px;"></textarea>
-          <button type="button" class="btn btn-link position-absolute top-0 end-0 mt-1 me-1 text-muted text-decoration-none" onclick="document.getElementById('comment-text').focus(); alert('Press Windows Key + . (or Cmd + Ctrl + Space on Mac) to open emojis!');">😀</button>
+          
         </div>
         <div class="d-flex justify-content-end mt-2">
           <button type="submit" id="submit-comment-btn" class="btn btn-primary btn-sm fw-bold px-4 rounded-pill shadow-sm">Comment</button>
@@ -1426,14 +1426,14 @@ document.addEventListener("DOMContentLoaded", function() {
     setTimeout(() => { 
         const { auth, googleProvider, githubProvider, signInWithPopup, signOut, onAuthStateChanged } = window.firebaseAuth;
 
-        document.getElementById("google-login-btn").addEventListener("click", () => signInWithPopup(auth, googleProvider).catch(err => alert(err.message)));
-        document.getElementById("github-login-btn").addEventListener("click", () => signInWithPopup(auth, githubProvider).catch(err => alert(err.message)));
+        
+        document.getElementById("google-login-btn").addEventListener("click", () => signInWithPopup(auth, googleProvider).catch(err => window.alert(err.message)));
+        document.getElementById("github-login-btn").addEventListener("click", () => signInWithPopup(auth, githubProvider).catch(err => window.alert(err.message)));
         document.getElementById("logout-btn").addEventListener("click", () => signOut(auth));
 
         onAuthStateChanged(auth, user => {
             currentUser = user;
             if (user) {
-                
                 const loginModalEl = document.getElementById('loginModal');
                 if (loginModalEl) {
                    const modalInstance = bootstrap.Modal.getInstance(loginModalEl);
@@ -1457,16 +1457,14 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     
-window.buildCommentNode = function(c) {
-        
+    window.buildCommentNode = function(c) {
         const avatarUrl = c.photo || `https://ui-avatars.com/api/?name=${c.name || 'A'}&background=random`;
-        
-        
         const score = c.like_count || 0;
         const displayScore = score === 0 ? "" : score; 
         const upvoteClass = c.has_liked ? "upvoted" : "";
         const downvoteClass = c.has_downvoted ? "downvoted" : ""; 
 
+        
         return `
         <div class="reddit-comment" id="comment-wrapper-${c.id}">
             
@@ -1474,13 +1472,10 @@ window.buildCommentNode = function(c) {
                 <button class="vote-btn upvote-btn ${upvoteClass}" onclick="voteComment(${c.id}, 'up', this)">
                     <svg style="pointer-events: none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
                 </button>
-                
                 <span class="vote-score" data-score="${score}">${displayScore}</span>
-                
                 <button class="vote-btn downvote-btn ${downvoteClass}" onclick="voteComment(${c.id}, 'down', this)">
                     <svg style="pointer-events: none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
                 </button>
-                
                 <div class="thread-line-container" onclick="collapseThread(${c.id})">
                     <div class="thread-line"></div>
                 </div>
@@ -1510,7 +1505,7 @@ window.buildCommentNode = function(c) {
                         <textarea id="reply-text-${c.id}" class="form-control form-control-sm bg-body mb-2" rows="2" placeholder="What are your thoughts?"></textarea>
                         <div class="d-flex justify-content-end gap-2">
                             <button class="btn btn-sm btn-secondary rounded-pill px-3" onclick="toggleReply(${c.id})">Cancel</button>
-                            <button class="btn btn-sm btn-primary rounded-pill px-3 fw-bold" onclick="submitReply(${c.id})">Reply</button>
+                            <button class="btn btn-sm btn-primary rounded-pill px-3 fw-bold" onclick="submitReply(${c.id}, this)">Reply</button>
                         </div>
                     </div>
                     
@@ -1551,7 +1546,6 @@ window.buildCommentNode = function(c) {
         
         let roots = allGlobalComments.filter(c => c.parent_id === null);
         
-        
         if (sortType === 'best') {
             roots.sort((a, b) => (b.like_count || 0) - (a.like_count || 0));
         } else if (sortType === 'new') {
@@ -1565,7 +1559,6 @@ window.buildCommentNode = function(c) {
         });
     }
 
-    
     document.getElementById("sort-comments").addEventListener("change", function(e) {
         renderSortedComments(e.target.value);
     });
@@ -1576,7 +1569,6 @@ window.buildCommentNode = function(c) {
             .then(r => r.json())
             .then(data => {
                 allGlobalComments = data.comments || [];
-                
                 document.getElementById("sort-comments").value = 'best';
                 renderSortedComments('best');
             }).catch(() => {
@@ -1589,7 +1581,6 @@ window.buildCommentNode = function(c) {
     
     window.toggleReply = function(id) {
         if (!currentUser) {
-            
             new bootstrap.Modal(document.getElementById('loginModal')).show();
             return;
         }
@@ -1604,10 +1595,8 @@ window.buildCommentNode = function(c) {
         collapsedState.classList.toggle('d-none');
     };
 
-    
     window.shareComment = function(id) {
         const shareUrl = window.location.href.split('#')[0] + `#comment-wrapper-${id}`;
-        
         
         function showToast(msg) {
             let toastBox = document.getElementById('custom-toast-box');
@@ -1635,8 +1624,6 @@ window.buildCommentNode = function(c) {
 
     
     window.voteComment = function(id, action, btnElement) {
-        
-
         const voteCol = btnElement.closest('.vote-column');
         const upBtn = voteCol.querySelector('.upvote-btn');
         const downBtn = voteCol.querySelector('.downvote-btn');
@@ -1663,9 +1650,6 @@ window.buildCommentNode = function(c) {
                     globalComment.has_downvoted = false;
                 }
             }
-            
-            fetch(`${API_BASE_URL}/comments/${id}/like`, { method: "POST" }).catch(console.error);
-            
         } else if (action === 'down') {
             if (isDownvoted) {
                 currentScore += 1; 
@@ -1680,77 +1664,114 @@ window.buildCommentNode = function(c) {
                     globalComment.has_liked = false;
                 }
             }
-            
         }
 
         
         scoreSpan.dataset.score = currentScore;
         scoreSpan.innerText = currentScore === 0 ? "" : currentScore;
-        
-        
         if (globalComment) globalComment.like_count = currentScore;
+
+        
+        fetch(`${API_BASE_URL}/comments/${id}/vote`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: action })
+        }).catch(console.error);
     };
 
-    window.submitReply = async function(parentId) {
-        if (!currentUser) return alert("Please sign in to reply.");
+    window.submitReply = async function(parentId, btnElement) {
+        if (!currentUser) return window.alert("Please sign in to reply.");
         const textInput = document.getElementById(`reply-text-${parentId}`).value.trim();
         if (!textInput) return;
 
         
-        const token = await currentUser.getIdToken();
+        const originalText = btnElement.innerHTML;
+        btnElement.disabled = true;
+        btnElement.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>...`;
 
-        fetch(`${API_BASE_URL}/comments`, {
-            method: "POST",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}` 
-            },
-            body: JSON.stringify({ 
-                slug: articleSlug, 
-                name: currentUser.displayName, 
-                photo: currentUser.photoURL,
-                text: textInput, 
-                parent_id: parentId 
-            })
-        }).then(() => {
+        try {
+            const token = await currentUser.getIdToken();
+            const response = await fetch(`${API_BASE_URL}/comments`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` 
+                },
+                body: JSON.stringify({ 
+                    slug: articleSlug, 
+                    name: currentUser.displayName, 
+                    photo: currentUser.photoURL,
+                    text: textInput, 
+                    parent_id: parentId 
+                })
+            });
+
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || "Error posting reply.");
+            }
+            
             loadComments(); 
-        }).catch(err => alert("Error posting reply."));
+        } catch (err) {
+            window.alert(err.message); 
+            btnElement.disabled = false;
+            btnElement.innerHTML = originalText;
+        }
     };
 
     
     document.getElementById("custom-comment-form").addEventListener("submit", async function(e) {
         e.preventDefault();
-        if (!currentUser) return alert("Please sign in to comment.");
+        if (!currentUser) return window.alert("Please sign in to comment.");
         
         const textInput = document.getElementById("comment-text").value.trim();
         if (!textInput) return;
+        
         const submitBtn = document.getElementById("submit-comment-btn");
+        const originalText = submitBtn.innerHTML;
+        
+        
         submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Posting...`;
 
-        const token = await currentUser.getIdToken();
+        try {
+            const token = await currentUser.getIdToken();
+            const response = await fetch(`${API_BASE_URL}/comments`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` 
+                },
+                body: JSON.stringify({ 
+                    slug: articleSlug, 
+                    name: currentUser.displayName, 
+                    photo: currentUser.photoURL,
+                    text: textInput, 
+                    parent_id: null 
+                })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || "Error posting comment.");
+            }
 
-        fetch(`${API_BASE_URL}/comments`, {
-            method: "POST",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}` 
-            },
-            body: JSON.stringify({ 
-                slug: articleSlug, 
-                name: currentUser.displayName, 
-                photo: currentUser.photoURL,
-                text: textInput, 
-                parent_id: null 
-            })
-        }).then(() => {
             document.getElementById("comment-text").value = "";
             loadComments();
             submitBtn.disabled = false;
-        }).catch(() => {
-            alert("Error posting comment.");
+            submitBtn.innerHTML = originalText;
+            
+        } catch (err) {
+            window.alert(err.message); 
             submitBtn.disabled = false;
-        });
+            submitBtn.innerHTML = originalText;
+        }
     });
+
+    
+    
+    window.alert = window.alert; 
 });
 </script>
 
