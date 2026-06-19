@@ -10,7 +10,16 @@
 		
 		
 		
+			<lastBuildDate>Fri, 19 Jun 2026 07:07:37 +0000</lastBuildDate>
+		
 			<atom:link href="http://localhost:1313/blog/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Mars Race</title>
+				<link>http://localhost:1313/blog/posts/nasa-picks-eric-schmidts-rocket-company-for-mars-mission-setting-up-a-race-with-spacex/</link>
+				<pubDate>Fri, 19 Jun 2026 07:07:37 +0000</pubDate>
+				<guid>http://localhost:1313/blog/posts/nasa-picks-eric-schmidts-rocket-company-for-mars-mission-setting-up-a-race-with-spacex/</guid>
+				<description>&lt;h2 id=&#34;introduction-to-the-mars-mission-race&#34; class=&#34;heading &#34;&gt;Introduction to the Mars Mission Race&lt;a href=&#34;#introduction-to-the-mars-mission-race&#34; aria-labelledby=&#34;introduction-to-the-mars-mission-race&#34;&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;!-- &lt;i class=&#34;fas fa-link anchor&#34;&gt;&lt;/i&gt; --&gt;&#xA;        &lt;svg class=&#34;svg-inline--fa fas fa-link anchor&#34; fill=&#34;currentColor&#34; aria-hidden=&#34;true&#34; role=&#34;img&#34; viewBox=&#34;0 0 576 512&#34;&gt;&lt;use href=&#34;#fas-link&#34;&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;&#xA;    &lt;/a&gt;&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;The space industry has been abuzz with the latest developments in the Mars mission race, with Relativity Space, a rocket maker acquired by former Google executive chair Eric Schmidt, emerging as a strong contender to beat SpaceX to the red planet. This development has significant implications for the space industry, with potential breakthroughs in technology, innovation, and exploration. In this article, we will delve into the details of Relativity Space&amp;rsquo;s acquisition, its technology, and its chances of beating SpaceX to Mars.&lt;/p&gt;</description>
+			</item>
 			<item>
 				<title>Robotaxis Invade Closed Highways: A Tech Disaster?</title>
 				<link>http://localhost:1313/blog/posts/waymo-recalls-nearly-4000-robotaxis-to-stop-them-driving-into-highway-construction-zones/</link>
@@ -248,13 +257,6 @@
 				<pubDate>Thu, 18 Jun 2026 13:26:34 +0000</pubDate>
 				<guid>http://localhost:1313/blog/posts/how-to-turn-off-ai-in-your-google-docs/</guid>
 				<description>&lt;h2 id=&#34;introduction-to-ai-in-google-docs&#34; class=&#34;heading &#34;&gt;Introduction to AI in Google Docs&lt;a href=&#34;#introduction-to-ai-in-google-docs&#34; aria-labelledby=&#34;introduction-to-ai-in-google-docs&#34;&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;!-- &lt;i class=&#34;fas fa-link anchor&#34;&gt;&lt;/i&gt; --&gt;&#xA;        &lt;svg class=&#34;svg-inline--fa fas fa-link anchor&#34; fill=&#34;currentColor&#34; aria-hidden=&#34;true&#34; role=&#34;img&#34; viewBox=&#34;0 0 576 512&#34;&gt;&lt;use href=&#34;#fas-link&#34;&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;&#xA;    &lt;/a&gt;&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;Google Docs has become an essential tool for individuals and businesses alike, providing a convenient and collaborative way to create and edit documents. Recently, Google introduced a new feature called &amp;ldquo;Gemini&amp;rdquo; which utilizes artificial intelligence (AI) to assist with writing tasks. While this feature can be helpful, some users may find the frequent &amp;ldquo;write with Gemini&amp;rdquo; pop-ups to be annoying and distracting. In this article, we will explore the reasons behind these pop-ups and provide a step-by-step guide on how to turn them off.&lt;/p&gt;</description>
-			</item>
-			<item>
-				<title>NASA Backs Schmidt&#39;s Rocket Revolution</title>
-				<link>http://localhost:1313/blog/posts/nasa-picks-eric-schmidts-rocket-company-for-mars-mission-setting-up-a-race-with-spacex/</link>
-				<pubDate>Thu, 18 Jun 2026 13:25:56 +0000</pubDate>
-				<guid>http://localhost:1313/blog/posts/nasa-picks-eric-schmidts-rocket-company-for-mars-mission-setting-up-a-race-with-spacex/</guid>
-				<description>&lt;h2 id=&#34;nasa-picks-eric-schmidts-rocket-company-for-mars-mission-setting-up-a-thrilling-competition-with-spacex&#34; class=&#34;heading &#34;&gt;NASA Picks Eric Schmidt’s Rocket Company for Mars Mission, Setting Up a Thrilling Competition with SpaceX&lt;a href=&#34;#nasa-picks-eric-schmidts-rocket-company-for-mars-mission-setting-up-a-thrilling-competition-with-spacex&#34; aria-labelledby=&#34;nasa-picks-eric-schmidts-rocket-company-for-mars-mission-setting-up-a-thrilling-competition-with-spacex&#34;&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;!-- &lt;i class=&#34;fas fa-link anchor&#34;&gt;&lt;/i&gt; --&gt;&#xA;        &lt;svg class=&#34;svg-inline--fa fas fa-link anchor&#34; fill=&#34;currentColor&#34; aria-hidden=&#34;true&#34; role=&#34;img&#34; viewBox=&#34;0 0 576 512&#34;&gt;&lt;use href=&#34;#fas-link&#34;&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;&#xA;    &lt;/a&gt;&#xA;&lt;/h2&gt;&#xA;&lt;p&gt;In a groundbreaking move, NASA has chosen Relativity Space, a private rocket manufacturer backed by former Google executive chair Eric Schmidt, to join the Mars mission. This development marks a significant milestone in the ongoing efforts of private space companies to push the boundaries of space exploration. With SpaceX, led by Elon Musk, already making headlines for its ambitious Mars ambitions, this latest announcement sets the stage for a thrilling competition between two of the most influential players in the space industry.&lt;/p&gt;</description>
 			</item>
 			<item>
 				<title>Hulk Meets Punisher: Spider-Man&#39;s Deadliest Alliance</title>

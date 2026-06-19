@@ -580,7 +580,7 @@
             &bull;
         
         3&nbsp;min read &bull;
-        589&nbsp;words
+        594&nbsp;words
     </small>
 
 
@@ -1135,9 +1135,6 @@
                         <a class="toc-item toc-level-1" href="/blog/posts/uplift-promo-codes-570-off/#how-to-get-the-best-uplift-desk-discount-codes">How to Get the Best Uplift Desk Discount Codes &nbsp; </a>
                         <a class="toc-item toc-level-1" href="/blog/posts/uplift-promo-codes-570-off/#benefits-of-uplift-desk-products">Benefits of Uplift Desk Products &nbsp; </a>
                         <a class="toc-item toc-level-1" href="/blog/posts/uplift-promo-codes-570-off/#frequently-asked-questions">Frequently Asked Questions &nbsp; </a>
-                        <a class="toc-item toc-level-2" href="/blog/posts/uplift-promo-codes-570-off/#discussion-title">
-        Join the Discussion
-</a>
                 </div>
             </small>
         </div>
@@ -1273,39 +1270,473 @@ A: Yes, you can combine promo codes with other discounts, but be sure to check t
 A: The Spring Setup Sale is a limited-time promotion, and the exact duration is not specified. Be sure to check the Uplift Desk website for the latest information on sale dates and times.</p>
 <hr class="my-5" style="opacity: 0.15;">
 
-<div class="card border-0 shadow-sm bg-body-tertiary w-100" style="border-radius: 12px; margin-bottom: 3rem;">
-  <div class="card-body p-4 p-md-5 text-start">
-    
-    
-    <div class="mb-4 border-bottom pb-3">
-      <h3 class="fw-bold mb-2 text-body" id="discussion-title">
-        Join the Discussion
-      </h3>
-      <p class="text-body-secondary mb-0" style="font-size: 0.95rem;">
-        Sign in with GitHub to share your thoughts, ask questions, or leave a reaction.
-      </p>
-    </div>
-            <div class="giscus-wrapper w-100">
-            
-            <script src="https://giscus.app/client.js"
-        data-repo="luckytaorem/blog"
-        data-repo-id="R_kgDOS5RlGg"
-        data-category="General"
-        data-category-id="DIC_kwDOS5RlGs4C_dNj"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="preferred_color_scheme"
-        data-lang="en"
-        crossorigin="anonymous"
-        async>
-</script>
-            
+<div class="w-100" style="margin-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0 text-body" id="discussion-title">Discussion</h4>
+    <select id="sort-comments" class="form-select form-select-sm" style="width: auto; cursor: pointer;">
+        <option value="best">Best</option>
+        <option value="new">New</option>
+        <option value="old">Old</option>
+    </select>
+  </div>
+  
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-body-tertiary shadow">
+        <div class="modal-header border-bottom border-secondary border-opacity-25">
+          <h5 class="modal-title fw-bold">Sign in to comment</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body d-flex flex-column gap-3 p-4">
+          <button class="btn btn-outline-secondary text-body d-flex justify-content-center align-items-center gap-2 fw-bold py-2" id="google-login-btn">
+            <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google
+          </button>
+          <button class="btn btn-outline-secondary text-body d-flex justify-content-center align-items-center gap-2 fw-bold py-2" id="github-login-btn">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Continue with GitHub
+          </button>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <div class="mb-5 border border-secondary border-opacity-25 p-3 shadow-sm bg-body-tertiary" style="border-radius: 8px;">
+    
+    <div id="login-ui">
+      <div class="form-control bg-body border-secondary border-opacity-25 py-2 text-muted" style="border-radius: 6px; cursor: text;" data-bs-toggle="modal" data-bs-target="#loginModal">
+        Join the conversation...
+      </div>
+    </div>
+
+    <div id="composer-ui" class="d-none">
+      <div class="d-flex align-items-center justify-content-between mb-3 border-bottom border-secondary border-opacity-25 pb-2">
+        <div class="d-flex align-items-center gap-2">
+          <img id="user-avatar" width="28" height="28" class="rounded-circle shadow-sm" src="">
+          <span id="user-name" class="fw-bold" style="font-size: 0.9rem;"></span>
+        </div>
+        <button id="logout-btn" class="btn btn-sm btn-link text-danger text-decoration-none p-0" style="font-size: 0.8rem;">Logout</button>
+      </div>
+
+      <form id="custom-comment-form">
+        <div class="position-relative">
+          <textarea id="comment-text" class="form-control bg-body border-secondary border-opacity-25 py-2 pe-5" rows="3" placeholder="What are your thoughts?" required style="border-radius: 6px;"></textarea>
+          <button type="button" class="btn btn-link position-absolute top-0 end-0 mt-1 me-1 text-muted text-decoration-none" onclick="document.getElementById('comment-text').focus(); alert('Press Windows Key + . (or Cmd + Ctrl + Space on Mac) to open emojis!');">😀</button>
+        </div>
+        <div class="d-flex justify-content-end mt-2">
+          <button type="submit" id="submit-comment-btn" class="btn btn-primary btn-sm fw-bold px-4 rounded-pill shadow-sm">Comment</button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <div id="comments-list" class="d-flex flex-column gap-1">
+    <div id="loading-indicator" class="text-muted py-2" style="font-size: 0.9rem;">
+      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Loading discussion...
+    </div>
+  </div>
+    
 </div>
+
+<style>
+
+@keyframes voteBounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+.vote-btn.upvoted svg, .vote-btn.downvoted svg {
+  animation: voteBounce 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+ 
+.reddit-comment { display: flex; gap: 8px; margin-top: 12px; }
+.vote-column { display: flex; flex-direction: column; align-items: center; width: 32px; flex-shrink: 0; }
+.vote-btn { cursor: pointer; color: #878a8c; background: none; border: none; padding: 2px; }
+.vote-btn:hover { color: #ff4500; background: rgba(255, 69, 0, 0.1); border-radius: 4px; }
+.vote-score { font-size: 0.8rem; font-weight: 700; margin: 2px 0; color: var(--bs-body-color); }
+.vote-btn.upvoted { color: #ff4500; }
+.vote-btn.downvoted { color: #7193ff; }
+
+.thread-line-container { width: 100%; display: flex; justify-content: center; flex-grow: 1; cursor: pointer; padding-top: 4px; }
+.thread-line { width: 2px; height: 100%; background-color: var(--bs-secondary-bg); transition: background-color 0.2s; }
+.thread-line-container:hover .thread-line { background-color: var(--bs-primary); }
+
+.comment-meta { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; margin-bottom: 2px; }
+.comment-meta img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
+.comment-author { font-weight: 600; color: var(--bs-body-color); }
+.comment-time { color: #878a8c; }
+
+.comment-content { font-size: 0.95rem; white-space: pre-wrap; line-height: 1.5; margin-bottom: 4px; word-break: break-word; }
+.comment-actions { display: flex; gap: 12px; align-items: center; }
+.action-btn { background: none; border: none; color: #878a8c; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 4px; padding: 4px 6px; border-radius: 4px; cursor: pointer; }
+.action-btn:hover { background-color: var(--bs-secondary-bg); color: var(--bs-body-color); }
+
+.children-container { margin-top: 4px; }
+</style>
+
+<script type="module">
+  
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, GithubAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBSqRABdmdLLb6k-OC8AQ0CQ3JGgf95o3c",
+    authDomain: "blogs-comment.firebaseapp.com",
+    projectId: "blogs-comment",
+    storageBucket: "blogs-comment.firebasestorage.app",
+    messagingSenderId: "1090330631029",
+    appId: "1:1090330631029:web:a99eb3a065d95b89e2913c"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const googleProvider = new GoogleAuthProvider();
+  const githubProvider = new GithubAuthProvider();
+
+  
+  window.firebaseAuth = { auth, googleProvider, githubProvider, signInWithPopup, signOut, onAuthStateChanged };
+</script>
+
+<script>
+let currentUser = null;
+const API_BASE_URL = "https://comments-api-72xk.onrender.com";
+let articleSlug = window.location.pathname.replace(/\/$/, "").replace(/^\//, ""); 
+let allGlobalComments = [];
+
+document.addEventListener("DOMContentLoaded", function() {
+    
+    
+    setTimeout(() => { 
+        const { auth, googleProvider, githubProvider, signInWithPopup, signOut, onAuthStateChanged } = window.firebaseAuth;
+
+        document.getElementById("google-login-btn").addEventListener("click", () => signInWithPopup(auth, googleProvider).catch(err => alert(err.message)));
+        document.getElementById("github-login-btn").addEventListener("click", () => signInWithPopup(auth, githubProvider).catch(err => alert(err.message)));
+        document.getElementById("logout-btn").addEventListener("click", () => signOut(auth));
+
+        onAuthStateChanged(auth, user => {
+            currentUser = user;
+            if (user) {
+                
+                const loginModalEl = document.getElementById('loginModal');
+                if (loginModalEl) {
+                   const modalInstance = bootstrap.Modal.getInstance(loginModalEl);
+                   if (modalInstance) modalInstance.hide();
+                }
+
+                document.getElementById("login-ui").classList.add("d-none");
+                document.getElementById("composer-ui").classList.remove("d-none");
+                document.getElementById("user-name").textContent = user.displayName || "Anonymous User";
+                document.getElementById("user-avatar").src = user.photoURL || "https://ui-avatars.com/api/?name=" + (user.displayName || "A");
+            } else {
+                document.getElementById("login-ui").classList.remove("d-none");
+                document.getElementById("composer-ui").classList.add("d-none");
+            }
+        });
+    }, 500);
+
+    
+    function escapeHtml(str) {
+        return (str || "").replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    
+window.buildCommentNode = function(c) {
+        
+        const avatarUrl = c.photo || `https://ui-avatars.com/api/?name=${c.name || 'A'}&background=random`;
+        
+        
+        const score = c.like_count || 0;
+        const displayScore = score === 0 ? "" : score; 
+        const upvoteClass = c.has_liked ? "upvoted" : "";
+        const downvoteClass = c.has_downvoted ? "downvoted" : ""; 
+
+        return `
+        <div class="reddit-comment" id="comment-wrapper-${c.id}">
+            
+            <div class="vote-column">
+                <button class="vote-btn upvote-btn ${upvoteClass}" onclick="voteComment(${c.id}, 'up', this)">
+                    <svg style="pointer-events: none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                </button>
+                
+                <span class="vote-score" data-score="${score}">${displayScore}</span>
+                
+                <button class="vote-btn downvote-btn ${downvoteClass}" onclick="voteComment(${c.id}, 'down', this)">
+                    <svg style="pointer-events: none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                </button>
+                
+                <div class="thread-line-container" onclick="collapseThread(${c.id})">
+                    <div class="thread-line"></div>
+                </div>
+            </div>
+
+            <div class="flex-grow-1" style="min-width: 0;">
+                
+                <div class="comment-meta">
+                    <img src="${avatarUrl}" alt="avatar">
+                    <span class="comment-author">${escapeHtml(c.name)}</span>
+                    <span class="comment-time">• ${escapeHtml(c.timestamp)}</span>
+                </div>
+
+                <div id="comment-body-${c.id}">
+                    <div class="comment-content">${escapeHtml(c.text)}</div>
+                    
+                    <div class="comment-actions">
+                        <button class="action-btn" onclick="toggleReply(${c.id})">
+                            <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/></svg> Reply
+                        </button>
+                        <button class="action-btn" onclick="shareComment(${c.id})">
+                            <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/></svg> Share
+                        </button>
+                    </div>
+
+                    <div id="reply-box-${c.id}" class="d-none mt-2 p-2 border border-secondary border-opacity-25 rounded bg-body-tertiary">
+                        <textarea id="reply-text-${c.id}" class="form-control form-control-sm bg-body mb-2" rows="2" placeholder="What are your thoughts?"></textarea>
+                        <div class="d-flex justify-content-end gap-2">
+                            <button class="btn btn-sm btn-secondary rounded-pill px-3" onclick="toggleReply(${c.id})">Cancel</button>
+                            <button class="btn btn-sm btn-primary rounded-pill px-3 fw-bold" onclick="submitReply(${c.id})">Reply</button>
+                        </div>
+                    </div>
+                    
+                    <div id="children-${c.id}" class="children-container"></div>
+                </div>
+
+                <div id="collapsed-state-${c.id}" class="d-none text-muted" style="font-size: 0.8rem; cursor: pointer; padding-top: 4px;" onclick="collapseThread(${c.id})">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> Expand comment thread
+                </div>
+
+            </div>
+        </div>
+        `;
+    }
+
+    
+    function renderThread(comment, allComments) {
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = buildCommentNode(comment);
+        const childContainer = wrapper.querySelector('#children-' + comment.id);
+        const children = allComments.filter(x => x.parent_id === comment.id);
+        
+        children.forEach(child => {
+            childContainer.innerHTML += renderThread(child, allComments);
+        });
+        return wrapper.innerHTML;
+    }
+
+    
+    function renderSortedComments(sortType) {
+        const commentsList = document.getElementById("comments-list");
+        commentsList.innerHTML = '';
+        
+        if (allGlobalComments.length === 0) {
+            commentsList.innerHTML = "<p class='text-muted py-3'>No comments yet. Be the first to share your thoughts!</p>";
+            return;
+        }
+        
+        let roots = allGlobalComments.filter(c => c.parent_id === null);
+        
+        
+        if (sortType === 'best') {
+            roots.sort((a, b) => (b.like_count || 0) - (a.like_count || 0));
+        } else if (sortType === 'new') {
+            roots.sort((a, b) => b.id - a.id);
+        } else if (sortType === 'old') {
+            roots.sort((a, b) => a.id - b.id);
+        }
+        
+        roots.forEach(root => {
+            commentsList.innerHTML += renderThread(root, allGlobalComments);
+        });
+    }
+
+    
+    document.getElementById("sort-comments").addEventListener("change", function(e) {
+        renderSortedComments(e.target.value);
+    });
+
+    
+    function loadComments() {
+        fetch(`${API_BASE_URL}/comments/${articleSlug}`)
+            .then(r => r.json())
+            .then(data => {
+                allGlobalComments = data.comments || [];
+                
+                document.getElementById("sort-comments").value = 'best';
+                renderSortedComments('best');
+            }).catch(() => {
+                document.getElementById("comments-list").innerHTML = "<p class='text-muted py-3'>Be the first to share your thoughts!</p>";
+            });
+    }
+
+    loadComments();
+
+    
+    window.toggleReply = function(id) {
+        if (!currentUser) {
+            
+            new bootstrap.Modal(document.getElementById('loginModal')).show();
+            return;
+        }
+        const box = document.getElementById('reply-box-' + id);
+        box.classList.toggle('d-none');
+    };
+
+    window.collapseThread = function(id) {
+        const body = document.getElementById('comment-body-' + id);
+        const collapsedState = document.getElementById('collapsed-state-' + id);
+        body.classList.toggle('d-none');
+        collapsedState.classList.toggle('d-none');
+    };
+
+    
+    window.shareComment = function(id) {
+        const shareUrl = window.location.href.split('#')[0] + `#comment-wrapper-${id}`;
+        
+        
+        function showToast(msg) {
+            let toastBox = document.getElementById('custom-toast-box');
+            if(!toastBox) {
+                toastBox = document.createElement('div');
+                toastBox.id = 'custom-toast-box';
+                toastBox.style.cssText = 'position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:var(--bs-body-color); color:var(--bs-body-bg); padding:10px 20px; border-radius:30px; font-size:0.9rem; font-weight:bold; z-index:9999; opacity:0; transition:opacity 0.3s; pointer-events:none; box-shadow: 0 4px 12px rgba(0,0,0,0.15);';
+                document.body.appendChild(toastBox);
+            }
+            toastBox.innerText = msg;
+            toastBox.style.opacity = '1';
+            setTimeout(() => toastBox.style.opacity = '0', 2500);
+        }
+
+        if (navigator.share) {
+            navigator.share({ title: 'Comment', url: shareUrl }).catch(() => {
+                navigator.clipboard.writeText(shareUrl);
+                showToast("Link copied to clipboard!");
+            });
+        } else {
+            navigator.clipboard.writeText(shareUrl);
+            showToast("Link copied to clipboard!");
+        }
+    };
+
+    
+    window.voteComment = function(id, action, btnElement) {
+        
+
+        const voteCol = btnElement.closest('.vote-column');
+        const upBtn = voteCol.querySelector('.upvote-btn');
+        const downBtn = voteCol.querySelector('.downvote-btn');
+        const scoreSpan = voteCol.querySelector('.vote-score');
+        
+        let currentScore = parseInt(scoreSpan.dataset.score || 0);
+        const isUpvoted = upBtn.classList.contains('upvoted');
+        const isDownvoted = downBtn.classList.contains('downvoted');
+
+        
+        const globalComment = allGlobalComments.find(c => c.id === id);
+
+        if (action === 'up') {
+            if (isUpvoted) {
+                currentScore -= 1; 
+                upBtn.classList.remove('upvoted');
+                if (globalComment) globalComment.has_liked = false;
+            } else {
+                currentScore += isDownvoted ? 2 : 1; 
+                upBtn.classList.add('upvoted');
+                downBtn.classList.remove('downvoted');
+                if (globalComment) {
+                    globalComment.has_liked = true;
+                    globalComment.has_downvoted = false;
+                }
+            }
+            
+            fetch(`${API_BASE_URL}/comments/${id}/like`, { method: "POST" }).catch(console.error);
+            
+        } else if (action === 'down') {
+            if (isDownvoted) {
+                currentScore += 1; 
+                downBtn.classList.remove('downvoted');
+                if (globalComment) globalComment.has_downvoted = false;
+            } else {
+                currentScore -= isUpvoted ? 2 : 1; 
+                downBtn.classList.add('downvoted');
+                upBtn.classList.remove('upvoted');
+                if (globalComment) {
+                    globalComment.has_downvoted = true;
+                    globalComment.has_liked = false;
+                }
+            }
+            
+        }
+
+        
+        scoreSpan.dataset.score = currentScore;
+        scoreSpan.innerText = currentScore === 0 ? "" : currentScore;
+        
+        
+        if (globalComment) globalComment.like_count = currentScore;
+    };
+
+    window.submitReply = async function(parentId) {
+        if (!currentUser) return alert("Please sign in to reply.");
+        const textInput = document.getElementById(`reply-text-${parentId}`).value.trim();
+        if (!textInput) return;
+
+        
+        const token = await currentUser.getIdToken();
+
+        fetch(`${API_BASE_URL}/comments`, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}` 
+            },
+            body: JSON.stringify({ 
+                slug: articleSlug, 
+                name: currentUser.displayName, 
+                photo: currentUser.photoURL,
+                text: textInput, 
+                parent_id: parentId 
+            })
+        }).then(() => {
+            loadComments(); 
+        }).catch(err => alert("Error posting reply."));
+    };
+
+    
+    document.getElementById("custom-comment-form").addEventListener("submit", async function(e) {
+        e.preventDefault();
+        if (!currentUser) return alert("Please sign in to comment.");
+        
+        const textInput = document.getElementById("comment-text").value.trim();
+        if (!textInput) return;
+        const submitBtn = document.getElementById("submit-comment-btn");
+        submitBtn.disabled = true;
+
+        const token = await currentUser.getIdToken();
+
+        fetch(`${API_BASE_URL}/comments`, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}` 
+            },
+            body: JSON.stringify({ 
+                slug: articleSlug, 
+                name: currentUser.displayName, 
+                photo: currentUser.photoURL,
+                text: textInput, 
+                parent_id: null 
+            })
+        }).then(() => {
+            document.getElementById("comment-text").value = "";
+            loadComments();
+            submitBtn.disabled = false;
+        }).catch(() => {
+            alert("Error posting comment.");
+            submitBtn.disabled = false;
+        });
+    });
+});
+</script>
 
 
                 
