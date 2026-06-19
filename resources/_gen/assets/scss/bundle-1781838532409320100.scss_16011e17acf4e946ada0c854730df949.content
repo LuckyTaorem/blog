@@ -13511,3 +13511,5 @@ section.list .datatable-top, section.list .datatable-bottom {
 @container (min-width: 0) {
   .fa-wrapper .fa-fluid {
     font-size: 60cqi; } }
+
+/*# sourceMappingURL=main.css.map */

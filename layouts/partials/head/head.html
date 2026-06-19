@@ -4,6 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="google-site-verification" content="i8FXlaFc-ZLFqIzN-rgTIK614f6dGg1gz8HAegeb4tI" />
+    <style>
+  /* Force the Hinode header logo to resize */
+  .navbar-brand img, 
+  .navbar-brand svg {
+      max-height: 100px !important; /* Crucial: removes the default strict height limit */
+      height: auto !important;
+      width: 250px !important;      /* Change this number to your desired width */
+  }
+</style>
     {{ hugo.Generator }}
     {{ partialCached "head/stylesheet-core.html" . -}}
 
