@@ -106,14 +106,17 @@ def sanitize_existing_posts():
     print("🧹 Running legacy frontmatter sanitizer...")
     if not os.path.exists(output_dir): return
     for fname in os.listdir(output_dir):
-        if not fname.endswith('.md'): continue
+        # 🚨 NEW: Skip Hugo structural files, only target actual blog posts!
+        if not fname.endswith('.md') or fname == "_index.md": continue
+        
         path = os.path.join(output_dir, fname)
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 content = f.read()
             
             # If the title line doesn't start with a quote, wrap it in quotes
-            fixed_content = re.sub(r'^title:\s*(?!["\'])(.*)$', r'title: "\1"', content, flags=re.MULTILINE)
+            # Made the regex slightly safer to ignore leading spaces
+            fixed_content = re.sub(r'^title:\s*([^"\'\n].*)$', r'title: "\1"', content, flags=re.MULTILINE)
             
             if fixed_content != content:
                 with open(path, 'w', encoding='utf-8') as f:
