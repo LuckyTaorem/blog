@@ -2065,14 +2065,14 @@ document.addEventListener("DOMContentLoaded", function() {
     setTimeout(() => { 
         const { auth, googleProvider, githubProvider, signInWithPopup, signOut, onAuthStateChanged } = window.firebaseAuth;
 
-        document.getElementById("google-login-btn").addEventListener("click", () => signInWithPopup(auth, googleProvider).catch(err => alert(err.message)));
-        document.getElementById("github-login-btn").addEventListener("click", () => signInWithPopup(auth, githubProvider).catch(err => alert(err.message)));
+        
+        document.getElementById("google-login-btn").addEventListener("click", () => signInWithPopup(auth, googleProvider).catch(err => window.alert(err.message)));
+        document.getElementById("github-login-btn").addEventListener("click", () => signInWithPopup(auth, githubProvider).catch(err => window.alert(err.message)));
         document.getElementById("logout-btn").addEventListener("click", () => signOut(auth));
 
         onAuthStateChanged(auth, user => {
             currentUser = user;
             if (user) {
-                
                 const loginModalEl = document.getElementById('loginModal');
                 if (loginModalEl) {
                    const modalInstance = bootstrap.Modal.getInstance(loginModalEl);
@@ -2096,16 +2096,14 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     
-window.buildCommentNode = function(c) {
-        
+    window.buildCommentNode = function(c) {
         const avatarUrl = c.photo || `https://ui-avatars.com/api/?name=${c.name || 'A'}&background=random`;
-        
-        
         const score = c.like_count || 0;
         const displayScore = score === 0 ? "" : score; 
         const upvoteClass = c.has_liked ? "upvoted" : "";
         const downvoteClass = c.has_downvoted ? "downvoted" : ""; 
 
+        
         return `
         <div class="reddit-comment" id="comment-wrapper-${c.id}">
             
@@ -2113,13 +2111,10 @@ window.buildCommentNode = function(c) {
                 <button class="vote-btn upvote-btn ${upvoteClass}" onclick="voteComment(${c.id}, 'up', this)">
                     <svg style="pointer-events: none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
                 </button>
-                
                 <span class="vote-score" data-score="${score}">${displayScore}</span>
-                
                 <button class="vote-btn downvote-btn ${downvoteClass}" onclick="voteComment(${c.id}, 'down', this)">
                     <svg style="pointer-events: none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
                 </button>
-                
                 <div class="thread-line-container" onclick="collapseThread(${c.id})">
                     <div class="thread-line"></div>
                 </div>
@@ -2190,7 +2185,6 @@ window.buildCommentNode = function(c) {
         
         let roots = allGlobalComments.filter(c => c.parent_id === null);
         
-        
         if (sortType === 'best') {
             roots.sort((a, b) => (b.like_count || 0) - (a.like_count || 0));
         } else if (sortType === 'new') {
@@ -2204,7 +2198,6 @@ window.buildCommentNode = function(c) {
         });
     }
 
-    
     document.getElementById("sort-comments").addEventListener("change", function(e) {
         renderSortedComments(e.target.value);
     });
@@ -2215,7 +2208,6 @@ window.buildCommentNode = function(c) {
             .then(r => r.json())
             .then(data => {
                 allGlobalComments = data.comments || [];
-                
                 document.getElementById("sort-comments").value = 'best';
                 renderSortedComments('best');
             }).catch(() => {
@@ -2228,7 +2220,6 @@ window.buildCommentNode = function(c) {
     
     window.toggleReply = function(id) {
         if (!currentUser) {
-            
             new bootstrap.Modal(document.getElementById('loginModal')).show();
             return;
         }
@@ -2243,10 +2234,8 @@ window.buildCommentNode = function(c) {
         collapsedState.classList.toggle('d-none');
     };
 
-    
     window.shareComment = function(id) {
         const shareUrl = window.location.href.split('#')[0] + `#comment-wrapper-${id}`;
-        
         
         function showToast(msg) {
             let toastBox = document.getElementById('custom-toast-box');
@@ -2272,10 +2261,7 @@ window.buildCommentNode = function(c) {
         }
     };
 
-    
     window.voteComment = function(id, action, btnElement) {
-        
-
         const voteCol = btnElement.closest('.vote-column');
         const upBtn = voteCol.querySelector('.upvote-btn');
         const downBtn = voteCol.querySelector('.downvote-btn');
@@ -2285,7 +2271,6 @@ window.buildCommentNode = function(c) {
         const isUpvoted = upBtn.classList.contains('upvoted');
         const isDownvoted = downBtn.classList.contains('downvoted');
 
-        
         const globalComment = allGlobalComments.find(c => c.id === id);
 
         if (action === 'up') {
@@ -2302,7 +2287,6 @@ window.buildCommentNode = function(c) {
                     globalComment.has_downvoted = false;
                 }
             }
-            
             fetch(`${API_BASE_URL}/comments/${id}/like`, { method: "POST" }).catch(console.error);
             
         } else if (action === 'down') {
@@ -2319,23 +2303,19 @@ window.buildCommentNode = function(c) {
                     globalComment.has_liked = false;
                 }
             }
-            
         }
 
-        
         scoreSpan.dataset.score = currentScore;
         scoreSpan.innerText = currentScore === 0 ? "" : currentScore;
-        
-        
         if (globalComment) globalComment.like_count = currentScore;
     };
 
+    
     window.submitReply = async function(parentId) {
-        if (!currentUser) return alert("Please sign in to reply.");
+        if (!currentUser) return window.alert("Please sign in to reply.");
         const textInput = document.getElementById(`reply-text-${parentId}`).value.trim();
         if (!textInput) return;
 
-        
         const token = await currentUser.getIdToken();
 
         fetch(`${API_BASE_URL}/comments`, {
@@ -2353,13 +2333,13 @@ window.buildCommentNode = function(c) {
             })
         }).then(() => {
             loadComments(); 
-        }).catch(err => alert("Error posting reply."));
+        }).catch(err => window.alert("Error posting reply."));
     };
 
     
     document.getElementById("custom-comment-form").addEventListener("submit", async function(e) {
         e.preventDefault();
-        if (!currentUser) return alert("Please sign in to comment.");
+        if (!currentUser) return window.alert("Please sign in to comment.");
         
         const textInput = document.getElementById("comment-text").value.trim();
         if (!textInput) return;
@@ -2386,10 +2366,14 @@ window.buildCommentNode = function(c) {
             loadComments();
             submitBtn.disabled = false;
         }).catch(() => {
-            alert("Error posting comment.");
+            window.alert("Error posting comment.");
             submitBtn.disabled = false;
         });
     });
+
+    
+    
+    window.alert = window.alert; 
 });
 </script>
 

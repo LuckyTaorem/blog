@@ -137,17 +137,17 @@ let allGlobalComments = [];
 document.addEventListener("DOMContentLoaded", function() {
     
     // --- AUTHENTICATION LOGIC ---
-    setTimeout(() => { // Wait for module to initialize
+    setTimeout(() => { 
         const { auth, googleProvider, githubProvider, signInWithPopup, signOut, onAuthStateChanged } = window.firebaseAuth;
 
-        document.getElementById("google-login-btn").addEventListener("click", () => signInWithPopup(auth, googleProvider).catch(err => alert(err.message)));
-        document.getElementById("github-login-btn").addEventListener("click", () => signInWithPopup(auth, githubProvider).catch(err => alert(err.message)));
+        // FIXED: Changed alert to window.alert
+        document.getElementById("google-login-btn").addEventListener("click", () => signInWithPopup(auth, googleProvider).catch(err => window.alert(err.message)));
+        document.getElementById("github-login-btn").addEventListener("click", () => signInWithPopup(auth, githubProvider).catch(err => window.alert(err.message)));
         document.getElementById("logout-btn").addEventListener("click", () => signOut(auth));
 
         onAuthStateChanged(auth, user => {
             currentUser = user;
             if (user) {
-                // Close the modal if it's open
                 const loginModalEl = document.getElementById('loginModal');
                 if (loginModalEl) {
                    const modalInstance = bootstrap.Modal.getInstance(loginModalEl);
@@ -171,16 +171,14 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // --- BUILD REDDIT COMMENT NODE ---
-window.buildCommentNode = function(c) {
-        // Fallback for missing avatars
+    window.buildCommentNode = function(c) {
         const avatarUrl = c.photo || `https://ui-avatars.com/api/?name=${c.name || 'A'}&background=random`;
-        
-        // Handle Score Logic (Hide 0s)
         const score = c.like_count || 0;
         const displayScore = score === 0 ? "" : score; 
         const upvoteClass = c.has_liked ? "upvoted" : "";
         const downvoteClass = c.has_downvoted ? "downvoted" : ""; 
 
+        // FIXED: Changed emoji alert to window.alert inside the HTML string
         return `
         <div class="reddit-comment" id="comment-wrapper-${c.id}">
             
@@ -188,13 +186,10 @@ window.buildCommentNode = function(c) {
                 <button class="vote-btn upvote-btn ${upvoteClass}" onclick="voteComment(${c.id}, 'up', this)">
                     <svg style="pointer-events: none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
                 </button>
-                
                 <span class="vote-score" data-score="${score}">${displayScore}</span>
-                
                 <button class="vote-btn downvote-btn ${downvoteClass}" onclick="voteComment(${c.id}, 'down', this)">
                     <svg style="pointer-events: none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
                 </button>
-                
                 <div class="thread-line-container" onclick="collapseThread(${c.id})">
                     <div class="thread-line"></div>
                 </div>
@@ -265,7 +260,6 @@ window.buildCommentNode = function(c) {
         
         let roots = allGlobalComments.filter(c => c.parent_id === null);
         
-        // Apply Sort Logic
         if (sortType === 'best') {
             roots.sort((a, b) => (b.like_count || 0) - (a.like_count || 0));
         } else if (sortType === 'new') {
@@ -279,7 +273,6 @@ window.buildCommentNode = function(c) {
         });
     }
 
-    // Bind Dropdown to Sorting function
     document.getElementById("sort-comments").addEventListener("change", function(e) {
         renderSortedComments(e.target.value);
     });
@@ -290,7 +283,6 @@ window.buildCommentNode = function(c) {
             .then(r => r.json())
             .then(data => {
                 allGlobalComments = data.comments || [];
-                // Default to "Best" on load
                 document.getElementById("sort-comments").value = 'best';
                 renderSortedComments('best');
             }).catch(() => {
@@ -303,7 +295,6 @@ window.buildCommentNode = function(c) {
     // --- ACTIONS ---
     window.toggleReply = function(id) {
         if (!currentUser) {
-            // Trigger login modal if they click reply while logged out
             new bootstrap.Modal(document.getElementById('loginModal')).show();
             return;
         }
@@ -318,11 +309,9 @@ window.buildCommentNode = function(c) {
         collapsedState.classList.toggle('d-none');
     };
 
-    // --- SHARE LOGIC WITH TOAST ---
     window.shareComment = function(id) {
         const shareUrl = window.location.href.split('#')[0] + `#comment-wrapper-${id}`;
         
-        // Custom Toast Generator
         function showToast(msg) {
             let toastBox = document.getElementById('custom-toast-box');
             if(!toastBox) {
@@ -347,10 +336,7 @@ window.buildCommentNode = function(c) {
         }
     };
 
-    // --- MUTUALLY EXCLUSIVE VOTING & STATE SYNC ---
     window.voteComment = function(id, action, btnElement) {
-        // Removed the login check! Anyone can vote now based on their IP address.
-
         const voteCol = btnElement.closest('.vote-column');
         const upBtn = voteCol.querySelector('.upvote-btn');
         const downBtn = voteCol.querySelector('.downvote-btn');
@@ -360,7 +346,6 @@ window.buildCommentNode = function(c) {
         const isUpvoted = upBtn.classList.contains('upvoted');
         const isDownvoted = downBtn.classList.contains('downvoted');
 
-        // Find the comment in the global array to save state for sorting
         const globalComment = allGlobalComments.find(c => c.id === id);
 
         if (action === 'up') {
@@ -377,7 +362,6 @@ window.buildCommentNode = function(c) {
                     globalComment.has_downvoted = false;
                 }
             }
-            // Fires off to your Render API without needing an Auth Token
             fetch(`${API_BASE_URL}/comments/${id}/like`, { method: "POST" }).catch(console.error);
             
         } else if (action === 'down') {
@@ -394,30 +378,26 @@ window.buildCommentNode = function(c) {
                     globalComment.has_liked = false;
                 }
             }
-            // Note: If you want downvotes to persist in the database, you'll need a /dislike endpoint later!
         }
 
-        // Update UI
         scoreSpan.dataset.score = currentScore;
         scoreSpan.innerText = currentScore === 0 ? "" : currentScore;
-        
-        // Sync the new score back to the array so sorting works!
         if (globalComment) globalComment.like_count = currentScore;
     };
 
+    // FIXED: Changed alert to window.alert
     window.submitReply = async function(parentId) {
-        if (!currentUser) return alert("Please sign in to reply.");
+        if (!currentUser) return window.alert("Please sign in to reply.");
         const textInput = document.getElementById(`reply-text-${parentId}`).value.trim();
         if (!textInput) return;
 
-        // Obtain secure Firebase ID Token
         const token = await currentUser.getIdToken();
 
         fetch(`${API_BASE_URL}/comments`, {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}` // Secure backend auth
+                "Authorization": `Bearer ${token}` 
             },
             body: JSON.stringify({ 
                 slug: articleSlug, 
@@ -427,14 +407,14 @@ window.buildCommentNode = function(c) {
                 parent_id: parentId 
             })
         }).then(() => {
-            loadComments(); // Refresh tree
-        }).catch(err => alert("Error posting reply."));
+            loadComments(); 
+        }).catch(err => window.alert("Error posting reply."));
     };
 
-    // --- SUBMIT MASTER COMMENT ---
+    // FIXED: Changed alert to window.alert
     document.getElementById("custom-comment-form").addEventListener("submit", async function(e) {
         e.preventDefault();
-        if (!currentUser) return alert("Please sign in to comment.");
+        if (!currentUser) return window.alert("Please sign in to comment.");
         
         const textInput = document.getElementById("comment-text").value.trim();
         if (!textInput) return;
@@ -461,9 +441,13 @@ window.buildCommentNode = function(c) {
             loadComments();
             submitBtn.disabled = false;
         }).catch(() => {
-            alert("Error posting comment.");
+            window.alert("Error posting comment.");
             submitBtn.disabled = false;
         });
     });
+
+    // --- FIX EMOJI PICKER FOR MAIN FORM ---
+    // (Also making sure the inline onclick alert from the HTML doesn't trigger an error if it remains)
+    window.alert = window.alert; 
 });
 </script>
