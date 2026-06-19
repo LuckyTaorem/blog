@@ -1,10 +1,10 @@
 ---
-title: "\'Amazon Faces Political Retaliation Lawsuit\"
+title: "Amazon Faces Political Retaliation Lawsuit"
 date: 2026-06-19T13:51:45.326452+00:00
 draft: false
 images: ["images/3-amazon-workers-say-theyre-under-investigation-for-speaking-out-about-data-centers.jpg"]
 thumbnail: "images/3-amazon-workers-say-theyre-under-investigation-for-speaking-out-about-data-centers.jpg"
-description: "\'Amazon engineers sue for illegal retaliation after voicing political views. Deep dive into legal, tech, and corporate culture impacts.\"
+description: "Amazon engineers sue for illegal retaliation after voicing political views. Deep dive into legal, tech, and corporate culture impacts."
 categories: ["Legal/Compliance"]
 tags: ["Amazon", "civil rights", "employee retaliation", "tech industry", "political expression"]
 ---
