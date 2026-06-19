@@ -102,6 +102,26 @@ def generate_fallback_image(title, slug):
     img.save(filepath)
     return f"images/{slug}.jpg"
 
+def sanitize_existing_posts():
+    print("🧹 Running legacy frontmatter sanitizer...")
+    if not os.path.exists(output_dir): return
+    for fname in os.listdir(output_dir):
+        if not fname.endswith('.md'): continue
+        path = os.path.join(output_dir, fname)
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # If the title line doesn't start with a quote, wrap it in quotes
+            fixed_content = re.sub(r'^title:\s*(?!["\'])(.*)$', r'title: "\1"', content, flags=re.MULTILINE)
+            
+            if fixed_content != content:
+                with open(path, 'w', encoding='utf-8') as f:
+                    f.write(fixed_content)
+                print(f"   -> Fixed frontmatter title in: {fname}")
+        except Exception as e:
+            print(f"⚠️ Failed to sanitize {fname}: {e}")
+
 def get_unsplash_image(title):
     if not UNSPLASH_KEY: return None
     search_query = " ".join(title.split()[:4])
@@ -533,6 +553,9 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
 # 5. EXECUTION ROUTER
 # ==========================================
 if __name__ == "__main__":
+    # Always run sanitation first to prevent Hugo build crashes from older files
+    sanitize_existing_posts() 
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--scrape", action="store_true", help="Scrape new articles and add to queue")
     parser.add_argument("--publish", action="store_true", help="Publish next batch from the queue")
