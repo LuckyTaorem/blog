@@ -294,35 +294,180 @@ IMPORTANT RULE FOR CATEGORIES:
 You must evaluate the article and pick EXACTLY ONE category from this exact list: {', '.join(VALID_CATEGORIES)}.
 """
 
+        # --- ROBUST MULTI-PROVIDER WATERFALL CONFIGURATION ---
+        # Ordered strategically by performance, output capacity, and free tier stability
         model_settings = [
-            {"model": "llama-3.3-70b-versatile", "word_count": "1800"},
-            {"model": "llama-3.1-8b-instant", "word_count": "1500"}
+            {"provider": "groq", "model": "llama-3.3-70b-versatile", "word_count": "1800"},
+            {"provider": "groq", "model": "llama-3.1-8b-instant", "word_count": "1500"},
+            {"provider": "sambanova", "model": "Meta-Llama-3.1-70B-Instruct", "word_count": "1500"},
+            {"provider": "cerebras", "model": "llama3.1-70b", "word_count": "1500"},
+            {"provider": "mistral", "model": "mistral-large-latest", "word_count": "1500"},
+            {"provider": "openrouter", "model": "meta-llama/llama-3.3-70b-instruct:free", "word_count": "1500"},
+            {"provider": "cohere", "model": "command-r-plus", "word_count": "1500"},
+            {"provider": "deepseek", "model": "deepseek-chat", "word_count": "1500"}
         ]
 
         article_content = None
 
         for setting in model_settings:
+            provider = setting['provider']
+            model_name = setting['model']
+            diet_prompt = prompt.replace("[WORD_COUNT]", setting['word_count'])
+            
+            print(f"  -> Attempting generation with {provider.upper()} ({model_name})...")
+
             try:
-                print(f"  -> Generating with {setting['model']}...")
-                diet_prompt = prompt.replace("[WORD_COUNT]", setting['word_count'])
-                response = client.chat.completions.create(
-                    messages=[
-                        {"role": "system", "content": "You are a professional tech blogger. You write exceptionally long, detailed, and comprehensive technical articles."},
-                        {"role": "user", "content": diet_prompt}
-                    ],
-                    model=setting['model'],
-                    temperature=0.7,
-                    max_tokens=6000, 
-                )
-                article_content = response.choices[0].message.content.strip()
-                break 
+                # 1. GROQ
+                if provider == "groq":
+                    response = client.chat.completions.create(
+                        messages=[
+                            {"role": "system", "content": "You are a professional tech blogger. You write exceptionally long, detailed, and comprehensive technical articles."},
+                            {"role": "user", "content": diet_prompt}
+                        ],
+                        model=model_name,
+                        temperature=0.7,
+                        max_tokens=6000, 
+                    )
+                    article_content = response.choices[0].message.content.strip()
+
+                # 2. SAMBANOVA
+                elif provider == "sambanova":
+                    key = os.environ.get("SAMBANOVA_API_KEY")
+                    if not key: continue
+                    res = requests.post(
+                        "https://api.sambanova.ai/v1/chat/completions",
+                        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                        json={
+                            "model": model_name,
+                            "messages": [
+                                {"role": "system", "content": "You are a professional tech blogger."},
+                                {"role": "user", "content": diet_prompt}
+                            ],
+                            "temperature": 0.7, "max_tokens": 6000
+                        },
+                        timeout=60
+                    )
+                    if res.status_code == 200: article_content = res.json()['choices'][0]['message']['content'].strip()
+                    else: print(f"     -> Provider error: {res.text}")
+
+                # 3. CEREBRAS
+                elif provider == "cerebras":
+                    key = os.environ.get("CEREBRAS_API_KEY")
+                    if not key: continue
+                    res = requests.post(
+                        "https://api.cerebras.ai/v1/chat/completions",
+                        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                        json={
+                            "model": model_name,
+                            "messages": [
+                                {"role": "system", "content": "You are a professional tech blogger."},
+                                {"role": "user", "content": diet_prompt}
+                            ],
+                            "temperature": 0.7, "max_tokens": 6000
+                        },
+                        timeout=60
+                    )
+                    if res.status_code == 200: article_content = res.json()['choices'][0]['message']['content'].strip()
+                    else: print(f"     -> Provider error: {res.text}")
+
+                # 4. MISTRAL AI
+                elif provider == "mistral":
+                    key = os.environ.get("MISTRAL_API_KEY")
+                    if not key: continue
+                    res = requests.post(
+                        "https://api.mistral.ai/v1/chat/completions",
+                        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                        json={
+                            "model": model_name,
+                            "messages": [
+                                {"role": "system", "content": "You are a professional tech blogger."},
+                                {"role": "user", "content": diet_prompt}
+                            ],
+                            "temperature": 0.7, "max_tokens": 4000
+                        },
+                        timeout=60
+                    )
+                    if res.status_code == 200: article_content = res.json()['choices'][0]['message']['content'].strip()
+                    else: print(f"     -> Provider error: {res.text}")
+
+                # 5. OPENROUTER (Uses Free Models)
+                elif provider == "openrouter":
+                    key = os.environ.get("OPENROUTER_API_KEY")
+                    if not key: continue
+                    res = requests.post(
+                        "https://openrouter.ai/api/v1/chat/completions",
+                        headers={
+                            "Authorization": f"Bearer {key}",
+                            "Content-Type": "application/json",
+                            "HTTP-Referer": "https://luckytaorem.github.io/blog/", 
+                            "X-Title": "LT Developer Tech Blog"
+                        },
+                        json={
+                            "model": model_name,
+                            "messages": [
+                                {"role": "system", "content": "You are a professional tech blogger."},
+                                {"role": "user", "content": diet_prompt}
+                            ],
+                            "temperature": 0.7, "max_tokens": 4000
+                        },
+                        timeout=60
+                    )
+                    if res.status_code == 200: article_content = res.json()['choices'][0]['message']['content'].strip()
+                    else: print(f"     -> Provider error: {res.text}")
+
+                # 6. COHERE
+                elif provider == "cohere":
+                    key = os.environ.get("COHERE_API_KEY")
+                    if not key: continue
+                    res = requests.post(
+                        "https://api.cohere.com/v1/chat",
+                        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                        json={
+                            "model": model_name,
+                            "message": diet_prompt,
+                            "preamble": "You are a professional tech blogger. You write exceptionally long, detailed, and comprehensive technical articles.",
+                            "max_tokens": 4000
+                        },
+                        timeout=60
+                    )
+                    if res.status_code == 200: article_content = res.json().get('text', '').strip()
+                    else: print(f"     -> Provider error: {res.text}")
+
+                # 7. DEEPSEEK
+                elif provider == "deepseek":
+                    key = os.environ.get("DEEPSEEK_API_KEY")
+                    if not key: continue
+                    res = requests.post(
+                        "https://api.deepseek.com/v1/chat/completions",
+                        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                        json={
+                            "model": model_name,
+                            "messages": [
+                                {"role": "system", "content": "You are a professional tech blogger."},
+                                {"role": "user", "content": diet_prompt}
+                            ],
+                            "temperature": 0.7, "max_tokens": 4000
+                        },
+                        timeout=60
+                    )
+                    if res.status_code == 200: article_content = res.json()['choices'][0]['message']['content'].strip()
+                    else: print(f"     -> Provider error: {res.text}")
+
+                # Verification: If we successfully captured text, end the fallback cascade
+                if article_content and len(article_content.split()) > 200:
+                    break
+                else:
+                    article_content = None
+
             except Exception as e:
-                if hasattr(e, 'status_code') and e.status_code == 429: continue 
-                else: break
-        
+                print(f"     -> Internal Loop Error with {provider.upper()}: {e}")
+                article_content = None
+                continue
+
+        # --- ABORT AND APPEND BACK TO QUEUE LOGIC ---
         if not article_content:
-            print("  -> Skipping article due to generation failure.")
-            # Put it back in the queue so we try again next hour
+            print(f"  -> 🚨 CRITICAL: All API providers failed for: '{article['title']}'.")
+            # Push the article to the back of the queue so it re-runs during the next automated invocation
             remaining_queue.append(article)
             continue
 
