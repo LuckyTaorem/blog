@@ -299,8 +299,7 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
         model_settings = [
             {"provider": "groq", "model": "llama-3.3-70b-versatile", "word_count": "1800"},
             {"provider": "groq", "model": "llama-3.1-8b-instant", "word_count": "1500"},
-            {"provider": "sambanova", "model": "Meta-Llama-3.1-70B-Instruct", "word_count": "1500"},
-            {"provider": "cerebras", "model": "llama3.1-70b", "word_count": "1500"},
+            {"provider": "cerebras", "model": "llama-3.3-70b", "word_count": "1500"},
             {"provider": "mistral", "model": "mistral-large-latest", "word_count": "1500"},
             {"provider": "openrouter", "model": "meta-llama/llama-3.3-70b-instruct:free", "word_count": "1500"},
             {"provider": "cohere", "model": "command-r-plus", "word_count": "1500"},
@@ -329,26 +328,6 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
                         max_tokens=6000, 
                     )
                     article_content = response.choices[0].message.content.strip()
-
-                # 2. SAMBANOVA
-                elif provider == "sambanova":
-                    key = os.environ.get("SAMBANOVA_API_KEY")
-                    if not key: continue
-                    res = requests.post(
-                        "https://api.sambanova.ai/v1/chat/completions",
-                        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-                        json={
-                            "model": model_name,
-                            "messages": [
-                                {"role": "system", "content": "You are a professional tech blogger."},
-                                {"role": "user", "content": diet_prompt}
-                            ],
-                            "temperature": 0.7, "max_tokens": 6000
-                        },
-                        timeout=60
-                    )
-                    if res.status_code == 200: article_content = res.json()['choices'][0]['message']['content'].strip()
-                    else: print(f"     -> Provider error: {res.text}")
 
                 # 3. CEREBRAS
                 elif provider == "cerebras":
