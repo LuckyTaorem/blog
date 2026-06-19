@@ -433,6 +433,7 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
 
                 # GEMINI
                 elif provider == "gemini":
+                    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
                     if not GEMINI_API_KEY:
                         continue
                     
@@ -495,8 +496,16 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
         # Fix Frontmatter
         if not article_content.startswith("---"):
             first_dash_idx = article_content.find("---")
-            if first_dash_idx != -1: article_content = article_content[first_dash_idx:]
-            else: article_content = f"---\ntitle: \"{article['title']}\"\ndate: {datetime.now(timezone.utc).isoformat()}\ndraft: false\nimages: [\"{image_url}\"]\n---\n\n" + article_content
+            if first_dash_idx != -1: 
+                article_content = article_content[first_dash_idx:]
+            else: 
+                safe_title = article['title'].replace('"', "'") # Swap internal double quotes to single quotes
+                article_content = f"---\ntitle: \"{safe_title}\"\ndate: {datetime.now(timezone.utc).isoformat()}\ndraft: false\nimages: [\"{image_url}\"]\n---\n\n" + article_content
+
+        # 🚨 NEW: Force title to be wrapped in quotes to prevent YAML colon crashes
+        article_content = re.sub(r'^title:\s*(?!["\'])(.*)$', r'title: "\1"', article_content, flags=re.MULTILINE)
+        # Fix double-quotes inside already-quoted AI titles
+        article_content = re.sub(r'^title:\s*"([^"]*?)"([^"]*?)"(.*)$', r'title: "\1\'\2\'\3', article_content, flags=re.MULTILINE)
 
         # Fix Categories
         cat_match = re.search(r'categories:\s*\["([^"]+)"\]', article_content)

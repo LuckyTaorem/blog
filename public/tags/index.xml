@@ -10,9 +10,51 @@
 		
 		
 		
-			<lastBuildDate>Fri, 19 Jun 2026 04:06:46 +0000</lastBuildDate>
+			<lastBuildDate>Fri, 19 Jun 2026 12:06:51 +0000</lastBuildDate>
 		
 			<atom:link href="http://localhost:1313/blog/tags/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Amazon</title>
+				<link>http://localhost:1313/blog/tags/amazon/</link>
+				<pubDate>Fri, 19 Jun 2026 12:06:51 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/amazon/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Data Centers</title>
+				<link>http://localhost:1313/blog/tags/data-centers/</link>
+				<pubDate>Fri, 19 Jun 2026 12:06:51 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/data-centers/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Employment Law</title>
+				<link>http://localhost:1313/blog/tags/employment-law/</link>
+				<pubDate>Fri, 19 Jun 2026 12:06:51 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/employment-law/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Mars Mission</title>
+				<link>http://localhost:1313/blog/tags/mars-mission/</link>
+				<pubDate>Fri, 19 Jun 2026 07:07:37 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/mars-mission/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Relativity Space</title>
+				<link>http://localhost:1313/blog/tags/relativity-space/</link>
+				<pubDate>Fri, 19 Jun 2026 07:07:37 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/relativity-space/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>SpaceX</title>
+				<link>http://localhost:1313/blog/tags/spacex/</link>
+				<pubDate>Fri, 19 Jun 2026 07:07:37 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/spacex/</guid>
+				<description></description>
+			</item>
 			<item>
 				<title>AI Safety</title>
 				<link>http://localhost:1313/blog/tags/ai-safety/</link>
@@ -207,13 +249,6 @@
 				<link>http://localhost:1313/blog/tags/slow-tech/</link>
 				<pubDate>Thu, 18 Jun 2026 20:26:56 +0000</pubDate>
 				<guid>http://localhost:1313/blog/tags/slow-tech/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Data Centers</title>
-				<link>http://localhost:1313/blog/tags/data-centers/</link>
-				<pubDate>Thu, 18 Jun 2026 20:26:49 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/data-centers/</guid>
 				<description></description>
 			</item>
 			<item>
@@ -917,13 +952,6 @@
 				<description></description>
 			</item>
 			<item>
-				<title>Amazon</title>
-				<link>http://localhost:1313/blog/tags/amazon/</link>
-				<pubDate>Thu, 18 Jun 2026 13:26:37 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/amazon/</guid>
-				<description></description>
-			</item>
-			<item>
 				<title>Colorsoft</title>
 				<link>http://localhost:1313/blog/tags/colorsoft/</link>
 				<pubDate>Thu, 18 Jun 2026 13:26:37 +0000</pubDate>
@@ -959,48 +987,6 @@
 				<description></description>
 			</item>
 			<item>
-				<title>Eric Schmidt</title>
-				<link>http://localhost:1313/blog/tags/eric-schmidt/</link>
-				<pubDate>Thu, 18 Jun 2026 13:25:56 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/eric-schmidt/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Mars Mission</title>
-				<link>http://localhost:1313/blog/tags/mars-mission/</link>
-				<pubDate>Thu, 18 Jun 2026 13:25:56 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/mars-mission/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Private Space Exploration</title>
-				<link>http://localhost:1313/blog/tags/private-space-exploration/</link>
-				<pubDate>Thu, 18 Jun 2026 13:25:56 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/private-space-exploration/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Relativity Space</title>
-				<link>http://localhost:1313/blog/tags/relativity-space/</link>
-				<pubDate>Thu, 18 Jun 2026 13:25:56 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/relativity-space/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>Space Technology</title>
-				<link>http://localhost:1313/blog/tags/space-technology/</link>
-				<pubDate>Thu, 18 Jun 2026 13:25:56 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/space-technology/</guid>
-				<description></description>
-			</item>
-			<item>
-				<title>SpaceX</title>
-				<link>http://localhost:1313/blog/tags/spacex/</link>
-				<pubDate>Thu, 18 Jun 2026 13:25:56 +0000</pubDate>
-				<guid>http://localhost:1313/blog/tags/spacex/</guid>
-				<description></description>
-			</item>
-			<item>
 				<title>Gaming News</title>
 				<link>http://localhost:1313/blog/tags/gaming-news/</link>
 				<pubDate>Sun, 01 Jan 2023 13:33:49 +0000</pubDate>
@@ -1026,6 +1012,27 @@
 				<link>http://localhost:1313/blog/tags/trailers/</link>
 				<pubDate>Sun, 01 Jan 2023 13:33:49 +0000</pubDate>
 				<guid>http://localhost:1313/blog/tags/trailers/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Eric Schmidt</title>
+				<link>http://localhost:1313/blog/tags/eric-schmidt/</link>
+				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/eric-schmidt/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Private Space Exploration</title>
+				<link>http://localhost:1313/blog/tags/private-space-exploration/</link>
+				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/private-space-exploration/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Space Technology</title>
+				<link>http://localhost:1313/blog/tags/space-technology/</link>
+				<pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+				<guid>http://localhost:1313/blog/tags/space-technology/</guid>
 				<description></description>
 			</item>
 	</channel>
