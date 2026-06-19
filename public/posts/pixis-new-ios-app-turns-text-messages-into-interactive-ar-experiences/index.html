@@ -580,7 +580,7 @@
             &bull;
         
         9&nbsp;min read &bull;
-        1,892&nbsp;words
+        1,891&nbsp;words
     </small>
 
 
@@ -1975,7 +1975,7 @@
       <form id="custom-comment-form">
         <div class="position-relative">
           <textarea id="comment-text" class="form-control bg-body border-secondary border-opacity-25 py-2 pe-5" rows="3" placeholder="What are your thoughts?" required style="border-radius: 6px;"></textarea>
-          <button type="button" class="btn btn-link position-absolute top-0 end-0 mt-1 me-1 text-muted text-decoration-none" onclick="document.getElementById('comment-text').focus(); alert('Press Windows Key + . (or Cmd + Ctrl + Space on Mac) to open emojis!');">😀</button>
+          
         </div>
         <div class="d-flex justify-content-end mt-2">
           <button type="submit" id="submit-comment-btn" class="btn btn-primary btn-sm fw-bold px-4 rounded-pill shadow-sm">Comment</button>
@@ -2144,7 +2144,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         <textarea id="reply-text-${c.id}" class="form-control form-control-sm bg-body mb-2" rows="2" placeholder="What are your thoughts?"></textarea>
                         <div class="d-flex justify-content-end gap-2">
                             <button class="btn btn-sm btn-secondary rounded-pill px-3" onclick="toggleReply(${c.id})">Cancel</button>
-                            <button class="btn btn-sm btn-primary rounded-pill px-3 fw-bold" onclick="submitReply(${c.id})">Reply</button>
+                            <button class="btn btn-sm btn-primary rounded-pill px-3 fw-bold" onclick="submitReply(${c.id}, this)">Reply</button>
                         </div>
                     </div>
                     
@@ -2261,6 +2261,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     };
 
+    
     window.voteComment = function(id, action, btnElement) {
         const voteCol = btnElement.closest('.vote-column');
         const upBtn = voteCol.querySelector('.upvote-btn');
@@ -2271,6 +2272,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const isUpvoted = upBtn.classList.contains('upvoted');
         const isDownvoted = downBtn.classList.contains('downvoted');
 
+        
         const globalComment = allGlobalComments.find(c => c.id === id);
 
         if (action === 'up') {
@@ -2287,8 +2289,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     globalComment.has_downvoted = false;
                 }
             }
-            fetch(`${API_BASE_URL}/comments/${id}/like`, { method: "POST" }).catch(console.error);
-            
         } else if (action === 'down') {
             if (isDownvoted) {
                 currentScore += 1; 
@@ -2305,35 +2305,53 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
+        
         scoreSpan.dataset.score = currentScore;
         scoreSpan.innerText = currentScore === 0 ? "" : currentScore;
         if (globalComment) globalComment.like_count = currentScore;
+
+        
+        fetch(`${API_BASE_URL}/comments/${id}/vote`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: action })
+        }).catch(console.error);
     };
 
-    
-    window.submitReply = async function(parentId) {
+    window.submitReply = async function(parentId, btnElement) {
         if (!currentUser) return window.alert("Please sign in to reply.");
         const textInput = document.getElementById(`reply-text-${parentId}`).value.trim();
         if (!textInput) return;
 
-        const token = await currentUser.getIdToken();
+        
+        const originalText = btnElement.innerHTML;
+        btnElement.disabled = true;
+        btnElement.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>...`;
 
-        fetch(`${API_BASE_URL}/comments`, {
-            method: "POST",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}` 
-            },
-            body: JSON.stringify({ 
-                slug: articleSlug, 
-                name: currentUser.displayName, 
-                photo: currentUser.photoURL,
-                text: textInput, 
-                parent_id: parentId 
-            })
-        }).then(() => {
+        try {
+            const token = await currentUser.getIdToken();
+            await fetch(`${API_BASE_URL}/comments`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` 
+                },
+                body: JSON.stringify({ 
+                    slug: articleSlug, 
+                    name: currentUser.displayName, 
+                    photo: currentUser.photoURL,
+                    text: textInput, 
+                    parent_id: parentId 
+                })
+            });
+            
             loadComments(); 
-        }).catch(err => window.alert("Error posting reply."));
+        } catch (err) {
+            window.alert("Error posting reply.");
+            
+            btnElement.disabled = false;
+            btnElement.innerHTML = originalText;
+        }
     };
 
     
@@ -2343,32 +2361,45 @@ document.addEventListener("DOMContentLoaded", function() {
         
         const textInput = document.getElementById("comment-text").value.trim();
         if (!textInput) return;
+        
         const submitBtn = document.getElementById("submit-comment-btn");
+        const originalText = submitBtn.innerHTML;
+        
+        
         submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Posting...`;
 
-        const token = await currentUser.getIdToken();
-
-        fetch(`${API_BASE_URL}/comments`, {
-            method: "POST",
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}` 
-            },
-            body: JSON.stringify({ 
-                slug: articleSlug, 
-                name: currentUser.displayName, 
-                photo: currentUser.photoURL,
-                text: textInput, 
-                parent_id: null 
-            })
-        }).then(() => {
+        try {
+            const token = await currentUser.getIdToken();
+            await fetch(`${API_BASE_URL}/comments`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` 
+                },
+                body: JSON.stringify({ 
+                    slug: articleSlug, 
+                    name: currentUser.displayName, 
+                    photo: currentUser.photoURL,
+                    text: textInput, 
+                    parent_id: null 
+                })
+            });
+            
+            
             document.getElementById("comment-text").value = "";
             loadComments();
+            
+            
             submitBtn.disabled = false;
-        }).catch(() => {
+            submitBtn.innerHTML = originalText;
+            
+        } catch (err) {
             window.alert("Error posting comment.");
+            
             submitBtn.disabled = false;
-        });
+            submitBtn.innerHTML = originalText;
+        }
     });
 
     
