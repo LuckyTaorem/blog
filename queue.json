@@ -1,23 +1,5 @@
 [
     {
-        "title": "The Onion\u2019s rebooted InfoWars is coming July 2nd",
-        "slug": "the-onions-rebooted-infowars-is-coming-july-2nd",
-        "summary": "The Onion's InfoWars officially has a launch date: On July 2nd, the conspiracy network previously run by Alex Jones will return as a comedy and media platform. The reboot comes more than a year and a half after news broke that the satirical news site was working to acquire the property owned by Jones, a [\u2026]",
-        "raw_image_url": "https://platform.theverge.com/wp-content/uploads/sites/2/2026/04/gettyimages-1425975603.jpg?quality=90&#038;strip=all&#038;crop=0,0,100,100"
-    },
-    {
-        "title": "Amazon employees say they\u2019re facing termination for backing data center limits",
-        "slug": "amazon-employees-say-theyre-facing-termination-for-backing-data-center-limits",
-        "summary": "When three Amazon software engineers testified earlier this month at Seattle City Council hearings about data centers, they started their testimony by citing a city law barring employment discrimination over political speech. Now, they're accusing their employer of breaking that law by retaliating against them. On June 10th - one week after the hearing, and [\u2026]",
-        "raw_image_url": "https://platform.theverge.com/wp-content/uploads/sites/2/2026/06/STKS528_DATA_CENTERS2_C.jpg?quality=90&#038;strip=all&#038;crop=0,0,100,100"
-    },
-    {
-        "title": "No more lightbulbs, much more sports: Five predictions for Roku\u2019s future",
-        "slug": "no-more-lightbulbs-much-more-sports-five-predictions-for-rokus-future",
-        "summary": "This is Lowpass by Janko Roettgers, a newsletter on the ever-evolving intersection of tech and entertainment, syndicated just for The Verge subscribers once a week. When Fox announced its acquisition of Roku earlier this week, executives of both companies were quick to promise that not much would change in the near future. Sure, getting its [\u2026]",
-        "raw_image_url": "https://platform.theverge.com/wp-content/uploads/sites/2/2026/06/STK284_AParkin_2.jpg?quality=90&#038;strip=all&#038;crop=0,0,100,100"
-    },
-    {
         "title": "Google Calendar finally has more color options for events",
         "slug": "google-calendar-finally-has-more-color-options-for-events",
         "summary": "Running out of color options for events in Google Calendar shouldn't be an issue going forward. The previous limit of 11 predefined colors has now been expanded to give users access to up to 200 custom colors for individual events across the native Calendar web and mobile apps, and the Calendar API. This started rolling [\u2026]",
@@ -280,5 +262,11 @@
         "slug": "ebay-coupons-20-off-in-june-2026",
         "summary": "Save up to 60% on a selection of items at eBay, including electronics, home products, card games, car parts and more.",
         "raw_image_url": null
+    },
+    {
+        "title": "No more lightbulbs, much more sports: Five predictions for Roku\u2019s future",
+        "slug": "no-more-lightbulbs-much-more-sports-five-predictions-for-rokus-future",
+        "summary": "This is Lowpass by Janko Roettgers, a newsletter on the ever-evolving intersection of tech and entertainment, syndicated just for The Verge subscribers once a week. When Fox announced its acquisition of Roku earlier this week, executives of both companies were quick to promise that not much would change in the near future. Sure, getting its [\u2026]",
+        "raw_image_url": "https://platform.theverge.com/wp-content/uploads/sites/2/2026/06/STK284_AParkin_2.jpg?quality=90&#038;strip=all&#038;crop=0,0,100,100"
     }
 ]
