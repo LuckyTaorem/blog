@@ -1,23 +1,5 @@
 [
     {
-        "title": "General Intuition in talks to raise $300M at around $2B valuation",
-        "slug": "general-intuition-in-talks-to-raise-300m-at-around-2b-valuation",
-        "summary": "The startup trains embodied AI and world models using Medal\u2019s dataset of 2 billion videos per year from 10 million monthly active users.",
-        "raw_image_url": null
-    },
-    {
-        "title": "A tech worker-backed PAC is bringing a $5M knife to Big Tech\u2019s $100M gunfight",
-        "slug": "a-tech-worker-backed-pac-is-bringing-a-5m-knife-to-big-techs-100m-gunfight",
-        "summary": "Guardrails positions itself as a populist political movement that runs on small donations from people in the trenches of the AI boom.",
-        "raw_image_url": null
-    },
-    {
-        "title": "Spotify\u2019s reserved ticket sales to music superfans are now going live",
-        "slug": "spotifys-reserved-ticket-sales-to-music-superfans-are-now-going-live",
-        "summary": "Spotify is launching \"Reserved,\" a new system that will hold two concert tickets for an artist's superfans before they're on sale to the public.",
-        "raw_image_url": null
-    },
-    {
         "title": "Adobe adds its AI assistant to Premiere, Illustrator and InDesign",
         "slug": "adobe-adds-its-ai-assistant-to-premiere-illustrator-and-indesign",
         "summary": "Adobe is updating its Firefly AI assistant with new chops, and adding it to Premiere, Illustrator, InDesign and Frame.io.",
@@ -207,6 +189,18 @@
         "title": "MapTap, a daily geography game, is my new Wordle",
         "slug": "maptap-a-daily-geography-game-is-my-new-wordle",
         "summary": "MapTap is a phone game that will make you feel smarter after you play it.",
+        "raw_image_url": null
+    },
+    {
+        "title": "A tech worker-backed PAC is bringing a $5M knife to Big Tech\u2019s $100M gunfight",
+        "slug": "a-tech-worker-backed-pac-is-bringing-a-5m-knife-to-big-techs-100m-gunfight",
+        "summary": "Guardrails positions itself as a populist political movement that runs on small donations from people in the trenches of the AI boom.",
+        "raw_image_url": null
+    },
+    {
+        "title": "Spotify\u2019s reserved ticket sales to music superfans are now going live",
+        "slug": "spotifys-reserved-ticket-sales-to-music-superfans-are-now-going-live",
+        "summary": "Spotify is launching \"Reserved,\" a new system that will hold two concert tickets for an artist's superfans before they're on sale to the public.",
         "raw_image_url": null
     }
 ]
