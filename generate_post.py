@@ -506,6 +506,11 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
             # Push the article to the back of the queue so it re-runs during the next automated invocation
             remaining_queue.append(article)
             continue
+        
+        # ==========================================
+        # ABORT AND APPEND BACK TO QUEUE LOGIC 
+        # (Keep your existing abort logic here)
+        # ==========================================
 
         # Clean Markdown Blocks
         start_pattern = r"^" + chr(96)*3 + r"(?:markdown)?\s*\n"
@@ -513,19 +518,31 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
         article_content = re.sub(start_pattern, "", article_content, flags=re.IGNORECASE)
         article_content = re.sub(end_pattern, "", article_content)
 
-        # Fix Frontmatter
+        # 1. Fix Missing Top Frontmatter
         if not article_content.startswith("---"):
             first_dash_idx = article_content.find("---")
             if first_dash_idx != -1: 
                 article_content = article_content[first_dash_idx:]
             else: 
-                safe_title = article['title'].replace('"', "'") # Swap internal double quotes to single quotes
+                safe_title = article['title'].replace('"', "'")
                 article_content = f"---\ntitle: \"{safe_title}\"\ndate: {datetime.now(timezone.utc).isoformat()}\ndraft: false\nimages: [\"{image_url}\"]\n---\n\n" + article_content
 
-        # 🚨 NEW: Force title to be wrapped in quotes to prevent YAML colon crashes
+        # 2. Fix Missing Bottom Frontmatter (The exact bug you just experienced!)
+        if article_content.startswith("---"):
+            second_dash_idx = article_content.find("---", 3)
+            if second_dash_idx == -1:
+                # If AI forgot the closing ---, split at the first double-newline and inject it
+                parts = article_content.split('\n\n', 1)
+                if len(parts) == 2:
+                    article_content = parts[0] + "\n---\n\n" + parts[1]
+
+        # 3. Force Quotes Around Title & Description (Prevents YAML colon crashes)
         article_content = re.sub(r'^title:\s*(?!["\'])(.*)$', r'title: "\1"', article_content, flags=re.MULTILINE)
-        # Fix double-quotes inside already-quoted AI titles
+        article_content = re.sub(r'^description:\s*(?!["\'])(.*)$', r'description: "\1"', article_content, flags=re.MULTILINE)
+
+        # 4. Clean Nested Quotes
         article_content = re.sub(r'^title:\s*"([^"]*?)"([^"]*?)"(.*)$', r'title: "\1\'\2\'\3', article_content, flags=re.MULTILINE)
+        article_content = re.sub(r'^description:\s*"([^"]*?)"([^"]*?)"(.*)$', r'description: "\1\'\2\'\3', article_content, flags=re.MULTILINE)
 
         # Fix Categories
         cat_match = re.search(r'categories:\s*\["([^"]+)"\]', article_content)
