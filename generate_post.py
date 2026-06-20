@@ -712,14 +712,23 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
                 safe_title = article['title'].replace('"', "'")
                 article_content = f"---\ntitle: \"{safe_title}\"\ndate: {datetime.now(timezone.utc).isoformat()}\ndraft: false\nimages: [\"{image_url}\"]\n---\n\n" + article_content
 
-        # 2. Fix Missing Bottom Frontmatter (The exact bug you just experienced!)
+        # 2. BULLETPROOF Frontmatter Closer
         if article_content.startswith("---"):
-            second_dash_idx = article_content.find("---", 3)
-            if second_dash_idx == -1:
-                # If AI forgot the closing ---, split at the first double-newline and inject it
-                parts = article_content.split('\n\n', 1)
-                if len(parts) == 2:
-                    article_content = parts[0] + "\n---\n\n" + parts[1]
+            # Check if there is a valid closing --- on its own line
+            if not re.search(r'^---\s*$', article_content[3:], re.MULTILINE):
+                
+                # The AI forgot to close it! Find the 'tags: [...]' line to safely inject it right below
+                tags_match = re.search(r'^tags:\s*\[.*?\]', article_content, re.MULTILINE | re.IGNORECASE)
+                
+                if tags_match:
+                    insert_point = tags_match.end()
+                    # Inject the closing dashes exactly where they belong
+                    article_content = article_content[:insert_point] + "\n---\n\n" + article_content[insert_point:].lstrip('- \n')
+                else:
+                    # Absolute last resort fallback
+                    parts = article_content.split('\n\n', 1)
+                    if len(parts) == 2:
+                        article_content = parts[0] + "\n---\n\n" + parts[1]
 
         # 3 & 4. Robustly Sanitize Title and Description Quotes & Escapes
         def sanitize_frontmatter_line(line_prefix, current_content):
