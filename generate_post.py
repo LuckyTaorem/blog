@@ -500,6 +500,8 @@ def run_publisher():
     batch = queue[:BATCH_SIZE]
     remaining_queue = queue[BATCH_SIZE:]
 
+    published_articles = []
+
     print(f"Publishing {len(batch)} articles. {len(remaining_queue)} remaining in queue.")
 
     for article in batch:
@@ -763,6 +765,8 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
             f.write(article_content)
         print(f"  ✅ Saved: {file_path}")
 
+        published_articles.append(article)
+
         ping_google_indexing_api(article['slug'])
 
         local_img_path = os.path.join("assets", "images", f"{article['slug']}.jpg")
@@ -773,6 +777,35 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
         json.dump(remaining_queue, f, indent=4)
         
     git_commit_and_push("Published article batch and updated queue", trigger_hugo=True)
+
+    if published_articles:
+        test_slug = published_articles[0]['slug']
+        test_url = f"https://luckytaorem.github.io/blog/posts/{test_slug}/"
+        print(f"\n⏳ Waiting for GitHub Pages deployment to finish...")
+        
+        site_live = False
+        for i in range(40): # Check every 15 seconds for up to 5 minutes
+            time.sleep(15)
+            try:
+                # Add a timestamp query to completely bypass browser/server caching
+                check_url = f"{test_url}?nocache={int(time.time())}"
+                r = requests.get(check_url, headers={'User-Agent': 'Mozilla/5.0'})
+                if r.status_code == 200:
+                    site_live = True
+                    print("✅ Deployment complete! The URLs are now live.")
+                    break
+            except Exception:
+                pass
+            print(f"  ... checking server ({i+1}/20)")
+            
+        if not site_live:
+            print("⚠️ Warning: Site did not go live within 5 minutes, but proceeding with broadcast.")
+
+        # 🚨 3. Now that the site is live, ping Google and share to Social Media!
+        for article in published_articles:
+            ping_google_indexing_api(article['slug'])
+            local_img_path = os.path.join("assets", "images", f"{article['slug']}.jpg")
+            share_to_social_media(article['title'], article['slug'], article['summary'], local_img_path)
 
 # ==========================================
 # 5. EXECUTION ROUTER
