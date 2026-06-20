@@ -614,8 +614,7 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
 # 5. EXECUTION ROUTER
 # ==========================================
 if __name__ == "__main__":
-    # Always run sanitation first to prevent Hugo build crashes from older files
-    sanitize_existing_posts() 
+    # Removed the sanitize function so it stops touching old files!
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--scrape", action="store_true", help="Scrape new articles and add to queue")
