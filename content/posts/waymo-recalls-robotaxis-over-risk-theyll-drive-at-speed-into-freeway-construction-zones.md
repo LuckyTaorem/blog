@@ -1,10 +1,10 @@
 ---
-title: "\'Robotaxi Recall\"
+title: "Robotaxi Recall"
 date: 2026-06-20T03:28:14.922607+00:00
 draft: false
 images: ["images/waymo-recalls-robotaxis-over-risk-theyll-drive-at-speed-into-freeway-construction-zones.jpg"]
 thumbnail: "images/waymo-recalls-robotaxis-over-risk-theyll-drive-at-speed-into-freeway-construction-zones.jpg"
-description: "\'Waymo recalls 3,871 robotaxis due to safety concerns over construction zones\"
+description: "Waymo recalls 3,871 robotaxis due to safety concerns over construction zones"
 categories: ["Robotics"]
 tags: ["Autonomous Vehicles", "Robotaxis", "Waymo"]
 ---
