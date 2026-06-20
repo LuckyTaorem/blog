@@ -1,10 +1,10 @@
 ---
-title: "\'Frame Pro\"
+title: "Frame Pro"
 date: 2026-06-20T03:28:28.846591+00:00
 draft: false
 images: ["images/samsung-the-frame-pro-2026-review-pricey-but-worth-it.jpg"]
 thumbnail: "images/samsung-the-frame-pro-2026-review-pricey-but-worth-it.jpg"
-description: "\'Discover the latest Frame Pro 2026 with AI audio, picture tuning, and anti-glare coating for enhanced viewing experience\"
+description: "Discover the latest Frame Pro 2026 with AI audio, picture tuning, and anti-glare coating for enhanced viewing experience"
 categories: ["Hardware"]
 tags: ["Artificial Intelligence", "Display Technology", "Gaming Monitor"]
 ---
