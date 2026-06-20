@@ -204,10 +204,17 @@ def git_commit_and_push(message, trigger_hugo=False):
     except Exception as e:
         print(f"⚠️ Git/Hugo operation failed: {e}")
 
-def share_to_social_media(title, slug, summary):
+def share_to_social_media(title, slug, summary, image_path):
+    from datetime import datetime, timezone
     print(f"\n📣 Broadcasting to Social Media: {title}")
-    post_url = f"https://luckytaorem.github.io/blog/posts/{slug}/"
     
+    post_url = f"https://luckytaorem.github.io/blog/posts/{slug}/"
+    today = datetime.now(timezone.utc).strftime('%B %d, %Y')
+    
+    # Clean the summary to filter out raw navigation bar HTML scrapes
+    clean_summary = summary.replace("The Verge", "").strip()
+    clean_summary = clean_summary[:100] + "..." if len(clean_summary) > 100 else clean_summary
+
     # -----------------------------------------
     # 1. BLUESKY
     # -----------------------------------------
@@ -217,8 +224,17 @@ def share_to_social_media(title, slug, summary):
         if bsky_handle and bsky_password:
             client = BskyClient()
             client.login(bsky_handle, bsky_password)
-            bsky_text = f"🚨 New Post: {title}\n\nRead the full breakdown here 👇\n{post_url}"
-            client.send_post(text=bsky_text)
+            
+            # The atproto send_image command automatically parses the URL to make it clickable
+            bsky_text = f"{title} | {today}\n\n{clean_summary}\n\nRead full breakdown below:\n{post_url}"
+            
+            if os.path.exists(image_path):
+                with open(image_path, 'rb') as f:
+                    img_data = f.read()
+                client.send_image(text=bsky_text, image=img_data, image_alt=title)
+            else:
+                client.send_post(text=bsky_text)
+                
             print("  🦋 Success: Posted to Bluesky")
         else:
             print("  ⚠️ Skipped Bluesky: Credentials missing")
@@ -232,9 +248,19 @@ def share_to_social_media(title, slug, summary):
         fb_token = os.environ.get("FB_PAGE_TOKEN")
         fb_page_id = os.environ.get("FB_PAGE_ID")
         if fb_token and fb_page_id:
-            fb_url = f"https://graph.facebook.com/v19.0/{fb_page_id}/feed"
-            fb_msg = f"🚨 New Post: {title}\n\nRead the full article here 👇\n{post_url}"
-            res = requests.post(fb_url, data={'message': fb_msg, 'access_token': fb_token})
+            fb_url = f"https://graph.facebook.com/v19.0/{fb_page_id}/photos"
+            fb_msg = f"{title} | {today}\n\n{clean_summary}\n\nRead full breakdown below:\n{post_url}"
+            
+            # Post as a Photo post instead of a text feed post for better engagement
+            if os.path.exists(image_path):
+                with open(image_path, 'rb') as f:
+                    files = {'file': f}
+                    data = {'caption': fb_msg, 'access_token': fb_token}
+                    res = requests.post(fb_url, files=files, data=data)
+            else:
+                feed_url = f"https://graph.facebook.com/v19.0/{fb_page_id}/feed"
+                res = requests.post(feed_url, data={'message': fb_msg, 'access_token': fb_token})
+                
             if res.status_code == 200:
                 print("  📘 Success: Posted to Facebook")
             else:
@@ -252,23 +278,23 @@ def share_to_social_media(title, slug, summary):
         t_secret = os.environ.get("TUMBLR_SECRET")
         t_oauth = os.environ.get("TUMBLR_OAUTH")
         t_oauth_secret = os.environ.get("TUMBLR_OAUTH_SECRET")
-        t_blog = os.environ.get("TUMBLR_BLOG_NAME") # e.g., luckytaorem
+        t_blog = os.environ.get("TUMBLR_BLOG_NAME")
         
         if all([t_key, t_secret, t_oauth, t_oauth_secret, t_blog]):
             client = pytumblr.TumblrRestClient(t_key, t_secret, t_oauth, t_oauth_secret)
-            client.create_link(
-                t_blog, 
-                state="published", 
-                title=title, 
-                url=post_url, 
-                description=f"{summary[:200]}...\n\nRead the full article here: {post_url}"
-            )
+            
+            caption_html = f"<h2>{title} | {today}</h2><p>{clean_summary}</p><p><a href='{post_url}'>Read full breakdown below: {post_url}</a></p>"
+            
+            if os.path.exists(image_path):
+                client.create_photo(t_blog, state="published", data=image_path, caption=caption_html, link=post_url)
+            else:
+                client.create_link(t_blog, state="published", title=f"{title} | {today}", url=post_url, description=caption_html)
+                
             print("  🆃 Success: Posted to Tumblr")
         else:
             print("  ⚠️ Skipped Tumblr: Credentials missing")
     except Exception as e:
         print(f"  ❌ Failed Tumblr: {e}")
-
 # ==========================================
 # 3. SCRAPE MODE (Runs at 8 AM / 8 PM)
 # ==========================================
@@ -694,7 +720,8 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
 
         ping_google_indexing_api(article['slug'])
 
-        share_to_social_media(article['title'], article['slug'], article['summary'])
+        local_img_path = os.path.join("assets", "images", f"{article['slug']}.jpg")
+        share_to_social_media(article['title'], article['slug'], article['summary'], local_img_path)
 
     # Save the updated queue (minus the 3 we just published)
     with open(QUEUE_FILE, "w", encoding="utf-8") as f:
