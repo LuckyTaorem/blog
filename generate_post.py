@@ -39,7 +39,11 @@ RSS_FEEDS = [
     "https://www.theverge.com/rss/index.xml",
     "https://www.wired.com/feed/rss",
     "https://arstechnica.com/feed/",
-    "https://venturebeat.com/feed/"
+    "https://venturebeat.com/feed/",
+
+    "https://indialegallive.com/feed/",
+    "https://www.livelaw.in/google_feeds.xml",
+    "https://www.lawctopus.com/feed/"
 ]
 
 output_dir = "content/posts"
