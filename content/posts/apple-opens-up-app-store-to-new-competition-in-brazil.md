@@ -1,5 +1,5 @@
 ---
-title: "Apple's Grip"
+title: " "Apple's Grip""
 date: 2026-06-18T22:56:30.326040+00:00
 draft: false
 images: ["images/apple-opens-up-app-store-to-new-competition-in-brazil.jpg"]

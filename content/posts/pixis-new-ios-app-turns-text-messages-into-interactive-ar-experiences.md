@@ -1,5 +1,5 @@
 ---
-title: "Pixi’s AR Messaging: The Future of Texting?"
+title: " "Pixi’s AR Messaging: The Future of Texting?""
 date: 2026-06-19T04:05:51.961904+00:00
 draft: false
 images: ["images/pixis-new-ios-app-turns-text-messages-into-interactive-ar-experiences.jpg"]

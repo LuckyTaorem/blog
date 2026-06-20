@@ -1,5 +1,5 @@
 ---
-title: "Revolutionary Keyboard Unleashed"
+title: " "Revolutionary Keyboard Unleashed""
 date: 2026-06-18T13:28:22.312864+00:00
 draft: false
 images: ["images/this-ghost-in-the-shell-keyboard-makes-me-want-to-activate-the-hundred-spidery-robot-fingers-inside-my-regular-fingers.jpg"]

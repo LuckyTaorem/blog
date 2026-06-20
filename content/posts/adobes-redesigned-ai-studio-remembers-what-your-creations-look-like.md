@@ -1,5 +1,5 @@
 ---
-title: "Adobe Unleashes AI Revolution"
+title: " "Adobe Unleashes AI Revolution""
 date: 2026-06-18T13:28:06.894534+00:00
 draft: false
 images: ["images/adobes-redesigned-ai-studio-remembers-what-your-creations-look-like.jpg"]

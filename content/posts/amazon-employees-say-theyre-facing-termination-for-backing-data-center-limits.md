@@ -1,5 +1,5 @@
 ---
-title: "Amazon Employees"
+title: " "Amazon Employees""
 date: 2026-06-19T12:06:51.185825+00:00
 draft: false
 images: ["images/amazon-employees-say-theyre-facing-termination-for-backing-data-center-limits.jpg"]
