@@ -415,21 +415,33 @@ def run_scraper():
             print(f"Found NEW article: {news_title}")
             
             # --- EXTENDED CONTEXT EXTRACTION ---
-            article_link = entry.get('link', '')
-            extended_text = fetch_extended_article_text(article_link)
+            raw_rss_content = entry.get('summary', '')
+            if 'content' in entry:
+                raw_rss_content = " ".join([c.value for c in entry.content])
             
-            # Fallback to the RSS data if the web scrape fails or blocks us
-            if not extended_text or len(extended_text) < 200:
-                raw_summary = entry.get('summary', '')
-                # Some RSS feeds hide the full text inside 'content'
-                if 'content' in entry:
-                    raw_summary = " ".join([c.value for c in entry.content])
-                extended_text = re.sub(r'<[^>]+>', ' ', raw_summary)
-            
+            # 1. SMART FETCH: If the RSS feed gives us a massive, clean article (like LiveLaw Google Feed), use it!
+            if len(raw_rss_content) > 800:
+                print("  -> Full article found in RSS XML. Bypassing web scraper!")
+                # Nuke any rogue scripts just in case
+                safe_html = re.sub(r'<script[^>]*>.*?</script>', ' ', raw_rss_content, flags=re.IGNORECASE | re.DOTALL)
+                safe_html = re.sub(r'<style[^>]*>.*?</style>', ' ', safe_html, flags=re.IGNORECASE | re.DOTALL)
+                extended_text = re.sub(r'<[^>]+>', ' ', safe_html)
+                
+            # 2. Otherwise, the RSS is just a short snippet, so we MUST scrape the live webpage
+            else:
+                print("  -> Short RSS snippet detected. Scraping live webpage...")
+                article_link = entry.get('link', '')
+                extended_text = fetch_extended_article_text(article_link)
+                
+                # Failsafe if the live scrape fails
+                if not extended_text or len(extended_text) < 200:
+                    extended_text = re.sub(r'<[^>]+>', ' ', raw_rss_content)
+
             # Clean it up and cap it at 3500 characters so it doesn't overload the AI prompt limit
             unescaped_text = html.unescape(extended_text)
             cleaned_text = clean_scraped_content(unescaped_text)
             final_summary = cleaned_text[:3500]
+            # -----------------------------------
             # -----------------------------------
 
             # Save clean text to queue
