@@ -225,8 +225,26 @@ def share_to_social_media(title, slug, summary, image_path):
             client = BskyClient()
             client.login(bsky_handle, bsky_password)
             
-            # The atproto send_image command automatically parses the URL to make it clickable
-            bsky_text = f"{title} | {today}\n\n{clean_summary}\n\nRead full breakdown below:\n{post_url}"
+            # 1. Clean up the base summary text
+            clean_summary = summary.replace("The Verge", "").strip()
+            
+            # 2. Define templates and unchanging parts
+            header = f"{title} | {today}\n\n"
+            footer = f"\n\nRead full breakdown below:\n{post_url}"
+            
+            # 3. Calculate exactly how many characters are left for the summary
+            # Bluesky max limit is 300. Leave a safety buffer of 5 characters.
+            max_allowed_total = 295 
+            used_chars = len(header) + len(footer)
+            available_chars_for_summary = max_allowed_total - used_chars
+            
+            # 4. Truncate the summary safely based on real remaining space
+            if len(clean_summary) > available_chars_for_summary:
+                # Subtract 3 to fit the "..." ellipsis nicely
+                clean_summary = clean_summary[:available_chars_for_summary - 3] + "..."
+            
+            # 5. Build final post text guaranteed to be under 300 characters
+            bsky_text = f"{header}{clean_summary}{footer}"
             
             if os.path.exists(image_path):
                 with open(image_path, 'rb') as f:
