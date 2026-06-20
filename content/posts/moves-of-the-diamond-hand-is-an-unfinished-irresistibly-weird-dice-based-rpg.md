@@ -136,7 +136,4 @@ If you're seeking a game that blends creativity, strategy, and unpredictability,
 
 --- 
 
-Word count: 1,485
-# ## Understanding the Moves of the Diamond Hand – A Deep Dive into Indie Gaming Excellence
-
 {{< comments >}}
