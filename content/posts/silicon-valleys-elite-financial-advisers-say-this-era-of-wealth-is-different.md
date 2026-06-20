@@ -1,10 +1,10 @@
 ---
-title: " \'Wealth Boom\'"
+title: "\'Wealth Boom\"
 date: 2026-06-20T03:28:10.216497+00:00
 draft: false
 images: ["images/silicon-valleys-elite-financial-advisers-say-this-era-of-wealth-is-different.jpg"]
 thumbnail: "images/silicon-valleys-elite-financial-advisers-say-this-era-of-wealth-is-different.jpg"
-description: " \'Discover what wealth advisers are telling tech clients about the wealth boom and its implications\'"
+description: "\'Discover what wealth advisers are telling tech clients about the wealth boom and its implications\"
 categories: ["Finance/FinTech"]
 tags: ["Wealth Management", "Tech Clients", "Financial Advice"]
 ---

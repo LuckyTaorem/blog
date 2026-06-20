@@ -1,5 +1,5 @@
 ---
-title: " " "Breathe Easy: Top 13 Essential Oil Diffusers"""
+title: "Breathe Easy: Top 13 Essential Oil Diffusers"
 date: 2026-06-18T13:29:28.849918+00:00
 draft: false
 images: ["images/13-best-essential-oil-diffusers-2026-tested-and-reviewed.jpg"]

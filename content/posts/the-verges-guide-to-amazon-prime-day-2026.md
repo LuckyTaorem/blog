@@ -1,5 +1,5 @@
 ---  
-title: " " "Prime Day 2026 Unveiled: A Tech Deep Dive"""
+title: "Prime Day 2026 Unveiled: A Tech Deep Dive"
 date: 2026-06-19T12:50:51.728971+00:00  
 draft: false  
 images: ["images/the-verges-guide-to-amazon-prime-day-2026.jpg"]  

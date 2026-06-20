@@ -1,5 +1,5 @@
 ---
-title: " " "Anthropic’s Fable 5: The AI Safety Crisis"""
+title: "Anthropic’s Fable 5: The AI Safety Crisis"
 date: 2026-06-19T13:49:37.385613+00:00
 draft: false
 images: ["images/who-decides-when-ai-is-too-dangerous.jpg"]

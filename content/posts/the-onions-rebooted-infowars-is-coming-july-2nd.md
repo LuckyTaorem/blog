@@ -1,5 +1,5 @@
 ---
-title: " " "InfoWars Reboot"""
+title: "InfoWars Reboot"
 date: 2026-06-19T12:06:45.635374+00:00
 draft: false
 images: ["images/the-onions-rebooted-infowars-is-coming-july-2nd.jpg"]

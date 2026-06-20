@@ -1,5 +1,5 @@
 ---
-title: " " "UK to Scan Asylum-Seekers' Faces for Age"""
+title: "UK to Scan Asylum-Seekers' Faces for Age"
 date: 2026-06-18T13:30:44.768561+00:00
 draft: false
 images: ["images/the-uk-will-scan-asylum-seekers-faces-for-age-checksdespite-knowing-the-tech-is-flawed.jpg"]

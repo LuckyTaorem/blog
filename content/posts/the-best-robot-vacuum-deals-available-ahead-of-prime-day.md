@@ -1,5 +1,5 @@
 ---
-title: " " "Prime Day Robot Vacuum Deals You Can't Miss"""
+title: "Prime Day Robot Vacuum Deals You Can't Miss"
 date: 2026-06-19T13:48:15.081904+00:00
 draft: false
 images: ["images/the-best-robot-vacuum-deals-available-ahead-of-prime-day.jpg"]

@@ -1,5 +1,5 @@
 ---
-title: " " "How to turn off AI in your Google Docs"""
+title: "How to turn off AI in your Google Docs"
 date: 2026-06-18T13:26:34.165709+00:00
 draft: false
 images: ["images/how-to-turn-off-ai-in-your-google-docs.jpg"]

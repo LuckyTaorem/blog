@@ -1,5 +1,5 @@
 ---
-title: " " "Home Depot Promo Codes: 50% Off in June 2026"""
+title: "Home Depot Promo Codes: 50% Off in June 2026"
 date: 2026-06-18T13:30:56.588275+00:00
 draft: false
 images: ["images/home-depot-promo-codes-50-off-in-june-2026.jpg"]
