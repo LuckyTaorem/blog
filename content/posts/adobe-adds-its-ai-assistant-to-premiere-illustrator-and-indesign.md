@@ -1,5 +1,5 @@
 ---
-title: " "AI Boost""
+title: " " "AI Boost"""
 date: 2026-06-19T04:05:46.423321+00:00
 draft: false
 images: ["images/adobe-adds-its-ai-assistant-to-premiere-illustrator-and-indesign.jpg"]

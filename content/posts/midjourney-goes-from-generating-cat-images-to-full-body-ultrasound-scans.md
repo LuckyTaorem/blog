@@ -1,5 +1,5 @@
 ---
-title: " "Midjourney Revolutionizes AI Art""
+title: " " "Midjourney Revolutionizes AI Art"""
 date: 2026-06-18T13:29:06.699374+00:00
 draft: false
 images: ["images/midjourney-goes-from-generating-cat-images-to-full-body-ultrasound-scans.jpg"]

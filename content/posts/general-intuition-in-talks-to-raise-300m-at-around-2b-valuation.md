@@ -1,5 +1,5 @@
 ---
-title: " "AI Evolved""
+title: " " "AI Evolved"""
 date: 2026-06-19T01:45:32.749983+00:00
 draft: false
 images: ["images/general-intuition-in-talks-to-raise-300m-at-around-2b-valuation.jpg"]

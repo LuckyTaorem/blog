@@ -1,5 +1,5 @@
 ---
-title: " "Amazon Faces Political Retaliation Lawsuit""
+title: " " "Amazon Faces Political Retaliation Lawsuit"""
 date: 2026-06-19T13:51:45.326452+00:00
 draft: false
 images: ["images/3-amazon-workers-say-theyre-under-investigation-for-speaking-out-about-data-centers.jpg"]

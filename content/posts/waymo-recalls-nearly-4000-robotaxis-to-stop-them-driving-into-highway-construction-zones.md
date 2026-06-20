@@ -1,5 +1,5 @@
 ---
-title: " "Robotaxis Invade Closed Highways: A Tech Disaster?""
+title: " " "Robotaxis Invade Closed Highways: A Tech Disaster?"""
 date: 2026-06-19T04:06:46.354555+00:00
 draft: false
 images: ["images/waymo-recalls-nearly-4000-robotaxis-to-stop-them-driving-into-highway-construction-zones.jpg"]

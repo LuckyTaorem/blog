@@ -1,5 +1,5 @@
 ---
-title: " "Ulta Promo Codes: Up to 50% Off in June 2026""
+title: " " "Ulta Promo Codes: Up to 50% Off in June 2026"""
 date: 2026-06-18T13:31:41.077370+00:00
 draft: false
 images: ["images/ulta-promo-codes-up-to-50-off-in-june-2026.jpg"]

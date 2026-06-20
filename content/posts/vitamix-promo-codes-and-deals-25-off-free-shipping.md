@@ -1,5 +1,5 @@
 ---
-title: " "Vitamix Deals: $25 Off + Free Shipment""
+title: " " "Vitamix Deals: $25 Off + Free Shipment"""
 date: 2026-06-18T13:33:36.352944+00:00
 draft: false
 images: ["images/vitamix-promo-codes-and-deals-25-off-free-shipping.jpg"]
