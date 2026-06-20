@@ -370,14 +370,17 @@ def run_scraper():
             # 1. Skip if already in Queue
             if news_title in existing_queue_titles: continue
             
-            # 2. Skip if already Published (NO IMAGE UPDATES, JUST SKIP)
-            if get_existing_post_path(news_title):
-                print(f"Duplicate found: {news_title}. Skipping entirely.")
+            # Generate the slug immediately
+            filename_slug = re.sub(r'[^\w\s-]', '', news_title).strip().lower()
+            filename_slug = re.sub(r'[-\s]+', '-', filename_slug)
+
+            # 2. Skip if already Published by checking if the file exists directly
+            expected_file_path = os.path.join(output_dir, f"{filename_slug}.md")
+            if os.path.exists(expected_file_path):
+                # print(f"Duplicate found on disk: {news_title}. Skipping.")
                 continue
 
             print(f"Found NEW article: {news_title}")
-            filename_slug = re.sub(r'[^\w\s-]', '', news_title).strip().lower()
-            filename_slug = re.sub(r'[-\s]+', '-', filename_slug)
             
             # --- EXTENDED CONTEXT EXTRACTION ---
             article_link = entry.get('link', '')
