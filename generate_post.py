@@ -105,29 +105,6 @@ def generate_fallback_image(title, slug):
     img.save(filepath)
     return f"images/{slug}.jpg"
 
-def sanitize_existing_posts():
-    print("🧹 Running legacy frontmatter sanitizer...")
-    if not os.path.exists(output_dir): return
-    for fname in os.listdir(output_dir):
-        # 🚨 NEW: Skip Hugo structural files, only target actual blog posts!
-        if not fname.endswith('.md') or fname == "_index.md": continue
-        
-        path = os.path.join(output_dir, fname)
-        try:
-            with open(path, 'r', encoding='utf-8') as f:
-                content = f.read()
-            
-            # If the title line doesn't start with a quote, wrap it in quotes
-            # Made the regex slightly safer to ignore leading spaces
-            fixed_content = re.sub(r'^title:\s*([^"\'\n].*)$', r'title: "\1"', content, flags=re.MULTILINE)
-            
-            if fixed_content != content:
-                with open(path, 'w', encoding='utf-8') as f:
-                    f.write(fixed_content)
-                print(f"   -> Fixed frontmatter title in: {fname}")
-        except Exception as e:
-            print(f"⚠️ Failed to sanitize {fname}: {e}")
-
 def get_unsplash_image(title):
     if not UNSPLASH_KEY: return None
     search_query = " ".join(title.split()[:4])
@@ -366,13 +343,13 @@ You MUST write a minimum of [WORD_COUNT] words. Do not summarize; provide extens
 Include headings, bullet points, and an FAQ section. Output in pure Markdown format.
 
 CRITICAL SEO RULES:
-1. Title Limit: The title in the frontmatter MUST be catchy, click-optimized, and strictly under 50 characters.
+1. Title Limit: The title in the frontmatter MUST be catchy, click-optimized, and strictly between 50 and 60 characters.
 2. Description Limit: The description in the frontmatter MUST be highly engaging and strictly between 140 and 150 characters.
 3. Heading Tags: DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for main sections and H3 (`###`) for subsections. 
 
 At the very top of the file, include YAML frontmatter formatted EXACTLY like this:
 ---
-title: "[Insert <50 Char Title Here]"
+title: "[Insert 50-60 Char Title Here]"
 date: {datetime.now(timezone.utc).isoformat()}
 draft: false
 images: ["{image_url}"]
@@ -568,13 +545,23 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
                 if len(parts) == 2:
                     article_content = parts[0] + "\n---\n\n" + parts[1]
 
-        # 3. Force Quotes Around Title & Description (Prevents YAML colon crashes)
-        article_content = re.sub(r'^title:\s*(?!["\'])(.*)$', r'title: "\1"', article_content, flags=re.MULTILINE)
-        article_content = re.sub(r'^description:\s*(?!["\'])(.*)$', r'description: "\1"', article_content, flags=re.MULTILINE)
+        # 3 & 4. Robustly Sanitize Title and Description Quotes & Escapes
+        def sanitize_frontmatter_line(line_prefix, current_content):
+            pattern = rf'^{line_prefix}:\s*(.*)$'
+            match = re.search(pattern, current_content, re.MULTILINE)
+            if not match:
+                return current_content
+            
+            raw_val = match.group(1).strip()
+            # Strip outer quotes, spaces, and stray backslashes
+            clean_val = re.sub(r'^["\'\s\\]+|["\'\s\\]+$', '', raw_val)
+            # Remove literal "\'" and '\"' and swap internal double quotes to single
+            clean_val = clean_val.replace("\\'", "'").replace('\\"', "'").replace('"', "'")
+            
+            return re.sub(pattern, f'{line_prefix}: "{clean_val}"', current_content, flags=re.MULTILINE)
 
-        # 4. Clean Nested Quotes
-        article_content = re.sub(r'^title:\s*"([^"]*?)"([^"]*?)"(.*)$', r'title: "\1\'\2\'\3', article_content, flags=re.MULTILINE)
-        article_content = re.sub(r'^description:\s*"([^"]*?)"([^"]*?)"(.*)$', r'description: "\1\'\2\'\3', article_content, flags=re.MULTILINE)
+        article_content = sanitize_frontmatter_line("title", article_content)
+        article_content = sanitize_frontmatter_line("description", article_content)
 
         # Fix Categories
         cat_match = re.search(r'categories:\s*\["([^"]+)"\]', article_content)
