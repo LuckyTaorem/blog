@@ -5,7 +5,7 @@ draft: false
 images: ["images/moves-of-the-diamond-hand-is-an-unfinished-irresistibly-weird-dice-based-rpg.jpg"]
 thumbnail: "images/moves-of-the-diamond-hand-is-an-unfinished-irresistibly-weird-dice-based-rpg.jpg"
 description: "Explore the chaotic charm of Moves of the Diamond Hand – a wild, sandbox-style RPG with dice, character choices, and creative freedom. Learn what makes this indie gem stand out in 2026."
-categories: ["Gaming", "Software", "Creative Development"]
+categories: ["Gaming"]
 tags: ["Indie Game", "RPG", "Dice Mechanics", "Creative Play", "Game Design"]
 ---
 
