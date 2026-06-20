@@ -185,23 +185,41 @@ def clean_scraped_content(raw_text):
     if not raw_text:
         return ""
         
-    # 1. Aggressive boundary cutting (Deletes everything BEFORE these known junk markers end)
+    # 1. Nuke raw JavaScript and CSS blocks that leak through
+    # This targets curly braces {} and common JS keywords that shouldn't be in news text
+    js_patterns = [
+        r'document\.querySelector.*?\}',
+        r'function\(.*?\).*?\}',
+        r'const.*?=.*?;',
+        r'let.*?=.*?;',
+        r'var.*?=.*?;',
+        r'\.addEventListener.*?\}',
+        r'\{.*?\}', # Blindly delete anything wrapped in curly braces (usually CSS or JS)
+        r'@media.*?\)' # Delete CSS media queries
+    ]
+    
+    cleaned = raw_text
+    for pattern in js_patterns:
+        cleaned = re.sub(pattern, "", cleaned, flags=re.DOTALL | re.IGNORECASE)
+
+    # 2. Aggressive boundary cutting (Deletes everything BEFORE these known junk markers end)
     junk_regexes = [
         r'^.*?Crunchboard Contact Us',                 # TechCrunch
         r'^.*?FollowSee All [a-zA-Z\s]+',              # The Verge
         r'^.*?Getting the conversation ready\.\.\.',   # The Verge (Alternate)
         r'^.*?Save this story',                        # Wired
-        r'^.*?Feature\s+Reviews.*?Tech\s+'             # ArsTechnica (Matches the huge vertical menu)
+        r'^.*?Feature\s+Reviews.*?Tech\s+',            # ArsTechnica
+        r'^.*?Home\s+»\s+Opportunities\s+&\s+Events.*?»', # Lawctopus navigation junk
+        r'^.*?Surprise Me!.*?(?=[A-Z])'                # More Lawctopus menu junk
     ]
     
-    cleaned = raw_text
     for pattern in junk_regexes:
         cleaned = re.sub(pattern, "", cleaned, flags=re.DOTALL | re.IGNORECASE)
         
-    # 2. Un-glue camel-case navigation words that leaked through (e.g., "TechReviewsScience" -> "Tech Reviews Science")
+    # 3. Un-glue camel-case navigation words that leaked through
     cleaned = re.sub(r'([a-z])([A-Z])', r'\1 \2', cleaned)
     
-    # 3. Nuke ALL massive spacing, tabs, and multiple newlines into a single space
+    # 4. Nuke ALL massive spacing, tabs, and multiple newlines into a single space
     cleaned = re.sub(r'\s+', ' ', cleaned)
     
     return cleaned.strip()
@@ -370,6 +388,16 @@ def run_scraper():
             if published_dt.date() != datetime.now(timezone.utc).date(): continue
 
             news_title = html.unescape(entry.get('title', 'NO TITLE'))
+            
+            # 🚨 NEW: Block Job Posts, Internships, and Academic Calls 🚨
+            skip_keywords = [
+                "job post", "hiring", "vacancy", "internship", 
+                "call for papers", "call for blogs", "apply now"
+            ]
+            if any(keyword in news_title.lower() for keyword in skip_keywords):
+                print(f"Skipping non-news post: {news_title}")
+                continue
+            # ---------------------------------------------------------
             
             # 1. Skip if already in Queue
             if news_title in existing_queue_titles: continue
