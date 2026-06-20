@@ -177,6 +177,28 @@ def fetch_extended_article_text(url):
         print(f"      -> Could not fetch extended text: {e}")
     return None
 
+def clean_scraped_content(raw_text):
+    if not raw_text:
+        return ""
+        
+    junk_patterns = [
+        r"Latest AI Amazon Apps.*Crunchboard Contact Us", 
+        r"The VergeThe Verge logo.*FollowSee All Reviews", 
+        r"WIREDSECURITYPOLITICSTHE BIG STORY.*LivestreamsMerchSearchSearch", 
+        r"Sections.*Standard Wide Links Standard Orange", 
+        r"CommentLoaderSave StorySave this story",
+        r"NotificationsNotificationsHamburger Navigation"
+    ]
+    
+    cleaned = raw_text
+    for pattern in junk_patterns:
+        cleaned = re.sub(pattern, "", cleaned, flags=re.DOTALL | re.IGNORECASE)
+    
+    cleaned = re.sub(re.compile(r'\t+'), ' ', cleaned)
+    cleaned = re.sub(re.compile(r'\n+'), '\n', cleaned)
+    
+    return cleaned.strip()
+
 def git_commit_and_push(message, trigger_hugo=False):
     print(f"\n📦 Committing changes: {message}")
     try:
@@ -367,7 +389,9 @@ def run_scraper():
                 extended_text = re.sub(r'<[^>]+>', '', raw_summary)
             
             # Clean it up and cap it at 3500 characters so it doesn't overload the AI prompt limit
-            final_summary = html.unescape(extended_text).strip()[:3500]
+            unescaped_text = html.unescape(extended_text)
+            cleaned_text = clean_scraped_content(unescaped_text)
+            final_summary = cleaned_text[:3500]
             # -----------------------------------
 
             # Save clean text to queue
