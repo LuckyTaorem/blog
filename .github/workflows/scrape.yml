@@ -21,11 +21,12 @@ jobs:
         with:
           python-version: '3.10'
       
-      # FIX 1: Added groq to the pip install list
+      # FIX: We now tell GitHub to look at requirements.txt instead of a hardcoded list!
       - name: Install Dependencies
-        run: pip install feedparser groq requests pillow
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
       
-      # FIX 2: Added the API key environment variable so the Groq client can initialize
       - name: Run Scraper
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
