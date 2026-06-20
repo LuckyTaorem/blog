@@ -1,0 +1,108 @@
+{
+  "version": "1.2",
+  "media": {
+    "default_library": "repo_media",
+    "libraries": [
+      {
+        "key": "repo_media",
+        "label": "Repository media",
+        "references": {
+          "write": {
+            "mode": "root_relative",
+            "base_path": "/"
+          },
+          "allow_default_library_fallback": true
+        },
+        "limits": {
+          "max_file_size_mb": 10
+        },
+        "driver": "git",
+        "storage": {
+          "root_path": "public"
+        }
+      }
+    ]
+  },
+  "frontmatter_format": "toml",
+  "sitemap_url": "https://luckytaorem.github.io/blog/sitemap.xml",
+  "publishing_mode": "editorial_workflow",
+  "i18n": {
+    "enabled": true,
+    "locales": [
+      "en"
+    ],
+    "default_locale": "en",
+    "prefix_default_locale": false
+  },
+  "collections": [
+    {
+      "name": "posts",
+      "git_path": "/content/posts/",
+      "file_extension": ".md",
+      "filename_pattern": "",
+      "collection_type": "flat",
+      "i18n": {
+        "enabled": true,
+        "strategy": "path"
+      },
+      "frontmatter_schema": [
+        {
+          "name": "title",
+          "type": "title",
+          "label": "Title"
+        },
+        {
+          "name": "date",
+          "type": "datetime",
+          "label": "Date",
+          "withTime": true
+        },
+        {
+          "name": "draft",
+          "type": "boolean",
+          "label": "Draft",
+          "default": false
+        },
+        {
+          "name": "images",
+          "type": "multiselect",
+          "label": "Images",
+          "options": [
+            "images/13-best-essential-oil-diffusers-2026-tested-and-reviewed.jpg"
+          ],
+          "color": "blue"
+        },
+        {
+          "name": "thumbnail",
+          "type": "image",
+          "label": "Thumbnail"
+        },
+        {
+          "name": "description",
+          "type": "richtext",
+          "label": "Description"
+        },
+        {
+          "name": "categories",
+          "type": "multiselect",
+          "label": "Categories",
+          "options": [
+            "Hardware"
+          ],
+          "color": "blue"
+        },
+        {
+          "name": "tags",
+          "type": "multiselect",
+          "label": "Tags",
+          "options": [
+            "Home Appliances",
+            "Essential Oils",
+            "Air Purification"
+          ],
+          "color": "blue"
+        }
+      ]
+    }
+  ]
+}
