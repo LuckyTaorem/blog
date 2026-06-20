@@ -1,0 +1,6 @@
+feedparser
+groq
+requests
+pillow
+google-auth
+requests
