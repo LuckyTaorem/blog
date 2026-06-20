@@ -42,8 +42,7 @@ RSS_FEEDS = [
     "https://venturebeat.com/feed/",
 
     "https://indialegallive.com/feed/",
-    "https://www.livelaw.in/google_feeds.xml",
-    "https://www.lawctopus.com/feed/"
+    "https://www.livelaw.in/google_feeds.xml"
 ]
 
 output_dir = "content/posts"
