@@ -23,17 +23,10 @@
       }
     ]
   },
+  "ssg_framework": "hugo",
   "frontmatter_format": "toml",
   "sitemap_url": "https://luckytaorem.github.io/blog/sitemap.xml",
   "publishing_mode": "editorial_workflow",
-  "i18n": {
-    "enabled": true,
-    "locales": [
-      "en"
-    ],
-    "default_locale": "en",
-    "prefix_default_locale": false
-  },
   "collections": [
     {
       "name": "posts",
@@ -41,32 +34,32 @@
       "file_extension": ".md",
       "filename_pattern": "",
       "collection_type": "flat",
-      "i18n": {
-        "enabled": true,
-        "strategy": "path"
-      },
       "frontmatter_schema": [
         {
           "name": "title",
           "type": "title",
-          "label": "Title"
+          "label": "Title",
+          "required": true
         },
         {
           "name": "date",
           "type": "datetime",
           "label": "Date",
+          "required": true,
           "withTime": true
         },
         {
           "name": "draft",
           "type": "boolean",
           "label": "Draft",
-          "default": false
+          "required": true,
+          "default": true
         },
         {
           "name": "images",
           "type": "multiselect",
           "label": "Images",
+          "required": true,
           "options": [
             "images/13-best-essential-oil-diffusers-2026-tested-and-reviewed.jpg"
           ],
@@ -75,17 +68,20 @@
         {
           "name": "thumbnail",
           "type": "image",
-          "label": "Thumbnail"
+          "label": "Thumbnail",
+          "required": true
         },
         {
           "name": "description",
           "type": "richtext",
-          "label": "Description"
+          "label": "Description",
+          "required": true
         },
         {
           "name": "categories",
           "type": "multiselect",
           "label": "Categories",
+          "required": true,
           "options": [
             "Hardware"
           ],
@@ -95,6 +91,7 @@
           "name": "tags",
           "type": "multiselect",
           "label": "Tags",
+          "required": true,
           "options": [
             "Home Appliances",
             "Essential Oils",
