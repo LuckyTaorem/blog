@@ -181,21 +181,24 @@ def clean_scraped_content(raw_text):
     if not raw_text:
         return ""
         
-    junk_patterns = [
-        r"Latest AI Amazon Apps.*Crunchboard Contact Us", 
-        r"The VergeThe Verge logo.*FollowSee All Reviews", 
-        r"WIREDSECURITYPOLITICSTHE BIG STORY.*LivestreamsMerchSearchSearch", 
-        r"Sections.*Standard Wide Links Standard Orange", 
-        r"CommentLoaderSave StorySave this story",
-        r"NotificationsNotificationsHamburger Navigation"
+    # 1. Aggressive boundary cutting (Deletes everything BEFORE these known junk markers end)
+    junk_regexes = [
+        r'^.*?Crunchboard Contact Us',                 # TechCrunch
+        r'^.*?FollowSee All [a-zA-Z\s]+',              # The Verge
+        r'^.*?Getting the conversation ready\.\.\.',   # The Verge (Alternate)
+        r'^.*?Save this story',                        # Wired
+        r'^.*?Feature\s+Reviews.*?Tech\s+'             # ArsTechnica (Matches the huge vertical menu)
     ]
     
     cleaned = raw_text
-    for pattern in junk_patterns:
+    for pattern in junk_regexes:
         cleaned = re.sub(pattern, "", cleaned, flags=re.DOTALL | re.IGNORECASE)
+        
+    # 2. Un-glue camel-case navigation words that leaked through (e.g., "TechReviewsScience" -> "Tech Reviews Science")
+    cleaned = re.sub(r'([a-z])([A-Z])', r'\1 \2', cleaned)
     
-    cleaned = re.sub(re.compile(r'\t+'), ' ', cleaned)
-    cleaned = re.sub(re.compile(r'\n+'), '\n', cleaned)
+    # 3. Nuke ALL massive spacing, tabs, and multiple newlines into a single space
+    cleaned = re.sub(r'\s+', ' ', cleaned)
     
     return cleaned.strip()
 
@@ -386,7 +389,7 @@ def run_scraper():
                 # Some RSS feeds hide the full text inside 'content'
                 if 'content' in entry:
                     raw_summary = " ".join([c.value for c in entry.content])
-                extended_text = re.sub(r'<[^>]+>', '', raw_summary)
+                extended_text = re.sub(r'<[^>]+>', ' ', raw_summary)
             
             # Clean it up and cap it at 3500 characters so it doesn't overload the AI prompt limit
             unescaped_text = html.unescape(extended_text)
