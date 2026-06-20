@@ -515,31 +515,36 @@ def run_publisher():
         image_url = download_and_verify_image(article['raw_image_url'], article['slug'], article['title'])
 
         prompt = f"""
-Act as an expert tech journalist and SEO specialist. Read this short news summary: {article['summary']}
+Act as an expert tech journalist and strict SEO specialist. Read this short news summary: {article['summary']}
 
 Write a highly engaging, in-depth technical blog post about this topic. 
 You MUST write a minimum of [WORD_COUNT] words. Do not summarize; provide extensive details, analysis, and context.
 Include headings, bullet points, and an FAQ section. Output in pure Markdown format.
 
-CRITICAL SEO RULES:
-1. Title Limit: The title in the frontmatter MUST be catchy, click-optimized, and strictly between 50 and 60 characters.
-2. Description Limit: The description in the frontmatter MUST be highly engaging and strictly between 140 and 150 characters.
-3. Heading Tags: DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for main sections and H3 (`###`) for subsections. 
+CRITICAL FRONTMATTER RULES (FAILURE IS NOT AN OPTION):
+1. Title Limit: STRICTLY 45 to 55 characters. No more, no less. (Count letters and spaces carefully).
+2. Description Limit: STRICTLY 140 to 150 characters.
+3. Category Array: You MUST select EXACTLY ONE (1) category from the allowed list. 
+   - WRONG: categories: ["Software", "Hardware"]
+   - RIGHT: categories: ["Software"]
 
-At the very top of the file, include YAML frontmatter formatted EXACTLY like this:
+ALLOWED CATEGORIES LIST:
+{', '.join(VALID_CATEGORIES)}
+
+YOUR OUTPUT MUST START EXACTLY WITH THIS YAML BLOCK. DO NOT DEVIATE:
 ---
-title: "[Insert 50-60 Char Title Here]"
+title: "[Insert 45-55 Char Title Here]"
 date: {datetime.now(timezone.utc).isoformat()}
 draft: false
 images: ["{image_url}"]
 thumbnail: "{image_url}"
 description: "[Insert 140-150 Char Description Here]"
-categories: ["Insert EXACTLY ONE category here"]
-tags: ["Insert 3 to 5 relevant tags here based on the text"]
+categories: ["[EXACTLY ONE CATEGORY STRING]"]
+tags: ["[Tag 1]", "[Tag 2]", "[Tag 3]"]
 ---
 
-IMPORTANT RULE FOR CATEGORIES: 
-You must evaluate the article and pick EXACTLY ONE category from this exact list: {', '.join(VALID_CATEGORIES)}.
+CRITICAL BODY RULES:
+DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for main sections and H3 (`###`) for subsections.
 """
 
         # --- ROBUST MULTI-PROVIDER WATERFALL CONFIGURATION ---
@@ -751,16 +756,31 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
         article_content = sanitize_frontmatter_line("title", article_content)
         article_content = sanitize_frontmatter_line("description", article_content)
 
-        # Fix Categories
-        cat_match = re.search(r'categories:\s*\["([^"]+)"\]', article_content)
+        # 🚨 RUTHLESS CATEGORY ENFORCER 🚨
+        # Matches any array format the AI tries to output: ["Cat1"] or ["Cat1", "Cat2"]
+        cat_match = re.search(r'categories:\s*\[(.*?)\]', article_content, re.IGNORECASE)
         if cat_match:
-            ai_category = cat_match.group(1)
-            if ai_category not in VALID_CATEGORIES:
+            raw_category_string = cat_match.group(1)
+            
+            # Split by comma, take ONLY the first item, and strip out any quotes or spaces
+            first_category = raw_category_string.split(',')[0].replace('"', '').replace("'", "").strip()
+            
+            safe_category = first_category
+            
+            # Verify the single category against the master list
+            if safe_category not in VALID_CATEGORIES:
                 from difflib import get_close_matches
-                closest = get_close_matches(ai_category, VALID_CATEGORIES, n=1, cutoff=0.4)
+                closest = get_close_matches(safe_category, VALID_CATEGORIES, n=1, cutoff=0.4)
                 safe_category = closest[0] if closest else "Other"
-                article_content = article_content.replace(f'categories: ["{ai_category}"]', f'categories: ["{safe_category}"]')
-
+            
+            # Forcefully overwrite the entire line to guarantee a single-item array
+            article_content = re.sub(
+                r'categories:\s*\[.*?\]', 
+                f'categories: ["{safe_category}"]', 
+                article_content, 
+                flags=re.IGNORECASE
+            )
+            
         img_line_match = re.search(r'^images:\s*\[(.*)\]', article_content, re.MULTILINE)
         if img_line_match:
             clean_img_path = re.sub(r'[\'\"\\\[\]]', '', img_line_match.group(1)).strip()
