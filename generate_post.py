@@ -12,6 +12,8 @@ import subprocess
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
 from difflib import SequenceMatcher
+from atproto import Client as BskyClient
+import pytumblr
 
 from google.oauth2 import service_account
 from google.auth.transport.requests import AuthorizedSession
@@ -201,6 +203,71 @@ def git_commit_and_push(message, trigger_hugo=False):
         print("✅ Git operations complete!")
     except Exception as e:
         print(f"⚠️ Git/Hugo operation failed: {e}")
+
+def share_to_social_media(title, slug, summary):
+    print(f"\n📣 Broadcasting to Social Media: {title}")
+    post_url = f"https://luckytaorem.github.io/blog/posts/{slug}/"
+    
+    # -----------------------------------------
+    # 1. BLUESKY
+    # -----------------------------------------
+    try:
+        bsky_handle = os.environ.get("BSKY_HANDLE")
+        bsky_password = os.environ.get("BSKY_PASSWORD")
+        if bsky_handle and bsky_password:
+            client = BskyClient()
+            client.login(bsky_handle, bsky_password)
+            bsky_text = f"🚨 New Post: {title}\n\nRead the full breakdown here 👇\n{post_url}"
+            client.send_post(text=bsky_text)
+            print("  🦋 Success: Posted to Bluesky")
+        else:
+            print("  ⚠️ Skipped Bluesky: Credentials missing")
+    except Exception as e:
+        print(f"  ❌ Failed Bluesky: {e}")
+
+    # -----------------------------------------
+    # 2. FACEBOOK PAGE
+    # -----------------------------------------
+    try:
+        fb_token = os.environ.get("FB_PAGE_TOKEN")
+        fb_page_id = os.environ.get("FB_PAGE_ID")
+        if fb_token and fb_page_id:
+            fb_url = f"https://graph.facebook.com/v19.0/{fb_page_id}/feed"
+            fb_msg = f"🚨 New Post: {title}\n\nRead the full article here 👇\n{post_url}"
+            res = requests.post(fb_url, data={'message': fb_msg, 'access_token': fb_token})
+            if res.status_code == 200:
+                print("  📘 Success: Posted to Facebook")
+            else:
+                print(f"  ❌ Failed Facebook: {res.text}")
+        else:
+            print("  ⚠️ Skipped Facebook: Credentials missing")
+    except Exception as e:
+        print(f"  ❌ Failed Facebook: {e}")
+
+    # -----------------------------------------
+    # 3. TUMBLR
+    # -----------------------------------------
+    try:
+        t_key = os.environ.get("TUMBLR_KEY")
+        t_secret = os.environ.get("TUMBLR_SECRET")
+        t_oauth = os.environ.get("TUMBLR_OAUTH")
+        t_oauth_secret = os.environ.get("TUMBLR_OAUTH_SECRET")
+        t_blog = os.environ.get("TUMBLR_BLOG_NAME") # e.g., luckytaorem
+        
+        if all([t_key, t_secret, t_oauth, t_oauth_secret, t_blog]):
+            client = pytumblr.TumblrRestClient(t_key, t_secret, t_oauth, t_oauth_secret)
+            client.create_link(
+                t_blog, 
+                state="published", 
+                title=title, 
+                url=post_url, 
+                description=f"{summary[:200]}...\n\nRead the full article here: {post_url}"
+            )
+            print("  🆃 Success: Posted to Tumblr")
+        else:
+            print("  ⚠️ Skipped Tumblr: Credentials missing")
+    except Exception as e:
+        print(f"  ❌ Failed Tumblr: {e}")
 
 # ==========================================
 # 3. SCRAPE MODE (Runs at 8 AM / 8 PM)
@@ -626,6 +693,8 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
         print(f"  ✅ Saved: {file_path}")
 
         ping_google_indexing_api(article['slug'])
+
+        share_to_social_media(article['title'], article['slug'], article['summary'])
 
     # Save the updated queue (minus the 3 we just published)
     with open(QUEUE_FILE, "w", encoding="utf-8") as f:

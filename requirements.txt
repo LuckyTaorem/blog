@@ -3,3 +3,5 @@ groq
 requests
 pillow
 google-auth
+atproto
+pytumblr
