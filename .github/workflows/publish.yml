@@ -40,4 +40,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # FIX 2: Hand the Google credentials to the Python script
           GCP_INDEXING_JSON: ${{ secrets.GCP_INDEXING_JSON }}
+
+          BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
+          BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          TUMBLR_KEY: ${{ secrets.TUMBLR_KEY }}
+          TUMBLR_SECRET: ${{ secrets.TUMBLR_SECRET }}
+          TUMBLR_OAUTH: ${{ secrets.TUMBLR_OAUTH }}
+          TUMBLR_OAUTH_SECRET: ${{ secrets.TUMBLR_OAUTH_SECRET }}
+          TUMBLR_BLOG_NAME: ${{ secrets.TUMBLR_BLOG_NAME }}
         run: python generate_post.py --publish
