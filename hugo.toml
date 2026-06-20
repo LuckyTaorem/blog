@@ -57,6 +57,16 @@ locale = "en-us"
   pageRef = "/contact"
   weight = 20
 
+[[menu.footer]]
+    name = "Privacy Policy"
+    url = "/privacy-policy/"
+    weight = 10
+
+[[menu.footer]]
+    name = "Terms and Conditions"
+    url = "/terms-and-conditions/"
+    weight = 10
+
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
