@@ -776,11 +776,6 @@ You must evaluate the article and pick EXACTLY ONE category from this exact list
 
         published_articles.append(article)
 
-        ping_google_indexing_api(article['slug'])
-
-        local_img_path = os.path.join("assets", "images", f"{article['slug']}.jpg")
-        share_to_social_media(article['title'], article['slug'], article['summary'], local_img_path)
-
     # Save the updated queue (minus the 3 we just published)
     with open(QUEUE_FILE, "w", encoding="utf-8") as f:
         json.dump(remaining_queue, f, indent=4)
