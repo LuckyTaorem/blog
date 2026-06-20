@@ -155,6 +155,26 @@ def download_and_verify_image(url, slug, title):
     # If all else fails, use the Space background
     return generate_fallback_image(title, slug)
 
+def fetch_extended_article_text(url):
+    """Visits the live article link to scrape full paragraphs for better AI context."""
+    if not url: return None
+    try:
+        # We use a browser User-Agent so news sites don't block our bot
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        res = requests.get(url, headers=headers, timeout=10)
+        
+        if res.status_code == 200:
+            # Extract all <p> tags using regex
+            paragraphs = re.findall(r'<p[^>]*>(.*?)</p>', res.text, re.IGNORECASE | re.DOTALL)
+            # Strip internal HTML (like <a> links or <strong> tags) from the paragraphs
+            clean_paragraphs = [re.sub(r'<[^>]+>', '', p).strip() for p in paragraphs]
+            # Combine everything into one massive string
+            full_text = " ".join(clean_paragraphs)
+            return html.unescape(full_text)
+    except Exception as e:
+        print(f"      -> Could not fetch extended text: {e}")
+    return None
+
 def git_commit_and_push(message, trigger_hugo=False):
     print(f"\n📦 Committing changes: {message}")
     try:
@@ -223,11 +243,27 @@ def run_scraper():
             filename_slug = re.sub(r'[^\w\s-]', '', news_title).strip().lower()
             filename_slug = re.sub(r'[-\s]+', '-', filename_slug)
             
-            # Save clean text to queue to avoid JSON serialization errors
+            # --- EXTENDED CONTEXT EXTRACTION ---
+            article_link = entry.get('link', '')
+            extended_text = fetch_extended_article_text(article_link)
+            
+            # Fallback to the RSS data if the web scrape fails or blocks us
+            if not extended_text or len(extended_text) < 200:
+                raw_summary = entry.get('summary', '')
+                # Some RSS feeds hide the full text inside 'content'
+                if 'content' in entry:
+                    raw_summary = " ".join([c.value for c in entry.content])
+                extended_text = re.sub(r'<[^>]+>', '', raw_summary)
+            
+            # Clean it up and cap it at 3500 characters so it doesn't overload the AI prompt limit
+            final_summary = html.unescape(extended_text).strip()[:3500]
+            # -----------------------------------
+
+            # Save clean text to queue
             queue.append({
                 "title": news_title,
                 "slug": filename_slug,
-                "summary": html.unescape(entry.get('summary', '')),
+                "summary": final_summary,
                 "raw_image_url": extract_rss_image(entry)
             })
 
