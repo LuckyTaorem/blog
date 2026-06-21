@@ -2,8 +2,8 @@
 title: "Supreme Court Imposes Fine"
 date: 2026-06-21T04:39:30.785039+00:00
 draft: false
-images: ["images/supreme-court-imposes-2-lakh-cost-on-chhattisgarh-for-challenging-compensation-to-landowners-after-decades-of-illegal-occupation.jpg"]
-thumbnail: "images/supreme-court-imposes-2-lakh-cost-on-chhattisgarh-for-challenging-compensation-to-landowners-after-decades-of-illegal-occupation.jpg"
+images: []
+thumbnail: ""
 description: "Supreme Court dismisses Chhattisgarh's plea, imposes cost for challenging landowners' compensation"
 categories: ["Legal/Compliance"]
 tags: ["Supreme Court", "Land Acquisition", "Chhattisgarh", "Compensation"]
