@@ -141,10 +141,19 @@ def download_and_verify_image(url, slug, title):
             headers = {'User-Agent': 'Mozilla/5.0'}
             r = requests.get(url, headers=headers, timeout=10)
             if r.status_code == 200:
-                with open(filepath, 'wb') as f: f.write(r.content)
-                with Image.open(filepath) as img: img.verify()
-                return f"images/{slug}.jpg"
-        except Exception: pass 
+                with open(filepath, 'wb') as f: 
+                    f.write(r.content)
+                try:
+                    # Verify it's a real image
+                    with Image.open(filepath) as img: 
+                        img.verify()
+                    return f"images/{slug}.jpg"
+                except Exception:
+                    # 🚨 CORRUPTED FILE: Delete it immediately so it doesn't crash Hugo
+                    if os.path.exists(filepath):
+                        os.remove(filepath)
+        except Exception: 
+            pass 
         
     # If RSS had no image or it failed, try Unsplash
     unsplash_url = get_unsplash_image(title)
@@ -152,12 +161,20 @@ def download_and_verify_image(url, slug, title):
         try:
             r = requests.get(unsplash_url, timeout=10)
             if r.status_code == 200:
-                with open(filepath, 'wb') as f: f.write(r.content)
-                with Image.open(filepath) as img: img.verify()
-                return f"images/{slug}.jpg"
-        except Exception: pass
+                with open(filepath, 'wb') as f: 
+                    f.write(r.content)
+                try:
+                    with Image.open(filepath) as img: 
+                        img.verify()
+                    return f"images/{slug}.jpg"
+                except Exception:
+                    # 🚨 CORRUPTED FILE: Delete it immediately so it doesn't crash Hugo
+                    if os.path.exists(filepath):
+                        os.remove(filepath)
+        except Exception: 
+            pass
 
-    # If all else fails, use the Space background
+    # If all else fails, generate the Space background (which is safely constructed via Pillow)
     return generate_fallback_image(title, slug)
 
 def fetch_extended_article_text(url):
