@@ -40,9 +40,11 @@ RSS_FEEDS = [
     "https://www.wired.com/feed/rss",
     "https://arstechnica.com/feed/",
     "https://venturebeat.com/feed/",
-
-    "https://indialegallive.com/feed/",
-    "https://www.livelaw.in/google_feeds.xml"
+    "https://www.engadget.com/rss.xml",
+    "https://9to5mac.com/feed/",
+    "https://feeds.macrumors.com/MacRumors-All",
+    "https://appleinsider.com/rss/news/",
+    "https://www.technologyreview.com/feed/"
 ]
 
 output_dir = "content/posts"
