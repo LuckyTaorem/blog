@@ -250,6 +250,7 @@ def git_commit_and_push(message, trigger_hugo=False):
         subprocess.run(["git", "add", "content/posts/"], check=True)
         subprocess.run(["git", "add", "assets/images/"], check=True)
         subprocess.run(["git", "add", "queue.json"], check=True)
+        subprocess.run(["git", "add", "broadcast_queue.json"], check=False)
         
         # Optional: You can keep static/images/ if you still have files going there, 
         # but we fixed the paths earlier so assets/images/ is the main one now!
@@ -798,6 +799,7 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                     if len(parts) == 2:
                         article_content = parts[0] + "\n---\n\n" + parts[1]
 
+
         # 3 & 4. Robustly Sanitize Title and Description Quotes & Escapes
         def sanitize_frontmatter_line(line_prefix, current_content):
             pattern = rf'^{line_prefix}:\s*(.*)$'
@@ -816,30 +818,32 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
         article_content = sanitize_frontmatter_line("title", article_content)
         article_content = sanitize_frontmatter_line("description", article_content)
 
-        # 🚨 RUTHLESS CATEGORY ENFORCER 🚨
-        # Matches any array format the AI tries to output: ["Cat1"] or ["Cat1", "Cat2"]
         cat_match = re.search(r'categories:\s*\[(.*?)\]', article_content, re.IGNORECASE)
         if cat_match:
             raw_category_string = cat_match.group(1)
-            
-            # Split by comma, take ONLY the first item, and strip out any quotes or spaces
             first_category = raw_category_string.split(',')[0].replace('"', '').replace("'", "").strip()
-            
             safe_category = first_category
-            
-            # Verify the single category against the master list
             if safe_category not in VALID_CATEGORIES:
                 from difflib import get_close_matches
                 closest = get_close_matches(safe_category, VALID_CATEGORIES, n=1, cutoff=0.4)
                 safe_category = closest[0] if closest else "Other"
-            
-            # Forcefully overwrite the entire line to guarantee a single-item array
             article_content = re.sub(
                 r'categories:\s*\[.*?\]', 
                 f'categories: ["{safe_category}"]', 
                 article_content, 
                 flags=re.IGNORECASE
             )
+
+        # 🚨 THE BOUNCER (MOVED HERE: After title and category are safely formatted!) 🚨
+        has_title = re.search(r'^title:\s*".+"', article_content, re.MULTILINE)
+        has_category = re.search(r'^categories:\s*\[.+\]', article_content, re.MULTILINE)
+        
+        if not has_title or not has_category:
+            print(f"  -> 🚨 CRITICAL: AI generated malformed frontmatter (Missing Title/Category). Rejecting.")
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            remaining_queue.append(article)
+            continue
             
         img_line_match = re.search(r'^images:\s*\[(.*)\]', article_content, re.MULTILINE)
         if img_line_match:
@@ -863,51 +867,67 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
     with open(QUEUE_FILE, "w", encoding="utf-8") as f:
         json.dump(remaining_queue, f, indent=4)
         
-    git_commit_and_push("Published article batch and updated queue", trigger_hugo=True)
-
-    if published_articles:
-        test_slug = published_articles[0]['slug']
-        test_url = f"https://luckytaorem.github.io/blog/posts/{test_slug}/"
-        print(f"\n⏳ Waiting for GitHub Pages deployment to finish...")
-        
-        site_live = False
-        for i in range(40): # Check every 15 seconds for up to 5 minutes
-            time.sleep(15)
-            try:
-                # Add a timestamp query to completely bypass browser/server caching
-                check_url = f"{test_url}?nocache={int(time.time())}"
-                r = requests.get(check_url, headers={'User-Agent': 'Mozilla/5.0'})
-                if r.status_code == 200:
-                    site_live = True
-                    print("✅ Deployment complete! The URLs are now live.")
-                    break
-            except Exception:
-                pass
-            print(f"  ... checking server ({i+1}/20)")
+    # 🚨 NEW: Save successfully generated articles to the Broadcast Queue
+    broadcast_file = "broadcast_queue.json"
+    existing_broadcasts = []
+    if os.path.exists(broadcast_file):
+        with open(broadcast_file, "r", encoding="utf-8") as f:
+            try: existing_broadcasts = json.load(f)
+            except: pass
             
-        if not site_live:
-            print("⚠️ Warning: Site did not go live within 5 minutes, but proceeding with broadcast.")
+    existing_broadcasts.extend(published_articles)
+    
+    with open(broadcast_file, "w", encoding="utf-8") as f:
+        json.dump(existing_broadcasts, f, indent=4)
+        
+    git_commit_and_push("Published article batch", trigger_hugo=True)
 
-        # 🚨 3. Now that the site is live, ping Google and share to Social Media!
-        for article in published_articles:
-            ping_google_indexing_api(article['slug'])
-            local_img_path = os.path.join("assets", "images", f"{article['slug']}.jpg")
-            share_to_social_media(article['title'], article['slug'], article['summary'], local_img_path)
+# ==========================================
+# 4.5 BROADCAST MODE (Triggered by GitHub Actions)
+# ==========================================
+def run_broadcaster():
+    print("\n--- 📣 STARTING SOCIAL MEDIA BROADCASTER ---")
+    broadcast_file = "broadcast_queue.json"
+    
+    if not os.path.exists(broadcast_file):
+        print("No broadcast queue found. Exiting.")
+        return
+        
+    with open(broadcast_file, "r", encoding="utf-8") as f:
+        try: queue = json.load(f)
+        except: queue = []
+        
+    if not queue:
+        print("Broadcast queue is empty. Exiting.")
+        return
+        
+    for article in queue:
+        ping_google_indexing_api(article['slug'])
+        local_img_path = os.path.join("assets", "images", f"{article['slug']}.jpg")
+        share_to_social_media(article['title'], article['slug'], article['summary'], local_img_path)
+        
+    # Empty the queue so we don't double-post next time
+    with open(broadcast_file, "w", encoding="utf-8") as f:
+        json.dump([], f)
+        
+    # Use [skip ci] so this commit doesn't trigger the Hugo build loop again!
+    git_commit_and_push("Cleared broadcast queue [skip ci]", trigger_hugo=False)
 
 # ==========================================
 # 5. EXECUTION ROUTER
 # ==========================================
 if __name__ == "__main__":
-    # Removed the sanitize function so it stops touching old files!
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--scrape", action="store_true", help="Scrape new articles and add to queue")
     parser.add_argument("--publish", action="store_true", help="Publish next batch from the queue")
+    parser.add_argument("--broadcast", action="store_true", help="Share published articles to social media")
     args = parser.parse_args()
 
     if args.scrape:
         run_scraper()
     elif args.publish:
         run_publisher()
+    elif args.broadcast:
+        run_broadcaster()
     else:
-        print("Please provide a flag: --scrape or --publish")
+        print("Please provide a flag: --scrape, --publish, or --broadcast")
