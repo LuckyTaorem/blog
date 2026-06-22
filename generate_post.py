@@ -843,7 +843,7 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
             if os.path.exists(file_path):
                 os.remove(file_path)
             remaining_queue.append(article)
-            continue
+            continue # 👈 ABSOLUTELY CRITICAL: Stop execution and jump to the next article!
             
         img_line_match = re.search(r'^images:\s*\[(.*)\]', article_content, re.MULTILINE)
         if img_line_match:
