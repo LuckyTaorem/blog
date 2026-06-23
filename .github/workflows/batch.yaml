@@ -44,8 +44,8 @@ jobs:
       - name: 2. Wait for Hugo to Deploy
         run: |
           echo "The Markdown was just pushed! The deploy action is running..."
-          echo "Waiting 90 seconds for GitHub Pages to process the HTML before sharing..."
-          sleep 90
+          echo "Waiting 10 minutes (600 seconds) for GitHub Pages to process the HTML before sharing..."
+          sleep 600
 
       - name: 3. Broadcast to Social Media
         env:

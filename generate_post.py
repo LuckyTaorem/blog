@@ -3,7 +3,7 @@ import feedparser
 from groq import Groq
 import re
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import html
 import requests
 import json
@@ -267,11 +267,14 @@ def git_commit_and_push(message, trigger_hugo=False):
         print(f"⚠️ Git/Hugo operation failed: {e}")
 
 def share_to_social_media(title, slug, summary, image_path):
-    from datetime import datetime, timezone
+    from datetime import datetime, timezone, timedelta
     print(f"\n📣 Broadcasting to Social Media: {title}")
     
     post_url = f"https://luckytaorem.github.io/blog/posts/{slug}/"
-    today = datetime.now(timezone.utc).strftime('%B %d, %Y')
+    
+    # 🚨 IST Calculation
+    ist_timezone = timezone(timedelta(hours=5, minutes=30))
+    today = datetime.now(ist_timezone).strftime('%B %d, %Y')
     
     # Clean the summary to filter out raw navigation bar HTML scrapes
     clean_summary = summary.replace("The Verge", "").strip()
@@ -653,6 +656,9 @@ def run_publisher():
         # Download image or generate fallback
         image_url = download_and_verify_image(article['raw_image_url'], article['slug'], article['title'])
 
+        ist_timezone = timezone(timedelta(hours=5, minutes=30))
+        current_iso = datetime.now(ist_timezone).isoformat()
+
         prompt = f"""
 Act as an expert tech journalist and strict SEO specialist. Read this short news summary: {article['summary']}
 
@@ -673,7 +679,7 @@ ALLOWED CATEGORIES LIST:
 YOUR OUTPUT MUST START EXACTLY WITH THIS YAML BLOCK. DO NOT DEVIATE:
 ---
 title: "[Insert 45-55 Char Title Here]"
-date: {datetime.now(timezone.utc).isoformat()}
+date: {current_iso}
 draft: false
 images: ["{image_url}"]
 thumbnail: "{image_url}"
@@ -857,7 +863,8 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                 article_content = article_content[first_dash_idx:]
             else: 
                 safe_title = article['title'].replace('"', "'")
-                article_content = f"---\ntitle: \"{safe_title}\"\ndate: {datetime.now(timezone.utc).isoformat()}\ndraft: false\nimages: [\"{image_url}\"]\n---\n\n" + article_content
+                # 🚨 Use current_iso here instead of UTC
+                article_content = f"---\ntitle: \"{safe_title}\"\ndate: {current_iso}\ndraft: false\nimages: [\"{image_url}\"]\n---\n\n" + article_content
 
         # 2. BULLETPROOF Frontmatter Closer
         if article_content.startswith("---"):

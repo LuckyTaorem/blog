@@ -1,5 +1,6 @@
 # 1. This generates perfect Canonical Tags and Sitemap URLs
 baseURL = "https://luckytaorem.github.io/blog/"
+timeZone = "Asia/Kolkata"
 
 
 # 2. This tells Hugo to automatically generate a robots.txt file

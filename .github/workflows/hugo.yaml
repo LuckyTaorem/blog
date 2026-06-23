@@ -1,4 +1,5 @@
 name: Deploy Hinode site to Public Repo
+timeZone: "Asia/Kolkata"
 
 on:
   push:
@@ -28,16 +29,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm' # 🚨 This caches your npm install!
+          cache: 'npm'
 
-      # 🚨 NEW: This caches all the thousands of Hugo Theme files!
-      - name: Cache Hugo Modules
+      # 🚨 ADDED THIS LINE: Creates the folder so GitHub doesn't panic if it's empty
+      - name: Create Resources Folder
+        run: mkdir -p resources
+
+      - name: Cache Hugo Resources
         uses: actions/cache@v4
         with:
-          path: /tmp/hugo_cache
-          key: ${{ runner.os }}-hugomod-${{ hashFiles('**/go.sum') }}
+          path: resources
+          key: ${{ runner.os }}-hugo-resources-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-hugomod-
+            ${{ runner.os }}-hugo-resources-
+      
+      - name: Cache Hugo Modules
+        uses: actions/cache@v4
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
