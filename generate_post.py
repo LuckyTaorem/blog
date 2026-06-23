@@ -379,6 +379,51 @@ def share_to_social_media(title, slug, summary, image_path):
             print("  ⚠️ Skipped Tumblr: Credentials missing")
     except Exception as e:
         print(f"  ❌ Failed Tumblr: {e}")
+
+    
+    # -----------------------------------------
+    # 5. LINKEDIN
+    # -----------------------------------------
+    try:
+        li_token = os.environ.get("LINKEDIN_TOKEN")
+        li_urn = os.environ.get("LINKEDIN_URN") # Format: urn:li:person:YOUR_ID_HERE
+
+        if li_token and li_urn:
+            li_url = "https://api.linkedin.com/v2/ugcPosts"
+            li_headers = {
+                "Authorization": f"Bearer {li_token}",
+                "X-Restli-Protocol-Version": "2.0.0",
+                "Content-Type": "application/json"
+            }
+            
+            li_payload = {
+                "author": li_urn,
+                "lifecycleState": "PUBLISHED",
+                "specificContent": {
+                    "com.linkedin.ugc.ShareContent": {
+                        "shareCommentary": {"text": f"{title}\n\n{clean_summary}\n\nRead the full breakdown: {post_url}"},
+                        "shareMediaCategory": "ARTICLE",
+                        "media": [{
+                            "status": "READY",
+                            "description": {"text": clean_summary},
+                            "originalUrl": post_url,
+                            "title": {"text": title}
+                        }]
+                    }
+                },
+                "visibility": {"com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"}
+            }
+            
+            res = requests.post(li_url, headers=li_headers, json=li_payload)
+            if res.status_code == 201:
+                print("  💼 Success: Posted to LinkedIn")
+            else:
+                print(f"  ❌ Failed LinkedIn: {res.status_code} - {res.text}")
+        else:
+            print("  ⚠️ Skipped LinkedIn: Credentials missing")
+    except Exception as e:
+        print(f"  ❌ Failed LinkedIn: {e}")
+        
 # ==========================================
 # 3. SCRAPE MODE (Runs at 8 AM / 8 PM)
 # ==========================================
