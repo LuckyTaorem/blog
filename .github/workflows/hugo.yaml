@@ -41,7 +41,7 @@ jobs:
       - name: Build with Hugo
         env:
           HUGO_ENVIRONMENT: production
-        run: hugo --gc --minify --baseURL "https://luckytaorem.github.io/blog/"
+        run: hugo --gc --minify --baseURL "https://luckytaorem.github.io/blog/ --logLevel error"
 
       - name: Deploy to Public Repo
         uses: peaceiris/actions-gh-pages@v4

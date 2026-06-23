@@ -71,3 +71,6 @@ locale = "en-us"
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+
+[build.sass]
+  implementation = "dartsass"
