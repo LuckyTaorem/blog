@@ -8,7 +8,6 @@ description: "Discover how Chinese EV battery swap stations are revolutionizing 
 categories: ["Hardware"]
 tags: ["EV", "Battery Swap", "Transportation"]
 ---
-```
 
 ## The Rise of Chinese-Style Battery Swap Technology in Europe
 
