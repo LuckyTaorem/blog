@@ -1,5 +1,4 @@
 name: Deploy Hinode site to Public Repo
-timeZone: "Asia/Kolkata"
 
 on:
   push:
