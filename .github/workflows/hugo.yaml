@@ -27,10 +27,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24' # 🚨 FIXED: Bumped to 24 to silence the deprecation warning
           cache: 'npm'
 
-      # 🚨 ADDED THIS LINE: Creates the folder so GitHub doesn't panic if it's empty
       - name: Create Resources Folder
         run: mkdir -p resources
 
@@ -42,11 +41,20 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-hugo-resources-
       
+      # 🚨 FIXED: Added the required path and key that I missed earlier!
       - name: Cache Hugo Modules
         uses: actions/cache@v4
+        with:
+          path: /tmp/hugo_cache
+          key: ${{ runner.os }}-hugomod-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-hugomod-
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: 'latest'
+          extended: true
         with:
           hugo-version: 'latest'
           extended: true
