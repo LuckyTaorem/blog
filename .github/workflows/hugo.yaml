@@ -22,12 +22,12 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22' # Hinode relies on Go modules
+          go-version: '1.22'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Hinode requires Node.js to build CSS/JS
+          node-version: '20'
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
@@ -41,7 +41,7 @@ jobs:
       - name: Build with Hugo
         env:
           HUGO_ENVIRONMENT: production
-        run: hugo --gc --minify --baseURL "https://luckytaorem.github.io/blog/"
+        run: hugo --gc --minify --baseURL "https://luckytaorem.github.io/blog/" --logLevel error
 
       - name: Deploy to Public Repo
         uses: peaceiris/actions-gh-pages@v4
@@ -51,34 +51,3 @@ jobs:
           publish_branch: main
           publish_dir: ./public
           keep_files: false
-
-      - name: Wait for GitHub Pages to Deploy
-        run: |
-          echo "Waiting 90 seconds for GitHub Pages to process the HTML..."
-          sleep 90
-
-      - name: Setup Python for Broadcasting
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-          cache: 'pip'
-
-      - name: Install Python Dependencies
-        run: pip install feedparser groq pillow requests atproto pytumblr google-auth google-auth-httplib2
-
-      - name: Broadcast to Social Media
-        env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
-          BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}
-          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
-          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
-          TUMBLR_KEY: ${{ secrets.TUMBLR_KEY }}
-          TUMBLR_SECRET: ${{ secrets.TUMBLR_SECRET }}
-          TUMBLR_OAUTH: ${{ secrets.TUMBLR_OAUTH }}
-          TUMBLR_OAUTH_SECRET: ${{ secrets.TUMBLR_OAUTH_SECRET }}
-          TUMBLR_BLOG_NAME: ${{ secrets.TUMBLR_BLOG_NAME }}
-          GCP_INDEXING_JSON: ${{ secrets.GCP_INDEXING_JSON }}
-          LINKEDIN_TOKEN: ${{ secrets.LINKEDIN_TOKEN }}
-          LINKEDIN_URN: ${{ secrets.LINKEDIN_URN }}
-        run: python generate_post.py --broadcast

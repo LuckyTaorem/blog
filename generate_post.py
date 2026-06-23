@@ -252,12 +252,7 @@ def git_commit_and_push(message, trigger_hugo=False):
         subprocess.run(["git", "add", "content/posts/"], check=True)
         subprocess.run(["git", "add", "assets/images/"], check=True)
         subprocess.run(["git", "add", "queue.json"], check=True)
-        subprocess.run(["git", "add", "broadcast_queue.json"], check=False)
-        
-        # Optional: You can keep static/images/ if you still have files going there, 
-        # but we fixed the paths earlier so assets/images/ is the main one now!
-        # subprocess.run(["git", "add", "static/images/"], check=True) 
-        # -----------------------------
+        # 🚨 REMOVED broadcast_queue.json from git tracking 🚨
 
         subprocess.run(["git", "commit", "-m", message], check=False) # allow fail if no changes
         subprocess.run(["git", "pull", "--rebase", "origin", "main"], check=True)
@@ -265,7 +260,8 @@ def git_commit_and_push(message, trigger_hugo=False):
         
         if trigger_hugo:
             print("🌐 Triggering Hugo rebuild...")
-            subprocess.run(["gh", "workflow", "run", "hugo.yaml", "--ref", "main"], check=True)
+            # Pushing natively triggers the Hugo action now, but this is a safe fallback
+            subprocess.run(["gh", "workflow", "run", "hugo.yaml", "--ref", "main"], check=False)
         print("✅ Git operations complete!")
     except Exception as e:
         print(f"⚠️ Git/Hugo operation failed: {e}")
@@ -988,12 +984,11 @@ def run_broadcaster():
         local_img_path = os.path.join("assets", "images", f"{article['slug']}.jpg")
         share_to_social_media(article['title'], article['slug'], article['summary'], local_img_path)
         
-    # Empty the queue so we don't double-post next time
-    with open(broadcast_file, "w", encoding="utf-8") as f:
-        json.dump([], f)
+    # 🚨 DONT COMMIT TO GIT. Just delete the temp file locally on the runner!
+    if os.path.exists(broadcast_file):
+        os.remove(broadcast_file)
         
-    # Use [skip ci] so this commit doesn't trigger the Hugo build loop again!
-    git_commit_and_push("Cleared broadcast queue [skip ci]", trigger_hugo=False)
+    print("✅ Broadcast complete and temporary queue cleared.")
 
 # ==========================================
 # 5. EXECUTION ROUTER
