@@ -55,9 +55,6 @@ jobs:
         with:
           hugo-version: 'latest'
           extended: true
-        with:
-          hugo-version: 'latest'
-          extended: true
 
       - name: Install npm dependencies
         run: npm install
