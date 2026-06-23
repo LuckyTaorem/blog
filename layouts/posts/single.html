@@ -1,0 +1,159 @@
+{{ define "main" -}}
+    {{- $blocks := $.Scratch.Get "blocks" -}}
+    {{- $breakpoint := $.Scratch.Get "breakpoint" -}}
+    {{- $sidebar := partial "page/sidebar" . -}}
+
+    {{ with $sidebar }}
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas-sidebar" aria-labelledby="offcanvas-label">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvas-label">{{ strings.FirstUpper $.Section }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{{ T "close" }}"></button>
+            </div>
+            <div class="offcanvas-body">
+                {{ . | safeHTML }}
+            </div>
+        </div>
+    {{ end }}
+
+    {{ $blocks | safeHTML }}
+
+    {{ $related := slice }}
+    {{ if .Params.categories }}
+        {{ $currentCategory := index .Params.categories 0 }}
+        {{ $related = where (where site.RegularPages "Section" "posts") "Params.categories" "intersect" (slice $currentCategory) }}
+        
+        {{ $related = where $related "Permalink" "!=" .Permalink | first 4 }}
+    {{ end }}
+
+    {{ $recent := where site.RegularPages "Section" "posts" }}
+    
+    {{ $recent = where $recent "Permalink" "!=" .Permalink | first 4 }}
+
+    <div class="container-fluid flex-fill p-4 px-xl-5">
+        <div class="row row-cols-1 row-cols-{{ $breakpoint.current }}-2 row-cols-{{ $breakpoint.next }}-3">
+            
+            <div class="col col-{{ $breakpoint.next }}-3 d-none d-{{ $breakpoint.next }}-block sticky-top pt-5" style="z-index: 10;">
+                {{ $sidebar | safeHTML }}
+                
+                <div class="d-flex flex-column gap-4 mt-2 pe-3">
+                    
+                    {{ if gt (len $related) 0 }}
+                    <div class="card border-0 shadow-sm bg-body-tertiary rounded-4">
+                        <div class="card-header fw-bold text-uppercase border-0 pt-4 pb-2 bg-transparent" style="font-size: 0.8rem; letter-spacing: 0.5px; color: var(--bs-primary);">
+                            Related Articles
+                        </div>
+                        <div class="card-body pt-2 pb-4">
+                            <div class="d-flex flex-column gap-4">
+                                {{ range $related }}
+                                <div>
+                                    {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
+                                    {{ if $imgStr }}
+                                        {{ $res := resources.Get $imgStr }}
+                                        <a href="{{ .RelPermalink }}" class="d-block mb-3">
+                                            <img src="{{ if $res }}{{ $res.RelPermalink }}{{ else }}{{ $imgStr | absURL }}{{ end }}" alt="{{ .Title }}" class="rounded-3 w-100 object-fit-cover shadow-sm" style="height: 200px;">
+                                        </a>
+                                    {{ end }}
+                                    <a href="{{ .RelPermalink }}" class="text-decoration-none text-body fw-bold lh-sm d-block mb-2" style="font-size: 0.95rem;">
+                                        {{ .Title }}
+                                    </a>
+                                    <p class="text-muted mb-0" style="font-size: 0.8rem; line-height: 1.4;">
+                                        {{ .Summary | plainify | truncate 220 }}
+                                    </p>
+                                </div>
+                                {{ end }}
+                            </div>
+                        </div>
+                    </div>
+                    {{ end }}
+
+                    {{ if gt (len $recent) 0 }}
+                    <div class="card border-0 shadow-sm bg-body-tertiary rounded-4">
+                        <div class="card-header fw-bold text-uppercase border-0 pt-4 pb-2 bg-transparent" style="font-size: 0.8rem; letter-spacing: 0.5px; color: var(--bs-primary);">
+                            Recent Content
+                        </div>
+                        <div class="card-body pt-2 pb-4">
+                            <div class="d-flex flex-column gap-4">
+                                {{ range $recent }}
+                                <div>
+                                    {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
+                                    {{ if $imgStr }}
+                                        {{ $res := resources.Get $imgStr }}
+                                        <a href="{{ .RelPermalink }}" class="d-block mb-2">
+                                            <img src="{{ if $res }}{{ $res.RelPermalink }}{{ else }}{{ $imgStr | absURL }}{{ end }}" alt="{{ .Title }}" class="rounded-3 w-100 object-fit-cover shadow-sm" style="height: 200px;">
+                                        </a>
+                                    {{ end }}
+                                    <a href="{{ .RelPermalink }}" class="text-decoration-none text-body fw-bold lh-sm d-block mb-1" style="font-size: 0.85rem;">
+                                        {{ .Title }}
+                                    </a>
+                                    <p class="text-muted mb-0" style="font-size: 0.75rem; line-height: 1.4;">
+                                        {{ .Summary | plainify | truncate 220 }}
+                                    </p>
+                                </div>
+                                {{ end }}
+                            </div>
+                        </div>
+                    </div>
+                    {{ end }}
+
+                </div>
+            </div>
+            <div class="col-12 col-{{ $breakpoint.current }}-9 col-{{ $breakpoint.next }}-7 mb-5 p-4" style="min-width: 0;">
+                
+                <style>
+                    .article-content-wrapper table {
+                        display: block !important;
+                        width: 100% !important;
+                        overflow-x: auto !important;
+                        -webkit-overflow-scrolling: touch;
+                    }
+                    /* Optional: Make the scrollbar look a bit nicer */
+                    .article-content-wrapper table::-webkit-scrollbar {
+                        height: 6px;
+                    }
+                    .article-content-wrapper table::-webkit-scrollbar-thumb {
+                        background-color: rgba(100, 100, 100, 0.3);
+                        border-radius: 10px;
+                    }
+                </style>
+
+                {{ .Render "header" }}
+                
+                <div class="article-content-wrapper">
+                    {{ .Render "body" }}
+                </div>
+                
+                {{ .Render "footer" }}
+                
+                <div class="d-block d-{{ $breakpoint.next }}-none mt-5 pt-5 border-top">
+                    <h4 class="fw-bold mb-4">Keep Reading</h4>
+                    <div class="d-flex flex-column gap-4">
+                        {{ range $related }}
+                        <div class="d-flex gap-3 align-items-center">
+                            {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
+                            {{ if $imgStr }}
+                                {{ $res := resources.Get $imgStr }}
+                                <a href="{{ .RelPermalink }}" class="flex-shrink-0">
+                                    <img src="{{ if $res }}{{ $res.RelPermalink }}{{ else }}{{ $imgStr | absURL }}{{ end }}" alt="{{ .Title }}" class="rounded-3 object-fit-cover shadow-sm" style="width: 90px; height: 90px;">
+                                </a>
+                            {{ end }}
+                            <div>
+                                <span class="badge bg-primary mb-1" style="font-size: 0.65rem;">Related</span>
+                                <a href="{{ .RelPermalink }}" class="text-decoration-none text-body fw-bold lh-sm d-block mb-1" style="font-size: 0.95rem;">
+                                    {{ .Title }}
+                                </a>
+                                <p class="text-muted mb-0" style="font-size: 0.8rem; line-height: 1.4;">
+                                    {{ .Summary | plainify | truncate 60 }}
+                                </p>
+                            </div>
+                        </div>
+                        {{ end }}
+                    </div>
+                </div>
+                </div>
+            
+            <div class="col col-{{ $breakpoint.current }}-3 col-{{ $breakpoint.next }}-2 d-none d-{{ $breakpoint.current }}-block pt-5">
+                {{ .Render "toc" }}
+            </div>
+        </div>
+    </div>
+{{ end -}}
