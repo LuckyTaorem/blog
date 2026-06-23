@@ -389,13 +389,13 @@ def share_to_social_media(title, slug, summary, image_path):
         li_urn = os.environ.get("LINKEDIN_URN") # Format: urn:li:person:YOUR_ID_HERE
 
         if li_token and li_urn:
-            li_url = "https://api.linkedin.com/v2/ugcPosts"
             li_headers = {
                 "Authorization": f"Bearer {li_token}",
                 "X-Restli-Protocol-Version": "2.0.0",
                 "Content-Type": "application/json"
             }
             
+            # Base payload for a standard text/link post
             li_payload = {
                 "author": li_urn,
                 "lifecycleState": "PUBLISHED",
@@ -413,8 +413,43 @@ def share_to_social_media(title, slug, summary, image_path):
                 },
                 "visibility": {"com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"}
             }
+
+            # 🚨 CHECK FOR IMAGE AND UPLOAD 🚨
+            if os.path.exists(image_path):
+                # Step 1: Register the image upload
+                reg_url = "https://api.linkedin.com/v2/assets?action=registerUpload"
+                reg_data = {
+                    "registerUploadRequest": {
+                        "recipes": ["urn:li:digitalmediaRecipe:feedshare-image"],
+                        "owner": li_urn,
+                        "serviceRelationships": [{"relationshipType": "OWNER", "identifier": "urn:li:userGeneratedContent"}]
+                    }
+                }
+                reg_res = requests.post(reg_url, headers=li_headers, json=reg_data).json()
+                
+                upload_url = reg_res["value"]["uploadMechanism"]["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"]["uploadUrl"]
+                asset_id = reg_res["value"]["asset"]
+                
+                # Step 2: Upload the binary image file
+                with open(image_path, 'rb') as f:
+                    img_bytes = f.read()
+                
+                upload_headers = {"Authorization": f"Bearer {li_token}"}
+                requests.put(upload_url, headers=upload_headers, data=img_bytes)
+                
+                # Step 3: Modify the payload to be a native IMAGE post
+                li_payload["specificContent"]["com.linkedin.ugc.ShareContent"]["shareMediaCategory"] = "IMAGE"
+                li_payload["specificContent"]["com.linkedin.ugc.ShareContent"]["media"] = [{
+                    "status": "READY",
+                    "description": {"text": title},
+                    "media": asset_id,
+                    "title": {"text": title}
+                }]
             
+            # Step 4: Post the final payload to the feed
+            li_url = "https://api.linkedin.com/v2/ugcPosts"
             res = requests.post(li_url, headers=li_headers, json=li_payload)
+            
             if res.status_code == 201:
                 print("  💼 Success: Posted to LinkedIn")
             else:
@@ -423,7 +458,7 @@ def share_to_social_media(title, slug, summary, image_path):
             print("  ⚠️ Skipped LinkedIn: Credentials missing")
     except Exception as e:
         print(f"  ❌ Failed LinkedIn: {e}")
-        
+
 # ==========================================
 # 3. SCRAPE MODE (Runs at 8 AM / 8 PM)
 # ==========================================
