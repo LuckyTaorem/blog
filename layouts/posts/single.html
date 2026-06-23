@@ -114,9 +114,37 @@
                         background-color: rgba(100, 100, 100, 0.3);
                         border-radius: 10px;
                     }
+                /* 🚨 NEW: Hide the theme's old folder-based breadcrumb */
+                    .default-header-wrapper nav[aria-label="breadcrumb"],
+                    .default-header-wrapper .breadcrumb,
+                    header nav[aria-label="breadcrumb"] {
+                        display: none !important;
+                    }
                 </style>
 
-                {{ .Render "header" }}
+                <nav aria-label="breadcrumb" class="mb-4" style="padding-top: calc(.3 * var(--navbar-offset));">
+                    <ol class="breadcrumb m-0 p-0 bg-transparent" style="font-size: 0.9rem; font-weight: 500;">
+                        <li class="breadcrumb-item">
+                            <a href="{{ site.Home.RelPermalink }}" class="text-decoration-none" style="color: var(--bs-primary);">Home</a>
+                        </li>
+                        
+                        {{ if .Params.categories }}
+                            {{ $cat := index .Params.categories 0 }}
+                            {{ $catURL := printf "/categories/%s/" ($cat | urlize) }}
+                            <li class="breadcrumb-item">
+                                <a href="{{ $catURL | relURL }}" class="text-decoration-none text-capitalize" style="color: var(--bs-primary);">{{ $cat }}</a>
+                            </li>
+                        {{ end }}
+                        
+                        <li class="breadcrumb-item active text-muted" aria-current="page">
+                            {{ .Title }}
+                        </li>
+                    </ol>
+                </nav>
+
+                <div class="default-header-wrapper">
+                    {{ .Render "header" }}
+                </div>
                 
                 <div class="article-content-wrapper">
                     {{ .Render "body" }}
