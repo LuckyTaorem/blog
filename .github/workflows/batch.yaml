@@ -2,7 +2,7 @@ name: 2. Batch Publisher
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '30 * * * *'
   workflow_dispatch:
 
 permissions:

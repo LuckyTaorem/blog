@@ -166,7 +166,7 @@
                             {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
                             {{ if $imgStr }}
                                 {{ $res := resources.Get $imgStr }}
-                                <a href="{{ .RelPermalink }}" class="flex-shrink-0">
+                                <a href="{{ .RelPermalink }}">
                                     <img src="{{ if $res }}{{ $res.RelPermalink }}{{ else }}{{ $imgStr | absURL }}{{ end }}" alt="{{ .Title }}" class="rounded-3 object-fit-cover shadow-sm" style="width: 90px; height: 90px;">
                                 </a>
                             {{ end }}
