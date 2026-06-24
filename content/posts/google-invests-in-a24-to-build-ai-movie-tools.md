@@ -8,7 +8,6 @@ description: "Google invests $75M in A24 to pioneer AI-driven filmmaking tools, 
 categories: ["Artificial Intelligence"]
 tags: ["DeepMind", "A24", "AI in Filmmaking", "Generative AI", "Tech Investments"]
 ---
-```
 
 ## The Dawn of AI-Powered Filmmaking: Google DeepMind and A24’s Groundbreaking Collaboration
 
