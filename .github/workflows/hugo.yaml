@@ -30,18 +30,6 @@ jobs:
           node-version: '24' # 🚨 FIXED: Bumped to 24 to silence the deprecation warning
           cache: 'npm'
 
-      - name: Create Resources Folder
-        run: mkdir -p resources
-
-      - name: Cache Hugo Resources
-        uses: actions/cache@v4
-        with:
-          path: resources
-          key: ${{ runner.os }}-hugo-resources-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-hugo-resources-
-      
-      # 🚨 FIXED: Added the required path and key that I missed earlier!
       - name: Cache Hugo Modules
         uses: actions/cache@v4
         with:

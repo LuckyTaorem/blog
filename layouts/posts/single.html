@@ -120,6 +120,12 @@
                     header nav[aria-label="breadcrumb"] {
                         display: none !important;
                     }
+                    /* 🚨 NEW: Prevents missing images (404) from blowing up the mobile layout */
+                    img {
+                        word-wrap: break-word !important;
+                        overflow: hidden !important;
+                        color: transparent !important; /* This hides the ugly broken text entirely */
+                    }
                 </style>
 
                 <nav aria-label="breadcrumb" class="mb-4" style="padding-top: calc(.3 * var(--navbar-offset));">

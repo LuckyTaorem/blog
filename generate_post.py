@@ -930,15 +930,12 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
             remaining_queue.append(article)
             continue # 👈 ABSOLUTELY CRITICAL: Stop execution and jump to the next article!
             
-        img_line_match = re.search(r'^images:\s*\[(.*)\]', article_content, re.MULTILINE)
-        if img_line_match:
-            clean_img_path = re.sub(r'[\'\"\\\[\]]', '', img_line_match.group(1)).strip()
-            article_content = re.sub(r'^images:\s*\[.*\]', f'images: ["{clean_img_path}"]', article_content, flags=re.MULTILINE)
-
-        thumb_line_match = re.search(r'^thumbnail:\s*(.*)', article_content, re.MULTILINE)
-        if thumb_line_match:
-            clean_thumb_path = re.sub(r'[\'\"\\\[\]]', '', thumb_line_match.group(1)).strip()
-            article_content = re.sub(r'^thumbnail:\s*.*', f'thumbnail: "{clean_thumb_path}"', article_content, flags=re.MULTILINE)
+        # 🚨 THE BOUNCER: Forcefully overwrite AI image hallucinations with our verified Python variable
+        if re.search(r'^images:\s*\[.*\]', article_content, re.MULTILINE):
+            article_content = re.sub(r'^images:\s*\[.*\]', f'images: ["{image_url}"]', article_content, flags=re.MULTILINE)
+        
+        if re.search(r'^thumbnail:\s*.*', article_content, re.MULTILINE):
+            article_content = re.sub(r'^thumbnail:\s*.*', f'thumbnail: "{image_url}"', article_content, flags=re.MULTILINE)
 
         article_content += "\n\n{{< comments >}}\n"
         
