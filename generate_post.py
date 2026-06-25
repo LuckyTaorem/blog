@@ -315,11 +315,13 @@ def share_to_social_media(title, slug, summary, image_path):
     today = datetime.now(ist_timezone).strftime('%B %d, %Y')
     
     # Clean the summary to filter out raw navigation bar HTML scrapes
-    clean_summary = summary.replace("The Verge", "").strip()
-    clean_summary = clean_summary[:100] + "..." if len(clean_summary) > 100 else clean_summary
+    base_summary = summary.replace("The Verge", "").strip()
+    
+    # 🚨 NEW: Create a generous 600-character extended summary for FB, Tumblr, and LinkedIn
+    extended_summary = base_summary[:600] + "..." if len(base_summary) > 600 else base_summary
 
     # -----------------------------------------
-    # 1. BLUESKY
+    # 1. BLUESKY (Requires strict dynamic truncation)
     # -----------------------------------------
     try:
         bsky_handle = os.environ.get("BSKY_HANDLE")
@@ -328,26 +330,22 @@ def share_to_social_media(title, slug, summary, image_path):
             client = BskyClient()
             client.login(bsky_handle, bsky_password)
             
-            # 1. Clean up the base summary text
-            clean_summary = summary.replace("The Verge", "").strip()
-            
-            # 2. Define templates and unchanging parts
+            # 1. Define templates and unchanging parts
             header = f"{title} | {today}\n\n"
             footer = f"\n\nRead full breakdown below:\n{post_url}"
             
-            # 3. Calculate exactly how many characters are left for the summary
-            # Bluesky max limit is 300. Leave a safety buffer of 5 characters.
-            max_allowed_total = 295 
+            # 2. Calculate exactly how many characters are left for the summary
+            max_allowed_total = 250 
             used_chars = len(header) + len(footer)
             available_chars_for_summary = max_allowed_total - used_chars
             
-            # 4. Truncate the summary safely based on real remaining space
-            if len(clean_summary) > available_chars_for_summary:
-                # Subtract 3 to fit the "..." ellipsis nicely
-                clean_summary = clean_summary[:available_chars_for_summary - 3] + "..."
+            # 3. Truncate specifically for Bluesky based on real remaining space
+            bsky_summary = base_summary
+            if len(bsky_summary) > available_chars_for_summary:
+                bsky_summary = bsky_summary[:available_chars_for_summary - 3] + "..."
             
-            # 5. Build final post text guaranteed to be under 300 characters
-            bsky_text = f"{header}{clean_summary}{footer}"
+            # 4. Build final post text guaranteed to be under 300 characters
+            bsky_text = f"{header}{bsky_summary}{footer}"
             
             if os.path.exists(image_path):
                 with open(image_path, 'rb') as f:
@@ -370,9 +368,9 @@ def share_to_social_media(title, slug, summary, image_path):
         fb_page_id = os.environ.get("FB_PAGE_ID")
         if fb_token and fb_page_id:
             fb_url = f"https://graph.facebook.com/v19.0/{fb_page_id}/photos"
-            fb_msg = f"{title} | {today}\n\n{clean_summary}\n\nRead full breakdown below:\n{post_url}"
+            # 🚨 Uses the new 600-char extended_summary
+            fb_msg = f"{title} | {today}\n\n{extended_summary}\n\nRead full breakdown below:\n{post_url}"
             
-            # Post as a Photo post instead of a text feed post for better engagement
             if os.path.exists(image_path):
                 with open(image_path, 'rb') as f:
                     files = {'file': f}
@@ -404,7 +402,8 @@ def share_to_social_media(title, slug, summary, image_path):
         if all([t_key, t_secret, t_oauth, t_oauth_secret, t_blog]):
             client = pytumblr.TumblrRestClient(t_key, t_secret, t_oauth, t_oauth_secret)
             
-            caption_html = f"<h2>{title} | {today}</h2><p>{clean_summary}</p><p><a href='{post_url}'>Read full breakdown below: {post_url}</a></p>"
+            # 🚨 Uses the new 600-char extended_summary
+            caption_html = f"<h2>{title} | {today}</h2><p>{extended_summary}</p><p><a href='{post_url}'>Read full breakdown below: {post_url}</a></p>"
             
             if os.path.exists(image_path):
                 client.create_photo(t_blog, state="published", data=image_path, caption=caption_html, link=post_url)
@@ -419,11 +418,11 @@ def share_to_social_media(title, slug, summary, image_path):
 
     
     # -----------------------------------------
-    # 5. LINKEDIN
+    # 4. LINKEDIN
     # -----------------------------------------
     try:
         li_token = os.environ.get("LINKEDIN_TOKEN")
-        li_urn = os.environ.get("LINKEDIN_URN") # Format: urn:li:person:YOUR_ID_HERE
+        li_urn = os.environ.get("LINKEDIN_URN")
 
         if li_token and li_urn:
             li_headers = {
@@ -432,17 +431,17 @@ def share_to_social_media(title, slug, summary, image_path):
                 "Content-Type": "application/json"
             }
             
-            # Base payload for a standard text/link post
+            # 🚨 Uses the new 600-char extended_summary
             li_payload = {
                 "author": li_urn,
                 "lifecycleState": "PUBLISHED",
                 "specificContent": {
                     "com.linkedin.ugc.ShareContent": {
-                        "shareCommentary": {"text": f"{title}\n\n{clean_summary}\n\nRead the full breakdown: {post_url}"},
+                        "shareCommentary": {"text": f"{title}\n\n{extended_summary}\n\nRead the full breakdown: {post_url}"},
                         "shareMediaCategory": "ARTICLE",
                         "media": [{
                             "status": "READY",
-                            "description": {"text": clean_summary},
+                            "description": {"text": extended_summary},
                             "originalUrl": post_url,
                             "title": {"text": title}
                         }]
@@ -451,9 +450,7 @@ def share_to_social_media(title, slug, summary, image_path):
                 "visibility": {"com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"}
             }
 
-            # 🚨 CHECK FOR IMAGE AND UPLOAD 🚨
             if os.path.exists(image_path):
-                # Step 1: Register the image upload
                 reg_url = "https://api.linkedin.com/v2/assets?action=registerUpload"
                 reg_data = {
                     "registerUploadRequest": {
@@ -467,14 +464,12 @@ def share_to_social_media(title, slug, summary, image_path):
                 upload_url = reg_res["value"]["uploadMechanism"]["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"]["uploadUrl"]
                 asset_id = reg_res["value"]["asset"]
                 
-                # Step 2: Upload the binary image file
                 with open(image_path, 'rb') as f:
                     img_bytes = f.read()
                 
                 upload_headers = {"Authorization": f"Bearer {li_token}"}
                 requests.put(upload_url, headers=upload_headers, data=img_bytes)
                 
-                # Step 3: Modify the payload to be a native IMAGE post
                 li_payload["specificContent"]["com.linkedin.ugc.ShareContent"]["shareMediaCategory"] = "IMAGE"
                 li_payload["specificContent"]["com.linkedin.ugc.ShareContent"]["media"] = [{
                     "status": "READY",
@@ -483,7 +478,6 @@ def share_to_social_media(title, slug, summary, image_path):
                     "title": {"text": title}
                 }]
             
-            # Step 4: Post the final payload to the feed
             li_url = "https://api.linkedin.com/v2/ugcPosts"
             res = requests.post(li_url, headers=li_headers, json=li_payload)
             
