@@ -3,20 +3,11 @@ baseURL = "https://luckytaorem.github.io/blog/"
 
 [params]
   description = "Expert analysis, tutorials, and news on Artificial Intelligence, Web Development, and Technology by Lucky Taorem."
-  
-  # 🚨 THIS KILLS THE HINODE LOGO IN SEO EXTENSIONS 🚨
-  # Hugo will look in your assets/ or static/ folder for this exact path
-  images = ["img/logo.png"]
+  # 🚨 Removed the 'images' array from here so Hinode's engine doesn't crash!
 
 timeZone = "Asia/Kolkata"
-
-
-# 2. This tells Hugo to automatically generate a robots.txt file
 enableRobotsTXT = true
-
-# 3. Optional: Ensures your URLs are clean (no ugly .html at the end)
 uglyURLs = false
-
 locale = "en-us"
 
 [module]
@@ -38,12 +29,12 @@ locale = "en-us"
 
 [params.publisher]
   name = "Lucky Taorem"
-  logo = "images/lucky.jpg"
+  logo = "img/logo.png"
 
-# This forces Hinode to output rich SEO metadata for social graphs
 [params.seo]
   twitter = "taorem_lucky"
-
+  # 🚨 THIS is the correct, safe place to define your global fallback SEO logo in Hinode
+  image = "img/logo.png"
 
 # --- TOP NAVIGATION MENU ---
 [[menus.main]]
