@@ -919,6 +919,19 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                 flags=re.IGNORECASE
             )
 
+                # 🚨 THE FORMAT CLEANER: Strip out AI-injected markdown wrappers
+        import re
+        
+        # 1. Remove ```markdown from the very beginning of the AI's response
+        article_content = re.sub(r'^```(?:markdown|md)?\s*\n', '', article_content, flags=re.IGNORECASE)
+        
+        # 2. Remove ``` from the very end of the AI's response
+        article_content = re.sub(r'\n```\s*$', '', article_content)
+        
+        # 3. Fix the specific bug in your screenshot (stray backticks right under the front matter)
+        article_content = article_content.replace("---\n```\n", "---\n")
+        
+
         # 🚨 THE BOUNCER (MOVED HERE: After title and category are safely formatted!) 🚨
         has_title = re.search(r'^title:\s*".+"', article_content, re.MULTILINE)
         has_category = re.search(r'^categories:\s*\[.+\]', article_content, re.MULTILINE)
