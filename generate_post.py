@@ -304,8 +304,42 @@ def git_commit_and_push(message, trigger_hugo=False):
     except Exception as e:
         print(f"⚠️ Git/Hugo operation failed: {e}")
 
-def share_to_social_media(title, slug, summary, image_path):
+def get_clean_content_from_markdown(file_path):
+    """Reads the local markdown file, strips frontmatter, and returns clean text body."""
+    if not os.path.exists(file_path):
+        print(f"  ❌ File not found: {file_path}")
+        return "", ""
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    # Extract title from frontmatter
+    title_match = re.search(r'^title:\s*"(.*?)"', content, re.MULTILINE)
+    title = title_match.group(1) if title_match else "No Title Found"
+
+    # Split frontmatter away to get pure body content
+    parts = content.split("---")
+    if len(parts) >= 3:
+        body = " ".join(parts[2:]).strip()
+    else:
+        body = content
+
+    # Clean up markdown headers, comments tags, and shortcodes
+    body = re.sub(r'#+\s+', '', body) 
+    body = body.replace("{{< comments >}}", "")
+    body = re.sub(r'\s+', ' ', body) 
+    
+    return title, body.strip()
+
+def share_to_social_media(file_path, slug, image_path):
     from datetime import datetime, timezone, timedelta
+    
+    # Fetch the pure, AI-generated text locally!
+    title, article_body = get_clean_content_from_markdown(file_path)
+    if not article_body:
+        print(f"  ❌ Aborting broadcast for {slug}: No article body content found.")
+        return
+
     print(f"\n📣 Broadcasting to Social Media: {title}")
     
     post_url = f"https://luckytaorem.github.io/blog/posts/{slug}/"
@@ -314,11 +348,8 @@ def share_to_social_media(title, slug, summary, image_path):
     ist_timezone = timezone(timedelta(hours=5, minutes=30))
     today = datetime.now(ist_timezone).strftime('%B %d, %Y')
     
-    # Clean the summary to filter out raw navigation bar HTML scrapes
-    base_summary = summary.replace("The Verge", "").strip()
-    
-    # 🚨 NEW: Create a generous 600-character extended summary for FB, Tumblr, and LinkedIn
-    extended_summary = base_summary[:600] + "..." if len(base_summary) > 600 else base_summary
+    # 🚨 Create a generous 600-character extended summary for FB, Tumblr, and LinkedIn
+    extended_summary = article_body[:600] + "..." if len(article_body) > 600 else article_body
 
     # -----------------------------------------
     # 1. BLUESKY (Requires strict dynamic truncation)
@@ -330,22 +361,24 @@ def share_to_social_media(title, slug, summary, image_path):
             client = BskyClient()
             client.login(bsky_handle, bsky_password)
             
-            # 1. Define templates and unchanging parts
+            footer = f"\n\nFull breakdown:\n{post_url}"
             header = f"{title} | {today}\n\n"
-            footer = f"\n\nRead full breakdown below:\n{post_url}"
             
-            # 2. Calculate exactly how many characters are left for the summary
-            max_allowed_total = 250 
+            max_allowed = 295 
             used_chars = len(header) + len(footer)
-            available_chars_for_summary = max_allowed_total - used_chars
+            available_chars = max_allowed - used_chars
             
-            # 3. Truncate specifically for Bluesky based on real remaining space
-            bsky_summary = base_summary
-            if len(bsky_summary) > available_chars_for_summary:
-                bsky_summary = bsky_summary[:available_chars_for_summary - 3] + "..."
-            
-            # 4. Build final post text guaranteed to be under 300 characters
-            bsky_text = f"{header}{bsky_summary}{footer}"
+            # Safe routing for character overflow
+            if available_chars > 15:
+                bsky_summary = article_body[:available_chars - 3] + "..."
+                bsky_text = f"{header}{bsky_summary}{footer}"
+            else:
+                if used_chars > max_allowed:
+                    title_space = max_allowed - len(footer) - len(f" | {today}\n\n") - 3
+                    short_title = title[:title_space] + "..."
+                    bsky_text = f"{short_title} | {today}{footer}"
+                else:
+                    bsky_text = f"{header.strip()}{footer}"
             
             if os.path.exists(image_path):
                 with open(image_path, 'rb') as f:
@@ -368,7 +401,6 @@ def share_to_social_media(title, slug, summary, image_path):
         fb_page_id = os.environ.get("FB_PAGE_ID")
         if fb_token and fb_page_id:
             fb_url = f"https://graph.facebook.com/v19.0/{fb_page_id}/photos"
-            # 🚨 Uses the new 600-char extended_summary
             fb_msg = f"{title} | {today}\n\n{extended_summary}\n\nRead full breakdown below:\n{post_url}"
             
             if os.path.exists(image_path):
@@ -402,7 +434,6 @@ def share_to_social_media(title, slug, summary, image_path):
         if all([t_key, t_secret, t_oauth, t_oauth_secret, t_blog]):
             client = pytumblr.TumblrRestClient(t_key, t_secret, t_oauth, t_oauth_secret)
             
-            # 🚨 Uses the new 600-char extended_summary
             caption_html = f"<h2>{title} | {today}</h2><p>{extended_summary}</p><p><a href='{post_url}'>Read full breakdown below: {post_url}</a></p>"
             
             if os.path.exists(image_path):
@@ -416,7 +447,6 @@ def share_to_social_media(title, slug, summary, image_path):
     except Exception as e:
         print(f"  ❌ Failed Tumblr: {e}")
 
-    
     # -----------------------------------------
     # 4. LINKEDIN
     # -----------------------------------------
@@ -431,7 +461,6 @@ def share_to_social_media(title, slug, summary, image_path):
                 "Content-Type": "application/json"
             }
             
-            # 🚨 Uses the new 600-char extended_summary
             li_payload = {
                 "author": li_urn,
                 "lifecycleState": "PUBLISHED",
@@ -1051,7 +1080,7 @@ def run_broadcaster():
         ping_google_indexing_api(article['slug'])
         ping_bing_indexing_api(article['slug'])
         local_img_path = os.path.join("assets", "images", f"{article['slug']}.jpg")
-        share_to_social_media(article['title'], article['slug'], article['summary'], local_img_path)
+        share_to_social_media(local_file_path, article['slug'], local_img_path)
         
     # 🚨 DONT COMMIT TO GIT. Just delete the temp file locally on the runner!
     if os.path.exists(broadcast_file):
