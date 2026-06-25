@@ -623,6 +623,31 @@ def ping_google_indexing_api(post_slug):
     except Exception as e:
         print(f"  🚨 Failed to notify Google: {e}")
 
+
+def ping_bing_indexing_api(post_slug):
+    print(f"📡 Pinging Bing Indexing API for: {post_slug}")
+    live_url = f"https://luckytaorem.github.io/blog/posts/{post_slug}/"
+    bing_api_key = os.environ.get("BING_API_KEY")
+    
+    if not bing_api_key:
+        print("  ⚠️ Skipped: BING_API_KEY not found in environment.")
+        return
+
+    try:
+        endpoint = f"https://ssl.bing.com/webmaster/api.svc/json/SubmitUrlbatch?apikey={bing_api_key}"
+        payload = {
+            "siteUrl": "https://luckytaorem.github.io/blog/",
+            "urlList": [live_url]
+        }
+        response = requests.post(endpoint, json=payload, timeout=10)
+        
+        if response.status_code == 200:
+            print(f"  ✅ Success! Bing will index {live_url} shortly.")
+        else:
+            print(f"  ⚠️ Bing API Error {response.status_code}: {response.text}")
+    except Exception as e:
+        print(f"  🚨 Failed to notify Bing: {e}")
+
 # ==========================================
 # 4. PUBLISH MODE (Runs every hour)
 # ==========================================
@@ -989,6 +1014,7 @@ def run_broadcaster():
         
     for article in queue:
         ping_google_indexing_api(article['slug'])
+        ping_bing_indexing_api(article['slug'])
         local_img_path = os.path.join("assets", "images", f"{article['slug']}.jpg")
         share_to_social_media(article['title'], article['slug'], article['summary'], local_img_path)
         

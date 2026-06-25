@@ -75,4 +75,5 @@ jobs:
           REDDIT_SECRET: ${{ secrets.REDDIT_SECRET }}
           REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
           REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
+          BING_API_KEY: ${{ secrets.BING_API_KEY }}
         run: python generate_post.py --broadcast
