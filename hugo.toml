@@ -1,5 +1,13 @@
-# 1. This generates perfect Canonical Tags and Sitemap URLs
+title = "Lucky Taorem | Tech & AI Blog"
 baseURL = "https://luckytaorem.github.io/blog/"
+
+[params]
+  description = "Expert analysis, tutorials, and news on Artificial Intelligence, Web Development, and Technology by Lucky Taorem."
+  
+  # 🚨 THIS KILLS THE HINODE LOGO IN SEO EXTENSIONS 🚨
+  # Hugo will look in your assets/ or static/ folder for this exact path
+  images = ["img/logo.png"]
+
 timeZone = "Asia/Kolkata"
 
 
@@ -9,7 +17,6 @@ enableRobotsTXT = true
 # 3. Optional: Ensures your URLs are clean (no ugly .html at the end)
 uglyURLs = false
 
-title = "LT Developer"
 locale = "en-us"
 
 [module]
@@ -24,6 +31,18 @@ locale = "en-us"
 
 [params.navigation]
   logo = "img/logo.png"
+
+[params.author]
+  name = "Lucky Taorem"
+  image = "images/lucky.jpg"
+
+[params.publisher]
+  name = "Lucky Taorem"
+  logo = "images/lucky.jpg"
+
+# This forces Hinode to output rich SEO metadata for social graphs
+[params.seo]
+  twitter = "taorem_lucky"
 
 
 # --- TOP NAVIGATION MENU ---
