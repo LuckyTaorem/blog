@@ -8,7 +8,6 @@ description: "Valve's $1,049 Steam Machine launches via lottery. Learn specs, pr
 categories: ["Gaming"]
 tags: ["Valve", "Steam Machine", "Gaming Hardware"]
 ---
-```
 
 ## Valve’s Steam Machine: A Deep Dive into Pricing, Specs, and the Lottery System
 
