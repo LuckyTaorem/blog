@@ -202,7 +202,6 @@ def fetch_extended_article_text(url):
 def clean_scraped_content(raw_text):
     if not raw_text:
         return ""
-        
     # 1. Nuke raw JavaScript and CSS blocks that leak through
     # This targets curly braces {} and common JS keywords that shouldn't be in news text
     js_patterns = [
@@ -241,6 +240,45 @@ def clean_scraped_content(raw_text):
     cleaned = re.sub(r'\s+', ' ', cleaned)
     
     return cleaned.strip()
+
+def extract_key_facts_with_ai(raw_text, title):
+    """Uses AI to extract critical facts from raw scraped text before saving to queue."""
+    if not raw_text or len(raw_text) < 300:
+        return raw_text # Too short to bother summarizing
+        
+    # We can send a massive chunk to the AI to read (up to 12,000 chars)
+    content_to_analyze = raw_text[:12000]
+    
+    prompt = f"""
+    You are an expert tech research assistant. Analyze the following raw scraped text for an article titled "{title}".
+    Extract all crucial facts so a journalist can draft a highly detailed article later.
+    
+    YOU MUST EXTRACT (if present in the text):
+    - The Core Story / Main Event
+    - Important Names, Companies, or People
+    - Pricing, Release Dates, or Financial Numbers
+    - Product Specifications, Hardware Details, or Software Features
+    - 1 or 2 Direct Quotes
+
+    Format as a clean, highly condensed bulleted list. DO NOT write an article. Just the facts.
+    
+    RAW TEXT:
+    {content_to_analyze}
+    """
+    
+    try:
+        # We use the 8b-instant model here because it is lightning fast and great at extraction
+        response = client.chat.completions.create(
+            messages=[{"role": "user", "content": prompt}],
+            model="llama-3.1-8b-instant", 
+            temperature=0.2, # Low temperature keeps it strictly factual
+            max_tokens=1000
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"      -> ⚠️ AI Fact Extraction failed: {e}. Falling back to raw text.")
+        return raw_text[:3500]
+    
 
 def git_commit_and_push(message, trigger_hugo=False):
     print(f"\n📦 Committing changes: {message}")
@@ -535,10 +573,13 @@ def run_scraper():
                 if not extended_text or len(extended_text) < 200:
                     extended_text = re.sub(r'<[^>]+>', ' ', raw_rss_content)
 
-            # Clean it up and cap it at 3500 characters so it doesn't overload the AI prompt limit
+            # Clean it up, then send it to the AI Research Assistant to extract the gold
             unescaped_text = html.unescape(extended_text)
             cleaned_text = clean_scraped_content(unescaped_text)
-            final_summary = cleaned_text[:3500]
+            
+            print("  -> 🧠 Using AI to extract key facts, specs, and quotes...")
+            final_summary = extract_key_facts_with_ai(cleaned_text, news_title)
+            # -----------------------------------
             # -----------------------------------
             # -----------------------------------
 
