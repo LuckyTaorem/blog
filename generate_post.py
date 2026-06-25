@@ -1166,9 +1166,13 @@ def run_emergency_broadcaster():
         try:
             ping_google_indexing_api(article['slug'])
             ping_bing_indexing_api(article['slug'])
-            
+        
+            # Define paths for the image and the local markdown file
             local_img_path = os.path.join("assets", "images", f"{article['slug']}.jpg")
-            share_to_social_media(article['filepath'], article['slug'], local_img_path)
+            local_file_path = os.path.join(output_dir, f"{article['slug']}.md")
+        
+            # Pass the local file path instead of the raw RSS summary
+            share_to_social_media(local_file_path, article['slug'], local_img_path)
             
         except Exception as e:
             print(f"🚨 Failed to broadcast '{article['title']}': {e}")

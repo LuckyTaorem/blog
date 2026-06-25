@@ -1,15 +1,13 @@
-name: Manual Social Broadcast
+name: Emergency Social Broadcast
 on:
-  workflow_dispatch: # 👈 This enables the manual "Run workflow" button!
+  workflow_dispatch: # 👈 This is what creates the manual "Run" button
 
 jobs:
-  broadcast:
+  emergency_override:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -20,9 +18,8 @@ jobs:
       - name: Install Dependencies
         run: pip install requests beautifulsoup4 feedparser groq pillow atproto pytumblr google-auth google-auth-oauthlib google-auth-httplib2
 
-      - name: Run Broadcaster
+      - name: Force Broadcast Recent Batch
         env:
-          # 🚨 ADDED GROQ API KEY HERE so the Python script doesn't crash on boot
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           SAMBANOVA_API_KEY: ${{ secrets.SAMBANOVA_API_KEY }}
           CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
@@ -49,4 +46,5 @@ jobs:
           REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
           REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
           BING_API_KEY: ${{ secrets.BING_API_KEY }}
-        run: python generate_post.py --broadcast
+        # 🚨 Notice the command here is specifically --force-recent
+        run: python generate_post.py --force-recent
