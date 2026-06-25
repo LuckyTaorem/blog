@@ -290,15 +290,13 @@ def git_commit_and_push(message, trigger_hugo=False):
         subprocess.run(["git", "add", "content/posts/"], check=True)
         subprocess.run(["git", "add", "assets/images/"], check=True)
         subprocess.run(["git", "add", "queue.json"], check=True)
-        # 🚨 REMOVED broadcast_queue.json from git tracking 🚨
 
-        subprocess.run(["git", "commit", "-m", message], check=False) # allow fail if no changes
+        subprocess.run(["git", "commit", "-m", message], check=False)
         subprocess.run(["git", "pull", "--rebase", "origin", "main"], check=True)
         subprocess.run(["git", "push"], check=True)
         
         if trigger_hugo:
             print("🌐 Triggering Hugo rebuild...")
-            # Pushing natively triggers the Hugo action now, but this is a safe fallback
             subprocess.run(["gh", "workflow", "run", "hugo.yaml", "--ref", "main"], check=False)
         print("✅ Git operations complete!")
     except Exception as e:
@@ -1079,7 +1077,12 @@ def run_broadcaster():
     for article in queue:
         ping_google_indexing_api(article['slug'])
         ping_bing_indexing_api(article['slug'])
+        
+        # Define paths for the image and the local markdown file
         local_img_path = os.path.join("assets", "images", f"{article['slug']}.jpg")
+        local_file_path = os.path.join(output_dir, f"{article['slug']}.md")
+        
+        # Pass the local file path instead of the raw RSS summary
         share_to_social_media(local_file_path, article['slug'], local_img_path)
         
     # 🚨 DONT COMMIT TO GIT. Just delete the temp file locally on the runner!
@@ -1087,6 +1090,91 @@ def run_broadcaster():
         os.remove(broadcast_file)
         
     print("✅ Broadcast complete and temporary queue cleared.")
+
+
+# ==========================================
+# 4.6 EMERGENCY OVERRIDE (Force Broadcast Recent Batch)
+# ==========================================
+def run_emergency_broadcaster():
+    print(f"\n--- 🚨 STARTING EMERGENCY BROADCASTER (Dynamic Batch Detection) ---")
+    
+    if not os.path.exists(output_dir):
+        print("No content directory found.")
+        return
+
+    articles = []
+    
+    # 1. Scan all markdown files in the folder
+    for filename in os.listdir(output_dir):
+        if not filename.endswith(".md") or filename == "_index.md":
+            continue
+            
+        filepath = os.path.join(output_dir, filename)
+        with open(filepath, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # 2. Extract the exact publication date and title
+        date_match = re.search(r'^date:\s*(.+)$', content, re.MULTILINE)
+        title_match = re.search(r'^title:\s*"(.*?)"', content, re.MULTILINE)
+
+        if date_match and title_match:
+            date_str = date_match.group(1).strip().strip('"').strip("'")
+            title = title_match.group(1)
+            slug = filename.replace(".md", "")
+
+            try:
+                # Parse the ISO timestamp into a real Python datetime object for sorting
+                post_date = datetime.fromisoformat(date_str)
+                articles.append({
+                    "title": title,
+                    "slug": slug,
+                    "date": post_date,
+                    "filepath": filepath
+                })
+            except Exception as e:
+                pass # Skip files with malformed dates
+
+    # 3. Sort articles from Newest to Oldest
+    articles.sort(key=lambda x: x['date'], reverse=True)
+    
+    if not articles:
+        print("No valid articles found to broadcast.")
+        return
+
+    # 🚨 NEW: Dynamic Batch Detection!
+    # Instead of a hard limit, we find the absolute newest article, 
+    # then grab every other article published within 30 minutes of it.
+    most_recent_date = articles[0]['date']
+    batch_articles = []
+    
+    for article in articles:
+        # Calculate the time difference between the absolute newest post and this post
+        time_diff = most_recent_date - article['date']
+        
+        # If the article was published within a 30-minute window, it belongs to this batch
+        if time_diff <= timedelta(minutes=30):
+            batch_articles.append(article)
+        else:
+            # Since the list is sorted, as soon as we hit a post older than 30 mins, we stop
+            break
+
+    print(f"🔍 Detected {len(batch_articles)} articles published in the most recent batch.")
+
+    # 4. Push them out to social media
+    for article in batch_articles:
+        print(f"\nProcessing social broadcast for: {article['title']}")
+        try:
+            ping_google_indexing_api(article['slug'])
+            ping_bing_indexing_api(article['slug'])
+            
+            local_img_path = os.path.join("assets", "images", f"{article['slug']}.jpg")
+            share_to_social_media(article['filepath'], article['slug'], local_img_path)
+            
+        except Exception as e:
+            print(f"🚨 Failed to broadcast '{article['title']}': {e}")
+
+    print("\n✅ Emergency broadcast complete.")
+
 
 # ==========================================
 # 5. EXECUTION ROUTER
@@ -1096,6 +1184,7 @@ if __name__ == "__main__":
     parser.add_argument("--scrape", action="store_true", help="Scrape new articles and add to queue")
     parser.add_argument("--publish", action="store_true", help="Publish next batch from the queue")
     parser.add_argument("--broadcast", action="store_true", help="Share published articles to social media")
+    parser.add_argument("--force-recent", action="store_true", help="Force broadcast the most recent batch of articles, bypassing the queue")
     args = parser.parse_args()
 
     if args.scrape:
@@ -1104,5 +1193,8 @@ if __name__ == "__main__":
         run_publisher()
     elif args.broadcast:
         run_broadcaster()
+    elif args.force_recent:
+        # 🚨 Calling the updated function with dynamic detection
+        run_emergency_broadcaster()
     else:
-        print("Please provide a flag: --scrape, --publish, or --broadcast")
+        print("Please provide a flag: --scrape, --publish, --broadcast, or --force-recent")
