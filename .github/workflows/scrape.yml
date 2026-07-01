@@ -2,8 +2,8 @@ name: 1. RSS Scraper Queue
 
 on:
   schedule:
-    # Runs at 2:30 UTC (8:00 AM IST) and 14:30 UTC (8:00 PM IST)
-    - cron: '30 2,14 * * *'
+    # Runs once at 14:30 UTC (8:00 PM IST)
+    - cron: '30 14 * * *'
   workflow_dispatch:
 
 permissions:

@@ -2,7 +2,8 @@ name: 2. Batch Publisher
 
 on:
   schedule:
-    - cron: '30 * * * *'
+    # Runs at 3:30 UTC (9:00 AM IST) and 15:30 UTC (9:00 PM IST)
+    - cron: '30 3,15 * * *'
   workflow_dispatch:
 
 permissions:
