@@ -727,8 +727,8 @@ def run_publisher():
         print("Queue is empty. Waiting for next scraper run.")
         return
 
-    # Take the first 3 articles, leave the rest in the queue
-    BATCH_SIZE = 3
+    # Take the first 5 articles, leave the rest in the queue
+    BATCH_SIZE = 5
     batch = queue[:BATCH_SIZE]
     remaining_queue = queue[BATCH_SIZE:]
 
