@@ -5,3 +5,7 @@ pillow
 google-auth
 atproto
 pytumblr
+google-auth-httplib2
+praw
+beautifulsoup4
+google-auth-oauthlib
