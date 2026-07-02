@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
+          cache: 'pip'
       
       # FIX: We now tell GitHub to look at requirements.txt instead of a hardcoded list!
       - name: Install Dependencies

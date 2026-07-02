@@ -60,3 +60,69 @@ jobs:
           publish_branch: main
           publish_dir: ./public
           keep_files: false
+      
+      # --- NEW STEPS ADDED BELOW DEPLOYMENT ---
+      - name: Setup Python for Broadcast
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install feedparser groq pillow requests atproto pytumblr google-auth google-auth-httplib2 praw beautifulsoup4 google-auth-oauthlib
+
+      - name: Smart Wait for GitHub Pages (Prevent 404s)
+        run: |
+          echo "Checking if the new articles are live..."
+          if [ ! -f "broadcast_queue.json" ]; then
+            echo "No broadcast queue found. Skipping wait."
+            exit 0
+          fi
+          
+          SLUG=$(jq -r '.[0].slug' broadcast_queue.json)
+          URL="https://luckytaorem.github.io/blog/$SLUG/"
+          echo "Polling $URL to see if it is live..."
+          
+          for i in {1..15}; do
+            STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" "$URL")
+            if [ "$STATUS" -eq 200 ]; then
+              echo "✅ Article is live! Proceeding to broadcast."
+              exit 0
+            fi
+            echo "⏳ Still getting $STATUS (Not live yet). Waiting 20 seconds... ($i/15)"
+            sleep 20
+          done
+          echo "🚨 Timeout reached. Proceeding anyway, but site might still be building."
+
+      - name: Broadcast to Social Media
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          SAMBANOVA_API_KEY: ${{ secrets.SAMBANOVA_API_KEY }}
+          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GCP_INDEXING_JSON: ${{ secrets.GCP_INDEXING_JSON }}
+          BSKY_HANDLE: ${{ secrets.BSKY_HANDLE }}
+          BSKY_PASSWORD: ${{ secrets.BSKY_PASSWORD }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          TUMBLR_KEY: ${{ secrets.TUMBLR_KEY }}
+          TUMBLR_SECRET: ${{ secrets.TUMBLR_SECRET }}
+          TUMBLR_OAUTH: ${{ secrets.TUMBLR_OAUTH }}
+          TUMBLR_OAUTH_SECRET: ${{ secrets.TUMBLR_OAUTH_SECRET }}
+          TUMBLR_BLOG_NAME: ${{ secrets.TUMBLR_BLOG_NAME }}
+          LINKEDIN_TOKEN: ${{ secrets.LINKEDIN_TOKEN }}
+          LINKEDIN_URN: ${{ secrets.LINKEDIN_URN }}
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_SECRET: ${{ secrets.REDDIT_SECRET }}
+          REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
+          REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
+          BING_API_KEY: ${{ secrets.BING_API_KEY }}
+        run: python generate_post.py --broadcast
