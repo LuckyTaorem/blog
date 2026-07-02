@@ -29,7 +29,7 @@ type: "page"
         <h2 class="h3 fw-bold text-body mb-2" id="author">The Architect: Lucky Taorem</h2>
         <h4 class="h6 text-primary fw-semibold mb-4">Web Developer & AI Automation Specialist</h4>
         <p class="text-body-secondary mb-4" style="line-height: 1.7;">
-          Hi, I'm Lucky Taorem (LT Developer). I built this platform as a living experiment in autonomous publishing. I designed the architecture, wrote the Python scripts, and integrated the AI engine that keeps this site running 24/7. When I'm not building autonomous automation bots, I focus on full-stack web development and pushing the limits of what LLMs can do.
+          Hi, I'm Taorem Lucky Singh (LT Developer). I built this platform as a living experiment in autonomous publishing. I designed the architecture, wrote the Python scripts, and integrated the AI engine that keeps this site running 24/7. When I'm not building autonomous automation bots, I focus on full-stack web development and pushing the limits of what LLMs can do.
         </p>
         <!-- Social & Portfolio Links with Colored Brand Icons -->
         <div class="d-flex flex-wrap gap-3 mt-4">
