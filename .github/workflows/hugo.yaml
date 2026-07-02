@@ -10,12 +10,19 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+# 🚀 UPDATED PERMISSIONS FOR DIRECT DEPLOYMENT
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    # 🚀 TIE THE DEPLOYMENT TO GITHUB PAGES ENVIRONMENT
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -63,14 +70,18 @@ jobs:
           HUGO_ENVIRONMENT: production
         run: hugo -F --gc --minify --baseURL "https://luckytaorem.github.io/blog/" --logLevel error
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      # 🚀 NEW: OFFICIAL GITHUB DIRECT UPLOAD (Skips the gh-pages branch entirely)
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          keep_files: false
+          path: ./public
+
+      # 🚀 NEW: OFFICIAL GITHUB DIRECT DEPLOY
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
       
-      # --- NEW STEPS ADDED BELOW DEPLOYMENT ---
+      # --- BROADCAST STEPS REMAIN UNCHANGED ---
       - name: Setup Python for Broadcast
         uses: actions/setup-python@v5
         with:
