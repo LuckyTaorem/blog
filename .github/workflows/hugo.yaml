@@ -72,7 +72,7 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          personal_token: ${{ secrets.DEPLOY_TOKEN }}  # 🚀 THIS IS THE MAGIC FIX
           publish_dir: ./public
           keep_files: false
       
