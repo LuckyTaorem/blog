@@ -1,4 +1,4 @@
-name: Deploy Hinode site to Public Repo
+name: Deploy Hinode site to GitHub Pages
 
 on:
   push:
@@ -27,7 +27,24 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24' # 🚨 FIXED: Bumped to 24 to silence the deprecation warning
+          node-version: '24'
+          cache: 'npm' # 🚀 NPM CACHE RESTORED
+
+      - name: Cache Hugo Modules # 🚀 HUGO MODULE CACHE RESTORED
+        uses: actions/cache@v4
+        with:
+          path: /tmp/hugo_cache
+          key: ${{ runner.os }}-hugomod-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-hugomod-
+
+      - name: Cache Hugo Resources # 🚀 CRITICAL: STOPS 20 MINUTE IMAGE PROCESSING
+        uses: actions/cache@v4
+        with:
+          path: resources
+          key: ${{ runner.os }}-hugo-resources-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-hugo-resources-
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
@@ -36,19 +53,17 @@ jobs:
           extended: true
 
       - name: Install npm dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build with Hugo
         env:
           HUGO_ENVIRONMENT: production
         run: hugo -F --gc --minify --baseURL "https://luckytaorem.github.io/blog/" --logLevel error
 
-      - name: Deploy to Public Repo
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          personal_token: ${{ secrets.DEPLOY_TOKEN }}
-          external_repository: luckytaorem/blog
-          publish_branch: main
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
           keep_files: false
       
@@ -57,6 +72,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
+          cache: 'pip'
 
       - name: Install Python Dependencies
         run: |

@@ -286,23 +286,9 @@ def git_commit_and_push(message, trigger_hugo=False):
         subprocess.run(["git", "config", "--global", "user.name", "AI Automation Bot"], check=True)
         subprocess.run(["git", "config", "--global", "user.email", "actions@github.com"], check=True)
 
-        # 🚀 NEW: Generate images locally before committing so the deployment server doesn't have to
-        if trigger_hugo:
-            print("🖼️ Generating Hugo resources locally to bypass GitHub Actions limits...")
-            try:
-                # Runs Hugo to process the images and save them into the resources folder
-                subprocess.run(["hugo", "--gc", "--minify"], check=True)
-            except Exception as e:
-                print(f"⚠️ Hugo local build failed: {e}")
-        
-        # --- STRICT FILE TARGETING ---
         subprocess.run(["git", "add", "content/posts/"], check=True)
         subprocess.run(["git", "add", "assets/images/"], check=True)
         subprocess.run(["git", "add", "queue.json"], check=True)
-
-        # 🚀 NEW: Commit the generated images to the repository!
-        if os.path.exists("resources"):
-            subprocess.run(["git", "add", "resources/"], check=True)
 
         subprocess.run(["git", "commit", "-m", message], check=False)
         subprocess.run(["git", "pull", "--rebase", "origin", "main"], check=True)
