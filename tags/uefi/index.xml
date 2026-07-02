@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>UEFI on Lucky Taorem | Tech &amp; AI Blog</title><link>https://luckytaorem.github.io/blog/tags/uefi/</link><description>Recent content in UEFI on Lucky Taorem | Tech &amp; AI Blog</description><generator>Hugo</generator><language>en</language><lastBuildDate>Mon, 22 Jun 2026 04:18:03 +0000</lastBuildDate><atom:link href="https://luckytaorem.github.io/blog/tags/uefi/index.xml" rel="self" type="application/rss+xml"/><item><title>Windows Linux Security Deadline</title><link>https://luckytaorem.github.io/blog/posts/a-critical-deadline-is-approaching-for-windows-and-linux-security/</link><pubDate>Mon, 22 Jun 2026 04:18:03 +0000</pubDate><guid>https://luckytaorem.github.io/blog/posts/a-critical-deadline-is-approaching-for-windows-and-linux-security/</guid><description>&lt;h2 id="introduction-to-uefi-infections" class="heading "&gt;Introduction to UEFI Infections&lt;a href="#introduction-to-uefi-infections" aria-labelledby="introduction-to-uefi-infections"&gt;
+
+
+
+
+
+
+
+
+&lt;!-- &lt;i class="fas fa-link anchor"&gt;&lt;/i&gt; --&gt;
+ &lt;svg class="svg-inline--fa fas fa-link anchor" fill="currentColor" aria-hidden="true" role="img" viewBox="0 0 576 512"&gt;&lt;use href="#fas-link"&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;
+ &lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;The clock is ticking for Windows and Linux users to update their cryptographic keys that protect their systems against firmware-based UEFI infections. Beginning June 24, three certificates that cryptographically verify each piece of firmware and software that loads during system boot will expire. These Microsoft-signed certificates are the linchpins of Secure Boot, a Microsoft-designed chain of trust. Secure Boot checks the digital signatures of all firmware that loads during system startup to ensure it originates from a trusted provider, such as the manufacturer of the motherboard the system runs on.&lt;/p&gt;</description></item></channel></rss>
