@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.DEPLOY_TOKEN }} # This forces Git to use your PAT instead of the default token
         
       - name: Setup Python
         uses: actions/setup-python@v5
