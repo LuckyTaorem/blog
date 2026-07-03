@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Security on Lucky Taorem | Tech &amp; AI Blog</title><link>https://luckytaorem.github.io/blog/tags/security/</link><description>Recent content in Security on Lucky Taorem | Tech &amp; AI Blog</description><generator>Hugo</generator><language>en</language><lastBuildDate>Mon, 22 Jun 2026 04:18:03 +0000</lastBuildDate><atom:link href="https://luckytaorem.github.io/blog/tags/security/index.xml" rel="self" type="application/rss+xml"/><item><title>Windows Linux Security Deadline</title><link>https://luckytaorem.github.io/blog/posts/a-critical-deadline-is-approaching-for-windows-and-linux-security/</link><pubDate>Mon, 22 Jun 2026 04:18:03 +0000</pubDate><guid>https://luckytaorem.github.io/blog/posts/a-critical-deadline-is-approaching-for-windows-and-linux-security/</guid><description>&lt;h2 id="introduction-to-uefi-infections" class="heading "&gt;Introduction to UEFI Infections&lt;a href="#introduction-to-uefi-infections" aria-labelledby="introduction-to-uefi-infections"&gt;
+
+
+
+
+
+
+
+
+&lt;!-- &lt;i class="fas fa-link anchor"&gt;&lt;/i&gt; --&gt;
+ &lt;svg class="svg-inline--fa fas fa-link anchor" fill="currentColor" aria-hidden="true" role="img" viewBox="0 0 576 512"&gt;&lt;use href="#fas-link"&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;
+ &lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;The clock is ticking for Windows and Linux users to update their cryptographic keys that protect their systems against firmware-based UEFI infections. Beginning June 24, three certificates that cryptographically verify each piece of firmware and software that loads during system boot will expire. These Microsoft-signed certificates are the linchpins of Secure Boot, a Microsoft-designed chain of trust. Secure Boot checks the digital signatures of all firmware that loads during system startup to ensure it originates from a trusted provider, such as the manufacturer of the motherboard the system runs on.&lt;/p&gt;</description></item><item><title>NordVPN Sale: 75% Off + 3 Free Months</title><link>https://luckytaorem.github.io/blog/posts/nordvpn-coupons-75-off-plus-3-months-free-in-june-2026/</link><pubDate>Thu, 18 Jun 2026 13:31:54 +0000</pubDate><guid>https://luckytaorem.github.io/blog/posts/nordvpn-coupons-75-off-plus-3-months-free-in-june-2026/</guid><description>&lt;h2 id="nordvpn-coupons-75-off-plus-3-months-free-in-june-2026" class="heading "&gt;NordVPN Coupons: 75% Off, Plus 3 Months Free in June 2026&lt;a href="#nordvpn-coupons-75-off-plus-3-months-free-in-june-2026" aria-labelledby="nordvpn-coupons-75-off-plus-3-months-free-in-june-2026"&gt;
+
+
+
+
+
+
+
+
+&lt;!-- &lt;i class="fas fa-link anchor"&gt;&lt;/i&gt; --&gt;
+ &lt;svg class="svg-inline--fa fas fa-link anchor" fill="currentColor" aria-hidden="true" role="img" viewBox="0 0 576 512"&gt;&lt;use href="#fas-link"&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;
+ &lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;Stay safe online and save big with the latest NordVPN coupons and discounts. In this article, we&amp;rsquo;ll explore the exclusive deals available in June 2026, including up to 77% off 2-year plans and 3 free months.&lt;/p&gt;
+
+
+
+
+
+&lt;h2 id="what-is-nordvpn" class="heading "&gt;What is NordVPN?&lt;a href="#what-is-nordvpn" aria-labelledby="what-is-nordvpn"&gt;
+
+
+
+
+
+
+
+
+&lt;!-- &lt;i class="fas fa-link anchor"&gt;&lt;/i&gt; --&gt;
+ &lt;svg class="svg-inline--fa fas fa-link anchor" fill="currentColor" aria-hidden="true" role="img" viewBox="0 0 576 512"&gt;&lt;use href="#fas-link"&gt;&lt;/use&gt;&lt;/svg&gt;&amp;nbsp;
+ &lt;/a&gt;
+&lt;/h2&gt;
+&lt;p&gt;Before diving into the discounts, let&amp;rsquo;s quickly recap what NordVPN is all about. NordVPN is a popular virtual private network (VPN) service that enables users to browse the internet securely and privately. With NordVPN, you can:&lt;/p&gt;</description></item></channel></rss>
