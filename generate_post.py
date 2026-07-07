@@ -1058,16 +1058,20 @@ def run_broadcaster():
     print("\n--- 📣 STARTING SOCIAL MEDIA BROADCASTER ---")
     broadcast_file = "broadcast_queue.json"
     
+    # 🚨 FIX: Fallback to scanning recent files if the queue is missing
     if not os.path.exists(broadcast_file):
-        print("No broadcast queue found. Exiting.")
+        print("⚠️ No broadcast queue found. Falling back to dynamic batch detection...")
+        run_emergency_broadcaster()
         return
         
     with open(broadcast_file, "r", encoding="utf-8") as f:
         try: queue = json.load(f)
         except: queue = []
         
+    # 🚨 FIX: Fallback if the queue exists but is empty
     if not queue:
-        print("Broadcast queue is empty. Exiting.")
+        print("⚠️ Broadcast queue is empty. Falling back to dynamic batch detection...")
+        run_emergency_broadcaster()
         return
         
     for article in queue:
