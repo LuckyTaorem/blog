@@ -66,13 +66,15 @@ jobs:
       - name: Build with Hugo
         env:
           HUGO_ENVIRONMENT: production
-        run: hugo -F --gc --minify --baseURL "https://luckytaorem.github.io/blog/" --logLevel error
+        run: hugo -F --gc --minify --baseURL "https://ltdeveloperblogs.github.io/" --logLevel error
 
         # 🚀 THE FIX: Use standard Git push instead of GitHub's broken API
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          personal_token: ${{ secrets.DEPLOY_TOKEN }}  # 🚀 THIS IS THE MAGIC FIX
+          personal_token: ${{ secrets.DEPLOY_TOKEN }}
+          external_repository: ltdeveloperblogs/ltdeveloperblogs.github.io
+          publish_branch: main
           publish_dir: ./public
           keep_files: false
       

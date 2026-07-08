@@ -336,7 +336,7 @@ def share_to_social_media(file_path, slug, image_path):
 
     print(f"\n📣 Broadcasting to Social Media: {title}")
     
-    post_url = f"https://luckytaorem.github.io/blog/posts/{slug}/"
+    post_url = f"https://ltdeveloperblogs.github.io/posts/{slug}/"
     
     # 🚨 IST Calculation
     ist_timezone = timezone(timedelta(hours=5, minutes=30))
@@ -657,7 +657,7 @@ def extract_text(data):
 
 def ping_google_indexing_api(post_slug):
     print(f"📡 Pinging Google Indexing API for: {post_slug}")
-    live_url = f"https://luckytaorem.github.io/blog/posts/{post_slug}/"
+    live_url = f"https://ltdeveloperblogs.github.io/posts/{post_slug}/"
     gcp_json_string = os.environ.get("GCP_INDEXING_JSON")
     
     if not gcp_json_string:
@@ -684,7 +684,7 @@ def ping_google_indexing_api(post_slug):
 
 def ping_bing_indexing_api(post_slug):
     print(f"📡 Pinging Bing Indexing API for: {post_slug}")
-    live_url = f"https://luckytaorem.github.io/blog/posts/{post_slug}/"
+    live_url = f"https://ltdeveloperblogs.github.io/posts/{post_slug}/"
     bing_api_key = os.environ.get("BING_API_KEY")
     
     if not bing_api_key:
@@ -694,7 +694,7 @@ def ping_bing_indexing_api(post_slug):
     try:
         endpoint = f"https://ssl.bing.com/webmaster/api.svc/json/SubmitUrlbatch?apikey={bing_api_key}"
         payload = {
-            "siteUrl": "https://luckytaorem.github.io/blog/",
+            "siteUrl": "https://ltdeveloperblogs.github.io/",
             "urlList": [live_url]
         }
         response = requests.post(endpoint, json=payload, timeout=10)
@@ -838,7 +838,7 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                         headers={
                             "Authorization": f"Bearer {key}",
                             "Content-Type": "application/json",
-                            "HTTP-Referer": "https://luckytaorem.github.io/blog/", 
+                            "HTTP-Referer": "https://ltdeveloperblogs.github.io/", 
                             "X-Title": "LT Developer Tech Blog"
                         },
                         json={
