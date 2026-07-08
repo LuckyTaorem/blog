@@ -91,26 +91,15 @@ jobs:
 
       - name: Smart Wait for GitHub Pages (Prevent 404s)
         run: |
-          echo "Checking if the new articles are live..."
-          if [ ! -f "broadcast_queue.json" ]; then
-            echo "No broadcast queue found. Skipping wait."
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          
+          if [[ "$COMMIT_MSG" != *"Published article batch"* ]]; then
+            echo "Not an automated article batch. Skipping wait."
             exit 0
           fi
           
-          SLUG=$(jq -r '.[0].slug' broadcast_queue.json)
-          URL="https://luckytaorem.github.io/blog/$SLUG/"
-          echo "Polling $URL to see if it is live..."
-          
-          for i in {1..15}; do
-            STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" "$URL")
-            if [ "$STATUS" -eq 200 ]; then
-              echo "✅ Article is live! Proceeding to broadcast."
-              exit 0
-            fi
-            echo "⏳ Still getting $STATUS (Not live yet). Waiting 20 seconds... ($i/15)"
-            sleep 20
-          done
-          echo "🚨 Timeout reached. Proceeding anyway, but site might still be building."
+          echo "⏳ Automated posts detected! Waiting 75 seconds for GitHub Pages deployment to propagate..."
+          sleep 75
 
       - name: Broadcast to Social Media
         env:
@@ -140,4 +129,14 @@ jobs:
           REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
           REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
           BING_API_KEY: ${{ secrets.BING_API_KEY }}
-        run: python generate_post.py --broadcast
+        run: |
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          echo "Last commit message was: $COMMIT_MSG"
+          
+          if [[ "$COMMIT_MSG" == *"Published article batch"* ]]; then
+            echo "📣 Automated post detected via commit message! Launching dynamic broadcast..."
+            # Use the emergency broadcaster to scan for recent .md files instead of the json queue
+            python generate_post.py --force-recent
+          else
+            echo "✅ Standard code push. Skipping broadcast to prevent duplicates."
+          fi

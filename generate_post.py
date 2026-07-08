@@ -1141,10 +1141,21 @@ def run_emergency_broadcaster():
         print("No valid articles found to broadcast.")
         return
 
-    # 🚨 NEW: Dynamic Batch Detection!
-    # Instead of a hard limit, we find the absolute newest article, 
-    # then grab every other article published within 30 minutes of it.
+    # 🚨 THE FIX: Absolute Time Check! 🚨
+    ist_timezone = timezone(timedelta(hours=5, minutes=30))
+    now_ist = datetime.now(ist_timezone)
     most_recent_date = articles[0]['date']
+    
+    # Calculate exactly how old the newest article is
+    age_of_newest = now_ist - most_recent_date
+    
+    # If the newest article is older than 2 hours, DO NOT broadcast.
+    if age_of_newest > timedelta(hours=10):
+        print(f"⚠️ Aborting Broadcast: The newest article is {age_of_newest.total_seconds() / 3600:.1f} hours old.")
+        print("To prevent spamming social media with older posts, we only broadcast articles published within the last 10 hours.")
+        return
+
+    # 🚨 Dynamic Batch Detection (Groups everything published alongside the newest post)
     batch_articles = []
     
     for article in articles:
@@ -1158,7 +1169,7 @@ def run_emergency_broadcaster():
             # Since the list is sorted, as soon as we hit a post older than 30 mins, we stop
             break
 
-    print(f"🔍 Detected {len(batch_articles)} articles published in the most recent batch.")
+    print(f"🔍 Detected {len(batch_articles)} articles published in the most recent fresh batch.")
 
     # 4. Push them out to social media
     for article in batch_articles:
