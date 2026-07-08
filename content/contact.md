@@ -112,7 +112,7 @@ document.getElementById('contact-form').addEventListener('submit', function(even
             sessionStorage.setItem('formSubmitted', 'true');
 
             // Send them to the Thank You page
-            window.location.href = "https://luckytaorem.github.io/blog/thanks/";
+            window.location.href = "https://ltdeveloperblogs.github.io/thanks/";
         }, (error) => {
             // Failed. Show error, reset the button and the CAPTCHA
             console.log('FAILED...', error);

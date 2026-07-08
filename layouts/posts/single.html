@@ -138,7 +138,7 @@
                             {{ $cat := index .Params.categories 0 }}
                             {{ $catURL := printf "/categories/%s/" ($cat | urlize) }}
                             <li class="breadcrumb-item">
-                                <a href="/blog/{{ $catURL | relURL }}" class="text-decoration-none text-capitalize" style="color: var(--bs-primary);">{{ $cat }}</a>
+                                <a href="/{{ $catURL | relURL }}" class="text-decoration-none text-capitalize" style="color: var(--bs-primary);">{{ $cat }}</a>
                             </li>
                         {{ end }}
                         
