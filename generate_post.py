@@ -280,6 +280,42 @@ def extract_key_facts_with_ai(raw_text, title):
         return raw_text[:3500]
     
 
+import random
+
+def get_internal_links_catalog(limit=40):
+    """Grabs a catalog of recent articles so the AI can choose the most relevant ones."""
+    if not os.path.exists(output_dir): 
+        return "No internal links available yet."
+        
+    files = [f for f in os.listdir(output_dir) if f.endswith('.md') and f != '_index.md']
+    if not files: 
+        return "No internal links available yet."
+    
+    # Sort files by newest first (using file modification time)
+    files.sort(key=lambda x: os.path.getmtime(os.path.join(output_dir, x)), reverse=True)
+    selected_files = files[:limit]
+    
+    catalog = []
+    for fname in selected_files:
+        slug = fname.replace('.md', '')
+        filepath = os.path.join(output_dir, fname)
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                # Read just enough to grab the title
+                content = f.read(500)
+                title_match = re.search(r'^title:\s*"(.*?)"', content, re.MULTILINE)
+                if title_match:
+                    title = title_match.group(1)
+                    catalog.append(f"- [{title}](/posts/{slug}/)")
+        except Exception:
+            continue
+            
+    if not catalog:
+        return "No internal links available yet."
+        
+    return "\n".join(catalog)
+    
+
 def git_commit_and_push(message, trigger_hugo=False):
     print(f"\n📦 Committing changes: {message}")
     try:
@@ -605,7 +641,8 @@ def run_scraper():
                 "title": news_title,
                 "slug": filename_slug,
                 "summary": final_summary,
-                "raw_image_url": extract_rss_image(entry)
+                "raw_image_url": extract_rss_image(entry),
+                "source_url": entry.get('link', '') # 🚀 NEW: Save the source URL
             })
 
     print(f"\nTotal articles now waiting in queue: {len(queue)}")
@@ -741,9 +778,21 @@ def run_publisher():
 
         ist_timezone = timezone(timedelta(hours=5, minutes=30))
         current_iso = datetime.now(ist_timezone).isoformat()
+        
+        # 🚀 NEW: Get 5 random internal links
+        internal_links = get_random_internal_links(5)
+        internal_links_str = "\n".join(internal_links) if internal_links else "No internal links available yet."
 
         prompt = f"""
 Act as an expert tech journalist and strict SEO specialist. Read this short news summary: {article['summary']}
+
+Write a highly engaging, in-depth technical blog post about this topic. 
+You MUST write a minimum of [WORD_COUNT] words. Do not summarize; provide extensive details, analysis, and context.
+Include headings, bullet points, and an FAQ section. Output in pure Markdown format.
+
+CRITICAL SEO RULE (INTERNAL LINKING):
+You must naturally weave the following internal links into the body of your article where contextually appropriate. Use exact markdown syntax. Do not just list them at the end.
+{internal_links_str}
 
 Write a highly engaging, in-depth technical blog post about this topic. 
 You MUST write a minimum of [WORD_COUNT] words. Do not summarize; provide extensive details, analysis, and context.
@@ -1023,6 +1072,11 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
         
         if re.search(r'^thumbnail:\s*.*', article_content, re.MULTILINE):
             article_content = re.sub(r'^thumbnail:\s*.*', f'thumbnail: "{image_url}"', article_content, flags=re.MULTILINE)
+
+        # 🚀 NEW: Append the External Source Link safely
+        source_url = article.get('source_url', '#')
+        if source_url and source_url != '#':
+            article_content += f"\n\n---\n**Source:** [*Original Article*]({source_url})\n"
 
         article_content += "\n\n{{< comments >}}\n"
         
