@@ -162,6 +162,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 document.getElementById("login-ui").classList.remove("d-none");
                 document.getElementById("composer-ui").classList.add("d-none");
             }
+            loadComments();
         });
     }, 500);
 
@@ -278,19 +279,29 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // --- FETCH & LOAD COMMENTS ---
-    function loadComments() {
-        fetch(`${API_BASE_URL}/comments/${articleSlug}`)
-            .then(r => r.json())
-            .then(data => {
-                allGlobalComments = data.comments || [];
-                document.getElementById("sort-comments").value = 'best';
-                renderSortedComments('best');
-            }).catch(() => {
-                document.getElementById("comments-list").innerHTML = "<p class='text-muted py-3'>Be the first to share your thoughts!</p>";
-            });
-    }
+  async function loadComments() {
+      const headers = {};
+      
+      // If a user is logged in, send their token so the backend can return their specific vote state
+      if (currentUser) {
+          try {
+              const token = await currentUser.getIdToken();
+              headers["Authorization"] = `Bearer ${token}`;
+          } catch (e) {
+              console.warn("Could not fetch token for comments:", e);
+          }
+      }
 
-    loadComments();
+      fetch(`${API_BASE_URL}/comments/${articleSlug}`, { headers })
+          .then(r => r.json())
+          .then(data => {
+              allGlobalComments = data.comments || [];
+              const sortDropdown = document.getElementById("sort-comments");
+              renderSortedComments(sortDropdown ? sortDropdown.value : 'best');
+          }).catch(() => {
+              document.getElementById("comments-list").innerHTML = "<p class='text-muted py-3'>Be the first to share your thoughts!</p>";
+          });
+  }
 
     // --- ACTIONS ---
     window.toggleReply = function(id) {
@@ -337,61 +348,75 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
     // --- MUTUALLY EXCLUSIVE VOTING & STATE SYNC ---
-    window.voteComment = function(id, action, btnElement) {
-        const voteCol = btnElement.closest('.vote-column');
-        const upBtn = voteCol.querySelector('.upvote-btn');
-        const downBtn = voteCol.querySelector('.downvote-btn');
-        const scoreSpan = voteCol.querySelector('.vote-score');
-        
-        let currentScore = parseInt(scoreSpan.dataset.score || 0);
-        const isUpvoted = upBtn.classList.contains('upvoted');
-        const isDownvoted = downBtn.classList.contains('downvoted');
+  window.voteComment = async function(id, action, btnElement) {
+      // 1. Block logged-out users and show login modal
+      if (!currentUser) {
+          new bootstrap.Modal(document.getElementById('loginModal')).show();
+          return;
+      }
 
-        // Find the comment in the global array to save state for sorting
-        const globalComment = allGlobalComments.find(c => c.id === id);
+      const voteCol = btnElement.closest('.vote-column');
+      const upBtn = voteCol.querySelector('.upvote-btn');
+      const downBtn = voteCol.querySelector('.downvote-btn');
+      const scoreSpan = voteCol.querySelector('.vote-score');
+      
+      let currentScore = parseInt(scoreSpan.dataset.score || 0);
+      const isUpvoted = upBtn.classList.contains('upvoted');
+      const isDownvoted = downBtn.classList.contains('downvoted');
 
-        if (action === 'up') {
-            if (isUpvoted) {
-                currentScore -= 1; 
-                upBtn.classList.remove('upvoted');
-                if (globalComment) globalComment.has_liked = false;
-            } else {
-                currentScore += isDownvoted ? 2 : 1; 
-                upBtn.classList.add('upvoted');
-                downBtn.classList.remove('downvoted');
-                if (globalComment) {
-                    globalComment.has_liked = true;
-                    globalComment.has_downvoted = false;
-                }
-            }
-        } else if (action === 'down') {
-            if (isDownvoted) {
-                currentScore += 1; 
-                downBtn.classList.remove('downvoted');
-                if (globalComment) globalComment.has_downvoted = false;
-            } else {
-                currentScore -= isUpvoted ? 2 : 1; 
-                downBtn.classList.add('downvoted');
-                upBtn.classList.remove('upvoted');
-                if (globalComment) {
-                    globalComment.has_downvoted = true;
-                    globalComment.has_liked = false;
-                }
-            }
-        }
+      const globalComment = allGlobalComments.find(c => c.id === id);
 
-        // Update UI locally
-        scoreSpan.dataset.score = currentScore;
-        scoreSpan.innerText = currentScore === 0 ? "" : currentScore;
-        if (globalComment) globalComment.like_count = currentScore;
+      if (action === 'up') {
+          if (isUpvoted) {
+              currentScore -= 1; 
+              upBtn.classList.remove('upvoted');
+              if (globalComment) globalComment.has_liked = false;
+          } else {
+              currentScore += isDownvoted ? 2 : 1; 
+              upBtn.classList.add('upvoted');
+              downBtn.classList.remove('downvoted');
+              if (globalComment) {
+                  globalComment.has_liked = true;
+                  globalComment.has_downvoted = false;
+              }
+          }
+      } else if (action === 'down') {
+          if (isDownvoted) {
+              currentScore += 1; 
+              downBtn.classList.remove('downvoted');
+              if (globalComment) globalComment.has_downvoted = false;
+          } else {
+              currentScore -= isUpvoted ? 2 : 1; 
+              downBtn.classList.add('downvoted');
+              upBtn.classList.remove('upvoted');
+              if (globalComment) {
+                  globalComment.has_downvoted = true;
+                  globalComment.has_liked = false;
+              }
+          }
+      }
 
-        // FIXED API CALL: Sends the exact action ('up' or 'down') to the new /vote endpoint!
-        fetch(`${API_BASE_URL}/comments/${id}/vote`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: action })
-        }).catch(console.error);
-    };
+      // Update UI locally
+      scoreSpan.dataset.score = currentScore;
+      scoreSpan.innerText = currentScore === 0 ? "" : currentScore;
+      if (globalComment) globalComment.like_count = currentScore;
+
+      // 2. Send the Auth Token so the backend knows WHO is voting
+      try {
+          const token = await currentUser.getIdToken();
+          await fetch(`${API_BASE_URL}/comments/${id}/vote`, {
+              method: "POST",
+              headers: { 
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}` 
+              },
+              body: JSON.stringify({ action: action })
+          });
+      } catch (err) {
+          console.error("Vote failed:", err);
+          window.alert("Failed to register vote. Please try again.");
+      }
+  };
 
     window.submitReply = async function(parentId, btnElement) {
         if (!currentUser) return window.alert("Please sign in to reply.");
