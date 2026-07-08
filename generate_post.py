@@ -779,9 +779,8 @@ def run_publisher():
         ist_timezone = timezone(timedelta(hours=5, minutes=30))
         current_iso = datetime.now(ist_timezone).isoformat()
         
-        # 🚀 NEW: Get 5 random internal links
-        internal_links = get_random_internal_links(5)
-        internal_links_str = "\n".join(internal_links) if internal_links else "No internal links available yet."
+        # 🚀 NEW: Get a catalog of existing articles for the AI to choose from
+        internal_links_catalog = get_internal_links_catalog(40)
 
         prompt = f"""
 Act as an expert tech journalist and strict SEO specialist. Read this short news summary: {article['summary']}
@@ -791,8 +790,13 @@ You MUST write a minimum of [WORD_COUNT] words. Do not summarize; provide extens
 Include headings, bullet points, and an FAQ section. Output in pure Markdown format.
 
 CRITICAL SEO RULE (INTERNAL LINKING):
-You must naturally weave the following internal links into the body of your article where contextually appropriate. Use exact markdown syntax. Do not just list them at the end.
-{internal_links_str}
+Here is a catalog of existing articles currently on our blog:
+{internal_links_catalog}
+
+Your task is to SELECT 3 to 5 articles from the list above that are STRICTLY RELATED to the topic you are writing about right now. 
+Naturally weave the links you chose into the body of your article where contextually appropriate. Use the exact markdown syntax provided in the list. Do not just paste a list of links at the end of the post.
+
+CRITICAL FRONTMATTER RULES (FAILURE IS NOT AN OPTION):
 
 Write a highly engaging, in-depth technical blog post about this topic. 
 You MUST write a minimum of [WORD_COUNT] words. Do not summarize; provide extensive details, analysis, and context.
