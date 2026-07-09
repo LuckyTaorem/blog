@@ -5,17 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="google-site-verification" content="i8FXlaFc-ZLFqIzN-rgTIK614f6dGg1gz8HAegeb4tI" />
     <link rel="canonical" href="{{ .Permalink }}">
-    <style>
-  /* Force the Hinode header logo to resize */
-  .navbar-brand img, 
-  .navbar-brand svg {
-      max-height: 100px !important; /* Crucial: removes the default strict height limit */
-      height: auto !important;
-      width: 250px !important;      /* Change this number to your desired width */
-  }
-  h3 {
-    font-size: 1.25rem !important;
-}
+<style>
+    /* Responsive Hinode header logo */
+    .navbar-brand img, 
+    .navbar-brand svg {
+        max-height: 100px !important; 
+        height: auto !important;
+        /* Change from a hard 250px width to a flexible max-width */
+        max-width: 250px !important; 
+        width: 100% !important;
+        object-fit: contain; /* Prevents the image from distorting */
+    }
+
+    /* Target mobile screens specifically (Bootstrap sm/xs breakpoints) */
+    @media (max-width: 575px) {
+        .navbar-brand img, 
+        .navbar-brand svg {
+            /* Shrink the logo slightly on mobile to give the hamburger menu space */
+            max-width: 200px !important; 
+        }
+    }
+
+    h3 {
+        font-size: 1.25rem !important;
+    }
 </style>
     {{ hugo.Generator }}
     {{ partialCached "head/stylesheet-core.html" . -}}
