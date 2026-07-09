@@ -1,0 +1,25 @@
+{{ define "main" }}
+<article>
+  <header>
+    <h1>{{ .Title }}</h1>
+  </header>
+  
+  <div class="sitemap-content">
+    <ul>
+      <!-- This loops through all regular blog posts and pages -->
+      {{ range .Site.RegularPages }}
+        {{- if not (or (in .RelPermalink "/tags/") (in .RelPermalink "/categories/")) -}}
+          {{- if not .Params.noSitemap -}}
+          <li>
+            <a href="{{ .Permalink }}">{{ .Title }}</a>
+            <small style="color: gray; margin-left: 10px;">
+              (Updated: {{ .Lastmod.Format "Jan 02, 2006" }})
+            </small>
+          </li>
+          {{- end -}}
+        {{- end -}}
+      {{ end }}
+    </ul>
+  </div>
+</article>
+{{ end }}
