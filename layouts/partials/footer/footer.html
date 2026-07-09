@@ -1,22 +1,77 @@
-<footer class="container-fluid footer text-center p-3">
+<style>
+    /* Professional Footer Styling */
+    .footer {
+        background-color: #1a1d21; /* Match your dark theme */
+        border-top: 1px solid #2d3136;
+        color: #8b949e;
+    }
+    
+    .footer-links-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 15px; /* Spacing between links */
+        margin-top: 10px;
+    }
+
+    .footer-link {
+        color: #8b949e;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s ease-in-out;
+    }
+
+    .footer-link:hover {
+        color: #e27a5f; /* Your brand orange/red */
+    }
+
+    /* Desktop-only divider dots */
+    .footer-divider {
+        display: none;
+        opacity: 0.5;
+        font-size: 0.8rem;
+    }
+
+    @media (min-width: 576px) {
+        .footer-divider {
+            display: inline-block;
+        }
+    }
+</style>
+
+<footer class="container-fluid footer text-center p-4">
     <div class="container-xxl text-center">
-        <small>
-            {{- $copyright := printf "%s © %s %s %s." (T "copyright") (dateFormat "2006" now) .Site.Title (T "rights") }}
-            {{ cond (gt (len .Site.Copyright) 0) .Site.Copyright $copyright }}
-            {{ .Site.Params.footer.license | safeHTML }}
+        
+        <!-- Copyright Section -->
+        <div class="footer-copyright mb-2">
+            <small>
+                {{- $copyright := printf "%s © %s %s %s." (T "copyright") (dateFormat "2006" now) .Site.Title (T "rights") }}
+                {{ cond (gt (len .Site.Copyright) 0) .Site.Copyright $copyright }}
+                {{ .Site.Params.footer.license | safeHTML }}
+                
+                {{ if .Site.Params.main.endorse }} |
+                    {{ $link := partial "assets/link.html" (dict
+                        "href" (index site.Params.links "hinode")
+                        "text" "Hinode"
+                        "class" "link-bg-footer"
+                        "page" .Page
+                    ) }}
+                {{ end }}
+            </small>
+        </div>
+
+        <!-- Navigation Links Section -->
+        <nav class="footer-links-container">
+            <a href="{{ "privacy-policy/" | relURL }}" class="footer-link">Privacy Policy</a>
+            <span class="footer-divider">•</span>
             
-            {{/* 🔒 Added Privacy Policy Link here */}}
-            • <a href="{{ "privacy-policy/" | relURL }}" class="text-reset decoration-none">Privacy Policy</a>
-            • <a href="{{ "terms-and-conditions/" | relURL }}" class="text-reset decoration-none">Terms & Conditions</a>
+            <a href="{{ "terms-and-conditions/" | relURL }}" class="footer-link">Terms & Conditions</a>
+            <span class="footer-divider">•</span>
             
-            {{ if .Site.Params.main.endorse }} |
-                {{ $link := partial "assets/link.html" (dict
-                    "href" (index site.Params.links "hinode")
-                    "text" "Hinode"
-                    "class" "link-bg-footer"
-                    "page" .Page
-                ) }}
-            {{ end }}
-        </small>
+            <!-- Added Sitemap Link -->
+            <a href="{{ "html-sitemap/" | relURL }}" class="footer-link">Sitemap</a>
+        </nav>
+
     </div>
 </footer>
