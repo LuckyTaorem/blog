@@ -50,7 +50,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: resources
-          key: ${{ runner.os }}-hugo-resources-${{ github.sha }}
+          # 🚀 FIX: Hash config files instead of commit SHA to prevent cache thrashing
+          key: ${{ runner.os }}-hugo-resources-${{ hashFiles('**/hugo.toml', '**/config.toml', '**/package-lock.json', '**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-hugo-resources-
 
