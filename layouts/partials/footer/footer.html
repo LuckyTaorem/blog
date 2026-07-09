@@ -1,9 +1,26 @@
 <style>
-    /* Professional Footer Styling */
+    /* Light Mode (Default) */
+    :root {
+        --ft-bg: #f8f9fa; /* Light gray background */
+        --ft-border: #e9ecef;
+        --ft-text: #6c757d;
+        --ft-link-hover: #d94a38;
+    }
+
+    /* Dark Mode (Overrides) */
+    [data-theme="dark"], [data-bs-theme="dark"], html.dark {
+        --ft-bg: #1a1d21;
+        --ft-border: #2d3136;
+        --ft-text: #8b949e;
+        --ft-link-hover: #e27a5f;
+    }
+
+    /* Apply variables */
     .footer {
-        background-color: #1a1d21; /* Match your dark theme */
-        border-top: 1px solid #2d3136;
-        color: #8b949e;
+        background-color: var(--ft-bg);
+        border-top: 1px solid var(--ft-border);
+        color: var(--ft-text);
+        transition: background-color 0.3s ease, border-color 0.3s ease;
     }
     
     .footer-links-container {
@@ -11,26 +28,26 @@
         flex-wrap: wrap;
         justify-content: center;
         align-items: center;
-        gap: 15px; /* Spacing between links */
+        gap: 15px;
         margin-top: 10px;
     }
 
     .footer-link {
-        color: #8b949e;
+        color: var(--ft-text);
         text-decoration: none;
         font-size: 0.9rem;
         transition: color 0.2s ease-in-out;
     }
 
     .footer-link:hover {
-        color: #e27a5f; /* Your brand orange/red */
+        color: var(--ft-link-hover);
     }
 
-    /* Desktop-only divider dots */
     .footer-divider {
         display: none;
         opacity: 0.5;
         font-size: 0.8rem;
+        color: var(--ft-text);
     }
 
     @media (min-width: 576px) {

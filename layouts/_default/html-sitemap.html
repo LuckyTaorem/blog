@@ -1,5 +1,32 @@
 {{ define "main" }}
 <style>
+  /* --- Define Color Variables for Light and Dark Mode --- */
+  
+  /* Light Mode (Default) */
+  :root {
+    --sm-card-bg: #ffffff;
+    --sm-card-border: #dee2e6;
+    --sm-card-hover: #f8f9fa;
+    --sm-text: #212529;
+    --sm-date: #6c757d;
+    --sm-title: #d94a38; /* Slightly darker orange for better contrast on white */
+    --sm-title-hover: #b53828;
+    --sm-page-bg: #ffffff;
+  }
+
+  /* Dark Mode (Overrides when toggle is clicked) */
+  [data-theme="dark"], [data-bs-theme="dark"], html.dark {
+    --sm-card-bg: #1a1d21;
+    --sm-card-border: #2d3136;
+    --sm-card-hover: #212529;
+    --sm-text: #ffffff;
+    --sm-date: #8b949e;
+    --sm-title: #e27a5f;
+    --sm-title-hover: #f49a84;
+    --sm-page-bg: #1a1d21; /* Optional: matches your dark theme background */
+  }
+
+  /* --- Container & Layout --- */
   .sitemap-container {
     max-width: 800px;
     margin: 0 auto;
@@ -8,38 +35,36 @@
   }
 
   .sitemap-title {
-    color: #ffffff;
+    color: var(--sm-text);
     text-align: center;
     margin-bottom: 30px;
     font-size: 2rem;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--sm-card-border);
     padding-bottom: 15px;
   }
 
-  /* --- Dynamic Area (Fades during JS load) --- */
-  #sitemap-dynamic-area {
-    transition: opacity 0.2s ease;
-  }
+  #sitemap-dynamic-area { transition: opacity 0.2s ease; }
 
-  .sitemap-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
+  .sitemap-list { list-style: none; padding: 0; margin: 0; }
 
+  /* --- Card Styling using Variables --- */
   .sitemap-item {
-    background: #1a1d21;
+    background: var(--sm-card-bg);
     margin-bottom: 12px;
     border-radius: 6px;
-    border: 1px solid #2d3136;
+    border: 1px solid var(--sm-card-border);
     transition: all 0.2s ease-in-out;
   }
 
   .sitemap-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border-color: #4a4e54;
-    background: #212529;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+    border-color: var(--sm-text); /* Highlight border on hover */
+    background: var(--sm-card-hover);
+  }
+
+  [data-bs-theme="dark"] .sitemap-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* Darker shadow for dark mode */
   }
 
   .sitemap-link {
@@ -51,25 +76,23 @@
   }
 
   .sitemap-post-title {
-    color: #e27a5f;
+    color: var(--sm-title);
     font-weight: 500;
     font-size: 1.1rem;
     transition: color 0.2s ease;
   }
   
-  .sitemap-link:hover .sitemap-post-title {
-    color: #f49a84;
-  }
+  .sitemap-link:hover .sitemap-post-title { color: var(--sm-title-hover); }
 
   .sitemap-date {
-    color: #8b949e;
+    color: var(--sm-date);
     font-size: 0.85rem;
     display: flex;
     align-items: center;
     gap: 6px;
   }
 
-  /* --- NEW: Advanced Pagination Styles --- */
+  /* --- Pagination using Variables --- */
   .pagination-container {
     display: flex;
     justify-content: center;
@@ -78,13 +101,13 @@
     gap: 8px;
     margin-top: 40px;
     padding-top: 20px;
-    border-top: 1px solid #333;
+    border-top: 1px solid var(--sm-card-border);
   }
 
   .pagination-btn, .pagination-number {
-    background: #1a1d21;
-    color: #8b949e;
-    border: 1px solid #2d3136;
+    background: var(--sm-card-bg);
+    color: var(--sm-date);
+    border: 1px solid var(--sm-card-border);
     padding: 8px 14px;
     border-radius: 6px;
     text-decoration: none;
@@ -96,30 +119,20 @@
 
   .pagination-btn:hover:not(.disabled), 
   .pagination-number:hover:not(.active) {
-    background: #212529;
-    color: #e27a5f;
-    border-color: #4a4e54;
+    background: var(--sm-card-hover);
+    color: var(--sm-title);
+    border-color: var(--sm-date);
   }
 
-  /* Active Highlighted Page */
   .pagination-number.active {
-    background: #e27a5f;
+    background: var(--sm-title);
     color: #ffffff;
-    border-color: #e27a5f;
-    pointer-events: none; /* Can't click current page */
-  }
-
-  /* Disabled Prev/Next */
-  .pagination-btn.disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
+    border-color: var(--sm-title);
     pointer-events: none;
   }
 
-  .pagination-ellipsis {
-    color: #8b949e;
-    padding: 8px 4px;
-  }
+  .pagination-btn.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+  .pagination-ellipsis { color: var(--sm-date); padding: 8px 4px; }
 
   @media (max-width: 600px) {
     .sitemap-link { flex-direction: column; align-items: flex-start; gap: 10px; }
