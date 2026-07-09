@@ -1,5 +1,5 @@
 title = "Lucky Taorem | Tech & AI Blog"
-baseURL = "https://luckytaorem.github.io/blog/"
+baseURL = "https://ltdeveloperblogs.github.io/"
 
 [params]
   description = "Expert analysis, tutorials, and news on Artificial Intelligence, Web Development, and Technology by Lucky Taorem."

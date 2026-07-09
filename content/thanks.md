@@ -15,7 +15,7 @@ url: "/thanks/"
   // Check for the secret ticket IMMEDIATELY before the page even loads
   if (sessionStorage.getItem('formSubmitted') !== 'true') {
       // No ticket? Kick them back to the contact page instantly
-      window.location.replace("https://luckytaorem.github.io/blog/contact/");
+      window.location.replace("https://ltdeveloperblogs.github.io/contact/");
   } else {
       // They have the ticket! Let them see the page, but destroy the ticket
       // so they can't just refresh the page forever.
