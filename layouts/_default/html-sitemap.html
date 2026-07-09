@@ -1,6 +1,5 @@
 {{ define "main" }}
 <style>
-  /* Container sizing and centering */
   .sitemap-container {
     max-width: 800px;
     margin: 0 auto;
@@ -8,7 +7,6 @@
     font-family: system-ui, -apple-system, sans-serif;
   }
 
-  /* Page Title */
   .sitemap-title {
     color: #ffffff;
     text-align: center;
@@ -18,23 +16,25 @@
     padding-bottom: 15px;
   }
 
-  /* Remove default list styling */
+  /* --- Dynamic Area (Fades during JS load) --- */
+  #sitemap-dynamic-area {
+    transition: opacity 0.2s ease;
+  }
+
   .sitemap-list {
     list-style: none;
     padding: 0;
     margin: 0;
   }
 
-  /* Individual item cards */
   .sitemap-item {
-    background: #1a1d21; /* Dark background matching your theme */
+    background: #1a1d21;
     margin-bottom: 12px;
     border-radius: 6px;
     border: 1px solid #2d3136;
     transition: all 0.2s ease-in-out;
   }
 
-  /* Hover effect for the cards */
   .sitemap-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -42,7 +42,6 @@
     background: #212529;
   }
 
-  /* Link layout inside the card */
   .sitemap-link {
     display: flex;
     justify-content: space-between;
@@ -51,19 +50,17 @@
     text-decoration: none;
   }
 
-  /* Post Title Text */
   .sitemap-post-title {
-    color: #e27a5f; /* Keeping your orange/red theme */
+    color: #e27a5f;
     font-weight: 500;
     font-size: 1.1rem;
     transition: color 0.2s ease;
   }
   
   .sitemap-link:hover .sitemap-post-title {
-    color: #f49a84; /* Lighter on hover */
+    color: #f49a84;
   }
 
-  /* Date styling */
   .sitemap-date {
     color: #8b949e;
     font-size: 0.85rem;
@@ -72,47 +69,191 @@
     gap: 6px;
   }
 
-  /* Calendar SVG Icon styling */
-  .sitemap-date svg {
-    opacity: 0.7;
+  /* --- NEW: Advanced Pagination Styles --- */
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
   }
 
-  /* Mobile Responsiveness */
+  .pagination-btn, .pagination-number {
+    background: #1a1d21;
+    color: #8b949e;
+    border: 1px solid #2d3136;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .pagination-btn:hover:not(.disabled), 
+  .pagination-number:hover:not(.active) {
+    background: #212529;
+    color: #e27a5f;
+    border-color: #4a4e54;
+  }
+
+  /* Active Highlighted Page */
+  .pagination-number.active {
+    background: #e27a5f;
+    color: #ffffff;
+    border-color: #e27a5f;
+    pointer-events: none; /* Can't click current page */
+  }
+
+  /* Disabled Prev/Next */
+  .pagination-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .pagination-ellipsis {
+    color: #8b949e;
+    padding: 8px 4px;
+  }
+
   @media (max-width: 600px) {
-    .sitemap-link {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
-    }
+    .sitemap-link { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .pagination-btn { padding: 8px 10px; font-size: 0.85rem; }
+    .pagination-number { padding: 8px 12px; }
   }
 </style>
 
 <div class="sitemap-container">
   <h1 class="sitemap-title">{{ .Title }}</h1>
   
-  <ul class="sitemap-list">
-    <!-- Loop through all regular blog posts and pages -->
-    {{ range .Site.RegularPages }}
-      {{- if not (or (in .RelPermalink "/tags/") (in .RelPermalink "/categories/")) -}}
-        {{- if not .Params.noSitemap -}}
+  {{ $validPages := slice }}
+  {{ range .Site.RegularPages }}
+    {{ if not (or (in .RelPermalink "/tags/") (in .RelPermalink "/categories/")) }}
+      {{ if not .Params.noSitemap }}
+        {{ $validPages = $validPages | append . }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+  {{/* Set to 50 items per page */}}
+  {{ $paginator := .Paginate $validPages 50 }}
+
+  <div id="sitemap-dynamic-area">
+    
+    <ul class="sitemap-list">
+      {{ range $paginator.Pages }}
         <li class="sitemap-item">
           <a href="{{ .Permalink }}" class="sitemap-link">
             <span class="sitemap-post-title">{{ .Title }}</span>
             <span class="sitemap-date">
-              <!-- Inline Calendar SVG Icon -->
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
               {{ .Lastmod.Format "Jan 02, 2006" }}
             </span>
           </a>
         </li>
-        {{- end -}}
-      {{- end -}}
+      {{ end }}
+    </ul>
+
+    {{ if gt $paginator.TotalPages 1 }}
+    <div class="pagination-container">
+      
+      <a href="{{ if $paginator.HasPrev }}{{ $paginator.Prev.URL }}{{ else }}#{{ end }}" 
+         class="pagination-link pagination-btn {{ if not $paginator.HasPrev }}disabled{{ end }}">
+         ← Prev
+      </a>
+
+      {{ $current := $paginator.PageNumber }}
+      {{ $total := $paginator.TotalPages }}
+      
+      {{ range $paginator.Pagers }}
+        {{ $pn := .PageNumber }}
+        
+        {{ if or (eq $pn 1) (eq $pn $total) (and (ge $pn (sub $current 2)) (le $pn (add $current 2))) }}
+          <a href="{{ .URL }}" class="pagination-link pagination-number {{ if eq $pn $current }}active{{ end }}">
+            {{ $pn }}
+          </a>
+          
+        {{ else if or (eq $pn (sub $current 3)) (eq $pn (add $current 3)) }}
+          <span class="pagination-ellipsis">...</span>
+        {{ end }}
+      {{ end }}
+
+      <a href="{{ if $paginator.HasNext }}{{ $paginator.Next.URL }}{{ else }}#{{ end }}" 
+         class="pagination-link pagination-btn {{ if not $paginator.HasNext }}disabled{{ end }}">
+         Next →
+      </a>
+      
+    </div>
     {{ end }}
-  </ul>
-</div>
+  </div> </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const dynamicAreaId = 'sitemap-dynamic-area';
+
+    async function loadPage(url) {
+      const dynamicArea = document.getElementById(dynamicAreaId);
+      
+      try {
+        // Fade out slightly to show it's loading
+        dynamicArea.style.opacity = '0.4';
+
+        // Fetch the new HTML file from the server
+        const response = await fetch(url);
+        const html = await response.text();
+        
+        // Parse the new HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newContent = doc.getElementById(dynamicAreaId);
+        
+        // Swap the content
+        if (newContent) {
+          dynamicArea.innerHTML = newContent.innerHTML;
+          window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll back to top
+        }
+      } catch (err) {
+        console.error('AJAX Load Failed, falling back to standard navigation:', err);
+        window.location.href = url; 
+      } finally {
+        // Fade back in
+        dynamicArea.style.opacity = '1';
+      }
+    }
+
+    // Intercept clicks on pagination buttons
+    document.body.addEventListener('click', (e) => {
+      // Find closest link with our class (handles clicks on elements inside the link too)
+      const link = e.target.closest('a.pagination-link'); 
+      
+      if (link) {
+        // Prevent normal page load
+        e.preventDefault();
+        
+        if (link.classList.contains('disabled') || link.classList.contains('active')) return;
+        
+        const url = link.getAttribute('href');
+        
+        // Update Browser URL seamlessly so refreshes and sharing work
+        history.pushState({ path: url }, '', url); 
+        
+        // Load content instantly
+        loadPage(url);
+      }
+    });
+
+    // Handle the browser Back / Forward buttons perfectly
+    window.addEventListener('popstate', (e) => {
+      const url = e.state?.path || window.location.pathname;
+      loadPage(url);
+    });
+  });
+</script>
 {{ end }}
