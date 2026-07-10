@@ -1,97 +1,148 @@
 <style>
-    /* Light Mode (Default) */
+    /* Premium Footer Theme Variables */
     :root {
-        --ft-bg: #f8f9fa; /* Light gray background */
-        --ft-border: #e9ecef;
-        --ft-text: #6c757d;
-        --ft-link-hover: #d94a38;
+        --ft-bg: transparent;   
+        --ft-border: rgba(0, 0, 0, 0.1); 
+        --ft-text-muted: #6b7280; 
+        --ft-text-strong: #374151; 
+        --ft-link-hover: #d94a38;  
     }
 
-    /* Dark Mode (Overrides) */
+    /* Dark Mode Overrides */
     [data-theme="dark"], [data-bs-theme="dark"], html.dark {
-        --ft-bg: #1a1d21;
-        --ft-border: #2d3136;
-        --ft-text: #8b949e;
+        --ft-bg: transparent;   
+        --ft-border: rgba(255, 255, 255, 0.1); 
+        --ft-text-muted: #9ca3af;
+        --ft-text-strong: #f3f4f6;
         --ft-link-hover: #e27a5f;
     }
 
-    /* Apply variables */
-    .footer {
-        background-color: var(--ft-bg);
-        border-top: 1px solid var(--ft-border);
-        color: var(--ft-text);
-        transition: background-color 0.3s ease, border-color 0.3s ease;
+    /* Base Footer Styles */
+    .premium-footer {
+        background-color: var(--ft-bg) !important;
+        border-top: 1px solid var(--ft-border) !important;
+        color: var(--ft-text-muted);
+        padding: 2.5rem 1.5rem;
+        font-family: system-ui, -apple-system, sans-serif;
+        position: relative;
+        z-index: 10;
     }
-    
-    .footer-links-container {
+
+    /* Responsive Flexbox Container */
+    .premium-footer-inner {
+        max-width: 1200px;
+        margin: 0 auto;
         display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-direction: column;
         align-items: center;
-        gap: 15px;
-        margin-top: 10px;
+        gap: 1.5rem;
     }
 
-    .footer-link {
-        color: var(--ft-text);
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: color 0.2s ease-in-out;
+    /* Copyright Details */
+    .footer-copyright {
+        font-size: 0.875rem;
+        line-height: 1.5;
+        text-align: center;
+        color: var(--ft-text-muted);
     }
 
-    .footer-link:hover {
-        color: var(--ft-link-hover);
+    .footer-copyright a {
+        color: var(--ft-text-strong) !important;
+        text-decoration: none !important;
+        font-weight: 500;
+    }
+
+    .footer-copyright a:hover {
+        color: var(--ft-link-hover) !important;
     }
 
     .footer-divider {
-        display: none;
-        opacity: 0.5;
-        font-size: 0.8rem;
-        color: var(--ft-text);
+        margin: 0 0.5rem;
+        opacity: 0.4;
     }
 
-    @media (min-width: 576px) {
-        .footer-divider {
-            display: inline-block;
+    /* -----------------------------------------
+       Navigation Links (Forced Visibility) 
+       ----------------------------------------- */
+    .premium-footer nav {
+        display: block !important;
+        width: 100%;
+    }
+
+    .premium-footer .footer-nav {
+        display: flex !important;
+        flex-wrap: wrap;
+        justify-content: center;
+        column-gap: 1rem !important;
+        row-gap: 0.5rem !important;
+        list-style: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .premium-footer .footer-nav a {
+        color: var(--ft-text-muted) !important;
+        text-decoration: none !important;
+        font-size: 0.875rem !important;
+        font-weight: 500 !important;
+        display: inline-block !important;
+    }
+
+    .premium-footer .footer-nav a:hover {
+        color: var(--ft-text-strong) !important;
+    }
+
+    /* Desktop Layout Overrides */
+    @media (min-width: 768px) {
+        .premium-footer-inner {
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .footer-copyright {
+            text-align: left;
+        }
+        .premium-footer nav {
+            width: auto;
+        }
+        .premium-footer .footer-nav {
+            column-gap: 1.5rem !important; 
         }
     }
 </style>
+
 <!-- Start cookieyes banner --> <script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/6f6f63e50fd15a902626c43b153a67dc/script.js"></script> <!-- End cookieyes banner -->
-<footer class="container-fluid footer text-center p-4">
-    <div class="container-xxl text-center">
+<footer class="premium-footer">
+    <div class="premium-footer-inner">
         
-        <!-- Copyright Section -->
-        <div class="footer-copyright mb-2">
-            <small>
-                {{- $copyright := printf "%s © %s %s %s." (T "copyright") (dateFormat "2006" now) .Site.Title (T "rights") }}
-                {{ cond (gt (len .Site.Copyright) 0) .Site.Copyright $copyright }}
-                {{ .Site.Params.footer.license | safeHTML }}
-                
-                {{ if .Site.Params.main.endorse }} |
-                    {{ $link := partial "assets/link.html" (dict
-                        "href" (index site.Params.links "hinode")
-                        "text" "Hinode"
-                        "class" "link-bg-footer"
-                        "page" .Page
-                    ) }}
-                {{ end }}
-            </small>
+        <div class="footer-copyright">
+            {{- $copyright := printf "%s © %s %s %s." (T "copyright") (dateFormat "2006" now) .Site.Title (T "rights") }}
+            <span>{{ cond (gt (len .Site.Copyright) 0) .Site.Copyright $copyright | safeHTML }}</span>
+            
+            {{ if .Site.Params.footer.license }}
+                <span class="footer-divider">•</span> {{ .Site.Params.footer.license | safeHTML }}
+            {{ end }}
+            
+            {{ if and .Site.Params.main.endorse (index site.Params.links "hinode") }} 
+                <span class="footer-divider">•</span>
+                {{ partial "assets/link.html" (dict
+                    "href" (index site.Params.links "hinode")
+                    "text" "Hinode"
+                    "class" "link-bg-footer"
+                    "page" .Page
+                ) }}
+            {{ end }}
         </div>
 
-        <!-- Navigation Links Section -->
-        <nav class="footer-links-container">
-            <a href="{{ "privacy-policy/" | relURL }}" class="footer-link">Privacy Policy</a>
-            <span class="footer-divider">•</span>
-            
-            <a href="{{ "terms-and-conditions/" | relURL }}" class="footer-link">Terms & Conditions</a>
-            <span class="footer-divider">•</span>
-
-            <a href="{{ "cookie-policy/" | relURL }}" class="footer-link">Cookie Policy</a>
-            <span class="footer-divider">•</span>
-            
-            <!-- Added Sitemap Link -->
-            <a href="{{ "html-sitemap/" | relURL }}" class="footer-link">Sitemap</a>
+        <nav aria-label="Footer Legal Links">
+            <ul class="footer-nav">
+                <li><a href="{{ "privacy-policy/" | relURL }}">Privacy Policy</a></li>
+                <li><a href="{{ "terms-and-conditions/" | relURL }}">Terms & Conditions</a></li>
+                <li><a href="{{ "cookie-policy/" | relURL }}">Cookie Policy</a></li>
+                <li><a href="{{ "html-sitemap/" | relURL }}">Sitemap</a></li>
+            </ul>
         </nav>
-
+        
     </div>
 </footer>

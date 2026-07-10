@@ -93,3 +93,7 @@ locale = "en-us"
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+
+[build]
+  [build.options]
+    transpiler = "dartsass"

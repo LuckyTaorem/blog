@@ -4,3 +4,6 @@ gcp-key.json
 ClearRuns.ps1
 credentials.json
 submit_sitemap.py
+node_modules
+public
+resources
