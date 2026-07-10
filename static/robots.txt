@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /tags/
+Disallow: /categories/
+Disallow: /search/
+Disallow: /*?q=*
 
 Sitemap: https://ltdeveloperblogs.github.io/sitemap.xml
