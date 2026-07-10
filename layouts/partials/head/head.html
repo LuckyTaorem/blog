@@ -81,4 +81,101 @@
     {{ if gt (len .Site.Languages) 1}}
     <meta name="lang" content="{{ .Site.Language }}">
     {{ end }}
+<style>
+    /* CSS Overrides only activate when specific classes are applied */
+    html.a11y-custom-fs body { 
+        font-size: var(--a11y-font-size) !important; 
+    }
+    html.a11y-custom-bg body, html.a11y-custom-bg .premium-footer { 
+        background-color: var(--a11y-bg) !important; 
+        transition: none !important; 
+    }
+    html.a11y-custom-link a { 
+        color: var(--a11y-link) !important; 
+    }
+    html.a11y-custom-btn .btn-primary, html.a11y-custom-btn .btn-outline-primary { 
+        background-color: var(--a11y-btn) !important; 
+        border-color: var(--a11y-btn) !important; 
+        color: #fff !important; 
+    }
+</style>
+
+<script>
+    // 1. RUN IMMEDIATELY: Applies saved settings instantly to prevent screen flickering
+    (function() {
+        try {
+            const settings = JSON.parse(localStorage.getItem('a11ySettings')) || {};
+            const html = document.documentElement;
+            if (settings.fontSize) { html.style.setProperty('--a11y-font-size', settings.fontSize + 'px'); html.classList.add('a11y-custom-fs'); }
+            if (settings.bg) { html.style.setProperty('--a11y-bg', settings.bg); html.classList.add('a11y-custom-bg'); }
+            if (settings.link) { html.style.setProperty('--a11y-link', settings.link); html.classList.add('a11y-custom-link'); }
+            if (settings.btn) { html.style.setProperty('--a11y-btn', settings.btn); html.classList.add('a11y-custom-btn'); }
+        } catch(e) {}
+    })();
+
+    // 2. UI LOGIC: Runs after the widget has loaded on the page
+    document.addEventListener("DOMContentLoaded", function() {
+        const fontSizeSlider = document.getElementById('a11y-fontsize');
+        const fontSizeVal = document.getElementById('fontSizeVal');
+        const bgColorPicker = document.getElementById('a11y-bgcolor');
+        const linkColorPicker = document.getElementById('a11y-linkcolor');
+        const btnColorPicker = document.getElementById('a11y-btncolor');
+        const btnReset = document.getElementById('a11y-reset');
+        const html = document.documentElement;
+        
+        let settings = JSON.parse(localStorage.getItem('a11ySettings')) || {};
+
+        // Helper: Converts the site's default RGB colors into HEX for the color pickers
+        function getHexColor(element, property) {
+            const rgb = window.getComputedStyle(element)[property];
+            if (!rgb || rgb.indexOf('rgb') === -1) return '#000000';
+            const match = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+            if (!match) return '#000000';
+            return "#" + (1 << 24 | match[1] << 16 | match[2] << 8 | match[3]).toString(16).slice(1);
+        }
+
+        if(fontSizeSlider) {
+            // Initialize UI values
+            fontSizeSlider.value = settings.fontSize || 16;
+            fontSizeVal.innerText = fontSizeSlider.value;
+            
+            // Set Color Pickers to match the current Theme (Light/Dark) UNLESS overridden
+            bgColorPicker.value = settings.bg || getHexColor(document.body, 'backgroundColor');
+            btnColorPicker.value = settings.btn || '#0d6efd'; 
+            
+            // Hack to find current default link color
+            const tempLink = document.createElement('a'); tempLink.href="#"; document.body.appendChild(tempLink);
+            linkColorPicker.value = settings.link || getHexColor(tempLink, 'color');
+            document.body.removeChild(tempLink);
+
+            // Save Function
+            function saveAndApply() {
+                localStorage.setItem('a11ySettings', JSON.stringify(settings));
+                if (settings.fontSize) { html.style.setProperty('--a11y-font-size', settings.fontSize + 'px'); html.classList.add('a11y-custom-fs'); }
+                if (settings.bg) { html.style.setProperty('--a11y-bg', settings.bg); html.classList.add('a11y-custom-bg'); }
+                if (settings.link) { html.style.setProperty('--a11y-link', settings.link); html.classList.add('a11y-custom-link'); }
+                if (settings.btn) { html.style.setProperty('--a11y-btn', settings.btn); html.classList.add('a11y-custom-btn'); }
+            }
+
+            // Event Listeners for changes
+            fontSizeSlider.addEventListener('input', (e) => { settings.fontSize = e.target.value; fontSizeVal.innerText = e.target.value; saveAndApply(); });
+            bgColorPicker.addEventListener('input', (e) => { settings.bg = e.target.value; saveAndApply(); });
+            linkColorPicker.addEventListener('input', (e) => { settings.link = e.target.value; saveAndApply(); });
+            btnColorPicker.addEventListener('input', (e) => { settings.btn = e.target.value; saveAndApply(); });
+            
+            // Reset Button
+            btnReset.addEventListener('click', () => {
+                settings = {};
+                localStorage.removeItem('a11ySettings');
+                html.classList.remove('a11y-custom-fs', 'a11y-custom-bg', 'a11y-custom-link', 'a11y-custom-btn');
+                html.style.removeProperty('--a11y-font-size'); html.style.removeProperty('--a11y-bg');
+                html.style.removeProperty('--a11y-link'); html.style.removeProperty('--a11y-btn');
+                
+                // Reset UI to defaults
+                fontSizeSlider.value = 16; fontSizeVal.innerText = 16;
+                bgColorPicker.value = getHexColor(document.body, 'backgroundColor');
+            });
+        }
+    });
+</script>
 {{ end }}

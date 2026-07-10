@@ -7,3 +7,4 @@ submit_sitemap.py
 node_modules
 public
 resources
+_vendor
