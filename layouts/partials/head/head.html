@@ -82,50 +82,204 @@
     <meta name="lang" content="{{ .Site.Language }}">
     {{ end }}
 <style>
-    /* CSS Overrides only activate when specific classes are applied */
-    html.a11y-custom-fs body { 
-        font-size: var(--a11y-font-size) !important; 
+    /* CSS Overrides for specific text areas */
+    html.a11y-custom-fs body { font-size: var(--a11y-fs-global) !important; }
+    html.a11y-custom-fs .article-content-wrapper { font-size: var(--a11y-fs-article) !important; }
+    html.a11y-custom-fs .card-body p, html.a11y-custom-fs .card a, html.a11y-custom-fs .d-flex.flex-column.gap-4 p { font-size: var(--a11y-fs-cards) !important; }
+    
+    /* Headings are scaled using a percentage so H1 stays bigger than H2 */
+    html.a11y-custom-fs h1, html.a11y-custom-fs h2, html.a11y-custom-fs h3, 
+    html.a11y-custom-fs h4, html.a11y-custom-fs h5, html.a11y-custom-fs h6,
+    html.a11y-custom-fs .card-title a {
+        font-size: calc(var(--a11y-fs-headings) * 1%) !important;
     }
-    html.a11y-custom-bg body, html.a11y-custom-bg .premium-footer { 
+
+    /* Colors */
+    html.a11y-custom-bg body, html.a11y-custom-bg .premium-footer, html.a11y-custom-bg .card, html.a11y-custom-bg .offcanvas { 
         background-color: var(--a11y-bg) !important; 
         transition: none !important; 
     }
-    html.a11y-custom-link a { 
-        color: var(--a11y-link) !important; 
-    }
-    html.a11y-custom-btn .btn-primary, html.a11y-custom-btn .btn-outline-primary { 
+    html.a11y-custom-link a { color: var(--a11y-link) !important; }
+    html.a11y-custom-btn .btn-primary, html.a11y-custom-btn .btn-outline-primary, html.a11y-custom-btn .badge.bg-primary { 
         background-color: var(--a11y-btn) !important; 
         border-color: var(--a11y-btn) !important; 
         color: #fff !important; 
     }
+
+    /* Mobile Transparent Drag Effect */
+    /* 1. Make the main navbar wrappers completely transparent */
+    body.a11y-is-dragging .fixed-top,
+    body.a11y-is-dragging .navbar,
+    body.a11y-is-dragging .navbar-collapse.show,
+    body.a11y-is-dragging .offcanvas {
+        background-color: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    
+    /* 2. Keep a slight blur/tint only on the dropdown menu itself */
+    body.a11y-is-dragging .dropdown-menu {
+        background-color: rgba(128, 128, 128, 0.15) !important;
+        box-shadow: none !important;
+        border-color: transparent !important;
+        backdrop-filter: blur(2px);
+    }
+
+    /* 3. Aggressively fade out EVERYTHING else */
+    body.a11y-is-dragging .navbar-nav > li:not(.a11y-widget-container),
+    body.a11y-is-dragging .navbar-brand,
+    body.a11y-is-dragging .navbar-toggler,
+    body.a11y-is-dragging form,
+    body.a11y-is-dragging .dropdown-menu > li:not(.is-dragging-row) {
+        opacity: 0.05 !important;
+        transition: opacity 0.2s ease;
+        pointer-events: none; /* Prevents accidental clicks */
+    }
+    
+    /* Ensure the widget itself stays 100% visible */
+    body.a11y-is-dragging .navbar-nav > li.a11y-widget-container {
+        opacity: 1 !important;
+    }
+
+    /* =========================================
+       ✨ PREMIUM MOBILE NAVIGATION MENU ✨
+       ========================================= */
+    @media (max-width: 991.98px) {
+        .navbar-nav-scroll{
+            overflow: hidden !important;
+        }
+        /* 1. Safe Menu Container */
+        .navbar-collapse {
+            background-color: var(--bs-body-bg) !important;
+            /* Added 2.5rem padding to the bottom for breathing room */
+            padding: 1.5rem 1.5rem 2.5rem 1.5rem !important; 
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(128, 128, 128, 0.08);
+            position: relative;
+            z-index: 1050; 
+            
+            /* Ensures a strict gap at the bottom of the screen */
+            margin: 1rem 1rem 3rem 1rem !important; 
+            width: auto; 
+            max-width: 100%;
+            overflow-x: hidden !important; /* Strictly block horizontal scroll */
+            overflow-y: auto !important;   /* This is the ONLY vertical scrollbar we want */
+            max-height: calc(100vh - 140px) !important; /* Stop before hitting the screen edge */
+        }
+
+        /* 1.5. Mobile Dropdown Menu Fix (Kills double scrollbars) */
+        .navbar-nav .dropdown-menu {
+            position: static !important; 
+            transform: none !important; /* <--- Add this to stop it from opening side-by-side */
+            width: 100% !important; 
+            min-width: 0 !important;
+            max-height: none !important; 
+            overflow: hidden !important; 
+            box-shadow: none !important;
+            border: none !important;
+            background-color: rgba(128, 128, 128, 0.05) !important; 
+            margin-top: 1rem !important;
+            border-radius: 14px;
+        }
+
+        /* 2. Main Navigation Links (Home, Articles, etc.) */
+        .navbar-nav { gap: 0.5rem; }
+        
+        .navbar-nav > .nav-item > .nav-link {
+            font-size: 1.25rem !important;
+            font-weight: 600 !important;
+            padding: 1rem 1.25rem !important;
+            border-radius: 14px;
+            transition: all 0.25s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: transparent;
+        }
+        
+        /* Soft tap/hover effect with slide animation */
+        .navbar-nav > .nav-item > .nav-link:hover,
+        .navbar-nav > .nav-item > .nav-link:active {
+            background-color: rgba(128, 128, 128, 0.06) !important;
+            color: var(--bs-primary) !important;
+            transform: translateX(6px);
+        }
+
+        /* Add a sleek right arrow to main links to indicate navigation */
+        .navbar-nav > .nav-item > .nav-link:not(.btn-link):not([data-bs-toggle="modal"]):not(.dropdown-toggle)::after {
+            content: "›";
+            font-size: 2rem;
+            line-height: 0.5;
+            font-weight: 300;
+            opacity: 0.3;
+        }
+
+        /* Hide the ugly default horizontal line */
+        .navbar-nav > li > hr { display: none !important; }
+
+        /* 3. Utility Tools Group (Search, Theme, Accessibility) */
+        .navbar-nav .btn-link, 
+        .navbar-nav .nav-link[data-bs-toggle="modal"],
+        .navbar-nav .a11y-widget-container > button {
+            background-color: rgba(128, 128, 128, 0.04) !important;
+            border-radius: 14px;
+            margin-top: 0.5rem;
+            border: 1px solid rgba(128, 128, 128, 0.08) !important;
+            font-size: 1.05rem !important;
+            font-weight: 500 !important;
+            padding: 1rem 1.25rem !important;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* Tint the utility icons with the primary brand color */
+        .navbar-nav .btn-link svg,
+        .navbar-nav .nav-link[data-bs-toggle="modal"] svg,
+        .navbar-nav .nav-link[data-bs-toggle="modal"] i,
+        .navbar-nav .a11y-widget-container > button svg {
+            color: var(--bs-primary);
+            opacity: 0.9;
+            width: 22px;
+            height: 22px;
+            margin-right: 0.5rem;
+        }
+        
+        /* Reset hover animation for the tools */
+        .navbar-nav .btn-link:hover,
+        .navbar-nav .nav-link[data-bs-toggle="modal"]:hover,
+        .navbar-nav .a11y-widget-container > button:hover {
+            transform: none;
+            background-color: rgba(128, 128, 128, 0.08) !important;
+        }
+    }
 </style>
 
 <script>
-    // 1. RUN IMMEDIATELY: Applies saved settings instantly to prevent screen flickering
+    // 1. RUN IMMEDIATELY: Prevent screen flickering
     (function() {
         try {
             const settings = JSON.parse(localStorage.getItem('a11ySettings')) || {};
             const html = document.documentElement;
-            if (settings.fontSize) { html.style.setProperty('--a11y-font-size', settings.fontSize + 'px'); html.classList.add('a11y-custom-fs'); }
+            if (settings.fsGlobal) { 
+                html.style.setProperty('--a11y-fs-global', settings.fsGlobal + 'px'); 
+                html.style.setProperty('--a11y-fs-article', settings.fsArticle + 'px'); 
+                html.style.setProperty('--a11y-fs-cards', settings.fsCards + 'px'); 
+                html.style.setProperty('--a11y-fs-headings', settings.fsHeadings); 
+                html.classList.add('a11y-custom-fs'); 
+            }
             if (settings.bg) { html.style.setProperty('--a11y-bg', settings.bg); html.classList.add('a11y-custom-bg'); }
             if (settings.link) { html.style.setProperty('--a11y-link', settings.link); html.classList.add('a11y-custom-link'); }
             if (settings.btn) { html.style.setProperty('--a11y-btn', settings.btn); html.classList.add('a11y-custom-btn'); }
         } catch(e) {}
     })();
 
-    // 2. UI LOGIC: Runs after the widget has loaded on the page
+    // 2. UI LOGIC
     document.addEventListener("DOMContentLoaded", function() {
-        const fontSizeSlider = document.getElementById('a11y-fontsize');
-        const fontSizeVal = document.getElementById('fontSizeVal');
-        const bgColorPicker = document.getElementById('a11y-bgcolor');
-        const linkColorPicker = document.getElementById('a11y-linkcolor');
-        const btnColorPicker = document.getElementById('a11y-btncolor');
-        const btnReset = document.getElementById('a11y-reset');
         const html = document.documentElement;
-        
         let settings = JSON.parse(localStorage.getItem('a11ySettings')) || {};
 
-        // Helper: Converts the site's default RGB colors into HEX for the color pickers
         function getHexColor(element, property) {
             const rgb = window.getComputedStyle(element)[property];
             if (!rgb || rgb.indexOf('rgb') === -1) return '#000000';
@@ -134,46 +288,93 @@
             return "#" + (1 << 24 | match[1] << 16 | match[2] << 8 | match[3]).toString(16).slice(1);
         }
 
-        if(fontSizeSlider) {
-            // Initialize UI values
-            fontSizeSlider.value = settings.fontSize || 16;
-            fontSizeVal.innerText = fontSizeSlider.value;
+        // Font Sliders
+        const slGlobal = document.getElementById('a11y-fs-global');
+        const slArticle = document.getElementById('a11y-fs-article');
+        const slCards = document.getElementById('a11y-fs-cards');
+        const slHeadings = document.getElementById('a11y-fs-headings');
+        
+        // Colors & Reset
+        const bgColor = document.getElementById('a11y-bgcolor');
+        const linkColor = document.getElementById('a11y-linkcolor');
+        const btnColor = document.getElementById('a11y-btncolor');
+        const btnReset = document.getElementById('a11y-reset');
+
+        if(slGlobal) {
+            // Init Values
+            slGlobal.value = settings.fsGlobal || 16; document.getElementById('val-global').innerText = slGlobal.value;
+            slArticle.value = settings.fsArticle || 18; document.getElementById('val-article').innerText = slArticle.value;
+            slCards.value = settings.fsCards || 14; document.getElementById('val-cards').innerText = slCards.value;
+            slHeadings.value = settings.fsHeadings || 100; document.getElementById('val-headings').innerText = slHeadings.value;
             
-            // Set Color Pickers to match the current Theme (Light/Dark) UNLESS overridden
-            bgColorPicker.value = settings.bg || getHexColor(document.body, 'backgroundColor');
-            btnColorPicker.value = settings.btn || '#0d6efd'; 
+            bgColor.value = settings.bg || getHexColor(document.body, 'backgroundColor');
+            btnColor.value = settings.btn || '#0d6efd'; 
             
-            // Hack to find current default link color
             const tempLink = document.createElement('a'); tempLink.href="#"; document.body.appendChild(tempLink);
-            linkColorPicker.value = settings.link || getHexColor(tempLink, 'color');
+            linkColor.value = settings.link || getHexColor(tempLink, 'color');
             document.body.removeChild(tempLink);
 
-            // Save Function
             function saveAndApply() {
                 localStorage.setItem('a11ySettings', JSON.stringify(settings));
-                if (settings.fontSize) { html.style.setProperty('--a11y-font-size', settings.fontSize + 'px'); html.classList.add('a11y-custom-fs'); }
+                html.style.setProperty('--a11y-fs-global', settings.fsGlobal + 'px');
+                html.style.setProperty('--a11y-fs-article', settings.fsArticle + 'px');
+                html.style.setProperty('--a11y-fs-cards', settings.fsCards + 'px');
+                html.style.setProperty('--a11y-fs-headings', settings.fsHeadings);
+                html.classList.add('a11y-custom-fs');
                 if (settings.bg) { html.style.setProperty('--a11y-bg', settings.bg); html.classList.add('a11y-custom-bg'); }
                 if (settings.link) { html.style.setProperty('--a11y-link', settings.link); html.classList.add('a11y-custom-link'); }
                 if (settings.btn) { html.style.setProperty('--a11y-btn', settings.btn); html.classList.add('a11y-custom-btn'); }
             }
 
-            // Event Listeners for changes
-            fontSizeSlider.addEventListener('input', (e) => { settings.fontSize = e.target.value; fontSizeVal.innerText = e.target.value; saveAndApply(); });
-            bgColorPicker.addEventListener('input', (e) => { settings.bg = e.target.value; saveAndApply(); });
-            linkColorPicker.addEventListener('input', (e) => { settings.link = e.target.value; saveAndApply(); });
-            btnColorPicker.addEventListener('input', (e) => { settings.btn = e.target.value; saveAndApply(); });
+            // Slider Listeners
+            function bindSlider(slider, key, valDisplay, isPercent = false) {
+                slider.addEventListener('input', (e) => { 
+                    settings[key] = e.target.value; 
+                    document.getElementById(valDisplay).innerText = e.target.value; 
+                    saveAndApply(); 
+                });
+            }
+            bindSlider(slGlobal, 'fsGlobal', 'val-global');
+            bindSlider(slArticle, 'fsArticle', 'val-article');
+            bindSlider(slCards, 'fsCards', 'val-cards');
+            bindSlider(slHeadings, 'fsHeadings', 'val-headings');
+
+            bgColor.addEventListener('input', (e) => { settings.bg = e.target.value; saveAndApply(); });
+            linkColor.addEventListener('input', (e) => { settings.link = e.target.value; saveAndApply(); });
+            btnColor.addEventListener('input', (e) => { settings.btn = e.target.value; saveAndApply(); });
             
-            // Reset Button
-            btnReset.addEventListener('click', () => {
-                settings = {};
-                localStorage.removeItem('a11ySettings');
-                html.classList.remove('a11y-custom-fs', 'a11y-custom-bg', 'a11y-custom-link', 'a11y-custom-btn');
-                html.style.removeProperty('--a11y-font-size'); html.style.removeProperty('--a11y-bg');
-                html.style.removeProperty('--a11y-link'); html.style.removeProperty('--a11y-btn');
+            // Transparency effect for Mobile
+            const sliders = document.querySelectorAll('.form-range');
+
+            sliders.forEach(slider => {
+                const handleDragStart = () => {
+                    if (window.innerWidth < 992) {
+                        document.body.classList.add('a11y-is-dragging');
+                        slider.closest('li').classList.add('is-dragging-row');
+                    }
+                };
                 
-                // Reset UI to defaults
-                fontSizeSlider.value = 16; fontSizeVal.innerText = 16;
-                bgColorPicker.value = getHexColor(document.body, 'backgroundColor');
+                const handleDragEnd = () => {
+                    document.body.classList.remove('a11y-is-dragging');
+                    slider.closest('li').classList.remove('is-dragging-row');
+                };
+
+                // Trigger on touch (mobile) and click (desktop simulating mobile)
+                slider.addEventListener('touchstart', handleDragStart, {passive: true});
+                slider.addEventListener('touchend', handleDragEnd);
+                slider.addEventListener('mousedown', handleDragStart);
+                window.addEventListener('mouseup', handleDragEnd);
+            });
+
+            // Reset
+            btnReset.addEventListener('click', () => {
+                settings = {}; localStorage.removeItem('a11ySettings');
+                html.classList.remove('a11y-custom-fs', 'a11y-custom-bg', 'a11y-custom-link', 'a11y-custom-btn');
+                slGlobal.value = 16; document.getElementById('val-global').innerText = 16;
+                slArticle.value = 18; document.getElementById('val-article').innerText = 18;
+                slCards.value = 14; document.getElementById('val-cards').innerText = 14;
+                slHeadings.value = 100; document.getElementById('val-headings').innerText = 100;
+                bgColor.value = getHexColor(document.body, 'backgroundColor');
             });
         }
     });
