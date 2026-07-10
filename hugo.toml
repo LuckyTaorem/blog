@@ -36,6 +36,17 @@ locale = "en-us"
   # 🚨 THIS is the correct, safe place to define your global fallback SEO logo in Hinode
   image = "img/logo.png"
 
+# --- DISABLE ANALYTICS & PREVENT ADBLOCKER ERRORS ---
+
+# 1. Disable Hugo's internal Google Analytics engine
+[privacy]
+  [privacy.googleAnalytics]
+    disable = true
+
+# 2. Disable Hinode's specific Analytics module bundler
+[params.modules.GoogleAnalytics]
+  disable = true
+
 # --- TOP NAVIGATION MENU ---
 [[menus.main]]
   name = "Home"
