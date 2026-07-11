@@ -1,0 +1,19 @@
+{{ printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>{{ "post-sitemap.xml" | absURL }}</loc>
+    <lastmod>{{ now.Format "2006-01-02T15:04:05-07:00" }}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>{{ "page-sitemap.xml" | absURL }}</loc>
+    <lastmod>{{ now.Format "2006-01-02T15:04:05-07:00" }}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>{{ "category-sitemap.xml" | absURL }}</loc>
+    <lastmod>{{ now.Format "2006-01-02T15:04:05-07:00" }}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>{{ "tag-sitemap.xml" | absURL }}</loc>
+    <lastmod>{{ now.Format "2006-01-02T15:04:05-07:00" }}</lastmod>
+  </sitemap>
+</sitemapindex>

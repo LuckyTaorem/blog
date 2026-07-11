@@ -5,4 +5,4 @@ Disallow: /categories/
 Disallow: /search/
 Disallow: /*?q=*
 
-Sitemap: https://ltdeveloperblogs.github.io/sitemap.xml
+Sitemap: https://ltdeveloperblogs.github.io/sitemap_index.xml

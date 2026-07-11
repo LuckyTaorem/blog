@@ -115,3 +115,44 @@ locale = "en-us"
 
 [caches]
   assets = { dir = ":resourceDir/_gen", maxAge = "720h" }
+
+# 1. Disable Hugo's default single sitemap
+disableKinds = ["sitemap"]
+
+# 2. Define XML as a valid media type
+[mediaTypes]
+  [mediaTypes."application/xml"]
+    suffixes = ["xml"]
+
+# 3. Create the custom output formats for our split sitemaps
+[outputFormats]
+  [outputFormats.SitemapIndex]
+    mediaType = "application/xml"
+    baseName = "sitemap_index"
+    isPlainText = true
+
+  [outputFormats.SitemapLegacy]
+    mediaType = "application/xml"
+    baseName = "sitemap"
+    isPlainText = true
+    
+  [outputFormats.SitemapPosts]
+    mediaType = "application/xml"
+    baseName = "post-sitemap"
+    isPlainText = true
+  [outputFormats.SitemapPages]
+    mediaType = "application/xml"
+    baseName = "page-sitemap"
+    isPlainText = true
+  [outputFormats.SitemapCategories]
+    mediaType = "application/xml"
+    baseName = "category-sitemap"
+    isPlainText = true
+  [outputFormats.SitemapTags]
+    mediaType = "application/xml"
+    baseName = "tag-sitemap"
+    isPlainText = true
+
+# 4. Assign these to generate on the Homepage (root directory)
+[outputs]
+  home = ["HTML", "RSS", "SitemapIndex", "SitemapLegacy", "SitemapPosts", "SitemapPages", "SitemapCategories", "SitemapTags"]

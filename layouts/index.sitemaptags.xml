@@ -1,0 +1,10 @@
+{{ printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  {{ range $name, $taxonomy := .Site.Taxonomies.tags }}
+  <url>
+    <loc>{{ "/tags/" | absURL }}{{ $name | urlize }}/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  {{ end }}
+</urlset>
