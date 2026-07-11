@@ -306,7 +306,7 @@ def get_internal_links_catalog(limit=40):
                 title_match = re.search(r'^title:\s*"(.*?)"', content, re.MULTILINE)
                 if title_match:
                     title = title_match.group(1)
-                    catalog.append(f"- [{title}](/posts/{slug}/)")
+                    catalog.append(f"- [{title}](https://ltdeveloperblogs.github.io/posts/{slug}/)")
         except Exception:
             continue
             
@@ -794,7 +794,7 @@ Here is a catalog of existing articles currently on our blog:
 {internal_links_catalog}
 
 Your task is to SELECT 3 to 5 articles from the list above that are STRICTLY RELATED to the topic you are writing about right now. 
-Naturally weave the links you chose into the body of your article where contextually appropriate. Use the exact markdown syntax provided in the list. Do not just paste a list of links at the end of the post.
+Naturally weave the links you chose into the body of your article where contextually appropriate. You MUST use the EXACT full absolute URL provided in the catalog (e.g., https://ltdeveloperblogs.github.io/posts/slug/). DO NOT truncate or shorten the URL to a relative path.
 
 CRITICAL FRONTMATTER RULES (FAILURE IS NOT AN OPTION):
 
@@ -1076,6 +1076,14 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
         
         if re.search(r'^thumbnail:\s*.*', article_content, re.MULTILINE):
             article_content = re.sub(r'^thumbnail:\s*.*', f'thumbnail: "{image_url}"', article_content, flags=re.MULTILINE)
+
+        # 🚨 NEW BOUNCER: Fix malformed AI internal links to prevent Hugo build crashes
+        # Converts broken links like `](posts/slug)` or `](/posts/slug)` into perfect absolute URLs
+        article_content = re.sub(
+            r'\]\((?:https?://ltdeveloperblogs\.github\.io)?/?posts/([^/)]+)/?\)',
+            r'](https://ltdeveloperblogs.github.io/posts/\1/)',
+            article_content
+        )
 
         # 🚀 NEW: Append the External Source Link safely
         source_url = article.get('source_url', '#')
