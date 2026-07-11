@@ -41,7 +41,7 @@ The Anker Solix C1000 is a compact portable power station with a 1,056-watt-hour
 ### Eco Flow River 2 Pro
 The Eco Flow River 2 Pro is a lightweight portable power station with a 768-watt-hour capacity. It features X-Boost surge for powering small appliances and a 30-millisecond delay EPS function. The device takes over an hour to charge from wall power.
 
-As we discussed in our article on [Valve's Steam Machine](/posts/valves-steam-machine-starts-at-1049/), high-capacity energy storage is crucial for powering demanding devices. Portable power stations like the ones reviewed above offer a reliable and efficient way to power various appliances and devices on the go.
+As we discussed in our article on [Valve's Steam Machine](/posts/valves-steam-machine-starts-at-1049-with-512gb-storage-and-no-controller/), high-capacity energy storage is crucial for powering demanding devices. Portable power stations like the ones reviewed above offer a reliable and efficient way to power various appliances and devices on the go.
 
 ## Comparison of Portable Power Stations
 In this section, we will compare the key features and specifications of the 9 best portable power stations.
