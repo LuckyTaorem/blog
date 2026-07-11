@@ -44,7 +44,7 @@ locale = "en-us"
     disable = true
 
 # 2. Disable Hinode's specific Analytics module bundler
-[params.modules.GoogleAnalytics]
+[params.modules.analytics]
   disable = true
 
 # --- TOP NAVIGATION MENU ---
