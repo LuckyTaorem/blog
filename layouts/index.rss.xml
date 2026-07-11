@@ -1,4 +1,4 @@
-{{ printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML -}}
 <rss version="2.0" 
      xmlns:atom="http://www.w3.org/2005/Atom"
      xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -12,45 +12,39 @@
     {{ range first 20 (where .Site.RegularPages "Section" "posts") }}
     {{ if not .Params.noSitemap }}
     <item>
-      <title><![CDATA[{{ .Title | safeHTML }}]]></title>
+      <!-- Automatically safely escaped by Hugo -->
+      <title>{{ .Title | htmlEscape }}</title>
       <link>{{ .Permalink }}</link>
       <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
       <guid>{{ .Permalink }}</guid>
       
-      {{ with .Params.categories }}{{ range . }}<category><![CDATA[{{ . | safeHTML }}]]></category>{{ end }}{{ end }}
-      {{ with .Params.tags }}{{ range . }}<category><![CDATA[{{ . | safeHTML }}]]></category>{{ end }}{{ end }}
+      {{ with .Params.categories }}{{ range . }}<category>{{ . | htmlEscape }}</category>{{ end }}{{ end }}
+      {{ with .Params.tags }}{{ range . }}<category>{{ . | htmlEscape }}</category>{{ end }}{{ end }}
 
       {{/* 🖼️ FEATURED IMAGES */}}
       {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
+      {{ $imgHtml := "" }}
       {{ if $imgStr }}
         {{ $res := resources.Get $imgStr }}
         {{ if $res }}
           {{ $optimized := $res.Resize "800x webp q80" }}
           <media:content url="{{ $optimized.Permalink }}" medium="image" type="image/webp" />
           <enclosure url="{{ $optimized.Permalink }}" type="image/webp" length="0" />
+          {{/* Store the image HTML so we can inject it safely */}}
+          {{ $imgHtml = printf "<p><img src=\"%s\" alt=\"%s\" /></p>" $optimized.Permalink .Title }}
         {{ else }}
           <media:content url="{{ $imgStr | absURL }}" medium="image" />
           <enclosure url="{{ $imgStr | absURL }}" type="image/jpeg" length="0" />
+          {{ $imgHtml = printf "<p><img src=\"%s\" alt=\"%s\" /></p>" ($imgStr | absURL) .Title }}
         {{ end }}
       {{ end }}
 
-      {{/* 📝 FULL ENCODED CONTENT (With ]]> escape for code snippets) */}}
-      <content:encoded>
-        <![CDATA[
-          {{ if $imgStr }}
-            {{ $res := resources.Get $imgStr }}
-            {{ if $res }}
-              <p><img src="{{ ($res.Resize "800x webp q80").Permalink }}" alt="{{ .Title }}" /></p>
-            {{ else }}
-              <p><img src="{{ $imgStr | absURL }}" alt="{{ .Title }}" /></p>
-            {{ end }}
-          {{ end }}
-          {{ .Content | replaceRE "&nbsp;" " " | replaceRE "]]>" "]]]]><![CDATA[>" | safeHTML }}
-        ]]>
-      </content:encoded>
+      {{/* 📝 FULL ENCODED CONTENT (No CDATA, Safely Escaped) */}}
+      {{ $fullContent := printf "%s\n%s" $imgHtml .Content }}
+      <content:encoded>{{ $fullContent | htmlEscape }}</content:encoded>
       
-      <!-- 🚨 Description with ]]> escape -->
-      <description><![CDATA[{{ .Summary | plainify | replaceRE "&nbsp;" " " | replaceRE "]]>" "]]]]><![CDATA[>" | safeHTML }}]]></description>
+      <!-- 🚨 Safely stripped and escaped Description -->
+      <description>{{ .Summary | plainify | htmlEscape }}</description>
     </item>
     {{ end }}
     {{ end }}
