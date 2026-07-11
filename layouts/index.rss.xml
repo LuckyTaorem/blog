@@ -12,14 +12,13 @@
     {{ range first 20 (where .Site.RegularPages "Section" "posts") }}
     {{ if not .Params.noSitemap }}
     <item>
-      <!-- Automatically safely escaped by Hugo -->
-      <title>{{ .Title | htmlEscape }}</title>
+      <title><![CDATA[{{ .Title | safeHTML }}]]></title>
       <link>{{ .Permalink }}</link>
       <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
       <guid>{{ .Permalink }}</guid>
       
-      {{ with .Params.categories }}{{ range . }}<category>{{ . | htmlEscape }}</category>{{ end }}{{ end }}
-      {{ with .Params.tags }}{{ range . }}<category>{{ . | htmlEscape }}</category>{{ end }}{{ end }}
+      {{ with .Params.categories }}{{ range . }}<category><![CDATA[{{ . | safeHTML }}]]></category>{{ end }}{{ end }}
+      {{ with .Params.tags }}{{ range . }}<category><![CDATA[{{ . | safeHTML }}]]></category>{{ end }}{{ end }}
 
       {{/* 🖼️ FEATURED IMAGES */}}
       {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
@@ -30,7 +29,6 @@
           {{ $optimized := $res.Resize "800x webp q80" }}
           <media:content url="{{ $optimized.Permalink }}" medium="image" type="image/webp" />
           <enclosure url="{{ $optimized.Permalink }}" type="image/webp" length="0" />
-          {{/* Store the image HTML so we can inject it safely */}}
           {{ $imgHtml = printf "<p><img src=\"%s\" alt=\"%s\" /></p>" $optimized.Permalink .Title }}
         {{ else }}
           <media:content url="{{ $imgStr | absURL }}" medium="image" />
@@ -39,12 +37,27 @@
         {{ end }}
       {{ end }}
 
-      {{/* 📝 FULL ENCODED CONTENT (No CDATA, Safely Escaped) */}}
-      {{ $fullContent := printf "%s\n%s" $imgHtml .Content }}
-      <content:encoded>{{ $fullContent | htmlEscape }}</content:encoded>
+      {{/* 🧹 REGEX CLEANUP PIPELINE */}}
+      {{ $cleanContent := .Content }}
       
-      <!-- 🚨 Safely stripped and escaped Description -->
-      <description>{{ .Summary | plainify | htmlEscape }}</description>
+      {{/* 1. Strip the messy heading anchor links added by Hugo */}}
+      {{ $cleanContent = $cleanContent | replaceRE "(?is)<a[^>]*aria-labelledby[^>]*>.*?</a>" "" }}
+      
+      {{/* 2. Strip all inline SVGs (like the FontAwesome link icons) */}}
+      {{ $cleanContent = $cleanContent | replaceRE "(?is)<svg.*?</svg>" "" }}
+      
+      {{/* 3. Strip lingering HTML comments */}}
+      {{ $cleanContent = $cleanContent | replaceRE "(?is)<!--.*?-->" "" }}
+      
+      {{/* 4. Fix ]]> inside code blocks so CDATA doesn't crash */}}
+      {{ $cleanContent = $cleanContent | replaceRE "]]>" "]]]]><![CDATA[>" }}
+
+      {{/* 📝 FULL ENCODED CONTENT (Now inside CDATA so it renders as visual text) */}}
+      <content:encoded><![CDATA[{{ $imgHtml | safeHTML }}{{ $cleanContent | safeHTML }}]]></content:encoded>
+      
+      {{/* 🚨 Clean Description */}}
+      {{ $cleanSummary := .Summary | plainify | replaceRE "&nbsp;" " " | replaceRE "]]>" "]]]]><![CDATA[>" }}
+      <description><![CDATA[{{ $cleanSummary | safeHTML }}]]></description>
     </item>
     {{ end }}
     {{ end }}
