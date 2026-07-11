@@ -1,4 +1,4 @@
-{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML -}}
+{{ printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
 <rss version="2.0" 
      xmlns:atom="http://www.w3.org/2005/Atom"
      xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -9,39 +9,36 @@
     <description>Recent content on {{ .Site.Title }}</description>
     <atom:link href="{{ .Permalink }}index.xml" rel="self" type="application/rss+xml" />
     
-    {{/* 🚀 Limit RSS to the 20 most recent pages to keep the file size highly optimized */}}
-    {{- range first 20 (where .Site.RegularPages "Section" "posts") -}}
-    {{- if not .Params.noSitemap -}}
+    {{ range first 20 (where .Site.RegularPages "Section" "posts") }}
+    {{ if not .Params.noSitemap }}
     <item>
-      <title>{{ .Title }}</title>
+      <!-- 🚨 Wrapped Title in CDATA to protect special characters -->
+      <title><![CDATA[{{ .Title }}]]></title>
       <link>{{ .Permalink }}</link>
       <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
       <guid>{{ .Permalink }}</guid>
       
-      {{/* 🏷️ CATEGORIES & TAGS */}}
-      {{ with .Params.categories }}{{ range . }}<category>{{ . }}</category>{{ end }}{{ end }}
-      {{ with .Params.tags }}{{ range . }}<category>{{ . }}</category>{{ end }}{{ end }}
+      <!-- 🚨 Wrapped Categories/Tags in CDATA -->
+      {{ with .Params.categories }}{{ range . }}<category><![CDATA[{{ . }}]]></category>{{ end }}{{ end }}
+      {{ with .Params.tags }}{{ range . }}<category><![CDATA[{{ . }}]]></category>{{ end }}{{ end }}
 
-      {{/* 🖼️ FEATURED IMAGES (Media Content & Enclosure for max compatibility) */}}
+      {{/* 🖼️ FEATURED IMAGES */}}
       {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
       {{ if $imgStr }}
         {{ $res := resources.Get $imgStr }}
         {{ if $res }}
-          {{/* Fetching the optimized WebP image path */}}
           {{ $optimized := $res.Resize "800x webp q80" }}
           <media:content url="{{ $optimized.Permalink }}" medium="image" type="image/webp" />
           <enclosure url="{{ $optimized.Permalink }}" type="image/webp" length="0" />
         {{ else }}
-          {{/* Fallback if it's an absolute external URL string */}}
           <media:content url="{{ $imgStr | absURL }}" medium="image" />
           <enclosure url="{{ $imgStr | absURL }}" type="image/jpeg" length="0" />
         {{ end }}
       {{ end }}
 
-      {{/* 📝 FULL ENCODED CONTENT */}}
+      {{/* 📝 FULL ENCODED CONTENT (Already in CDATA, but added nbsp scrubber just in case) */}}
       <content:encoded>
         <![CDATA[
-          {{/* If a featured image exists, inject it right at the top of the feed reader view */}}
           {{ if $imgStr }}
             {{ $res := resources.Get $imgStr }}
             {{ if $res }}
@@ -50,13 +47,14 @@
               <p><img src="{{ $imgStr | absURL }}" alt="{{ .Title }}" /></p>
             {{ end }}
           {{ end }}
-          {{ .Content }}
+          {{ .Content | replaceRE "&nbsp;" " " | safeHTML }}
         ]]>
       </content:encoded>
       
-      <description>{{ .Summary | plainify | htmlUnescape }}</description>
+      <!-- 🚨 Wrapped Description in CDATA and forcibly scrubbed nbsp -->
+      <description><![CDATA[{{ .Summary | plainify | replaceRE "&nbsp;" " " | safeHTML }}]]></description>
     </item>
-    {{- end -}}
-    {{- end -}}
+    {{ end }}
+    {{ end }}
   </channel>
 </rss>
