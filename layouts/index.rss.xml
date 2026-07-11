@@ -12,13 +12,14 @@
     {{ range first 20 (where .Site.RegularPages "Section" "posts") }}
     {{ if not .Params.noSitemap }}
     <item>
-      <title><![CDATA[{{ .Title | safeHTML }}]]></title>
+      <!-- Plain text safely escaped without CDATA -->
+      <title>{{ .Title | plainify | htmlEscape }}</title>
       <link>{{ .Permalink }}</link>
       <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
       <guid>{{ .Permalink }}</guid>
       
-      {{ with .Params.categories }}{{ range . }}<category><![CDATA[{{ . | safeHTML }}]]></category>{{ end }}{{ end }}
-      {{ with .Params.tags }}{{ range . }}<category><![CDATA[{{ . | safeHTML }}]]></category>{{ end }}{{ end }}
+      {{ with .Params.categories }}{{ range . }}<category>{{ . | plainify | htmlEscape }}</category>{{ end }}{{ end }}
+      {{ with .Params.tags }}{{ range . }}<category>{{ . | plainify | htmlEscape }}</category>{{ end }}{{ end }}
 
       {{/* 🖼️ FEATURED IMAGES */}}
       {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
@@ -29,36 +30,53 @@
           {{ $optimized := $res.Resize "800x webp q80" }}
           <media:content url="{{ $optimized.Permalink }}" medium="image" type="image/webp" />
           <enclosure url="{{ $optimized.Permalink }}" type="image/webp" length="0" />
-          {{ $imgHtml = printf "<p><img src=\"%s\" alt=\"%s\" /></p>" $optimized.Permalink .Title }}
+          {{ $imgHtml = printf "<p><img src=\"%s\" alt=\"%s\" /></p>" $optimized.Permalink (.Title | plainify) }}
         {{ else }}
           <media:content url="{{ $imgStr | absURL }}" medium="image" />
           <enclosure url="{{ $imgStr | absURL }}" type="image/jpeg" length="0" />
-          {{ $imgHtml = printf "<p><img src=\"%s\" alt=\"%s\" /></p>" ($imgStr | absURL) .Title }}
+          {{ $imgHtml = printf "<p><img src=\"%s\" alt=\"%s\" /></p>" ($imgStr | absURL) (.Title | plainify) }}
         {{ end }}
       {{ end }}
 
-      {{/* 🧹 REGEX CLEANUP PIPELINE */}}
+      {{/* 🧹 HYPER-AGGRESSIVE CLEANUP PIPELINE */}}
       {{ $cleanContent := .Content }}
       
-      {{/* 1. Strip the messy heading anchor links added by Hugo */}}
+      {{/* 1. CHOP OFF THE BOTTOM: Strip Source, Discussion, and Firebase Comments completely */}}
+      {{ $cleanContent = $cleanContent | replaceRE "(?is)<hr>\\s*<p><strong>Source:</strong>.*" "" }}
+      {{ $cleanContent = $cleanContent | replaceRE "(?is)<hr class=\"my-5\".*" "" }}
+      {{ $cleanContent = $cleanContent | replaceRE "(?is)<h4[^>]*id=\"discussion-title\".*" "" }}
+      {{ $cleanContent = $cleanContent | replaceRE "(?is)<div[^>]*id=\"login-ui\".*" "" }}
+      
+      {{/* 2. Strip the messy heading anchor links added by Hugo */}}
       {{ $cleanContent = $cleanContent | replaceRE "(?is)<a[^>]*aria-labelledby[^>]*>.*?</a>" "" }}
       
-      {{/* 2. Strip all inline SVGs (like the FontAwesome link icons) */}}
+      {{/* 3. Strip all inline SVGs, Scripts, and Styles */}}
       {{ $cleanContent = $cleanContent | replaceRE "(?is)<svg.*?</svg>" "" }}
+      {{ $cleanContent = $cleanContent | replaceRE "(?is)<script.*?</script>" "" }}
+      {{ $cleanContent = $cleanContent | replaceRE "(?is)<style.*?</style>" "" }}
       
-      {{/* 3. Strip lingering HTML comments */}}
+      {{/* 4. PURIFY TAGS: Strip all id, class, style, aria, and role attributes */}}
+      {{ $cleanContent = $cleanContent | replaceRE "\\s+(id|class|style|aria-[a-z]+|role|data-[a-z]+|tabindex)=\"[^\"]*\"" "" }}
+      
+      {{/* 5. Strip lingering HTML comments */}}
       {{ $cleanContent = $cleanContent | replaceRE "(?is)<!--.*?-->" "" }}
-      
-      {{/* 4. Fix ]]> inside code blocks using LITERAL string replacement, not Regex */}}
-      {{ $cleanContent = replace $cleanContent "]]>" "]]]]><![CDATA[>" }}
 
-      {{/* 📝 FULL ENCODED CONTENT (Now inside CDATA so it renders as visual text) */}}
-      <content:encoded><![CDATA[{{ $imgHtml | safeHTML }}{{ $cleanContent | safeHTML }}]]></content:encoded>
+      {{/* 6. ENTITY SCRUBBER: Convert forbidden HTML typography into XML-safe characters */}}
+      {{ $cleanContent = $cleanContent | replaceRE "&rsquo;" "'" }}
+      {{ $cleanContent = $cleanContent | replaceRE "&lsquo;" "'" }}
+      {{ $cleanContent = $cleanContent | replaceRE "&rdquo;" "\"" }}
+      {{ $cleanContent = $cleanContent | replaceRE "&ldquo;" "\"" }}
+      {{ $cleanContent = $cleanContent | replaceRE "&mdash;" "-" }}
+      {{ $cleanContent = $cleanContent | replaceRE "&ndash;" "-" }}
+      {{ $cleanContent = $cleanContent | replaceRE "&hellip;" "..." }}
+      {{ $cleanContent = $cleanContent | replaceRE "&nbsp;" " " }}
+
+      {{/* 📝 FULL ENCODED CONTENT (Raw, clean HTML tags, No CDATA) */}}
+      <content:encoded>{{ $imgHtml | safeHTML }}{{ $cleanContent | safeHTML }}</content:encoded>
       
-      {{/* 🚨 Clean Description */}}
+      {{/* 🚨 Clean Description (Plain text safely escaped) */}}
       {{ $cleanSummary := .Summary | plainify | replaceRE "&nbsp;" " " }}
-      {{ $cleanSummary = replace $cleanSummary "]]>" "]]]]><![CDATA[>" }}
-      <description><![CDATA[{{ $cleanSummary | safeHTML }}]]></description>
+      <description>{{ $cleanSummary | htmlEscape }}</description>
     </item>
     {{ end }}
     {{ end }}
