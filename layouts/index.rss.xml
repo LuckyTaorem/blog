@@ -12,15 +12,13 @@
     {{ range first 20 (where .Site.RegularPages "Section" "posts") }}
     {{ if not .Params.noSitemap }}
     <item>
-      <!-- 🚨 Wrapped Title in CDATA to protect special characters -->
-      <title><![CDATA[{{ .Title }}]]></title>
+      <title><![CDATA[{{ .Title | safeHTML }}]]></title>
       <link>{{ .Permalink }}</link>
       <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
       <guid>{{ .Permalink }}</guid>
       
-      <!-- 🚨 Wrapped Categories/Tags in CDATA -->
-      {{ with .Params.categories }}{{ range . }}<category><![CDATA[{{ . }}]]></category>{{ end }}{{ end }}
-      {{ with .Params.tags }}{{ range . }}<category><![CDATA[{{ . }}]]></category>{{ end }}{{ end }}
+      {{ with .Params.categories }}{{ range . }}<category><![CDATA[{{ . | safeHTML }}]]></category>{{ end }}{{ end }}
+      {{ with .Params.tags }}{{ range . }}<category><![CDATA[{{ . | safeHTML }}]]></category>{{ end }}{{ end }}
 
       {{/* 🖼️ FEATURED IMAGES */}}
       {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
@@ -36,7 +34,7 @@
         {{ end }}
       {{ end }}
 
-      {{/* 📝 FULL ENCODED CONTENT (Already in CDATA, but added nbsp scrubber just in case) */}}
+      {{/* 📝 FULL ENCODED CONTENT (With ]]> escape for code snippets) */}}
       <content:encoded>
         <![CDATA[
           {{ if $imgStr }}
@@ -47,12 +45,12 @@
               <p><img src="{{ $imgStr | absURL }}" alt="{{ .Title }}" /></p>
             {{ end }}
           {{ end }}
-          {{ .Content | replaceRE "&nbsp;" " " | safeHTML }}
+          {{ .Content | replaceRE "&nbsp;" " " | replaceRE "]]>" "]]]]><![CDATA[>" | safeHTML }}
         ]]>
       </content:encoded>
       
-      <!-- 🚨 Wrapped Description in CDATA and forcibly scrubbed nbsp -->
-      <description><![CDATA[{{ .Summary | plainify | replaceRE "&nbsp;" " " | safeHTML }}]]></description>
+      <!-- 🚨 Description with ]]> escape -->
+      <description><![CDATA[{{ .Summary | plainify | replaceRE "&nbsp;" " " | replaceRE "]]>" "]]]]><![CDATA[>" | safeHTML }}]]></description>
     </item>
     {{ end }}
     {{ end }}
