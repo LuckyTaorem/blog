@@ -1,11 +1,47 @@
 <div class="row row-cols-1 row-cols-md-3 g-4 mt-4">
-  {{ range first 12 (where site.RegularPages "Section" "posts") }}
+  {{/* Added $index to track the loop count */}}
+  {{ range $index, $page := first 12 (where site.RegularPages "Section" "posts") }}
     <div class="col">
       <div class="card h-100 shadow-sm border-0">
         
-        {{ if .Params.images }}
-            <img src="{{ index .Params.images 0 | absURL }}" class="card-img-top" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
-          {{ end }}
+        <!-- 🚀 SMART IMAGE PROCESSING -->
+        {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
+        {{ if $imgStr }}
+            {{ $res := resources.Get $imgStr }}
+            
+            {{ if $res }}
+                {{/* Resize to 600px, convert to WebP, and compress to 80% */}}
+                {{ $optimized := $res.Resize "600x webp q80" }}
+                
+                <img src="{{ $optimized.RelPermalink }}" 
+                     width="{{ $optimized.Width }}" 
+                     height="{{ $optimized.Height }}" 
+                     
+                     {{/* Instantly load the first 2 images, delay the rest */}}
+                     {{ if lt $index 2 }}
+                         loading="eager" fetchpriority="high"
+                     {{ else }}
+                         loading="lazy"
+                     {{ end }}
+                     
+                     class="card-img-top" 
+                     alt="{{ .Title }}" 
+                     style="height: 220px; object-fit: cover;">
+            {{ else }}
+                {{/* Fallback for external images */}}
+                <img src="{{ $imgStr | absURL }}" 
+                     
+                     {{ if lt $index 2 }}
+                         loading="eager" fetchpriority="high"
+                     {{ else }}
+                         loading="lazy"
+                     {{ end }}
+                     
+                     class="card-img-top" 
+                     alt="{{ .Title }}" 
+                     style="height: 220px; object-fit: cover;">
+            {{ end }}
+        {{ end }}
 
         <div class="card-body">
           <h3 class="card-title h5 mb-3">
