@@ -11,11 +11,27 @@
         <div class="card h-100 shadow-sm border-0 bg-body-tertiary">
           
           <!-- Safely grab either thumbnail or images parameter -->
-          {{ if .Params.thumbnail }}
-            <img src="{{ .Params.thumbnail | absURL }}" class="card-img-top" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
-          {{ else if .Params.images }}
-            <img src="{{ index .Params.images 0 | absURL }}" class="card-img-top" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
-          {{ end }}
+          <!-- 🚀 OPTIMIZED IMAGE PROCESSING -->
+              {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
+              {{ if $imgStr }}
+                  {{/* Try to find the image in your Hugo resources (assets folder) */}}
+                  {{ $res := resources.Get $imgStr }}
+                  
+                  {{ if $res }}
+                      {{/* 1. Resize to max 600px width, 2. Convert to WebP, 3. Compress to 80% quality */}}
+                      {{ $optimized := $res.Resize "600x webp q80" }}
+                      <img src="{{ $optimized.RelPermalink }}" 
+                           width="{{ $optimized.Width }}" 
+                           height="{{ $optimized.Height }}" 
+                           loading="lazy" 
+                           class="card-img-top" 
+                           alt="{{ .Title }}" 
+                           style="height: 220px; object-fit: cover;">
+                  {{ else }}
+                      {{/* Fallback for external images (http...) */}}
+                      <img src="{{ $imgStr | absURL }}" loading="lazy" class="card-img-top" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
+                  {{ end }}
+              {{ end }}
 
           <div class="card-body">
             <h3 class="card-title h5 mb-3">

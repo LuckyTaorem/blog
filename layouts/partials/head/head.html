@@ -2,28 +2,51 @@
     {{- $version := strings.TrimSpace (partialCached "assets/version.html" . "version") -}}
     {{ $desc := .Page.Description | default (.Page.Content | safeHTML | truncate 150) -}}
     <meta charset="utf-8">
+    <!-- Preconnect to external resources to speed up DNS lookups -->
+    <link rel="preconnect" href="https://cdn-cookieyes.com">
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.clarity.ms">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="google-site-verification" content="i8FXlaFc-ZLFqIzN-rgTIK614f6dGg1gz8HAegeb4tI" />
     <link rel="canonical" href="{{ .Permalink }}">
 
-    <!-- Clarity tracking code for https://ltdeveloperblogs.github.io/ -->
-<script>
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "xk3e4avedq");
-</script>
+<!-- 🚀 OPTIMIZED: Delay Third-Party Analytics to fix Total Blocking Time -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let analyticsLoaded = false;
+            
+            function loadAnalytics() {
+                if (analyticsLoaded) return;
+                analyticsLoaded = true;
+                
+                // 1. Load Google Analytics
+                const gaScript = document.createElement('script');
+                gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-QQH6C9QL6T";
+                gaScript.async = true;
+                document.head.appendChild(gaScript);
+                
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-QQH6C9QL6T');
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QQH6C9QL6T"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+                // 2. Load Clarity
+                (function(c,l,a,r,i,t,y){
+                    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+                    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+                })(window, document, "clarity", "script", "xk3e4avedq");
+            }
 
-  gtag('config', 'G-QQH6C9QL6T');
-</script>
+            // Load when user interacts (scrolls, moves mouse, or taps)
+            const events = ['scroll', 'mousemove', 'touchstart'];
+            events.forEach(event => window.addEventListener(event, loadAnalytics, { once: true, passive: true }));
+            
+            // Fallback: Load after 3 seconds if no interaction occurs
+            setTimeout(loadAnalytics, 3000);
+        });
+    </script>
 <style>
     /* Responsive Hinode header logo */
     .navbar-brand img, 
