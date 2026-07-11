@@ -97,3 +97,12 @@ locale = "en-us"
 [build]
   [build.options]
     transpiler = "dartsass"
+    target = "es2020"
+
+[minify]
+  disableCSS = false
+  disableJS = false
+  minifyOutput = true
+
+[caches]
+  assets = { dir = ":resourceDir/_gen", maxAge = "720h" }
