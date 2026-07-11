@@ -87,7 +87,7 @@
                         </table>
                     </xsl:if>
                     <div class="footer">
-                        Developed by Taorem Lucky Singh &bull; Open in a code editor to view raw XML.
+                        Developed by Taorem Lucky Singh &#8226; Open in a code editor to view raw XML.
                     </div>
                 </div>
             </body>
