@@ -4,31 +4,26 @@
     <div class="col">
       <div class="card h-100 shadow-sm border-0">
         
-        <!-- 🚀 SMART IMAGE PROCESSING -->
         {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
         {{ if $imgStr }}
             {{ $res := resources.Get $imgStr }}
-            
             {{ if $res }}
-                {{/* Resize to 600px, convert to WebP, and compress to 80% */}}
                 {{ $optimized := $res.Resize "600x webp q80" }}
-                
                 <img src="{{ $optimized.RelPermalink }}" 
                      width="{{ $optimized.Width }}" 
                      height="{{ $optimized.Height }}" 
                      
-                     {{/* Instantly load the first 2 images, delay the rest */}}
                      {{ if lt $index 2 }}
                          loading="eager" fetchpriority="high"
                      {{ else }}
                          loading="lazy"
                      {{ end }}
                      
-                     class="card-img-top" 
+
+                     class="card-img-top skeleton-loader" 
                      alt="{{ .Title }}" 
                      style="height: 220px; object-fit: cover;">
             {{ else }}
-                {{/* Fallback for external images */}}
                 <img src="{{ $imgStr | absURL }}" 
                      
                      {{ if lt $index 2 }}
@@ -37,7 +32,8 @@
                          loading="lazy"
                      {{ end }}
                      
-                     class="card-img-top" 
+
+                     class="card-img-top skeleton-loader" 
                      alt="{{ .Title }}" 
                      style="height: 220px; object-fit: cover;">
             {{ end }}
