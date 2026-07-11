@@ -1,17 +1,60 @@
 {{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML -}}
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" 
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
     <title>{{ .Site.Title }}</title>
     <link>{{ .Site.BaseURL }}</link>
     <description>Recent content on {{ .Site.Title }}</description>
     <atom:link href="{{ .Permalink }}index.xml" rel="self" type="application/rss+xml" />
-    {{- range .Site.RegularPages -}}
+    
+    {{/* 🚀 Limit RSS to the 20 most recent pages to keep the file size highly optimized */}}
+    {{- range first 20 (where .Site.RegularPages "Section" "posts") -}}
     {{- if not .Params.noSitemap -}}
     <item>
       <title>{{ .Title }}</title>
       <link>{{ .Permalink }}</link>
       <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
       <guid>{{ .Permalink }}</guid>
+      
+      {{/* 🏷️ CATEGORIES & TAGS */}}
+      {{ with .Params.categories }}{{ range . }}<category>{{ . }}</category>{{ end }}{{ end }}
+      {{ with .Params.tags }}{{ range . }}<category>{{ . }}</category>{{ end }}{{ end }}
+
+      {{/* 🖼️ FEATURED IMAGES (Media Content & Enclosure for max compatibility) */}}
+      {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
+      {{ if $imgStr }}
+        {{ $res := resources.Get $imgStr }}
+        {{ if $res }}
+          {{/* Fetching the optimized WebP image path */}}
+          {{ $optimized := $res.Resize "800x webp q80" }}
+          <media:content url="{{ $optimized.Permalink }}" medium="image" type="image/webp" />
+          <enclosure url="{{ $optimized.Permalink }}" type="image/webp" length="0" />
+        {{ else }}
+          {{/* Fallback if it's an absolute external URL string */}}
+          <media:content url="{{ $imgStr | absURL }}" medium="image" />
+          <enclosure url="{{ $imgStr | absURL }}" type="image/jpeg" length="0" />
+        {{ end }}
+      {{ end }}
+
+      {{/* 📝 FULL ENCODED CONTENT */}}
+      <content:encoded>
+        <![CDATA[
+          {{/* If a featured image exists, inject it right at the top of the feed reader view */}}
+          {{ if $imgStr }}
+            {{ $res := resources.Get $imgStr }}
+            {{ if $res }}
+              <p><img src="{{ ($res.Resize "800x webp q80").Permalink }}" alt="{{ .Title }}" /></p>
+            {{ else }}
+              <p><img src="{{ $imgStr | absURL }}" alt="{{ .Title }}" /></p>
+            {{ end }}
+          {{ end }}
+          {{ .Content }}
+        ]]>
+      </content:encoded>
+      
+      <description>{{ .Summary | plainify | htmlUnescape }}</description>
     </item>
     {{- end -}}
     {{- end -}}
