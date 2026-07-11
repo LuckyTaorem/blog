@@ -47,6 +47,15 @@ locale = "en-us"
 [params.modules.analytics]
   disable = true
 
+[params.flexsearch]
+  lazyLoad = true
+
+[params.modules.flexsearch]
+  lazyLoad = true
+
+[params.modules.fontawesome]
+  disable = true
+
 # --- TOP NAVIGATION MENU ---
 [[menus.main]]
   name = "Home"
