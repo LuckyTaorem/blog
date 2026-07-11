@@ -49,14 +49,15 @@
       {{/* 3. Strip lingering HTML comments */}}
       {{ $cleanContent = $cleanContent | replaceRE "(?is)<!--.*?-->" "" }}
       
-      {{/* 4. Fix ]]> inside code blocks so CDATA doesn't crash */}}
-      {{ $cleanContent = $cleanContent | replaceRE "]]>" "]]]]><![CDATA[>" }}
+      {{/* 4. Fix ]]> inside code blocks using LITERAL string replacement, not Regex */}}
+      {{ $cleanContent = replace $cleanContent "]]>" "]]]]><![CDATA[>" }}
 
       {{/* 📝 FULL ENCODED CONTENT (Now inside CDATA so it renders as visual text) */}}
       <content:encoded><![CDATA[{{ $imgHtml | safeHTML }}{{ $cleanContent | safeHTML }}]]></content:encoded>
       
       {{/* 🚨 Clean Description */}}
-      {{ $cleanSummary := .Summary | plainify | replaceRE "&nbsp;" " " | replaceRE "]]>" "]]]]><![CDATA[>" }}
+      {{ $cleanSummary := .Summary | plainify | replaceRE "&nbsp;" " " }}
+      {{ $cleanSummary = replace $cleanSummary "]]>" "]]]]><![CDATA[>" }}
       <description><![CDATA[{{ $cleanSummary | safeHTML }}]]></description>
     </item>
     {{ end }}
