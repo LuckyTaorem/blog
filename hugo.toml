@@ -34,7 +34,7 @@ locale = "en-us"
 [params.seo]
   twitter = "taorem_lucky"
   # 🚨 THIS is the correct, safe place to define your global fallback SEO logo in Hinode
-  image = "images/og-image.jpg
+  image = "images/og-image.jpg"
 
 # --- DISABLE ANALYTICS & PREVENT ADBLOCKER ERRORS ---
 
