@@ -581,7 +581,9 @@ def run_scraper():
             # 🚨 NEW: Block Job Posts, Internships, and Academic Calls 🚨
             skip_keywords = [
                 "job post", "hiring", "vacancy", "internship", 
-                "call for papers", "call for blogs", "apply now","Register"
+                "call for papers", "call for blogs", "apply now", "register",
+                "coupon", "coupon code", "promo code", "discount code", 
+                "promo codes", "discount codes", "save big", "deal of the day","promo","discount","promos","coupons","codes","offers","offer","sale","sales","clearance","clearance sale","flash sale","limited time offer","limited time deal","limited time discount"
             ]
             if any(keyword in news_title.lower() for keyword in skip_keywords):
                 print(f"Skipping non-news post: {news_title}")
