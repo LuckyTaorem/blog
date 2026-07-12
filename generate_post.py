@@ -251,16 +251,19 @@ def extract_key_facts_with_ai(raw_text, title):
     
     prompt = f"""
     You are an expert tech research assistant. Analyze the following raw scraped text for an article titled "{title}".
-    Extract all crucial facts so a journalist can draft a highly detailed article later.
+    Extract all crucial facts with high structural accuracy so a journalist can draft an incredibly exhaustive, highly detailed article later.
+    
+    CRITICAL STRUCTURAL REQUIREMENT:
+    If this article is a listicle, comparison, round-up, or breakdown of multiple items (e.g., "Top 10 Products", "20 New Features", "Best Apps"), YOU MUST EXHAUSTIVELY EXTRACT EVERY SINGLE ITEM listed in the text. Do not compress, skip, or group them into general summaries. If there are 20 features, extract all 20 features individually with their specific parameters and descriptions.
     
     YOU MUST EXTRACT (if present in the text):
     - The Core Story / Main Event
-    - Important Names, Companies, or People
+    - Important Names, Companies, Brands, or Key People
+    - Complete List of Products/Features (Extract EVERY item sequentially with individual pricing, specifications, or core functionalities)
     - Pricing, Release Dates, or Financial Numbers
-    - Product Specifications, Hardware Details, or Software Features
-    - 1 or 2 Direct Quotes
+    - 1 or 2 Direct Quotes (Retain exact original phrasing)
 
-    Format as a clean, highly condensed bulleted list. DO NOT write an article. Just the facts.
+    Format as a clean, structured bulleted list. Maintain chronological or sequential order matching the source text to ensure accuracy to the original. DO NOT write an article commentary. Just the comprehensive facts.
     
     RAW TEXT:
     {content_to_analyze}
@@ -271,8 +274,8 @@ def extract_key_facts_with_ai(raw_text, title):
         response = client.chat.completions.create(
             messages=[{"role": "user", "content": prompt}],
             model="llama-3.1-8b-instant", 
-            temperature=0.2, # Low temperature keeps it strictly factual
-            max_tokens=1000
+            temperature=0.1, # Dropped slightly from 0.2 to enforce absolute adherence to text and reduce structural hallucinations
+            max_tokens=2500 # Bumped up to prevent truncation when dealing with massive feature lists
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
