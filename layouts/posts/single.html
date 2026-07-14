@@ -322,9 +322,8 @@ async function generateLiveSummary() {
   btn.classList.add('active');
   wrapper.classList.add('expanded');
   
-  // 2. Target your article content. 
-  // IMPORTANT: Ensure 'article' matches your Hugo theme's content container (e.g., '.post-content')
-  const articleElement = document.querySelector('article');
+  // 2. Target the specific article wrapper
+  const articleElement = document.querySelector('.article-content-wrapper');
   if (!articleElement) {
       textOutput.innerText = "Error: Could not locate article text.";
       loading.classList.add('hidden');
@@ -332,11 +331,13 @@ async function generateLiveSummary() {
       return;
   }
   
-  // Extract and limit text to ~4000 characters to save tokens and speed up API response
+  // 3. Extract pure text. 
+  // innerText automatically ignores <img> tags and HTML structure, 
+  // capturing only the visible headings and paragraph text.
   const articleText = articleElement.innerText.slice(0, 4000);
 
   try {
-    // 3. Send request securely to your Vercel Serverless Function
+    // 4. Send request securely to your Vercel Serverless Function
     const response = await fetch('/api/summarize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -345,7 +346,7 @@ async function generateLiveSummary() {
 
     const data = await response.json();
     
-    // 4. Reveal the result
+    // 5. Reveal the result
     loading.classList.add('hidden');
     textOutput.classList.remove('hidden');
     
