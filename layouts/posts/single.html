@@ -684,7 +684,12 @@ async function generateLiveSummary() {
     textOutput.classList.remove('hidden');
     
     if (response.ok && data.summary) {
-        textOutput.innerText = data.summary;
+        // Convert Markdown **bold** to HTML <strong> tags
+        const formattedSummary = data.summary.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        
+        // Use innerHTML instead of innerText to render the tags properly
+        textOutput.innerHTML = formattedSummary; 
+        
         btnText.innerText = "AI Summary Generated";
     } else {
         textOutput.innerText = data.error || "An error occurred.";
