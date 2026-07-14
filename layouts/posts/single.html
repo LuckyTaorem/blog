@@ -338,7 +338,7 @@ async function generateLiveSummary() {
 
   try {
     // 4. Send request securely to your Vercel Serverless Function
-    const response = await fetch('/api/summarize', {
+    const response = await fetch('https://blog-hkoim6fdj-taorem.vercel.app/api/summarize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ articleText: articleText })
