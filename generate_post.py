@@ -791,7 +791,11 @@ def run_publisher():
 Act as an expert tech journalist and strict SEO specialist. Read this short news summary: {article['summary']}
 
 Write a highly engaging, in-depth technical blog post about this topic. 
-You MUST write a minimum of [WORD_COUNT] words. Do not summarize; provide extensive details, analysis, and context.
+While your goal is a comprehensive [WORD_COUNT]-word article, you MUST adhere to the following constraints to prevent AI loops:
+1. FACTS ONLY: Do not hallucinate future software versions, features, or events. Base all claims strictly on the provided summary.
+2. NO SPAM: Do not include promotional filler, coupons, or unrelated affiliate links.
+3. NO REPETITION: Do not repeat paragraphs or concluding sentences. Stop generating immediately when all factual information has been covered, even if you do not reach the word count.
+
 Include headings, bullet points, and an FAQ section. Output in pure Markdown format.
 
 CRITICAL SEO RULE (INTERNAL LINKING):
@@ -800,12 +804,6 @@ Here is a catalog of existing articles currently on our blog:
 
 Your task is to SELECT 3 to 5 articles from the list above that are STRICTLY RELATED to the topic you are writing about right now. 
 Naturally weave the links you chose into the body of your article where contextually appropriate. You MUST use the EXACT full absolute URL provided in the catalog (e.g., https://ltdeveloperblogs.github.io/posts/slug/). DO NOT truncate or shorten the URL to a relative path.
-
-CRITICAL FRONTMATTER RULES (FAILURE IS NOT AN OPTION):
-
-Write a highly engaging, in-depth technical blog post about this topic. 
-You MUST write a minimum of [WORD_COUNT] words. Do not summarize; provide extensive details, analysis, and context.
-Include headings, bullet points, and an FAQ section. Output in pure Markdown format.
 
 CRITICAL FRONTMATTER RULES (FAILURE IS NOT AN OPTION):
 1. Title Limit: STRICTLY 45 to 55 characters. No more, no less. (Count letters and spaces carefully).
@@ -850,7 +848,10 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
             provider = setting['provider']
             model_name = setting['model']
             diet_prompt = prompt.replace("[WORD_COUNT]", setting['word_count'])
-            
+
+            # Stricter system prompt to prevent hallucination loops
+            system_instruction = "You are a professional tech blogger. You write factual, detailed articles. You never hallucinate information or repeat sentences."
+
             print(f"  -> Attempting generation with {provider.upper()} ({model_name})...")
 
             try:
@@ -858,11 +859,13 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                 if provider == "groq":
                     response = client.chat.completions.create(
                         messages=[
-                            {"role": "system", "content": "You are a professional tech blogger. You write exceptionally long, detailed, and comprehensive technical articles."},
+                            {"role": "system", "content": system_instruction},
                             {"role": "user", "content": diet_prompt}
                         ],
                         model=model_name,
                         temperature=0.7,
+                        frequency_penalty=0.6, # Added to prevent repetition
+                        presence_penalty=0.4,  # Added to encourage new topics
                         max_tokens=6000, 
                     )
                     article_content = response.choices[0].message.content.strip()
@@ -877,10 +880,13 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                         json={
                             "model": model_name,
                             "messages": [
-                                {"role": "system", "content": "You are a professional tech blogger."},
+                                {"role": "system", "content": system_instruction},
                                 {"role": "user", "content": diet_prompt}
                             ],
-                            "temperature": 0.7, "max_tokens": 4000
+                            "temperature": 0.7, 
+                            "frequency_penalty": 0.6,
+                            "presence_penalty": 0.4,
+                            "max_tokens": 4000
                         },
                         timeout=60
                     )
@@ -902,10 +908,13 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                         json={
                             "model": model_name,
                             "messages": [
-                                {"role": "system", "content": "You are a professional tech blogger."},
+                                {"role": "system", "content": system_instruction},
                                 {"role": "user", "content": diet_prompt}
                             ],
-                            "temperature": 0.7, "max_tokens": 4000
+                            "temperature": 0.7, 
+                            "frequency_penalty": 0.6,
+                            "presence_penalty": 0.4,
+                            "max_tokens": 4000
                         },
                         timeout=120
                     )
@@ -922,7 +931,10 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                         json={
                             "model": model_name,
                             "message": diet_prompt,
-                            "preamble": "You are a professional tech blogger. You write exceptionally long, detailed, and comprehensive technical articles.",
+                            "preamble": system_instruction,
+                            "temperature": 0.7,
+                            "frequency_penalty": 0.6,
+                            "presence_penalty": 0.4,
                             "max_tokens": 4000
                         },
                         timeout=60
@@ -944,16 +956,14 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                         json={
                             "contents": [{
                                 "parts": [{
-                                    "text": (
-                                        "You are a professional tech blogger. "
-                                        "You write exceptionally long, detailed, and comprehensive technical articles.\n\n"
-                                        + diet_prompt
-                                    )
+                                    "text": f"{system_instruction}\n\n{diet_prompt}"
                                 }]
                             }],
                             "generationConfig": {
                                 "maxOutputTokens": 8192,
-                                "temperature": 0.7
+                                "temperature": 0.7,
+                                "frequencyPenalty": 0.6,
+                                "presencePenalty": 0.4
                             }
                         },
                         timeout=120
