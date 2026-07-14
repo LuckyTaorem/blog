@@ -1090,6 +1090,27 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
             article_content
         )
 
+        # 🚨 STRICT URL CHECK: Remove internal links if the markdown file does not actually exist
+        def remove_dead_links(match):
+            link_text = match.group(1)
+            slug = match.group(2)
+            expected_md_file = os.path.join(output_dir, f"{slug}.md")
+            
+            if os.path.exists(expected_md_file):
+                # The post exists! Keep the full markdown link.
+                return match.group(0) 
+            else:
+                # The post does NOT exist. Strip the markdown link and return just the text.
+                print(f"  -> ⚠️ Stripping hallucinated link for non-existent post: {slug}")
+                return link_text 
+
+        # Find all standardized internal links and run them through our strict check
+        article_content = re.sub(
+            r'\[([^\]]+)\]\(https://ltdeveloperblogs\.github\.io/posts/([^/]+)/?\)',
+            remove_dead_links,
+            article_content
+        )
+
         # 🚀 NEW: Append the External Source Link safely
         source_url = article.get('source_url', '#')
         if source_url and source_url != '#':
