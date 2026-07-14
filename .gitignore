@@ -9,3 +9,5 @@ public
 resources
 _vendor
 .vscode
+.vercel
+.env*
