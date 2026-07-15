@@ -211,18 +211,20 @@
         .navbar-collapse.show,
         .navbar-collapse.collapsing {
             background-color: var(--bs-body-bg) !important;
-            padding: 1.5rem 1.5rem 2.5rem 1.5rem !important; 
+            padding: 1.5rem !important; 
             border-radius: 1.5rem;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
             border: 1px solid rgba(128, 128, 128, 0.08);
-            position: absolute; /* Ensures it overlays content rather than breaking grid */
-            top: 100%;
-            left: 1rem;
-            right: 1rem;
+            
+            /* FIX: Use standard document flow with a top margin instead of absolute positioning */
+            position: relative; 
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            
             z-index: 1050; 
             overflow-x: hidden !important; 
             overflow-y: auto !important;  
-            max-height: calc(100vh - 140px) !important; 
+            max-height: calc(100vh - 120px) !important; 
         }
 
         /* 1.5. Mobile Dropdown Menu Fix */
