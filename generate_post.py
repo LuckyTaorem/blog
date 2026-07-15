@@ -791,7 +791,7 @@ def run_publisher():
 Act as an expert tech journalist and strict SEO specialist. Read this short news summary: {article['summary']}
 
 Write a highly engaging, in-depth technical blog post about this topic. 
-While your goal is a comprehensive [WORD_COUNT]-word article, you MUST adhere to the following constraints to prevent AI loops:
+While your goal is to strictly write a comprehensive article between [WORD_COUNT] words, you MUST adhere to the following constraints to prevent AI loops:
 1. FACTS ONLY: Do not hallucinate future software versions, features, or events. Base all claims strictly on the provided summary.
 2. NO SPAM: Do not include promotional filler, coupons, or unrelated affiliate links.
 3. NO REPETITION: Do not repeat paragraphs or concluding sentences. Stop generating immediately when all factual information has been covered, even if you do not reach the word count.
@@ -834,12 +834,12 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
         # --- ROBUST MULTI-PROVIDER WATERFALL CONFIGURATION ---
         # Ordered strategically by performance, output capacity, and free tier stability
         model_settings = [
-            {"provider": "groq", "model": "llama-3.3-70b-versatile", "word_count": "1800"},
-            {"provider": "groq", "model": "llama-3.1-8b-instant", "word_count": "1500"},
-            {"provider": "mistral", "model": "mistral-large-latest", "word_count": "1500"},
-            {"provider": "gemini", "model": "gemini-2.5-flash", "word_count": "1500"},
-            {"provider": "openrouter", "model": "openrouter/free", "word_count": "1500"},
-            {"provider": "cohere", "model": "command-r-plus", "word_count": "1500"}
+            {"provider": "groq", "model": "llama-3.3-70b-versatile", "word_count": "1000 and 2000"},
+            {"provider": "groq", "model": "llama-3.1-8b-instant", "word_count": "1000 and 2000"},
+            {"provider": "mistral", "model": "mistral-large-latest", "word_count": "1000 and 2000"},
+            {"provider": "gemini", "model": "gemini-2.5-flash", "word_count": "1000 and 2000"},
+            {"provider": "openrouter", "model": "openrouter/free", "word_count": "1000 and 2000"},
+            {"provider": "cohere", "model": "command-r-plus", "word_count": "1000 and 2000"}
         ]
 
         article_content = None
