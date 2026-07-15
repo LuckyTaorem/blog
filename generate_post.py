@@ -866,7 +866,7 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                         temperature=0.7,
                         frequency_penalty=0.6, # Added to prevent repetition
                         presence_penalty=0.4,  # Added to encourage new topics
-                        max_tokens=6000, 
+                        max_tokens=8000, 
                     )
                     article_content = response.choices[0].message.content.strip()
 
@@ -886,7 +886,7 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                             "temperature": 0.7, 
                             "frequency_penalty": 0.6,
                             "presence_penalty": 0.4,
-                            "max_tokens": 4000
+                            "max_tokens": 8000
                         },
                         timeout=60
                     )
@@ -914,7 +914,7 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                             "temperature": 0.7, 
                             "frequency_penalty": 0.6,
                             "presence_penalty": 0.4,
-                            "max_tokens": 4000
+                            "max_tokens": 8000
                         },
                         timeout=120
                     )
@@ -935,7 +935,7 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                             "temperature": 0.7,
                             "frequency_penalty": 0.6,
                             "presence_penalty": 0.4,
-                            "max_tokens": 4000
+                            "max_tokens": 8000
                         },
                         timeout=60
                     )
