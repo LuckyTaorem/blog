@@ -109,9 +109,9 @@
               {{ $thumbRes := resources.Get $thumbStr }}
               {{ if $thumbRes }}
                   {{ $thumbOpt := $thumbRes.Resize "200x200 webp q80" }}
-                  <img src="{{ $thumbOpt.RelPermalink }}" loading="lazy" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
+                  <img src="{{ $thumbOpt.RelPermalink }}" loading="eager" fetchpriority="high" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
               {{ else }}
-                  <img src="{{ $thumbStr | absURL }}" loading="lazy" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
+                  <img src="{{ $thumbStr | absURL }}" loading="eager" fetchpriority="high" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
               {{ end }}
             {{ end }}
           </div>
@@ -144,15 +144,15 @@
       <article class="card border-0 bg-transparent article-group flex-md-row align-items-center gap-4 position-relative pb-4 border-bottom border-secondary border-opacity-25">
         
         {{/* Banner Image (Height increased to 380px) */}}
-        <div class="img-wrapper rounded shadow-sm w-100" style="flex: 0 0 50%; height: 380px;">
+        <div class="img-wrapper rounded shadow-sm w-100 skeleton-loader" style="flex: 0 0 50%; height: 380px;">
           {{ $gridImg := .Params.thumbnail | default (index .Params.images 0) }}
           {{ if $gridImg }}
             {{ $gRes := resources.Get $gridImg }}
             {{ if $gRes }}
                 {{ $gOpt := $gRes.Resize "900x webp q80" }}
-                <img src="{{ $gOpt.RelPermalink }}" loading="lazy" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
+                <img src="{{ $gOpt.RelPermalink }}" loading="lazy" onload="this.parentElement.classList.remove('skeleton-loader')" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
             {{ else }}
-                <img src="{{ $gridImg | absURL }}" loading="lazy" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
+                <img src="{{ $gridImg | absURL }}" loading="lazy" onload="this.parentElement.classList.remove('skeleton-loader')" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
             {{ end }}
           {{ end }}
         </div>
@@ -184,16 +184,16 @@
     <div class="col-md-6 mb-4">
       <article class="card h-100 border-0 bg-transparent article-group position-relative pb-3 border-bottom border-secondary border-opacity-25">
         
-        {{/* Image Container (Height increased to 300px) */}}
-        <div class="img-wrapper rounded mb-3 shadow-sm" style="height: 300px;">
+        {{/* Image Container - ADDED SKELETON AND LAZY LOAD */}}
+        <div class="img-wrapper rounded mb-3 shadow-sm skeleton-loader" style="height: 300px;">
           {{ $gridImg := .Params.thumbnail | default (index .Params.images 0) }}
           {{ if $gridImg }}
             {{ $gRes := resources.Get $gridImg }}
             {{ if $gRes }}
                 {{ $gOpt := $gRes.Resize "800x webp q80" }}
-                <img src="{{ $gOpt.RelPermalink }}" loading="lazy" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
+                <img src="{{ $gOpt.RelPermalink }}" loading="lazy" onload="this.parentElement.classList.remove('skeleton-loader')" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
             {{ else }}
-                <img src="{{ $gridImg | absURL }}" loading="lazy" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
+                <img src="{{ $gridImg | absURL }}" loading="lazy" onload="this.parentElement.classList.remove('skeleton-loader')" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
             {{ end }}
           {{ end }}
         </div>

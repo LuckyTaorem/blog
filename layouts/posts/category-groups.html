@@ -75,6 +75,10 @@
   <!-- ========================================== -->
   <!-- POSTS GRID                                 -->
   <!-- ========================================== -->
+  
+  {{/* Initialize a global counter to track the absolute position of cards on the screen */}}
+  {{ $.Scratch.Set "globalCardIndex" 0 }}
+  
   <!-- Loop through every category on the site -->
   {{ range $categoryName, $taxonomy := .Site.Taxonomies.categories }}
     <div class="mb-5 category-section" data-section-category="{{ $categoryName | lower }}">
@@ -88,18 +92,34 @@
       <!-- 3-Column Grid -->
       <div class="row row-cols-1 row-cols-md-3 g-4">
         {{ range first 6 $taxonomy.Pages }}
+          
+          {{/* Fetch the current global card count */}}
+          {{ $gIndex := $.Scratch.Get "globalCardIndex" }}
+          
           <div class="col post-card" 
                data-category="{{ $categoryName | lower }}" 
                data-tags="{{ if .Params.tags }}{{ delimit .Params.tags "," | lower }}{{ end }}" 
                data-date="{{ .Date.Format "2006-01-02" }}">
             
             <div class="card h-100 shadow-sm border-0 bg-body-tertiary hover-card overflow-hidden">
-              <!-- Safely grab either thumbnail or images parameter -->
-              {{ if .Params.thumbnail }}
-                <img src="{{ .Params.thumbnail | absURL }}" class="card-img-top img-animate" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
-              {{ else if .Params.images }}
-                <img src="{{ index .Params.images 0 | absURL }}" class="card-img-top img-animate" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
-              {{ end }}
+              
+              <!-- Image Wrapper with Conditional Skeleton -->
+              <div class="img-wrapper {{ if ge $gIndex 3 }}skeleton-loader{{ end }}" style="height: 220px; overflow: hidden;">
+                {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
+                {{ if $imgStr }}
+                  <img src="{{ $imgStr | absURL }}" 
+                       class="card-img-top img-animate w-100 h-100" 
+                       style="object-fit: cover;" 
+                       alt="{{ .Title }}"
+                       
+                       {{/* Eager load the top 3 items, Lazy load everything else */}}
+                       {{ if lt $gIndex 3 }}
+                         loading="eager" fetchpriority="high"
+                       {{ else }}
+                         loading="lazy" onload="this.parentElement.classList.remove('skeleton-loader')"
+                       {{ end }}>
+                {{ end }}
+              </div>
 
               <div class="card-body">
                 <h3 class="card-title h5 mb-3">
@@ -114,11 +134,14 @@
               </div>
             </div>
           </div>
+          
+          {{/* Increment the global counter after rendering each card */}}
+          {{ $.Scratch.Add "globalCardIndex" 1 }}
+          
         {{ end }}
       </div>
     </div>
   {{ end }}
-</div>
 
 <!-- ========================================== -->
 <!-- CUSTOM STYLES & ANIMATIONS                 -->

@@ -254,6 +254,133 @@
                         "control"    true
                         "fs"         $fs
                     ) }}
+<style>
+/* hide top banner */
+.VIpgJd-ZVi9od-ORHb-OEVmcd { display: none !important; }
+.goog-te-banner-frame.skiptranslate { display: none !important; }
+body { top: 0 !important; }
+
+/* Google Translate widget styling */
+.goog-te-gadget {
+    display: inline-flex !important;
+    align-items: center;
+    gap: .5rem;
+    font-size: .92rem !important;
+    line-height: 1;
+    background: transparent;
+    border: 0;
+    padding: 0;
+}
+
+/* hide the small helper label that says "Translate" */
+.goog-te-gadget .goog-te-gadget-simple {
+    display: none !important;
+}
+
+/* style the select */
+.goog-te-combo {
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border: 1px solid var(--bs-border-color);
+    border-radius: .7rem;
+    padding: .45rem .9rem;
+    font-size: .92rem;
+    font-weight: 500;
+    cursor: pointer;
+    min-width: 140px;
+}
+
+/* keep existing focus/hover styles */
+.goog-te-combo:hover { border-color: var(--bs-primary); }
+.goog-te-combo:focus {
+    outline: none;
+    box-shadow: 0 0 0 .25rem rgba(var(--bs-primary-rgb), .2);
+}
+
+/* container used in your nav — ensure it doesn't force vertical layout */
+#google_translate_element {
+    display: inline-flex;
+    align-items: center;
+    margin-left: .75rem; /* adjust spacing to match other nav items */
+}
+</style>
+
+<div id="google_translate_element"></div>
+
+<script>
+function googleTranslateElementInit() {
+  // Fixed-first languages you requested (kept in this exact order)
+  const fixedFirst = ['en','hi','ru','zh-CN','es'];
+
+  // Comprehensive list of other commonly supported Google Translate language codes.
+  // Keep this list updated if Google adds new codes.
+  const others = [
+    'af','sq','am','ar','hy','az','eu','be','bn','bs','bg','ca','ceb','ny','co',
+    'hr','cs','da','nl','eo','et','tl','fi','fr','fy','gl','ka','de','el','gu',
+    'ht','ha','haw','he','hmn','hu','is','ig','id','ga','it','ja','jw','kn','kk',
+    'km','ko','ku','ky','lo','la','lv','lt','lb','mk','mg','ms','ml','mt','mi',
+    'mr','mn','my','ne','no','ps','fa','pl','pt','pa','ro','sm','gd','sr','st',
+    'sn','sd','si','sk','sl','so','su','sw','sv','tg','ta','te','th','tr','uk',
+    'ur','uz','vi','cy','xh','yi','yo','zu','zh-TW'
+  ];
+
+  // Remove duplicates and ensure fixedFirst remain at the front
+  const set = new Set(fixedFirst);
+  const filteredOthers = others.filter(code => !set.has(code));
+
+  // Optionally sort the remaining languages alphabetically by their language code
+  filteredOthers.sort((a,b) => a.localeCompare(b, 'en', {sensitivity:'base'}));
+
+  // Final includedLanguages string
+  const includedLanguages = fixedFirst.concat(filteredOthers).join(',');
+
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    includedLanguages: includedLanguages,
+    layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL
+  }, 'google_translate_element');
+}
+</script>
+
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+function removePoweredBy() {
+  // selectors that target the attribution link and wrapper
+  const selectors = [
+    '.VIpgJd-ZVi9od-l4eHX-hSRGPd',
+    '.goog-logo-link',
+    '.goog-te-gadget .goog-te-gadget-simple',
+    '#google_translate_element a[href*="translate.google.com"]'
+  ];
+  selectors.forEach(sel => {
+    document.querySelectorAll(sel).forEach(el => el.remove());
+  });
+
+  // also remove any text node that contains "Powered by" inside the gadget
+  const gadget = document.querySelector('#google_translate_element .goog-te-gadget');
+  if (gadget) {
+    Array.from(gadget.childNodes).forEach(node => {
+      if (node.nodeType === Node.TEXT_NODE && /powered by/i.test(node.textContent)) {
+        node.remove();
+      }
+    });
+  }
+}
+
+// run once after load
+window.addEventListener('load', () => {
+  setTimeout(removePoweredBy, 300); // small delay to let widget render
+  // observe for future insertions
+  const container = document.getElementById('google_translate_element');
+  if (container) {
+    const mo = new MutationObserver(() => removePoweredBy());
+    mo.observe(container, { childList: true, subtree: true });
+  }
+});
+</script>
+
+
 
                     {{/* Accessibility Menu Widget */}}
                     <li class="nav-item dropdown ms-lg-2 a11y-widget-container mb-3 mb-lg-0 mt-2 mt-lg-0">
