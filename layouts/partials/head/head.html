@@ -206,34 +206,30 @@
     /* =========================================
        ✨ PREMIUM MOBILE NAVIGATION MENU ✨
        ========================================= */
+    /* Target only when the navbar is explicitly collapsed */
     @media (max-width: 991.98px) {
-        .navbar-nav-scroll{
-            overflow: hidden !important;
-        }
-        /* 1. Safe Menu Container */
-        .navbar-collapse {
+        .navbar-collapse.show,
+        .navbar-collapse.collapsing {
             background-color: var(--bs-body-bg) !important;
-            /* Added 2.5rem padding to the bottom for breathing room */
             padding: 1.5rem 1.5rem 2.5rem 1.5rem !important; 
             border-radius: 1.5rem;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
             border: 1px solid rgba(128, 128, 128, 0.08);
-            position: relative;
+            position: absolute; /* Ensures it overlays content rather than breaking grid */
+            top: 100%;
+            left: 1rem;
+            right: 1rem;
             z-index: 1050; 
-            
-            /* Ensures a strict gap at the bottom of the screen */
-            margin: 1rem 1rem 3rem 1rem !important; 
-            width: auto; 
-            max-width: 100%;
-            overflow-x: hidden !important; /* Strictly block horizontal scroll */
-            overflow-y: auto !important;   /* This is the ONLY vertical scrollbar we want */
-            max-height: calc(100vh - 140px) !important; /* Stop before hitting the screen edge */
+            overflow-x: hidden !important; 
+            overflow-y: auto !important;  
+            max-height: calc(100vh - 140px) !important; 
         }
 
-        /* 1.5. Mobile Dropdown Menu Fix (Kills double scrollbars) */
-        .navbar-nav .dropdown-menu {
+        /* 1.5. Mobile Dropdown Menu Fix */
+        .navbar-collapse.show .navbar-nav .dropdown-menu,
+        .navbar-collapse.collapsing .navbar-nav .dropdown-menu {
             position: static !important; 
-            transform: none !important; /* <--- Add this to stop it from opening side-by-side */
+            transform: none !important; 
             width: 100% !important; 
             min-width: 0 !important;
             max-height: none !important; 
@@ -246,9 +242,13 @@
         }
 
         /* 2. Main Navigation Links (Home, Articles, etc.) */
-        .navbar-nav { gap: 0.5rem; }
+        .navbar-collapse.show .navbar-nav,
+        .navbar-collapse.collapsing .navbar-nav { 
+            gap: 0.5rem; 
+        }
         
-        .navbar-nav > .nav-item > .nav-link {
+        .navbar-collapse.show .navbar-nav > .nav-item > .nav-link,
+        .navbar-collapse.collapsing .navbar-nav > .nav-item > .nav-link {
             font-size: 1.25rem !important;
             font-weight: 600 !important;
             padding: 1rem 1.25rem !important;
@@ -261,15 +261,18 @@
         }
         
         /* Soft tap/hover effect with slide animation */
-        .navbar-nav > .nav-item > .nav-link:hover,
-        .navbar-nav > .nav-item > .nav-link:active {
+        .navbar-collapse.show .navbar-nav > .nav-item > .nav-link:hover,
+        .navbar-collapse.show .navbar-nav > .nav-item > .nav-link:active,
+        .navbar-collapse.collapsing .navbar-nav > .nav-item > .nav-link:hover,
+        .navbar-collapse.collapsing .navbar-nav > .nav-item > .nav-link:active {
             background-color: rgba(128, 128, 128, 0.06) !important;
             color: var(--bs-primary) !important;
             transform: translateX(6px);
         }
 
-        /* Add a sleek right arrow to main links to indicate navigation */
-        .navbar-nav > .nav-item > .nav-link:not(.btn-link):not([data-bs-toggle="modal"]):not(.dropdown-toggle)::after {
+        /* Add a sleek right arrow to main links */
+        .navbar-collapse.show .navbar-nav > .nav-item > .nav-link:not(.btn-link):not([data-bs-toggle="modal"]):not(.dropdown-toggle)::after,
+        .navbar-collapse.collapsing .navbar-nav > .nav-item > .nav-link:not(.btn-link):not([data-bs-toggle="modal"]):not(.dropdown-toggle)::after {
             content: "›";
             font-size: 2rem;
             line-height: 0.5;
@@ -278,12 +281,18 @@
         }
 
         /* Hide the ugly default horizontal line */
-        .navbar-nav > li > hr { display: none !important; }
+        .navbar-collapse.show .navbar-nav > li > hr,
+        .navbar-collapse.collapsing .navbar-nav > li > hr { 
+            display: none !important; 
+        }
 
-        /* 3. Utility Tools Group (Search, Theme, Accessibility) */
-        .navbar-nav .btn-link, 
-        .navbar-nav .nav-link[data-bs-toggle="modal"],
-        .navbar-nav .a11y-widget-container > button {
+        /* 3. Utility Tools Group */
+        .navbar-collapse.show .navbar-nav .btn-link, 
+        .navbar-collapse.show .navbar-nav .nav-link[data-bs-toggle="modal"],
+        .navbar-collapse.show .navbar-nav .a11y-widget-container > button,
+        .navbar-collapse.collapsing .navbar-nav .btn-link, 
+        .navbar-collapse.collapsing .navbar-nav .nav-link[data-bs-toggle="modal"],
+        .navbar-collapse.collapsing .navbar-nav .a11y-widget-container > button {
             background-color: rgba(128, 128, 128, 0.04) !important;
             border-radius: 14px;
             margin-top: 0.5rem;
@@ -296,11 +305,15 @@
             width: 100%;
         }
 
-        /* Tint the utility icons with the primary brand color */
-        .navbar-nav .btn-link svg,
-        .navbar-nav .nav-link[data-bs-toggle="modal"] svg,
-        .navbar-nav .nav-link[data-bs-toggle="modal"] i,
-        .navbar-nav .a11y-widget-container > button svg {
+        /* Tint the utility icons */
+        .navbar-collapse.show .navbar-nav .btn-link svg,
+        .navbar-collapse.show .navbar-nav .nav-link[data-bs-toggle="modal"] svg,
+        .navbar-collapse.show .navbar-nav .nav-link[data-bs-toggle="modal"] i,
+        .navbar-collapse.show .navbar-nav .a11y-widget-container > button svg,
+        .navbar-collapse.collapsing .navbar-nav .btn-link svg,
+        .navbar-collapse.collapsing .navbar-nav .nav-link[data-bs-toggle="modal"] svg,
+        .navbar-collapse.collapsing .navbar-nav .nav-link[data-bs-toggle="modal"] i,
+        .navbar-collapse.collapsing .navbar-nav .a11y-widget-container > button svg {
             color: var(--bs-primary);
             opacity: 0.9;
             width: 22px;
@@ -309,9 +322,12 @@
         }
         
         /* Reset hover animation for the tools */
-        .navbar-nav .btn-link:hover,
-        .navbar-nav .nav-link[data-bs-toggle="modal"]:hover,
-        .navbar-nav .a11y-widget-container > button:hover {
+        .navbar-collapse.show .navbar-nav .btn-link:hover,
+        .navbar-collapse.show .navbar-nav .nav-link[data-bs-toggle="modal"]:hover,
+        .navbar-collapse.show .navbar-nav .a11y-widget-container > button:hover,
+        .navbar-collapse.collapsing .navbar-nav .btn-link:hover,
+        .navbar-collapse.collapsing .navbar-nav .nav-link[data-bs-toggle="modal"]:hover,
+        .navbar-collapse.collapsing .navbar-nav .a11y-widget-container > button:hover {
             transform: none;
             background-color: rgba(128, 128, 128, 0.08) !important;
         }
