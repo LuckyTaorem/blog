@@ -1,64 +1,322 @@
-<div class="row row-cols-1 row-cols-md-3 g-4 mt-4">
-  {{/* Added $index to track the loop count */}}
-  {{ range $index, $page := first 12 (where site.RegularPages "Section" "posts") }}
-    <div class="col">
-      <div class="card h-100 shadow-sm border-0">
-        
-        {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
+<style>
+  /* Custom Hover Animations */
+  .article-group {
+    cursor: pointer;
+  }
+  .article-group .img-wrapper {
+    overflow: hidden;
+  }
+  .article-group img {
+    transition: transform 0.4s ease-in-out;
+  }
+  .article-group:hover img {
+    transform: scale(1.08);
+  }
+  .article-group .title-link {
+    transition: color 0.2s ease-in-out;
+  }
+  /* Change the hex code below to match your theme's primary color (e.g., orange or blue) */
+  .article-group:hover .title-link {
+    color: #f97316 !important; 
+  }
+</style>
+
+{{/* Fetch all posts */}}
+{{ $posts := where site.RegularPages "Section" "posts" }}
+
+{{/* Split posts into Featured (1), Secondary (4), and Grid (6) */}}
+{{ $featured := index $posts 0 }}
+{{ $secondary := first 4 (after 1 $posts) }}
+{{ $gridPosts := first 6 (after 5 $posts) }}
+
+<!-- ========================================== -->
+<!-- SECTION 1: THE EDITORIAL HERO AREA         -->
+<!-- ========================================== -->
+<div class="row g-4 g-lg-5 mt-4">
+  
+  <!-- 1. FEATURED STORY (Left Column) -->
+  {{ if $featured }}
+  <div class="col-lg-7">
+    <article class="featured-story position-relative article-group">
+      
+      {{/* Featured Image */}}
+      <div class="img-wrapper rounded mb-4 shadow-sm w-100" style="aspect-ratio: 16/9; max-height: 420px;">
+        {{ $imgStr := $featured.Params.thumbnail | default (index $featured.Params.images 0) }}
         {{ if $imgStr }}
-            {{ $res := resources.Get $imgStr }}
-            {{ if $res }}
-                {{ $optimized := $res.Resize "600x webp q80" }}
-                <img src="{{ $optimized.RelPermalink }}" 
-                     width="{{ $optimized.Width }}" 
-                     height="{{ $optimized.Height }}" 
-                     
-                     {{ if lt $index 2 }}
-                         loading="eager" fetchpriority="high"
-                     {{ else }}
-                         loading="lazy"
-                     {{ end }}
-                     
-
-                     class="card-img-top skeleton-loader" 
-                     alt="{{ .Title }}" 
-                     style="height: 220px; object-fit: cover;">
-            {{ else }}
-                <img src="{{ $imgStr | absURL }}" 
-                     
-                     {{ if lt $index 2 }}
-                         loading="eager" fetchpriority="high"
-                     {{ else }}
-                         loading="lazy"
-                     {{ end }}
-                     
-
-                     class="card-img-top skeleton-loader" 
-                     alt="{{ .Title }}" 
-                     style="height: 220px; object-fit: cover;">
-            {{ end }}
+          {{ $res := resources.Get $imgStr }}
+          {{ if $res }}
+              {{ $optimized := $res.Resize "900x webp q80" }}
+              <img src="{{ $optimized.RelPermalink }}" loading="eager" fetchpriority="high" class="w-100 h-100 object-fit-cover" alt="{{ $featured.Title }}">
+          {{ else }}
+              <img src="{{ $imgStr | absURL }}" loading="eager" fetchpriority="high" class="w-100 h-100 object-fit-cover" alt="{{ $featured.Title }}">
+          {{ end }}
         {{ end }}
+      </div>
 
-        <div class="card-body">
-          <h3 class="card-title h5 mb-3">
-            <a href="{{ .RelPermalink }}" class="text-decoration-none text-body fw-bold stretched-link">
+      {{/* Meta Data */}}
+      <div class="d-flex align-items-center mb-2">
+        <span class="text-uppercase fw-bold text-primary" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+          {{ index $featured.Params.categories 0 | default "News" }}
+        </span>
+        <span class="mx-2 text-secondary opacity-50">&middot;</span>
+        <span class="text-secondary" style="font-size: 0.85rem;">{{ $featured.Date.Format "January 2, 2006" }}</span>
+      </div>
+      
+      {{/* Title & Excerpt */}}
+      <h2 class="display-6 fw-bold mb-3" style="line-height: 1.2;">
+        <a href="{{ $featured.RelPermalink }}" class="text-decoration-none text-body stretched-link title-link">
+          {{ $featured.Title }}
+        </a>
+      </h2>
+      <p class="text-secondary fs-5 mb-0" style="opacity: 0.9;">
+        {{ $featured.Summary | plainify | truncate 180 }}
+      </p>
+
+    </article>
+  </div>
+  {{ end }}
+
+  <!-- 2. SECONDARY STORIES WITH THUMBNAILS (Right Column) -->
+  <div class="col-lg-5">
+    <div class="d-flex flex-column gap-4 mt-4 mt-lg-0">
+      
+      {{ range $index, $page := $secondary }}
+      <article class="list-story position-relative article-group {{ if not (eq $index 3) }}border-bottom pb-3{{ end }}">
+        
+        <div class="d-flex gap-3 align-items-start">
+          
+          {{/* Secondary Text Container */}}
+          <div class="flex-grow-1">
+            <div class="d-flex align-items-center mb-1">
+              <span class="text-uppercase fw-bold text-secondary" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                {{ index .Params.categories 0 | default "News" }}
+              </span>
+            </div>
+            <h3 class="h6 fw-bold mb-1" style="line-height: 1.4;">
+              <a href="{{ .RelPermalink }}" class="text-decoration-none text-body stretched-link title-link">
+                {{ .Title }}
+              </a>
+            </h3>
+            <p class="text-secondary mb-0 d-none d-sm-block" style="font-size: 0.85rem; opacity: 0.85;">
+              {{ .Summary | plainify | truncate 80 }}
+            </p>
+          </div>
+
+          {{/* Secondary Thumbnail Container */}}
+          <div class="img-wrapper rounded flex-shrink-0" style="width: 100px; height: 100px;">
+            {{ $thumbStr := .Params.thumbnail | default (index .Params.images 0) }}
+            {{ if $thumbStr }}
+              {{ $thumbRes := resources.Get $thumbStr }}
+              {{ if $thumbRes }}
+                  {{ $thumbOpt := $thumbRes.Resize "200x200 webp q80" }}
+                  <img src="{{ $thumbOpt.RelPermalink }}" loading="lazy" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
+              {{ else }}
+                  <img src="{{ $thumbStr | absURL }}" loading="lazy" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
+              {{ end }}
+            {{ end }}
+          </div>
+
+        </div>
+      </article>
+      {{ end }}
+
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ========================================== -->
+<!-- SECTION 2: CLEAN EDITORIAL GRID            -->
+<!-- ========================================== -->
+{{ if $gridPosts }}
+<div class="mt-5 pt-5 border-top border-secondary border-opacity-25">
+  <div class="d-flex align-items-baseline justify-content-between mb-4">
+    <h3 class="fw-bold m-0" style="font-size: 2rem; letter-spacing: -0.02em;">Deep Dives</h3>
+  </div>
+  
+  <div class="row g-4">
+    {{ range $index, $page := $gridPosts }}
+    
+    {{/* LAYOUT 1: The Massive Horizontal Featured Banner (Index 0) */}}
+    {{ if eq $index 0 }}
+    <div class="col-12 mb-4">
+      <article class="card border-0 bg-transparent article-group flex-md-row align-items-center gap-4 position-relative pb-4 border-bottom border-secondary border-opacity-25">
+        
+        {{/* Banner Image (Height increased to 380px) */}}
+        <div class="img-wrapper rounded shadow-sm w-100" style="flex: 0 0 50%; height: 380px;">
+          {{ $gridImg := .Params.thumbnail | default (index .Params.images 0) }}
+          {{ if $gridImg }}
+            {{ $gRes := resources.Get $gridImg }}
+            {{ if $gRes }}
+                {{ $gOpt := $gRes.Resize "900x webp q80" }}
+                <img src="{{ $gOpt.RelPermalink }}" loading="lazy" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
+            {{ else }}
+                <img src="{{ $gridImg | absURL }}" loading="lazy" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
+            {{ end }}
+          {{ end }}
+        </div>
+
+        {{/* Banner Content */}}
+        <div class="card-body p-0 mt-2 mt-md-0">
+          <div class="d-flex align-items-center mb-2">
+            <span class="badge bg-primary text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em; padding: 0.35em 0.65em;">
+              {{ index .Params.categories 0 | default "In-Depth" }}
+            </span>
+            <span class="mx-2 text-secondary opacity-50">&middot;</span>
+            <span class="text-secondary small">{{ .Date.Format "January 2, 2006" }}</span>
+          </div>
+          <h4 class="fw-bold mb-3" style="font-size: 2rem; line-height: 1.2; letter-spacing: -0.01em;">
+            <a href="{{ .RelPermalink }}" class="text-decoration-none text-body stretched-link title-link">
               {{ .Title }}
             </a>
-          </h3>
-          <p class="card-text text-body-secondary" style="font-size: 0.95rem;">
-            {{ .Summary | plainify | truncate 120 }}
+          </h4>
+          <p class="text-secondary mb-0" style="font-size: 1.05rem; opacity: 0.85; line-height: 1.5;">
+            {{ .Summary | plainify | truncate 180 }}
           </p>
         </div>
-        <div class="card-footer bg-transparent border-0 pb-3">
-          <small class="text-body-tertiary fw-semibold">
-            {{ .Date.Format "January 2, 2006" }}
-          </small>
+        
+      </article>
+    </div>
+
+    {{/* LAYOUT 2: Standard 2-Column Grid with Text (Indices 1 through 4) */}}
+    {{ else if lt $index 5 }}
+    <div class="col-md-6 mb-4">
+      <article class="card h-100 border-0 bg-transparent article-group position-relative pb-3 border-bottom border-secondary border-opacity-25">
+        
+        {{/* Image Container (Height increased to 300px) */}}
+        <div class="img-wrapper rounded mb-3 shadow-sm" style="height: 300px;">
+          {{ $gridImg := .Params.thumbnail | default (index .Params.images 0) }}
+          {{ if $gridImg }}
+            {{ $gRes := resources.Get $gridImg }}
+            {{ if $gRes }}
+                {{ $gOpt := $gRes.Resize "800x webp q80" }}
+                <img src="{{ $gOpt.RelPermalink }}" loading="lazy" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
+            {{ else }}
+                <img src="{{ $gridImg | absURL }}" loading="lazy" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
+            {{ end }}
+          {{ end }}
         </div>
+
+        {{/* Content */}}
+        <div class="card-body p-0">
+          <div class="d-flex align-items-center mb-2">
+            <span class="text-uppercase fw-bold text-primary" style="font-size: 0.7rem; letter-spacing: 0.05em;">
+              {{ index .Params.categories 0 | default "Analysis" }}
+            </span>
+            <span class="mx-2 text-secondary opacity-50">&middot;</span>
+            <span class="text-secondary small" style="font-size: 0.8rem;">{{ .Date.Format "Jan 2, 2006" }}</span>
+          </div>
+          <h4 class="h4 fw-bold mb-2" style="line-height: 1.3; letter-spacing: -0.01em;">
+            <a href="{{ .RelPermalink }}" class="text-decoration-none text-body stretched-link title-link">
+              {{ .Title }}
+            </a>
+          </h4>
+          <p class="text-secondary mb-0" style="font-size: 0.95rem; opacity: 0.85; line-height: 1.5;">
+            {{ .Summary | plainify | truncate 130 }}
+          </p>
+        </div>
+        
+      </article>
+    </div>
+    {{ end }}
+    
+    {{ end }}
+  </div>
+</div>
+{{ end }}
+
+<!-- ========================================== -->
+<!-- SECTION 3: TYPOGRAPHY-FIRST INDEX          -->
+<!-- ========================================== -->
+{{/* Fetch the next 5 posts for the list */}}
+{{ $listPosts := first 5 (after 11 $posts) }}
+
+{{ if $listPosts }}
+<div class="mt-5 pt-5 border-top border-secondary border-opacity-25 mb-5">
+  <div class="row g-5">
+    
+    <!-- Left Column: Sticky Heading -->
+    <div class="col-lg-4">
+      <div class="position-sticky" style="top: 3rem;">
+        <h3 class="display-5 fw-bold mb-3" style="font-size: 2.75rem; line-height: 1.1;">Trending<br>Discussions</h3>
+        <p class="text-secondary mb-4" style="font-size: 1.1rem; opacity: 0.9;">
+          Explore the most talked-about tech insights and architectural breakthroughs from our archives.
+        </p>
+        <!-- The global 'View All' button moved here for better flow -->
+        <a href="/posts/" class="btn btn-outline-primary px-4 py-2 rounded-pill fw-bold">Explore Full Archive</a>
       </div>
     </div>
-  {{ end }}
+
+    <!-- Right Column: Numbered Minimalist List -->
+    <div class="col-lg-8">
+      <div class="d-flex flex-column border-top border-secondary border-opacity-25">
+        
+        {{ range $index, $page := $listPosts }}
+        <article class="article-list-item position-relative border-bottom border-secondary border-opacity-25 py-4 d-flex align-items-center gap-4">
+          
+          {{/* Massive Monospace Number */}}
+          <div class="text-secondary opacity-25 fw-bold flex-shrink-0 index-number" style="font-size: 4.5rem; line-height: 0.8; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">
+            {{ printf "%02d" (add $index 1) }}
+          </div>
+
+          {{/* Content */}}
+          <div class="flex-grow-1 ps-2">
+            <div class="d-flex align-items-center mb-2">
+              <span class="text-uppercase fw-bold text-primary" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                {{ index .Params.categories 0 | default "Insight" }}
+              </span>
+              <span class="mx-2 text-secondary opacity-50">&middot;</span>
+              <span class="text-secondary" style="font-size: 0.85rem;">{{ .Date.Format "Jan 2, 2006" }}</span>
+            </div>
+            <h4 class="h3 fw-bold mb-0" style="line-height: 1.3;">
+              <a href="{{ .RelPermalink }}" class="text-decoration-none text-body stretched-link list-title-link">
+                {{ .Title }}
+              </a>
+            </h4>
+          </div>
+
+          {{/* Hover Arrow Icon */}}
+          <div class="flex-shrink-0 d-none d-sm-flex align-items-center text-primary opacity-0 arrow-icon" style="transition: all 0.3s ease;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+            </svg>
+          </div>
+
+        </article>
+        {{ end }}
+
+      </div>
+    </div>
+
+  </div>
 </div>
 
-<div class="mt-5 mb-3 text-center">
-  <a href="/posts/" class="btn btn-primary px-4 py-2 rounded-pill fw-bold">View All Articles</a>
-</div>
+<style>
+  /* Section 3 Hover Animations */
+  .article-list-item {
+    transition: padding-left 0.3s ease;
+  }
+  
+  /* When hovering over the article block */
+  .article-list-item:hover {
+    padding-left: 1rem; /* Slides the whole block slightly right */
+  }
+
+  .article-list-item:hover .list-title-link {
+    color: #f97316 !important; /* Match this to your primary theme color */
+  }
+
+  /* Make the number darker/pop on hover */
+  .article-list-item:hover .index-number {
+    opacity: 0.6 !important;
+    color: #f97316 !important; 
+  }
+
+  /* Slide the arrow in from the right */
+  .article-list-item:hover .arrow-icon {
+    opacity: 1 !important;
+    transform: translateX(-15px);
+  }
+</style>
+{{ end }}

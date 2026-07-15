@@ -3,27 +3,102 @@
   <h1 class="fw-bold mb-3 text-body">{{ .Title }}</h1>
   <p class="text-body-secondary mb-5 fs-5">{{ .Description }}</p>
 
+  <!-- ========================================== -->
+  <!-- FILTER BAR                                 -->
+  <!-- ========================================== -->
+  <div class="row g-3 mb-5 pb-4 border-bottom border-secondary border-opacity-25">
+    
+    <!-- 1. Category Filter Dropdown -->
+    <div class="col-md-4">
+      <label class="form-label fw-bold text-secondary small text-uppercase">Filter by Category</label>
+      <div class="dropdown">
+        <button class="btn border border-secondary border-opacity-50 w-100 text-start d-flex justify-content-between align-items-center bg-body-tertiary text-body" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+  <span id="category-btn-text">All Categories</span>
+  <i class="bi bi-chevron-down"></i>
+</button>
+        <div class="dropdown-menu w-100 p-2 shadow-sm border-0 mt-1">
+          <input type="text" class="form-control mb-2 dropdown-search" id="categorySearch" placeholder="Search category...">
+          <div class="dropdown-list-container" style="max-height: 250px; overflow-y: auto; overflow-x: hidden;">
+            <!-- Loop through categories -->
+            {{ range $categoryName, $taxonomy := .Site.Taxonomies.categories }}
+            <label class="dropdown-item px-3 py-2 rounded filter-option cursor-pointer d-flex align-items-center gap-2 mb-1" for="filter-cat-{{ $categoryName | urlize }}">
+              <input class="form-check-input filter-checkbox cat-checkbox m-0" type="checkbox" value="{{ $categoryName | lower }}" id="filter-cat-{{ $categoryName | urlize }}">
+              <span class="text-capitalize">{{ $categoryName | humanize }}</span>
+            </label>
+            {{ end }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Tag Filter Dropdown -->
+    <div class="col-md-4">
+      <label class="form-label fw-bold text-secondary small text-uppercase">Filter by Tag</label>
+      <div class="dropdown">
+        <button class="btn border border-secondary border-opacity-50 w-100 text-start d-flex justify-content-between align-items-center bg-body-tertiary text-body" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+  <span id="tag-btn-text">All Tags</span>
+  <i class="bi bi-chevron-down"></i>
+</button>
+        <div class="dropdown-menu w-100 p-2 shadow-sm border-0 mt-1">
+          <input type="text" class="form-control mb-2 dropdown-search" id="tagSearch" placeholder="Search tag...">
+          <div class="dropdown-list-container" style="max-height: 250px; overflow-y: auto; overflow-x: hidden;">
+            <!-- Loop through all tags -->
+            {{ range $tagName, $taxonomy := .Site.Taxonomies.tags }}
+            <label class="dropdown-item px-3 py-2 rounded filter-option cursor-pointer d-flex align-items-center gap-2 mb-1" for="filter-tag-{{ $tagName | urlize }}">
+              <input class="form-check-input filter-checkbox tag-checkbox m-0" type="checkbox" value="{{ $tagName | lower }}" id="filter-tag-{{ $tagName | urlize }}">
+              <span class="text-capitalize">{{ $tagName | humanize }}</span>
+            </label>
+            {{ end }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Date Filter -->
+    <div class="col-md-4">
+      <label class="form-label fw-bold text-secondary small text-uppercase">Filter by Date</label>
+      <input type="date" id="dateFilter" class="form-control bg-body-tertiary border-secondary border-opacity-50">
+    </div>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- NO RESULTS MESSAGE (Hidden by default)     -->
+  <!-- ========================================== -->
+  <div id="no-results-message" class="text-center py-5 d-none">
+    <i class="bi bi-search text-secondary opacity-50 mb-3 d-block" style="font-size: 3rem;"></i>
+    <h3 class="fw-bold text-body">No articles found</h3>
+    <p class="text-secondary">Try adjusting your categories, tags, or date filters to find what you're looking for.</p>
+    <button class="btn btn-outline-primary mt-3 rounded-pill px-4" onclick="location.reload()">Clear All Filters</button>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- POSTS GRID                                 -->
+  <!-- ========================================== -->
   <!-- Loop through every category on the site -->
   {{ range $categoryName, $taxonomy := .Site.Taxonomies.categories }}
-    <div class="mb-5">
+    <div class="mb-5 category-section" data-section-category="{{ $categoryName | lower }}">
       
-      <!-- Category Title (Capitalized) -->
-      <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
+      <!-- Category Title -->
+      <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4 category-header">
         <h2 class="fw-bold mb-0 text-capitalize">{{ $categoryName | humanize }}</h2>
         <a href="{{ "/categories/" | relLangURL }}{{ $categoryName | urlize }}/" class="text-primary text-decoration-none fw-semibold">View All &rarr;</a>
       </div>
 
-      <!-- 3-Column Grid for the first 6 posts in this category -->
+      <!-- 3-Column Grid -->
       <div class="row row-cols-1 row-cols-md-3 g-4">
         {{ range first 6 $taxonomy.Pages }}
-          <div class="col">
-            <div class="card h-100 shadow-sm border-0 bg-body-tertiary">
-              
+          <div class="col post-card" 
+               data-category="{{ $categoryName | lower }}" 
+               data-tags="{{ if .Params.tags }}{{ delimit .Params.tags "," | lower }}{{ end }}" 
+               data-date="{{ .Date.Format "2006-01-02" }}">
+            
+            <div class="card h-100 shadow-sm border-0 bg-body-tertiary hover-card overflow-hidden">
               <!-- Safely grab either thumbnail or images parameter -->
               {{ if .Params.thumbnail }}
-                <img src="{{ .Params.thumbnail | absURL }}" class="card-img-top" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
+                <img src="{{ .Params.thumbnail | absURL }}" class="card-img-top img-animate" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
               {{ else if .Params.images }}
-                <img src="{{ index .Params.images 0 | absURL }}" class="card-img-top" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
+                <img src="{{ index .Params.images 0 | absURL }}" class="card-img-top img-animate" alt="{{ .Title }}" style="height: 220px; object-fit: cover;">
               {{ end }}
 
               <div class="card-body">
@@ -44,4 +119,165 @@
     </div>
   {{ end }}
 </div>
+
+<!-- ========================================== -->
+<!-- CUSTOM STYLES & ANIMATIONS                 -->
+<!-- ========================================== -->
+<style>
+/* Card Hover Animations */
+.hover-card {
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.hover-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1) !important;
+}
+
+/* Image Zoom Animation */
+.img-animate {
+  transition: transform 0.5s ease;
+}
+.hover-card:hover .img-animate {
+  transform: scale(1.05);
+}
+
+/* Dropdown UI Improvements */
+.cursor-pointer { 
+  cursor: pointer; 
+}
+.dropdown-menu { 
+  border-radius: 12px; 
+}
+.filter-option { 
+  transition: background-color 0.2s, padding-left 0.2s ease-in-out; 
+}
+/* Slide-in text animation on hover for dropdown items */
+.filter-option:hover { 
+  background-color: var(--bs-tertiary-bg); 
+  padding-left: 1.25rem !important; 
+}
+
+/* Custom Scrollbar for Dropdowns to ensure visibility */
+.dropdown-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+.dropdown-list-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dropdown-list-container::-webkit-scrollbar-thumb {
+  background-color: #adb5bd;
+  border-radius: 10px;
+}
+.dropdown-list-container::-webkit-scrollbar-thumb:hover {
+  background-color: #6c757d;
+}
+</style>
+
+<!-- ========================================== -->
+<!-- JAVASCRIPT FOR CLIENT-SIDE FILTERING       -->
+<!-- ========================================== -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  
+  // 1. Dropdown Search Functionality (FIXED: Toggling Bootstrap classes instead of inline styles)
+  const dropdownSearches = document.querySelectorAll('.dropdown-search');
+  
+  dropdownSearches.forEach(searchInput => {
+    searchInput.addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase().trim();
+      const container = e.target.nextElementSibling;
+      const options = container.querySelectorAll('.filter-option');
+      
+      options.forEach(option => {
+        const label = option.querySelector('span').textContent.toLowerCase();
+        if (label.includes(searchTerm)) {
+          option.classList.remove('d-none');
+          option.classList.add('d-flex');
+        } else {
+          option.classList.remove('d-flex');
+          option.classList.add('d-none');
+        }
+      });
+    });
+  });
+
+  // 2. Global Filter Logic
+  const allSections = document.querySelectorAll('.category-section');
+  const catCheckboxes = document.querySelectorAll('.cat-checkbox');
+  const tagCheckboxes = document.querySelectorAll('.tag-checkbox');
+  const dateInput = document.getElementById('dateFilter');
+  const noResultsMsg = document.getElementById('no-results-message'); // The new message element
+  
+  const catBtnText = document.getElementById('category-btn-text');
+  const tagBtnText = document.getElementById('tag-btn-text');
+
+  function updateButtonText(checkboxes, defaultText, buttonEl) {
+    const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+    if (selectedCount === 0) {
+      buttonEl.textContent = defaultText;
+    } else if (selectedCount === 1) {
+      const label = Array.from(checkboxes).find(cb => cb.checked).nextElementSibling.textContent.trim();
+      buttonEl.textContent = label;
+    } else {
+      buttonEl.textContent = `${selectedCount} Selected`;
+    }
+  }
+
+  function applyFilters() {
+    const selectedCats = Array.from(catCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+    const selectedTags = Array.from(tagCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+    const selectedDate = dateInput.value;
+
+    updateButtonText(catCheckboxes, 'All Categories', catBtnText);
+    updateButtonText(tagCheckboxes, 'All Tags', tagBtnText);
+
+    let totalVisibleCards = 0; // Track the total number of visible cards globally
+
+    allSections.forEach(section => {
+      let visibleCardsInSection = 0;
+      const sectionCards = section.querySelectorAll('.post-card');
+
+      sectionCards.forEach(card => {
+        const cardCat = card.getAttribute('data-category');
+        const cardTagsStr = card.getAttribute('data-tags');
+        const cardTags = cardTagsStr ? cardTagsStr.split(',') : [];
+        const cardDate = card.getAttribute('data-date');
+
+        const matchesCat = selectedCats.length === 0 || selectedCats.includes(cardCat);
+        const matchesTag = selectedTags.length === 0 || selectedTags.some(tag => cardTags.includes(tag));
+        const matchesDate = selectedDate === "" || cardDate === selectedDate;
+
+        if (matchesCat && matchesTag && matchesDate) {
+          card.style.display = 'block';
+          visibleCardsInSection++;
+          totalVisibleCards++; // Increment global counter
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Hide category section if empty
+      if (visibleCardsInSection === 0) {
+        section.style.display = 'none';
+      } else {
+        section.style.display = 'block';
+      }
+    });
+
+    // 3. Show/Hide the "No Results" message
+    if (totalVisibleCards === 0) {
+      noResultsMsg.classList.remove('d-none');
+    } else {
+      noResultsMsg.classList.add('d-none');
+    }
+  }
+
+  // 4. Attach Event Listeners
+  document.querySelectorAll('.filter-checkbox').forEach(cb => {
+    cb.addEventListener('change', applyFilters);
+  });
+  
+  dateInput.addEventListener('change', applyFilters);
+});
+</script>
 {{ end }}
