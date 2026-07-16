@@ -7,6 +7,7 @@ type: "page"
 <!-- Client-Side Parsing Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+<script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit" async defer></script>
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 </script>
@@ -27,7 +28,10 @@ type: "page"
     <div class="mb-4 max-w-md mx-auto">
       <input type="file" id="resumeFile" class="form-control form-control-lg border-subtle" accept=".pdf, .docx" />
     </div>
-    <button id="analyzeBtn" class="btn btn-primary btn-lg w-100 fw-bold rounded-3" onclick="processFile()">
+    <div id="recaptcha-wrapper" class="mb-4 d-flex justify-content-center">
+      <div id="recaptcha-container"></div>
+    </div>
+    <button id="analyzeBtn" class="btn btn-primary btn-lg w-100 fw-bold rounded-3" onclick="processFile()" disabled>
       <i class="fas fa-magic me-2"></i>Analyze Resume
     </button>
   </div>
@@ -46,6 +50,48 @@ type: "page"
 
   <!-- Results Dashboard -->
   <div id="resultsLayout" class="mt-5 d-none">
+    <div class="card p-4 shadow-sm border-0 bg-body-tertiary rounded-4 mb-4">
+      <h4 class="fw-bold mb-4"><i class="fas fa-file-contract text-primary me-2"></i>Extracted Resume Data</h4>
+      <div class="row g-4 mb-4">
+        <div class="col-md-4">
+          <h6 class="fw-bold text-body border-bottom pb-2">Contact & Links</h6>
+          <p class="mb-1 text-body-secondary"><i class="fas fa-envelope me-2"></i><span id="extEmail"></span></p>
+          <p class="mb-3 text-body-secondary"><i class="fas fa-phone me-2"></i><span id="extPhone"></span></p>
+          <div id="extSocials" class="d-flex flex-wrap gap-2"></div>
+        </div>
+        <div class="col-md-4">
+          <h6 class="fw-bold text-body border-bottom pb-2">Education & Schooling</h6>
+          <ul id="extEducation" class="text-body-secondary ps-3 small mb-0"></ul>
+        </div>
+        <div class="col-md-4">
+          <h6 class="fw-bold text-body border-bottom pb-2">Certifications</h6>
+          <ul id="extCertifications" class="text-body-secondary ps-3 small mb-0"></ul>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <h6 class="fw-bold text-body border-bottom pb-2">Work Experience</h6>
+          <ul id="extWork" class="text-body-secondary ps-3 small mb-0"></ul>
+        </div>
+        <div class="col-md-6">
+          <h6 class="fw-bold text-body border-bottom pb-2">Projects Detected</h6>
+          <ul id="extProjects" class="text-body-secondary ps-3 small mb-0"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="card p-4 shadow-sm border-0 border-top border-info border-4 bg-body-tertiary rounded-4 mb-4">
+      <h5 class="text-info fw-bold"><i class="fas fa-spell-check me-2"></i>Spelling, Grammar & Quality Check</h5>
+      <div class="row g-4 mt-1">
+        <div class="col-md-6">
+          <h6 class="fw-bold text-body">Spelling & Grammar Issues</h6>
+          <ul id="listGrammar" class="text-body-secondary ps-3 small mb-0"></ul>
+        </div>
+        <div class="col-md-6">
+          <h6 class="fw-bold text-body">General Quality Feedback</h6>
+          <ul id="listQuality" class="text-body-secondary ps-3 small mb-0"></ul>
+        </div>
+      </div>
+    </div>
     <div class="row g-4">
       <div class="col-md-4 text-center">
         <div class="card p-4 shadow-sm border-0 h-100 bg-body-tertiary rounded-4">
@@ -107,6 +153,43 @@ type: "page"
 // ==========================================
 const API_URL = 'https://resume-ats-api.vercel.app/api/analyze';
 
+// --- NEW: RECAPTCHA THEME & TOGGLE LOGIC ---
+let recaptchaWidgetId;
+
+function renderRecaptcha() {
+  const htmlTheme = document.documentElement.getAttribute("data-bs-theme") || 'light';
+  const wrapper = document.getElementById("recaptcha-wrapper");
+  const analyzeBtn = document.getElementById("analyzeBtn");
+
+  // To prevent ghost iframes, we completely wipe and rebuild the HTML container
+  wrapper.innerHTML = '<div id="recaptcha-container"></div>';
+  analyzeBtn.disabled = true;
+
+  recaptchaWidgetId = grecaptcha.render('recaptcha-container', {
+    'sitekey': '6LeDECYtAAAAAMUFxP8A8zQv2NhFMMtn1DSpM8-L', // Your Site Key
+    'theme': htmlTheme === 'dark' ? 'dark' : 'light',
+    'callback': function(token) {
+      analyzeBtn.disabled = false; // Enable when solved
+    },
+    'expired-callback': function() {
+      analyzeBtn.disabled = true; // Disable if it expires
+    }
+  });
+}
+
+// Render when Google API loads
+window.onRecaptchaLoad = function() {
+  renderRecaptcha();
+};
+
+// Rebuild when the user toggles dark mode
+const observer = new MutationObserver(() => {
+  if (typeof grecaptcha !== "undefined") {
+    renderRecaptcha();
+  }
+});
+observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-bs-theme"] });
+
 // UI Error Handler Helper
 function showError(msg) {
   const errBox = document.getElementById('errorAlert');
@@ -139,6 +222,11 @@ document.addEventListener("DOMContentLoaded", () => {
 // Main Logic
 async function processFile() {
   hideError();
+  const recaptchaResponse = grecaptcha.getResponse(recaptchaWidgetId);
+  if (!recaptchaResponse) {
+    return showError('Please complete the reCAPTCHA verification.');
+  }
+
   const fileInput = document.getElementById('resumeFile');
   if (!fileInput.files.length) return showError('Please select a PDF or DOCX file.');
 
@@ -181,7 +269,33 @@ async function processFile() {
       throw new Error(data.error || 'Server Error: Check your API Key and Vercel KV settings.');
     }
 
+    // 3. Lock UI & Store Cooldown
     localStorage.setItem('lastScanTime', Date.now().toString());
+
+    // --- Populate Extracted Data ---
+    document.getElementById('extEmail').innerText = data.extractedData.email;
+    document.getElementById('extPhone').innerText = data.extractedData.phone;
+    
+    // Map Social Links
+    const socialContainer = document.getElementById('extSocials');
+    socialContainer.innerHTML = '';
+    if (data.extractedData.socialLinks && data.extractedData.socialLinks.length > 0) {
+      data.extractedData.socialLinks.forEach(link => {
+        socialContainer.innerHTML += `<span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill"><i class="fas fa-link me-1"></i>${link}</span>`;
+      });
+    } else {
+      socialContainer.innerHTML = '<span class="text-muted small">No links found</span>';
+    }
+
+    // Map Extracted Lists
+    mapListToUI('extEducation', data.extractedData.education);
+    mapListToUI('extCertifications', data.extractedData.certifications);
+    mapListToUI('extWork', data.extractedData.workExperience);
+    mapListToUI('extProjects', data.extractedData.projects);
+
+    // Map Grammar and Quality Checks
+    mapListToUI('listGrammar', data.qualityCheck.spellingAndGrammarIssues);
+    mapListToUI('listQuality', data.qualityCheck.generalFeedback);
 
     document.getElementById('resRole').innerText = data.detectedRole;
     document.getElementById('resScore').innerText = data.atsScore;
@@ -204,8 +318,9 @@ async function processFile() {
 
   } catch (err) {
     showError(err.message);
+    grecaptcha.reset(recaptchaWidgetId);
+    btn.disabled = true; 
   } finally {
-    btn.disabled = false;
     loader.classList.add('d-none');
   }
 }
@@ -215,7 +330,8 @@ function mapListToUI(elementId, arrayData) {
   ul.innerHTML = '';
   if (arrayData && arrayData.length > 0) {
     arrayData.forEach(item => {
-      ul.innerHTML += `<li class="mb-2">${item}</li>`;
+      // Removed the 'mb-2' class from the <li> here since Bootstrap flex handles the gap now
+      ul.innerHTML += `<li>${item}</li>`;
     });
   } else {
     ul.innerHTML = '<li>No data provided.</li>';
