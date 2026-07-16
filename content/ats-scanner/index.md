@@ -2,6 +2,8 @@
 title: "AI Resume ATS Scanner"
 description: "Upload your resume to check your ATS score and get actionable feedback."
 type: "page"
+images: 
+  - "/images/ats-thumbnail.png"
 ---
 
 <!-- Client-Side Parsing Libraries -->

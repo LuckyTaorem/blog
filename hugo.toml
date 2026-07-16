@@ -21,7 +21,7 @@ locale = "en-us"
   copyright = "© 2026 LT Developer. All rights reserved."
 
 [params.navigation]
-  logo = "img/logo.png"
+  logo = "images/og-image.jpg"
 
 [params.author]
   name = "Lucky Taorem"
@@ -29,12 +29,12 @@ locale = "en-us"
 
 [params.publisher]
   name = "Lucky Taorem"
-  logo = "img/logo.png"
+  logo = "images/og-image.jpg"
 
 [params.seo]
   twitter = "taorem_lucky"
   # 🚨 THIS is the correct, safe place to define your global fallback SEO logo in Hinode
-  image = "img/logo.png"
+  image = "images/og-image.jpg"
 
 # --- DISABLE ANALYTICS & PREVENT ADBLOCKER ERRORS ---
 

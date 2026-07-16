@@ -33,7 +33,7 @@
     {{ else if .Params.images }}
       "{{ index .Params.images 0 | absURL }}"
     {{ else }}
-      "{{ "img/logo-2800x867.png" | absURL }}"
+      "{{ "images/og-image.jpg" | absURL }}"
     {{ end }}
   ],
   "datePublished": "{{ .Date.Format $iso8601 }}",
@@ -49,7 +49,7 @@
     "name": "{{ .Site.Title }}",
     "logo": {
       "@type": "ImageObject",
-      "url": "{{ "img/logo-2800x867.png" | absURL }}"
+      "url": "{{ "images/og-image.jpg" | absURL }}"
     }
   }
 }
