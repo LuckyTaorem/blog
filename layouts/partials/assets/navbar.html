@@ -167,6 +167,7 @@
             </div>
     
             <div class="navbar-collapse collapse" id="{{ $id }}-collapse">
+                
                 {{/* Insert search input */}}
                 {{- if and $search.enabled (not $search.modal) }}
                     {{ partial "assets/search-input.html" (dict "class" (printf "mt-4 mt-%s-0 me-%s-3" $args.breakpoint $args.breakpoint)) }}
@@ -174,6 +175,7 @@
                 
                 <ul class="navbar-nav {{ if $flex }}d-flex w-100{{ else }}ms-auto{{ end }}">
                     {{/* Render top-menu items (maximum depth of 2) */}}
+
                     {{- partial "assets/helpers/navbar-render-menu.html" (dict
                         "page"       $page
                         "menus"      $menus
@@ -183,6 +185,17 @@
                         "control"    false
                         "fs"         $fs
                     ) }}
+
+                    {{/* CUSTOM DROPDOWN INJECTED HERE */}}
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Projects
+        </a>
+        <ul class="dropdown-menu shadow-sm border-subtle" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item py-2" href="/ats-scanner/">ATS Scanner</a></li>
+            {{/* Add more project links here later if needed */}}
+        </ul>
+    </li>
     
                     {{/* Insert divider if applicable */}}
                     {{- if and $menus (or $enableLanguage $enableVersions) -}}

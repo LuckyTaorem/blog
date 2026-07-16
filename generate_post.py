@@ -1092,32 +1092,36 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
         if re.search(r'^thumbnail:\s*.*', article_content, re.MULTILINE):
             article_content = re.sub(r'^thumbnail:\s*.*', f'thumbnail: "{image_url}"', article_content, flags=re.MULTILINE)
 
-        # 🚨 NEW BOUNCER: Fix malformed AI internal links to prevent Hugo build crashes
-        # Converts broken links like `](posts/slug)` or `](/posts/slug)` into perfect absolute URLs
-        article_content = re.sub(
-            r'\]\((?:https?://ltdeveloperblogs\.github\.io)?/?posts/([^/)]+)/?\)',
-            r'](https://ltdeveloperblogs.github.io/posts/\1/)',
-            article_content
-        )
-
-        # 🚨 STRICT URL CHECK: Remove internal links if the markdown file does not actually exist
-        def remove_dead_links(match):
+        # 🚨 STRICT INTERNAL LINK VALIDATOR
+        # Replaces the previous two-step regex with a single, bulletproof pass
+        def validate_internal_links(match):
             link_text = match.group(1)
-            slug = match.group(2)
-            expected_md_file = os.path.join(output_dir, f"{slug}.md")
+            raw_url = match.group(2)
             
-            if os.path.exists(expected_md_file):
-                # The post exists! Keep the full markdown link.
-                return match.group(0) 
-            else:
-                # The post does NOT exist. Strip the markdown link and return just the text.
-                print(f"  -> ⚠️ Stripping hallucinated link for non-existent post: {slug}")
-                return link_text 
+            # Check if this URL points to our posts directory (handles absolute and relative links)
+            if 'ltdeveloperblogs.github.io/posts/' in raw_url or raw_url.startswith('/posts/') or raw_url.startswith('posts/'):
+                # Extract strictly the slug, ignoring slashes, domains, and trailing characters
+                slug_match = re.search(r'posts/([^/#?)]+)', raw_url)
+                
+                if slug_match:
+                    slug = slug_match.group(1).strip()
+                    expected_md_file = os.path.join(output_dir, f"{slug}.md")
+                    
+                    if os.path.exists(expected_md_file):
+                        # The file exists! Standardize the link to a perfect absolute URL
+                        return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{slug}/)"
+                    else:
+                        # Dead link detected! Strip the markdown formatting completely, leaving only plain text
+                        print(f"  -> ⚠️ Stripping hallucinated/dead link: {slug}")
+                        return link_text
+            
+            # If it's an external link or doesn't match our pattern, leave it untouched
+            return match.group(0)
 
-        # Find all standardized internal links and run them through our strict check
+        # Find ALL markdown links [text](url) and run them through the validator
         article_content = re.sub(
-            r'\[([^\]]+)\]\(https://ltdeveloperblogs\.github\.io/posts/([^/]+)/?\)',
-            remove_dead_links,
+            r'\[([^\]]+)\]\(([^)]+)\)',
+            validate_internal_links,
             article_content
         )
 
