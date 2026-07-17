@@ -243,6 +243,7 @@ const API_URL = 'https://resume-ats-api.vercel.app/api/analyze';
 const CL_API_URL = 'https://resume-ats-api.vercel.app/api/cover-letter';
 // NEW: Global State
 let globalResumeText = "";
+let globalReportData = null;
 let atsChartInstance = null;
 let storedTries = localStorage.getItem('clTries');
 let coverLetterTries = storedTries !== null ? parseInt(storedTries) : 3;
@@ -308,6 +309,11 @@ document.addEventListener("DOMContentLoaded", () => {
       // NEW: Restore Cover Letter access during cooldown
       if (savedResume) {
         globalResumeText = savedResume;
+        // Restore full report data for the PDF generator
+        const savedReport = localStorage.getItem('savedReportData');
+        if (savedReport) {
+           globalReportData = JSON.parse(savedReport);
+        }
         document.getElementById('coverLetterSection').classList.remove('d-none');
         document.getElementById('clDescription').value = localStorage.getItem('savedJD') || '';
         document.getElementById('clCompany').value = localStorage.getItem('savedCompany') || '';
@@ -370,6 +376,8 @@ async function processFile() {
     // Lock UI & Store Cooldown & Persist Data
     localStorage.setItem('lastScanTime', Date.now().toString());
     localStorage.setItem('savedResumeText', globalResumeText);
+    globalReportData = data; // Save to memory
+    localStorage.setItem('savedReportData', JSON.stringify(data)); // Save to browser storage
     localStorage.setItem('savedJD', jdText);
     // --- Populate Extracted Data ---
     document.getElementById('extEmail').innerText = data.extractedData.email;
@@ -468,23 +476,72 @@ function renderChart(formatScore, keywordScore, impactScore) {
     }
   });
 }
-// --- UPDATED: PDF Export Logic ---
+// --- UPGRADED: Professional PDF Export Logic ---
 function downloadPDF() {
   const btn = document.getElementById('downloadPdfBtn');
   const originalHTML = btn.innerHTML;
+  if (!globalReportData) {
+    return alert("Report data is missing. Please scan a resume first.");
+  }
   // Show Loading State
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating PDF...';
-  const element = document.getElementById('resultsLayout');
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating Document...';
+  const data = globalReportData;
+  // 1. Create a pristine, off-screen container designed ONLY for the PDF
+  const pdfContainer = document.createElement('div');
+  pdfContainer.style.padding = '40px';
+  pdfContainer.style.fontFamily = 'Helvetica, Arial, sans-serif';
+  pdfContainer.style.color = '#000000';      // Pure black text
+  pdfContainer.style.background = '#ffffff'; // Pure white background
+  pdfContainer.style.width = '800px';
+  pdfContainer.style.lineHeight = '1.6';
+  // 2. Build the linear, page-break-safe HTML layout
+  pdfContainer.innerHTML = `
+    <h1 style="color: #0d6efd; text-align: center; margin-bottom: 5px; font-size: 28px;">Resume ATS Report</h1>
+    <h3 style="text-align: center; color: #555; margin-top: 0; font-size: 18px;">Target Role: ${data.detectedRole}</h3>
+    <hr style="margin: 20px 0; border: 1px solid #ddd;">
+    <div style="margin-bottom: 30px;">
+        <h2 style="margin: 0; color: #333; font-size: 22px;">Overall ATS Score: <span style="color: #0d6efd;">${data.atsScore}/100</span></h2>
+        <p style="margin: 5px 0 0 0; font-size: 14px; color: #555;"><strong>Email:</strong> ${data.extractedData.email} &nbsp;|&nbsp; <strong>Phone:</strong> ${data.extractedData.phone}</p>
+    </div>
+    <div style="margin-bottom: 25px; page-break-inside: avoid;">
+        <h3 style="border-bottom: 2px solid #0d6efd; padding-bottom: 5px; font-size: 18px;">Score Breakdown</h3>
+        <p style="margin: 8px 0; font-size: 14px;"><strong>Formatting:</strong> ${data.breakdown.formatting.score}/100 - ${data.breakdown.formatting.feedback}</p>
+        <p style="margin: 8px 0; font-size: 14px;"><strong>Keywords:</strong> ${data.breakdown.keywords.score}/100 - ${data.breakdown.keywords.feedback}</p>
+        <p style="margin: 8px 0; font-size: 14px;"><strong>Impact:</strong> ${data.breakdown.impact.score}/100 - ${data.breakdown.impact.feedback}</p>
+    </div>
+    <div style="margin-bottom: 25px; page-break-inside: avoid;">
+        <h3 style="border-bottom: 2px solid #198754; padding-bottom: 5px; font-size: 18px; color: #198754;">Key Strengths</h3>
+        <ul style="margin: 10px 0; padding-left: 20px; font-size: 14px;">
+            ${data.strengths.map(s => `<li style="margin-bottom: 6px;">${s}</li>`).join('')}
+        </ul>
+    </div>
+    <div style="margin-bottom: 25px; page-break-inside: avoid;">
+        <h3 style="border-bottom: 2px solid #dc3545; padding-bottom: 5px; font-size: 18px; color: #dc3545;">Areas for Improvement</h3>
+        <ul style="margin: 10px 0; padding-left: 20px; font-size: 14px;">
+            ${data.weaknesses.map(s => `<li style="margin-bottom: 6px;">${s}</li>`).join('')}
+        </ul>
+    </div>
+    <div style="margin-bottom: 25px; page-break-inside: avoid;">
+        <h3 style="border-bottom: 2px solid #ffc107; padding-bottom: 5px; font-size: 18px; color: #b28602;">Missing Core Keywords</h3>
+        <p style="font-size: 14px; margin: 10px 0;">${data.missingKeywords.join(', ')}</p>
+    </div>
+    <div style="margin-bottom: 25px; page-break-inside: avoid;">
+        <h3 style="border-bottom: 2px solid #0d6efd; padding-bottom: 5px; font-size: 18px;">Actionable Next Steps</h3>
+        <ol style="margin: 10px 0; padding-left: 20px; font-size: 14px;">
+            ${data.actionableSteps.map(s => `<li style="margin-bottom: 6px;">${s}</li>`).join('')}
+        </ol>
+    </div>
+  `;
+  // 3. Feed the pristine container into html2pdf
   const opt = {
-    margin:       0.3,
+    margin:       0.5,
     filename:     'ATS_Resume_Report.pdf',
-    image:        { type: 'jpeg', quality: 1 },
-    html2canvas:  { scale: 2, scrollY: 0, useCORS: true },
-    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
-    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+    image:        { type: 'jpeg', quality: 1 }, 
+    html2canvas:  { scale: 2, logging: false },
+    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
   };
-  html2pdf().set(opt).from(element).save().then(() => {
+  html2pdf().set(opt).from(pdfContainer).save().then(() => {
     // Restore Button State
     btn.disabled = false;
     btn.innerHTML = originalHTML;
