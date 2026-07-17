@@ -497,37 +497,37 @@ function downloadPDF() {
   pdfContainer.style.lineHeight = '1.6';
   // 2. Build the linear, page-break-safe HTML layout
   pdfContainer.innerHTML = `
-    <h1 style="color: #0d6efd; text-align: center; margin-bottom: 5px; font-size: 28px;">Resume ATS Report</h1>
-    <h3 style="text-align: center; color: #555; margin-top: 0; font-size: 18px;">Target Role: ${data.detectedRole}</h3>
+    <div style="color: #0d6efd; text-align: center; margin-bottom: 5px; font-size: 28px; font-weight: bold;">Resume ATS Report</div>
+    <div style="text-align: center; color: #555; margin-top: 0; font-size: 18px; font-weight: bold;">Target Role: ${data.detectedRole}</div>
     <hr style="margin: 20px 0; border: 1px solid #ddd;">
     <div style="margin-bottom: 30px;">
-        <h2 style="margin: 0; color: #333; font-size: 22px;">Overall ATS Score: <span style="color: #0d6efd;">${data.atsScore}/100</span></h2>
+        <div style="margin: 0; color: #333; font-size: 22px; font-weight: bold;">Overall ATS Score: <span style="color: #0d6efd;">${data.atsScore}/100</span></div>
         <p style="margin: 5px 0 0 0; font-size: 14px; color: #555;"><strong>Email:</strong> ${data.extractedData.email} &nbsp;|&nbsp; <strong>Phone:</strong> ${data.extractedData.phone}</p>
     </div>
     <div style="margin-bottom: 25px; page-break-inside: avoid;">
-        <h3 style="border-bottom: 2px solid #0d6efd; padding-bottom: 5px; font-size: 18px;">Score Breakdown</h3>
+        <div style="border-bottom: 2px solid #0d6efd; padding-bottom: 5px; font-size: 18px; font-weight: bold; margin-bottom: 10px;">Score Breakdown</div>
         <p style="margin: 8px 0; font-size: 14px;"><strong>Formatting:</strong> ${data.breakdown.formatting.score}/100 - ${data.breakdown.formatting.feedback}</p>
         <p style="margin: 8px 0; font-size: 14px;"><strong>Keywords:</strong> ${data.breakdown.keywords.score}/100 - ${data.breakdown.keywords.feedback}</p>
         <p style="margin: 8px 0; font-size: 14px;"><strong>Impact:</strong> ${data.breakdown.impact.score}/100 - ${data.breakdown.impact.feedback}</p>
     </div>
     <div style="margin-bottom: 25px; page-break-inside: avoid;">
-        <h3 style="border-bottom: 2px solid #198754; padding-bottom: 5px; font-size: 18px; color: #198754;">Key Strengths</h3>
+        <div style="border-bottom: 2px solid #198754; padding-bottom: 5px; font-size: 18px; color: #198754; font-weight: bold; margin-bottom: 10px;">Key Strengths</div>
         <ul style="margin: 10px 0; padding-left: 20px; font-size: 14px;">
             ${data.strengths.map(s => `<li style="margin-bottom: 6px;">${s}</li>`).join('')}
         </ul>
     </div>
     <div style="margin-bottom: 25px; page-break-inside: avoid;">
-        <h3 style="border-bottom: 2px solid #dc3545; padding-bottom: 5px; font-size: 18px; color: #dc3545;">Areas for Improvement</h3>
+        <div style="border-bottom: 2px solid #dc3545; padding-bottom: 5px; font-size: 18px; color: #dc3545; font-weight: bold; margin-bottom: 10px;">Areas for Improvement</div>
         <ul style="margin: 10px 0; padding-left: 20px; font-size: 14px;">
             ${data.weaknesses.map(s => `<li style="margin-bottom: 6px;">${s}</li>`).join('')}
         </ul>
     </div>
     <div style="margin-bottom: 25px; page-break-inside: avoid;">
-        <h3 style="border-bottom: 2px solid #ffc107; padding-bottom: 5px; font-size: 18px; color: #b28602;">Missing Core Keywords</h3>
+        <div style="border-bottom: 2px solid #ffc107; padding-bottom: 5px; font-size: 18px; color: #b28602; font-weight: bold; margin-bottom: 10px;">Missing Core Keywords</div>
         <p style="font-size: 14px; margin: 10px 0;">${data.missingKeywords.join(', ')}</p>
     </div>
     <div style="margin-bottom: 25px; page-break-inside: avoid;">
-        <h3 style="border-bottom: 2px solid #0d6efd; padding-bottom: 5px; font-size: 18px;">Actionable Next Steps</h3>
+        <div style="border-bottom: 2px solid #0d6efd; padding-bottom: 5px; font-size: 18px; font-weight: bold; margin-bottom: 10px;">Actionable Next Steps</div>
         <ol style="margin: 10px 0; padding-left: 20px; font-size: 14px;">
             ${data.actionableSteps.map(s => `<li style="margin-bottom: 6px;">${s}</li>`).join('')}
         </ol>
