@@ -487,15 +487,13 @@ function downloadPDF() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating Document...';
   const data = globalReportData;
-  // 1. Create a pristine, off-screen container designed ONLY for the PDF
+  // 1. Create container (Removed fixed width and padding to fix clipping)
   const pdfContainer = document.createElement('div');
-  pdfContainer.style.padding = '40px';
   pdfContainer.style.fontFamily = 'Helvetica, Arial, sans-serif';
-  pdfContainer.style.color = '#000000';      // Pure black text
-  pdfContainer.style.background = '#ffffff'; // Pure white background
-  pdfContainer.style.width = '800px';
+  pdfContainer.style.color = '#000000';      
+  pdfContainer.style.background = '#ffffff'; 
   pdfContainer.style.lineHeight = '1.6';
-  // 2. Build the linear, page-break-safe HTML layout
+  // 2. Build the linear, page-break-safe HTML layout 
   pdfContainer.innerHTML = `
     <div style="color: #0d6efd; text-align: center; margin-bottom: 5px; font-size: 28px; font-weight: bold;">Resume ATS Report</div>
     <div style="text-align: center; color: #555; margin-top: 0; font-size: 18px; font-weight: bold;">Target Role: ${data.detectedRole}</div>
@@ -535,11 +533,16 @@ function downloadPDF() {
   `;
   // 3. Feed the pristine container into html2pdf
   const opt = {
-    margin:       0.5,
+    margin:       0.5, // 0.5 inch margins all around protects against edge clipping
     filename:     'ATS_Resume_Report.pdf',
     image:        { type: 'jpeg', quality: 1 }, 
-    html2canvas:  { scale: 2, logging: false },
-    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    html2canvas:  { 
+      scale: 2, 
+      scrollY: 0,        // Fixes the massive top gap
+      windowWidth: 800   // Enforces a consistent virtual canvas width
+    },
+    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
   };
   html2pdf().set(opt).from(pdfContainer).save().then(() => {
     // Restore Button State
@@ -596,8 +599,12 @@ async function generateCoverLetter() {
   } catch (err) {
     errBox.innerText = err.message;
     errBox.classList.remove('d-none');
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-magic me-2"></i>Generate Cover Letter';
+  } finally {
+    // FIX: Safely reset the button state after success or failure
+    if (coverLetterTries > 0) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-magic me-2"></i>Generate Cover Letter';
+    }
   }
 }
 function copyCoverLetter() {
