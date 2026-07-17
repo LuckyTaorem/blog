@@ -49,7 +49,7 @@ type: "page"
 
   <div class="card p-5 shadow-sm border-0 bg-body-tertiary rounded-4">
     <div class="text-center mb-4">
-      <h3 class="fw-bold text-primary mb-2"><i class="fas fa-pen-nib me-2"></i>AI Cover Letter Generator</h3>
+      <h3 id="aiCoverLetterTitle" class="fw-bold text-primary mb-2"><i class="fas fa-pen-nib me-2"></i>AI Cover Letter Generator</h3>
       <p class="text-body-secondary">Tries remaining today: <strong id="clTries" class="text-primary">3</strong>/3</p>
     </div>
     <!-- Input Form -->

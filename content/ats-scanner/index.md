@@ -84,14 +84,14 @@ images:
 
   <!-- Cooldown Warning -->
   <div id="cooldownSection" class="alert alert-warning text-center d-none shadow-sm p-4 rounded-4">
-    <h4 class="fw-bold"><i class="fas fa-hourglass-half me-2"></i>Cooldown Active</h4>
+    <h4 id="cooldownActive" class="fw-bold"><i class="fas fa-hourglass-half me-2"></i>Cooldown Active</h4>
     <p class="mb-0">You have already scanned a resume today. You can scan another one in <strong id="timeRemaining"></strong>.</p>
   </div>
 
   <div id="coverLetterSection" class="card p-5 mt-5 shadow-sm border-0 bg-body-tertiary rounded-4 d-none">
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 border-bottom pb-3">
       <div>
-        <h4 class="fw-bold mb-1"><i class="fas fa-robot text-primary me-2"></i>AI Cover Letter Generator</h4>
+        <h4 id="aiCoverLetterTitle" class="fw-bold mb-1"><i class="fas fa-robot text-primary me-2"></i>AI Cover Letter Generator</h4>
         <p class="text-body-secondary mb-0">Tries remaining today: <strong id="clTries" class="text-primary">3</strong>/3</p>
       </div>
       <a href="/cover-letter-generator/" class="btn btn-outline-secondary btn-sm fw-bold rounded-pill px-3">
