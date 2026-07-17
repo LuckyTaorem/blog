@@ -63,8 +63,9 @@ images:
     <div class="mb-4 max-w-md mx-auto">
       <input type="file" id="resumeFile" class="form-control form-control-lg border-subtle" accept=".pdf, .docx" />
     </div>
-    <div class="mb-4 max-w-md mx-auto form-floating shadow-sm rounded-4">
-      <textarea id="jobDescription" class="form-control border-0 bg-body-secondary" placeholder="Paste the job description here..." style="height: 120px; border-radius: 1rem; resize: none;"></textarea>
+    <!-- Upgraded Job Description Matcher -->
+    <div class="mb-4 max-w-md mx-auto w-100 form-floating shadow-sm rounded-4">
+      <textarea id="jobDescription" class="form-control border-0 bg-body-secondary w-100" placeholder="Paste the job description here..." style="height: 120px; border-radius: 1rem; resize: none;"></textarea>
       <label for="jobDescription" class="text-body-secondary fw-bold small">
         <i class="fas fa-briefcase me-2 text-primary"></i>Target Job Description (Optional)
       </label>
@@ -100,13 +101,16 @@ images:
         <textarea id="clDescription" class="form-control" rows="4" placeholder="Paste the job description here..."></textarea>
       </div>
     </div>
+    <!-- NEW: Inline Error Box -->
+    <div id="clErrorBox" class="alert alert-danger d-none py-2 mt-3 small fw-bold"></div>
     <button id="generateClBtn" class="btn btn-success fw-bold w-100 mb-4" onclick="generateCoverLetter()">
       <i class="fas fa-magic me-2"></i>Generate Cover Letter
     </button>
     <div id="clOutputSection" class="d-none">
       <label class="form-label fw-bold small">Generated Cover Letter</label>
-      <textarea id="clOutput" class="form-control mb-2" rows="12"></textarea>
-      <button class="btn btn-outline-secondary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('clOutput').value); alert('Copied to clipboard!')">
+      <textarea id="clOutput" class="form-control mb-2 bg-white" rows="12" readonly></textarea>
+      <!-- UPGRADED: Copy Button -->
+      <button id="copyClBtn" class="btn btn-outline-secondary btn-sm fw-bold" onclick="copyCoverLetter()">
         <i class="fas fa-copy me-2"></i>Copy to Clipboard
       </button>
     </div>
@@ -121,8 +125,8 @@ images:
   <!-- Results Dashboard -->
   <div id="resultsLayout" class="mt-5 d-none">
     <!-- Action Bar (PDF & Cover Letter) -->
-    <div id="pdfActionButtons" class="d-flex flex-wrap gap-3 justify-content-end mb-4">
-      <button class="btn btn-outline-primary fw-bold rounded-pill px-4" onclick="downloadPDF()">
+    <div id="pdfActionButtons" class="d-flex flex-wrap gap-3 justify-content-end mb-4" data-html2canvas-ignore="true">
+      <button id="downloadPdfBtn" class="btn btn-outline-primary fw-bold rounded-pill px-4" onclick="downloadPDF()">
         <i class="fas fa-download me-2"></i>Download PDF Report
       </button>
       <button class="btn btn-primary fw-bold rounded-pill px-4" onclick="openCoverLetterPanel()">
@@ -240,7 +244,8 @@ const CL_API_URL = 'https://resume-ats-api.vercel.app/api/cover-letter';
 // NEW: Global State
 let globalResumeText = "";
 let atsChartInstance = null;
-let coverLetterTries = parseInt(localStorage.getItem('clTries')) || 3;
+let storedTries = localStorage.getItem('clTries');
+let coverLetterTries = storedTries !== null ? parseInt(storedTries) : 3;
 let recaptchaWidgetId;
 function renderRecaptcha() {
   const htmlTheme = document.documentElement.getAttribute("data-bs-theme") || 'light';
@@ -280,6 +285,14 @@ function showError(msg) {
 function hideError() {
   document.getElementById('errorAlert').classList.add('d-none');
 }
+function updateCoverLetterUI() {
+  document.getElementById('clTries').innerText = coverLetterTries;
+  if (coverLetterTries <= 0) {
+    const btn = document.getElementById('generateClBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-ban me-2"></i>Limit Reached (Try again tomorrow)';
+  }
+}
 // 24h Lock Initialization & State Recovery
 document.addEventListener("DOMContentLoaded", () => {
   const lastScan = localStorage.getItem('lastScanTime');
@@ -299,6 +312,8 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('clDescription').value = localStorage.getItem('savedJD') || '';
         document.getElementById('clCompany').value = localStorage.getItem('savedCompany') || '';
         document.getElementById('clTitle').value = localStorage.getItem('savedTitle') || '';
+        // Ensure the button state is correct on page load
+        updateCoverLetterUI();
       }
     } else {
       localStorage.removeItem('lastScanTime');
@@ -453,28 +468,26 @@ function renderChart(formatScore, keywordScore, impactScore) {
     }
   });
 }
-// --- NEW: PDF Export Logic ---
 // --- UPDATED: PDF Export Logic ---
 function downloadPDF() {
+  const btn = document.getElementById('downloadPdfBtn');
+  const originalHTML = btn.innerHTML;
+  // Show Loading State
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating PDF...';
   const element = document.getElementById('resultsLayout');
-  const actionBtns = document.getElementById('pdfActionButtons');
-  // Hide buttons so they don't appear in the PDF
-  actionBtns.classList.add('d-none');
   const opt = {
-    margin:       0.3, // Reduced margin
+    margin:       0.3,
     filename:     'ATS_Resume_Report.pdf',
     image:        { type: 'jpeg', quality: 1 },
-    html2canvas:  { 
-      scale: 2, 
-      scrollY: 0, // Fixes the huge blank space at the top
-      useCORS: true 
-    },
+    html2canvas:  { scale: 2, scrollY: 0, useCORS: true },
     jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
-    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] } // Fixes text clipping at the bottom
+    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
   };
   html2pdf().set(opt).from(element).save().then(() => {
-    // Reveal buttons again after PDF generates
-    actionBtns.classList.remove('d-none');
+    // Restore Button State
+    btn.disabled = false;
+    btn.innerHTML = originalHTML;
   });
 }
 // --- NEW: Cover Letter Generator Logic ---
@@ -482,23 +495,34 @@ function openCoverLetterPanel() {
   document.getElementById('coverLetterSection').classList.remove('d-none');
   document.getElementById('coverLetterSection').scrollIntoView({ behavior: 'smooth' });
   document.getElementById('clTries').innerText = coverLetterTries;
+  updateCoverLetterUI();
   // Pre-fill JD if they provided one earlier
   const initialJD = document.getElementById('jobDescription').value;
   if(initialJD) document.getElementById('clDescription').value = initialJD;
 }
 async function generateCoverLetter() {
-  if (coverLetterTries <= 0) return alert("You have used all 3 cover letter attempts.");
-  if (!globalResumeText) return alert("Please upload and scan a resume first.");
+  const errBox = document.getElementById('clErrorBox');
+  errBox.classList.add('d-none'); // Hide previous errors
+  if (coverLetterTries <= 0) return;
+  if (!globalResumeText) {
+    errBox.innerText = "Please upload and scan a resume first.";
+    errBox.classList.remove('d-none');
+    return;
+  }
   const company = document.getElementById('clCompany').value;
   const title = document.getElementById('clTitle').value;
   const jd = document.getElementById('clDescription').value;
+  const btn = document.getElementById('generateClBtn');
+  if(!company || !title) {
+    errBox.innerText = "Please provide the Company Name and Job Title.";
+    errBox.classList.remove('d-none');
+    return;
+  }
   localStorage.setItem('savedCompany', company);
   localStorage.setItem('savedTitle', title);
   localStorage.setItem('savedJD', jd);
-  const btn = document.getElementById('generateClBtn');
-  if(!company || !title) return alert("Please provide the Company Name and Job Title.");
   btn.disabled = true;
-  btn.innerHTML = '<div class="spinner-border spinner-border-sm me-2"></div>Generating...';
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating...';
   try {
     const response = await fetch(CL_API_URL, {
       method: 'POST',
@@ -509,15 +533,28 @@ async function generateCoverLetter() {
     if (!response.ok) throw new Error(data.error || 'Failed to generate cover letter.');
     document.getElementById('clOutput').value = data.coverLetter;
     document.getElementById('clOutputSection').classList.remove('d-none');
-    // Deduct Try
     coverLetterTries--;
-    localStorage.setItem('clTries', coverLetterTries);
-    document.getElementById('clTries').innerText = coverLetterTries;
+    localStorage.setItem('clTries', coverLetterTries.toString());
+    updateCoverLetterUI();
   } catch (err) {
-    alert(err.message);
-  } finally {
+    errBox.innerText = err.message;
+    errBox.classList.remove('d-none');
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-magic me-2"></i>Generate Cover Letter';
   }
+}
+function copyCoverLetter() {
+  const outputText = document.getElementById('clOutput').value;
+  navigator.clipboard.writeText(outputText);
+  const btn = document.getElementById('copyClBtn');
+  const originalHTML = btn.innerHTML;
+  // Turn green and show "Copied!"
+  btn.classList.replace('btn-outline-secondary', 'btn-success');
+  btn.innerHTML = '<i class="fas fa-check me-2"></i>Copied!';
+  // Revert back after 2 seconds
+  setTimeout(() => {
+    btn.classList.replace('btn-success', 'btn-outline-secondary');
+    btn.innerHTML = originalHTML;
+  }, 2000);
 }
 </script>
