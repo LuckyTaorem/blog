@@ -1,15 +1,48 @@
 ---
-title: "AI Resume ATS Scanner"
-description: "Upload your resume to check your ATS score and get actionable feedback."
+title: "Free AI Resume Scanner | Check Your ATS Score Instantly"
+description: "Upload your resume to our free AI-powered ATS scanner. Get an instant compatibility score, missing keyword analysis, and actionable feedback to land more interviews."
 type: "page"
 images: 
   - "/images/ats-thumbnail.png"
 ---
 
+<!-- Custom WebApplication Schema for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "AI Resume ATS Scanner",
+  "description": "An AI-powered Applicant Tracking System (ATS) resume scanner that provides instant compatibility scores, keyword optimization, and formatting feedback.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web browser",
+  "url": "https://ltdeveloperblogs.github.io/ats-scanner/",
+  "provider": {
+    "@type": "Person",
+    "name": "Taorem Lucky Singh"
+  },
+  "featureList": [
+    "Instant ATS Score Calculation",
+    "Missing Keyword Detection",
+    "Spelling and Grammar Checks",
+    "Actionable Resume Feedback"
+  ],
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "description": "100% Free Resume Scan"
+  }
+}
+</script>
+
 <!-- Client-Side Parsing Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
 <script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit" async defer></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 </script>
@@ -29,6 +62,10 @@ images:
     </div>
     <div class="mb-4 max-w-md mx-auto">
       <input type="file" id="resumeFile" class="form-control form-control-lg border-subtle" accept=".pdf, .docx" />
+    </div>
+    <div class="mb-4 max-w-md mx-auto">
+      <label class="form-label fw-bold text-body-secondary small"><i class="fas fa-briefcase me-2"></i>Target Job Description (Optional)</label>
+      <textarea id="jobDescription" class="form-control border-subtle" rows="3" placeholder="Paste the job description here for a highly targeted ATS score..."></textarea>
     </div>
     <div id="recaptcha-wrapper" class="mb-4 d-flex justify-content-center">
       <div id="recaptcha-container"></div>
@@ -52,6 +89,20 @@ images:
 
   <!-- Results Dashboard -->
   <div id="resultsLayout" class="mt-5 d-none">
+    <div class="d-flex flex-wrap gap-3 justify-content-end mb-4">
+      <button class="btn btn-outline-primary fw-bold rounded-pill px-4" onclick="downloadPDF()">
+        <i class="fas fa-download me-2"></i>Download PDF Report
+      </button>
+      <button class="btn btn-primary fw-bold rounded-pill px-4" onclick="openCoverLetterPanel()">
+        <i class="fas fa-pen-nib me-2"></i>Generate Cover Letter
+      </button>
+    </div>
+    <div class="card p-4 shadow-sm border-0 bg-body-tertiary rounded-4 mb-4">
+      <h5 class="fw-bold mb-3"><i class="fas fa-chart-pie text-primary me-2"></i>Score Analytics</h5>
+      <div style="position: relative; height:300px; width:100%">
+        <canvas id="atsChart"></canvas>
+      </div>
+    </div>
     <div class="card p-4 shadow-sm border-0 bg-body-tertiary rounded-4 mb-4">
       <h4 class="fw-bold mb-4"><i class="fas fa-file-contract text-primary me-2"></i>Extracted Resume Data</h4>
       <div class="row g-4 mb-4">
@@ -147,26 +198,53 @@ images:
       <ol id="listSteps" class="mb-0 ps-3 text-body-secondary"></ol>
     </div>
   </div>
+  <div id="coverLetterSection" class="card p-5 mt-5 shadow-sm border-0 bg-body-tertiary rounded-4 d-none">
+    <h4 class="fw-bold mb-3"><i class="fas fa-robot text-primary me-2"></i>AI Cover Letter Generator</h4>
+    <p class="text-body-secondary">Tries remaining: <strong id="clTries" class="text-primary">3</strong>/3</p>
+    <div class="row g-3 mb-4">
+      <div class="col-md-6">
+        <label class="form-label fw-bold small">Company Name</label>
+        <input type="text" id="clCompany" class="form-control" placeholder="e.g. Google">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold small">Job Title</label>
+        <input type="text" id="clTitle" class="form-control" placeholder="e.g. Senior PHP Developer">
+      </div>
+      <div class="col-12">
+        <label class="form-label fw-bold small">Job Description</label>
+        <textarea id="clDescription" class="form-control" rows="4" placeholder="Paste the job description here..."></textarea>
+      </div>
+    </div>
+    <button id="generateClBtn" class="btn btn-success fw-bold w-100 mb-4" onclick="generateCoverLetter()">
+      <i class="fas fa-magic me-2"></i>Generate Cover Letter
+    </button>
+    <div id="clOutputSection" class="d-none">
+      <label class="form-label fw-bold small">Generated Cover Letter</label>
+      <textarea id="clOutput" class="form-control mb-2" rows="12"></textarea>
+      <button class="btn btn-outline-secondary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('clOutput').value); alert('Copied to clipboard!')">
+        <i class="fas fa-copy me-2"></i>Copy to Clipboard
+      </button>
+    </div>
+  </div>
 </div>
-
 <script>
 // ==========================================
 // CONFIGURATION: Set your Vercel API URL here
 // ==========================================
 const API_URL = 'https://resume-ats-api.vercel.app/api/analyze';
-
-// --- NEW: RECAPTCHA THEME & TOGGLE LOGIC ---
+const CL_API_URL = 'https://resume-ats-api.vercel.app/api/cover-letter';
+// NEW: Global State
+let globalResumeText = "";
+let atsChartInstance = null;
+let coverLetterTries = parseInt(localStorage.getItem('clTries')) || 3;
 let recaptchaWidgetId;
-
 function renderRecaptcha() {
   const htmlTheme = document.documentElement.getAttribute("data-bs-theme") || 'light';
   const wrapper = document.getElementById("recaptcha-wrapper");
   const analyzeBtn = document.getElementById("analyzeBtn");
-
   // To prevent ghost iframes, we completely wipe and rebuild the HTML container
   wrapper.innerHTML = '<div id="recaptcha-container"></div>';
   analyzeBtn.disabled = true;
-
   recaptchaWidgetId = grecaptcha.render('recaptcha-container', {
     'sitekey': '6LeDECYtAAAAAMUFxP8A8zQv2NhFMMtn1DSpM8-L', // Your Site Key
     'theme': htmlTheme === 'dark' ? 'dark' : 'light',
@@ -178,12 +256,10 @@ function renderRecaptcha() {
     }
   });
 }
-
 // Render when Google API loads
 window.onRecaptchaLoad = function() {
   renderRecaptcha();
 };
-
 // Rebuild when the user toggles dark mode
 const observer = new MutationObserver(() => {
   if (typeof grecaptcha !== "undefined") {
@@ -191,25 +267,21 @@ const observer = new MutationObserver(() => {
   }
 });
 observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-bs-theme"] });
-
 // UI Error Handler Helper
 function showError(msg) {
   const errBox = document.getElementById('errorAlert');
   document.getElementById('errorMessage').innerText = msg;
   errBox.classList.remove('d-none');
 }
-
 function hideError() {
   document.getElementById('errorAlert').classList.add('d-none');
 }
-
 // 24h Lock Initialization
 document.addEventListener("DOMContentLoaded", () => {
   const lastScan = localStorage.getItem('lastScanTime');
   if (lastScan) {
     const timePassed = Date.now() - parseInt(lastScan);
     const cooldownPeriod = 24 * 60 * 60 * 1000;
-
     if (timePassed < cooldownPeriod) {
       document.getElementById('uploadSection').classList.add('d-none');
       document.getElementById('cooldownSection').classList.remove('d-none');
@@ -220,7 +292,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
-
 // Main Logic
 async function processFile() {
   hideError();
@@ -228,24 +299,18 @@ async function processFile() {
   if (!recaptchaResponse) {
     return showError('Please complete the reCAPTCHA verification.');
   }
-
   const fileInput = document.getElementById('resumeFile');
   if (!fileInput.files.length) return showError('Please select a PDF or DOCX file.');
-
   const file = fileInput.files[0];
   const fileExtension = file.name.split('.').pop().toLowerCase();
-
   if (fileExtension !== 'pdf' && fileExtension !== 'docx') {
     return showError('Only .pdf and .docx files are allowed.');
   }
-
   const btn = document.getElementById('analyzeBtn');
   const loader = document.getElementById('loading');
   const loadText = document.getElementById('loadingText');
-  
   btn.disabled = true;
   loader.classList.remove('d-none');
-
   try {
     let extractedText = '';
     if (fileExtension === 'pdf') {
@@ -255,29 +320,29 @@ async function processFile() {
       loadText.innerText = "Extracting text from DOCX...";
       extractedText = await extractTextFromDOCX(file);
     }
-
     if (!extractedText.trim()) throw new Error("Could not extract text. Make sure the file contains text, not just images.");
-
+    // NEW: Save text globally for the Cover Letter generator
+    globalResumeText = extractedText;
+    const jdText = document.getElementById('jobDescription').value;
     loadText.innerText = "AI is analyzing your profile matrix...";
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ resumeText: extractedText })
+      body: JSON.stringify({ 
+        resumeText: extractedText,
+        jobDescription: jdText,
+        sendEmailReport: true
+        })
     });
-
     const data = await response.json();
-
     if (!response.ok) {
       throw new Error(data.error || 'Server Error: Check your API Key and Vercel KV settings.');
     }
-
     // 3. Lock UI & Store Cooldown
     localStorage.setItem('lastScanTime', Date.now().toString());
-
     // --- Populate Extracted Data ---
     document.getElementById('extEmail').innerText = data.extractedData.email;
     document.getElementById('extPhone').innerText = data.extractedData.phone;
-    
     // Map Social Links
     const socialContainer = document.getElementById('extSocials');
     socialContainer.innerHTML = '';
@@ -288,36 +353,30 @@ async function processFile() {
     } else {
       socialContainer.innerHTML = '<span class="text-muted small">No links found</span>';
     }
-
     // Map Extracted Lists
     mapListToUI('extEducation', data.extractedData.education);
     mapListToUI('extCertifications', data.extractedData.certifications);
     mapListToUI('extWork', data.extractedData.workExperience);
     mapListToUI('extProjects', data.extractedData.projects);
-
     // Map Grammar and Quality Checks
     mapListToUI('listGrammar', data.qualityCheck.spellingAndGrammarIssues);
     mapListToUI('listQuality', data.qualityCheck.generalFeedback);
-
     document.getElementById('resRole').innerText = data.detectedRole;
     document.getElementById('resScore').innerText = data.atsScore;
     document.getElementById('feedFormat').innerText = data.breakdown.formatting.feedback;
     document.getElementById('feedKeywords').innerText = data.breakdown.keywords.feedback;
     document.getElementById('feedImpact').innerText = data.breakdown.impact.feedback;
-
     mapListToUI('listStrengths', data.strengths);
     mapListToUI('listWeaknesses', data.weaknesses);
     mapListToUI('listSteps', data.actionableSteps);
-
     const badgeContainer = document.getElementById('badgeKeywords');
     badgeContainer.innerHTML = '';
     data.missingKeywords.forEach(kw => {
       badgeContainer.innerHTML += `<span class="badge bg-secondary text-light me-2 mb-2 p-2 fs-6 rounded-pill">${kw}</span>`;
     });
-
+    renderChart(data.breakdown.formatting.score, data.breakdown.keywords.score, data.breakdown.impact.score);
     document.getElementById('uploadSection').classList.add('d-none');
     document.getElementById('resultsLayout').classList.remove('d-none');
-
   } catch (err) {
     showError(err.message);
     grecaptcha.reset(recaptchaWidgetId);
@@ -326,7 +385,6 @@ async function processFile() {
     loader.classList.add('d-none');
   }
 }
-
 function mapListToUI(elementId, arrayData) {
   const ul = document.getElementById(elementId);
   ul.innerHTML = '';
@@ -339,7 +397,6 @@ function mapListToUI(elementId, arrayData) {
     ul.innerHTML = '<li>No data provided.</li>';
   }
 }
-
 async function extractTextFromPDF(file) {
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -352,10 +409,84 @@ async function extractTextFromPDF(file) {
   }
   return fullText;
 }
-
 async function extractTextFromDOCX(file) {
   const arrayBuffer = await file.arrayBuffer();
   const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
   return result.value;
+}
+// --- NEW: Chart.js Initialization ---
+function renderChart(formatScore, keywordScore, impactScore) {
+  const ctx = document.getElementById('atsChart').getContext('2d');
+  if (atsChartInstance) atsChartInstance.destroy();
+  atsChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Formatting', 'Keywords', 'Impact'],
+      datasets: [{
+        label: 'Category Score',
+        data: [formatScore, keywordScore, impactScore],
+        backgroundColor: ['rgba(54, 162, 235, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)'],
+        borderColor: ['rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { y: { beginAtZero: true, max: 100 } }
+    }
+  });
+}
+// --- NEW: PDF Export Logic ---
+function downloadPDF() {
+  const element = document.getElementById('resultsLayout');
+  const opt = {
+    margin:       0.5,
+    filename:     'ATS_Resume_Report.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  html2pdf().set(opt).from(element).save();
+}
+// --- NEW: Cover Letter Generator Logic ---
+function openCoverLetterPanel() {
+  document.getElementById('coverLetterSection').classList.remove('d-none');
+  document.getElementById('coverLetterSection').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('clTries').innerText = coverLetterTries;
+  // Pre-fill JD if they provided one earlier
+  const initialJD = document.getElementById('jobDescription').value;
+  if(initialJD) document.getElementById('clDescription').value = initialJD;
+}
+async function generateCoverLetter() {
+  if (coverLetterTries <= 0) return alert("You have used all 3 cover letter attempts.");
+  if (!globalResumeText) return alert("Please upload and scan a resume first.");
+  const company = document.getElementById('clCompany').value;
+  const title = document.getElementById('clTitle').value;
+  const jd = document.getElementById('clDescription').value;
+  const btn = document.getElementById('generateClBtn');
+  if(!company || !title) return alert("Please provide the Company Name and Job Title.");
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner-border spinner-border-sm me-2"></div>Generating...';
+  try {
+    const response = await fetch(CL_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resumeText: globalResumeText, company, title, jobDescription: jd })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Failed to generate cover letter.');
+    document.getElementById('clOutput').value = data.coverLetter;
+    document.getElementById('clOutputSection').classList.remove('d-none');
+    // Deduct Try
+    coverLetterTries--;
+    localStorage.setItem('clTries', coverLetterTries);
+    document.getElementById('clTries').innerText = coverLetterTries;
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-magic me-2"></i>Generate Cover Letter';
+  }
 }
 </script>
