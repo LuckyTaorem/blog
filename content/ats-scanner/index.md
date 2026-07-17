@@ -63,9 +63,11 @@ images:
     <div class="mb-4 max-w-md mx-auto">
       <input type="file" id="resumeFile" class="form-control form-control-lg border-subtle" accept=".pdf, .docx" />
     </div>
-    <div class="mb-4 max-w-md mx-auto">
-      <label class="form-label fw-bold text-body-secondary small"><i class="fas fa-briefcase me-2"></i>Target Job Description (Optional)</label>
-      <textarea id="jobDescription" class="form-control border-subtle" rows="3" placeholder="Paste the job description here for a highly targeted ATS score..."></textarea>
+    <div class="mb-4 max-w-md mx-auto form-floating shadow-sm rounded-4">
+      <textarea id="jobDescription" class="form-control border-0 bg-body-secondary" placeholder="Paste the job description here..." style="height: 120px; border-radius: 1rem; resize: none;"></textarea>
+      <label for="jobDescription" class="text-body-secondary fw-bold small">
+        <i class="fas fa-briefcase me-2 text-primary"></i>Target Job Description (Optional)
+      </label>
     </div>
     <div id="recaptcha-wrapper" class="mb-4 d-flex justify-content-center">
       <div id="recaptcha-container"></div>
@@ -81,6 +83,35 @@ images:
     <p class="mb-0">You have already scanned a resume today. You can scan another one in <strong id="timeRemaining"></strong>.</p>
   </div>
 
+  <div id="coverLetterSection" class="card p-5 mt-5 shadow-sm border-0 bg-body-tertiary rounded-4 d-none">
+    <h4 class="fw-bold mb-3"><i class="fas fa-robot text-primary me-2"></i>AI Cover Letter Generator</h4>
+    <p class="text-body-secondary">Tries remaining: <strong id="clTries" class="text-primary">3</strong>/3</p>
+    <div class="row g-3 mb-4">
+      <div class="col-md-6">
+        <label class="form-label fw-bold small">Company Name</label>
+        <input type="text" id="clCompany" class="form-control" placeholder="e.g. Google">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold small">Job Title</label>
+        <input type="text" id="clTitle" class="form-control" placeholder="e.g. Senior PHP Developer">
+      </div>
+      <div class="col-12">
+        <label class="form-label fw-bold small">Job Description</label>
+        <textarea id="clDescription" class="form-control" rows="4" placeholder="Paste the job description here..."></textarea>
+      </div>
+    </div>
+    <button id="generateClBtn" class="btn btn-success fw-bold w-100 mb-4" onclick="generateCoverLetter()">
+      <i class="fas fa-magic me-2"></i>Generate Cover Letter
+    </button>
+    <div id="clOutputSection" class="d-none">
+      <label class="form-label fw-bold small">Generated Cover Letter</label>
+      <textarea id="clOutput" class="form-control mb-2" rows="12"></textarea>
+      <button class="btn btn-outline-secondary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('clOutput').value); alert('Copied to clipboard!')">
+        <i class="fas fa-copy me-2"></i>Copy to Clipboard
+      </button>
+    </div>
+  </div>
+
   <!-- Loading Spinner -->
   <div id="loading" class="text-center my-5 d-none">
     <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
@@ -89,7 +120,8 @@ images:
 
   <!-- Results Dashboard -->
   <div id="resultsLayout" class="mt-5 d-none">
-    <div class="d-flex flex-wrap gap-3 justify-content-end mb-4">
+    <!-- Action Bar (PDF & Cover Letter) -->
+    <div id="pdfActionButtons" class="d-flex flex-wrap gap-3 justify-content-end mb-4">
       <button class="btn btn-outline-primary fw-bold rounded-pill px-4" onclick="downloadPDF()">
         <i class="fas fa-download me-2"></i>Download PDF Report
       </button>
@@ -198,34 +230,6 @@ images:
       <ol id="listSteps" class="mb-0 ps-3 text-body-secondary"></ol>
     </div>
   </div>
-  <div id="coverLetterSection" class="card p-5 mt-5 shadow-sm border-0 bg-body-tertiary rounded-4 d-none">
-    <h4 class="fw-bold mb-3"><i class="fas fa-robot text-primary me-2"></i>AI Cover Letter Generator</h4>
-    <p class="text-body-secondary">Tries remaining: <strong id="clTries" class="text-primary">3</strong>/3</p>
-    <div class="row g-3 mb-4">
-      <div class="col-md-6">
-        <label class="form-label fw-bold small">Company Name</label>
-        <input type="text" id="clCompany" class="form-control" placeholder="e.g. Google">
-      </div>
-      <div class="col-md-6">
-        <label class="form-label fw-bold small">Job Title</label>
-        <input type="text" id="clTitle" class="form-control" placeholder="e.g. Senior PHP Developer">
-      </div>
-      <div class="col-12">
-        <label class="form-label fw-bold small">Job Description</label>
-        <textarea id="clDescription" class="form-control" rows="4" placeholder="Paste the job description here..."></textarea>
-      </div>
-    </div>
-    <button id="generateClBtn" class="btn btn-success fw-bold w-100 mb-4" onclick="generateCoverLetter()">
-      <i class="fas fa-magic me-2"></i>Generate Cover Letter
-    </button>
-    <div id="clOutputSection" class="d-none">
-      <label class="form-label fw-bold small">Generated Cover Letter</label>
-      <textarea id="clOutput" class="form-control mb-2" rows="12"></textarea>
-      <button class="btn btn-outline-secondary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('clOutput').value); alert('Copied to clipboard!')">
-        <i class="fas fa-copy me-2"></i>Copy to Clipboard
-      </button>
-    </div>
-  </div>
 </div>
 <script>
 // ==========================================
@@ -276,9 +280,10 @@ function showError(msg) {
 function hideError() {
   document.getElementById('errorAlert').classList.add('d-none');
 }
-// 24h Lock Initialization
+// 24h Lock Initialization & State Recovery
 document.addEventListener("DOMContentLoaded", () => {
   const lastScan = localStorage.getItem('lastScanTime');
+  const savedResume = localStorage.getItem('savedResumeText');
   if (lastScan) {
     const timePassed = Date.now() - parseInt(lastScan);
     const cooldownPeriod = 24 * 60 * 60 * 1000;
@@ -287,8 +292,17 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById('cooldownSection').classList.remove('d-none');
       const hoursLeft = Math.ceil((cooldownPeriod - timePassed) / (1000 * 60 * 60));
       document.getElementById('timeRemaining').innerText = hoursLeft + ' hours';
+      // NEW: Restore Cover Letter access during cooldown
+      if (savedResume) {
+        globalResumeText = savedResume;
+        document.getElementById('coverLetterSection').classList.remove('d-none');
+        document.getElementById('clDescription').value = localStorage.getItem('savedJD') || '';
+        document.getElementById('clCompany').value = localStorage.getItem('savedCompany') || '';
+        document.getElementById('clTitle').value = localStorage.getItem('savedTitle') || '';
+      }
     } else {
       localStorage.removeItem('lastScanTime');
+      localStorage.removeItem('savedResumeText');
     }
   }
 });
@@ -338,8 +352,10 @@ async function processFile() {
     if (!response.ok) {
       throw new Error(data.error || 'Server Error: Check your API Key and Vercel KV settings.');
     }
-    // 3. Lock UI & Store Cooldown
+    // Lock UI & Store Cooldown & Persist Data
     localStorage.setItem('lastScanTime', Date.now().toString());
+    localStorage.setItem('savedResumeText', globalResumeText);
+    localStorage.setItem('savedJD', jdText);
     // --- Populate Extracted Data ---
     document.getElementById('extEmail').innerText = data.extractedData.email;
     document.getElementById('extPhone').innerText = data.extractedData.phone;
@@ -438,16 +454,28 @@ function renderChart(formatScore, keywordScore, impactScore) {
   });
 }
 // --- NEW: PDF Export Logic ---
+// --- UPDATED: PDF Export Logic ---
 function downloadPDF() {
   const element = document.getElementById('resultsLayout');
+  const actionBtns = document.getElementById('pdfActionButtons');
+  // Hide buttons so they don't appear in the PDF
+  actionBtns.classList.add('d-none');
   const opt = {
-    margin:       0.5,
+    margin:       0.3, // Reduced margin
     filename:     'ATS_Resume_Report.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2 },
-    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    image:        { type: 'jpeg', quality: 1 },
+    html2canvas:  { 
+      scale: 2, 
+      scrollY: 0, // Fixes the huge blank space at the top
+      useCORS: true 
+    },
+    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] } // Fixes text clipping at the bottom
   };
-  html2pdf().set(opt).from(element).save();
+  html2pdf().set(opt).from(element).save().then(() => {
+    // Reveal buttons again after PDF generates
+    actionBtns.classList.remove('d-none');
+  });
 }
 // --- NEW: Cover Letter Generator Logic ---
 function openCoverLetterPanel() {
@@ -464,6 +492,9 @@ async function generateCoverLetter() {
   const company = document.getElementById('clCompany').value;
   const title = document.getElementById('clTitle').value;
   const jd = document.getElementById('clDescription').value;
+  localStorage.setItem('savedCompany', company);
+  localStorage.setItem('savedTitle', title);
+  localStorage.setItem('savedJD', jd);
   const btn = document.getElementById('generateClBtn');
   if(!company || !title) return alert("Please provide the Company Name and Job Title.");
   btn.disabled = true;
