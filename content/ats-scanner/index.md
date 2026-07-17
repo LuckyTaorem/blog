@@ -1,6 +1,6 @@
 ---
-title: "Free AI Resume Scanner | Check Your ATS Score Instantly"
-description: "Upload your resume to our free AI-powered ATS scanner. Get an instant compatibility score, missing keyword analysis, and actionable feedback to land more interviews."
+title: "Free AI Resume Scanner & Cover Letter Generator | Check ATS Score"
+description: "Upload your resume to our free AI ATS scanner. Get an instant score, match job descriptions, find missing keywords, and generate tailored cover letters."
 type: "page"
 images: 
   - "/images/ats-thumbnail.png"
@@ -11,26 +11,30 @@ images:
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "AI Resume ATS Scanner",
-  "description": "An AI-powered Applicant Tracking System (ATS) resume scanner that provides instant compatibility scores, keyword optimization, and formatting feedback.",
+  "name": "AI Resume ATS Scanner & Cover Letter Generator",
+  "description": "An AI-powered Applicant Tracking System (ATS) resume scanner and cover letter generator that provides instant compatibility scores, targeted job description matching, keyword optimization, and downloadable PDF reports.",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web browser",
   "url": "https://ltdeveloperblogs.github.io/ats-scanner/",
   "provider": {
     "@type": "Person",
-    "name": "Taorem Lucky Singh"
+    "name": "Taorem Lucky Singh",
+    "jobTitle": "WordPress and PHP Developer"
   },
   "featureList": [
     "Instant ATS Score Calculation",
+    "Target Job Description Matching",
     "Missing Keyword Detection",
     "Spelling and Grammar Checks",
-    "Actionable Resume Feedback"
+    "Actionable Resume Feedback",
+    "AI Cover Letter Generation",
+    "Downloadable PDF Reports"
   ],
   "offers": {
     "@type": "Offer",
     "price": "0",
     "priceCurrency": "USD",
-    "description": "100% Free Resume Scan"
+    "description": "100% Free Resume Scan and Cover Letter Generation"
   }
 }
 </script>
@@ -108,7 +112,7 @@ images:
     </button>
     <div id="clOutputSection" class="d-none">
       <label class="form-label fw-bold small">Generated Cover Letter</label>
-      <textarea id="clOutput" class="form-control mb-2 bg-white" rows="12" readonly></textarea>
+      <textarea id="clOutput" class="form-control mb-2" rows="12" readonly></textarea>
       <!-- UPGRADED: Copy Button -->
       <button id="copyClBtn" class="btn btn-outline-secondary btn-sm fw-bold" onclick="copyCoverLetter()">
         <i class="fas fa-copy me-2"></i>Copy to Clipboard
