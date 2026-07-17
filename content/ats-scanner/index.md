@@ -89,8 +89,15 @@ images:
   </div>
 
   <div id="coverLetterSection" class="card p-5 mt-5 shadow-sm border-0 bg-body-tertiary rounded-4 d-none">
-    <h4 class="fw-bold mb-3"><i class="fas fa-robot text-primary me-2"></i>AI Cover Letter Generator</h4>
-    <p class="text-body-secondary">Tries remaining: <strong id="clTries" class="text-primary">3</strong>/3</p>
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 border-bottom pb-3">
+      <div>
+        <h4 class="fw-bold mb-1"><i class="fas fa-robot text-primary me-2"></i>AI Cover Letter Generator</h4>
+        <p class="text-body-secondary mb-0">Tries remaining today: <strong id="clTries" class="text-primary">3</strong>/3</p>
+      </div>
+      <a href="/cover-letter-generator/" class="btn btn-outline-secondary btn-sm fw-bold rounded-pill px-3">
+        <i class="fas fa-file-upload me-2"></i>Use a Different Resume
+      </a>
+    </div>
     <div class="row g-3 mb-4">
       <div class="col-md-6">
         <label class="form-label fw-bold small">Company Name</label>
