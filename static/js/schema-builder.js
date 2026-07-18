@@ -119,6 +119,13 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (err) {
       aiError.textContent = err.message;
       aiError.classList.remove('d-none');
+      
+      // If the backend API says the limit is reached, instantly lock the frontend UI
+      if (err.message.toLowerCase().includes('limit')) {
+        aiTries = 0;
+        localStorage.setItem('schemaAiTries', 0);
+        updateAiUI();
+      }
     } finally {
       if (aiTries > 0) {
         generateAiBtn.disabled = false;
@@ -288,6 +295,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const blankItem = generateBlankTemplate(arr[0]);
       arr.push(blankItem);
       
+      // Clear AI cache so the manual changes take over
+      aiGeneratedSchema = null;
+      
       // Rebuild UI and update Code
       renderFormFromObject(currentManualSchemaObj);
       generateOutput();
@@ -305,6 +315,10 @@ document.addEventListener("DOMContentLoaded", () => {
     
     if (Array.isArray(arr)) {
       arr.splice(indexToRemove, 1);
+      
+      // Clear AI cache so the manual changes take over
+      aiGeneratedSchema = null;
+      
       renderFormFromObject(currentManualSchemaObj);
       generateOutput();
     }
