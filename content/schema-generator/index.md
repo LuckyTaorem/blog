@@ -46,6 +46,18 @@ type: "page"
     transform: translateX(-50%);
     padding: 0 1rem;
   }
+  .sidebar-overflow{
+    z-index:0;
+  }
+  .col.col-md-3.col-lg-2.d-none.d-md-block.pt-5{
+    z-index:-5;
+  }
+  .col-lg-6{
+    width:100%;
+  }
+  span.badge.bg-secondary.position-absolute.top-0.end-0.m-3.opacity-50.user-select-none{
+    z-index:2;
+  }
 </style>
 
 <!-- Replace your old container-fluid div with this -->
@@ -85,11 +97,32 @@ type: "page"
         <div class="h5 fw-bold mb-3 border-bottom pb-2">Manual Builder</div>
         <label class="form-label small fw-bold">Select Schema Type</label>
         <select id="schemaTypeSelector" class="form-select mb-4 border-subtle">
+          <option value="article">News Article</option>
+          <option value="books">Books</option>
+          <option value="breadcrumb">Breadcrumb List</option>
+          <option value="Carousel">Carousel</option>
+          <option value="dataset">Dataset</option>
+          <option value="forum">Discussion Forum</option>
+          <option value="Quiz">Quiz</option>
+          <option value="EmployerAggregateRating">Employer Rating</option>
+          <option value="Event">Event</option>
+          <option value="Image">Image Object</option>
+          <option value="JobPosting">Job Posting</option>
+          <option value="LocalBusiness">Local Business (Restaurant)</option>
+          <option value="Organization">Organization</option>
+          <option value="Recipe">Recipe</option>
+          <option value="Video">Video Object</option>
+          <option value="Movie">Movie List</option>
+          <option value="Product">Product</option>
           <option value="faq">FAQ Page</option>
-          <option value="article">Article / Blog Post</option>
           <option value="course">Course</option>
         </select>
-        <div id="dynamicFormContainer"></div>
+        <div class="col-lg-6">
+  <!-- Inner scrolling container -->
+          <div class="pe-2" style="max-height: calc(100vh - 100px); overflow-y: auto; overflow-x: hidden;">
+            <div id="dynamicFormContainer"></div>
+          </div>
+        </div>
       </div>
     </div>
     <!-- RIGHT COLUMN: Live Code Output -->
@@ -118,12 +151,15 @@ type: "page"
         <div class="p-4 position-relative" style="background-color: #1e1e1e; height: 100%; min-height: 550px; overflow-y: auto;">
           <!-- Visual hint for users -->
           <span class="badge bg-secondary position-absolute top-0 end-0 m-3 opacity-50 user-select-none">
-            <i class="fas fa-edit me-1"></i>Editable
+            <i class="fas fa-edit me-1"></i>ReadOnly
           </span>
-          <!-- Added contenteditable="true" and outline:none -->
-          <pre><code id="codeOutput" contenteditable="true" spellcheck="false" style="color: #4af626; font-family: 'Courier New', Courier, monospace; font-size: 14px; white-space: pre-wrap; word-break: break-all; outline: none;">
-// Select a schema type to begin...
-          </code></pre>
+          <div class="col-lg-6">
+  <!-- Inner scrolling container -->
+  <div class="pe-2 sticky-top" style="max-height: calc(200vh - 400px); top: 100px; z-index: 1; overflow-y: auto; overflow-x: hidden;">
+    <!-- Code block with word-wrap forced -->
+    <pre id="codeOutput" style="white-space: pre-wrap; word-break: break-word;"></pre>
+  </div>
+</div>
         </div>
       </div>
     </div>
