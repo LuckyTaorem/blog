@@ -10,7 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const generateAiBtn = document.getElementById('generateAiBtn');
   const aiPrompt = document.getElementById('aiPrompt');
   const aiError = document.getElementById('aiError');
-  let aiTries = parseInt(localStorage.getItem('schemaAiTries')) || 3;
+  let storedTries = localStorage.getItem('schemaAiTries');
+  let aiTries = storedTries !== null ? parseInt(storedTries) : 3;
   let aiGeneratedSchema = null; 
 
   let currentSchema = 'faq';
