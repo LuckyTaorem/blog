@@ -19,208 +19,285 @@
   .article-group:hover .title-link {
     color: #f97316 !important; 
   }
+  /* Container Fixes */
+.hero-container {
+  /* No overflow:hidden here, allowing the dropdown to flow naturally */
+  z-index: 1;
+}
+
+.hero-glow {
+  background: radial-gradient(circle, rgba(var(--bs-primary-rgb), 0.08) 0%, transparent 60%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Premium Button Hover Effects */
+.premium-btn,
+.premium-btn-outline {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.premium-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px -10px rgba(var(--bs-primary-rgb), 0.8) !important;
+}
+
+.premium-btn-outline:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.15) !important;
+  background-color: var(--bs-secondary-bg) !important;
+}
+
+/* Dropdown Animation */
+.premium-dropdown {
+  animation: slideFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top center;
+}
+
+@keyframes slideFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Tech Stack Pill Hover Effects */
+.tech-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: default;
+}
+
+.tech-pill i {
+  transition: transform 0.3s ease, color 0.3s ease;
+  font-size: 1rem;
+}
+
+.tech-pill:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 15px -8px rgba(0, 0, 0, 0.2) !important;
+  border-color: var(--bs-primary) !important;
+}
+
+.tech-pill:hover i {
+  transform: scale(1.15);
+  color: var(--bs-primary) !important;
+}
 </style>
 
 {{/* Fetch all posts */}}
 {{ $posts := where site.RegularPages "Section" "posts" }}
 
-{{/* Split posts into Featured (1), Secondary (4), and Grid (6) */}}
-{{ $featured := index $posts 0 }}
-{{ $secondary := first 4 (after 1 $posts) }}
-{{ $gridPosts := first 6 (after 5 $posts) }}
+{{/* Split posts for Landing Page layout */}}
+{{ $heroFeatures := first 3 $posts }}
+{{ $gridPosts := first 6 (after 3 $posts) }}
+
+<!-- Load FontAwesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- ENHANCED PROJECT & AI BLOG HERO -->
+<div class="hero-container row align-items-center py-5 my-4 my-lg-5 position-relative">
+  
+  <!-- Subtly animated AI-style background glow -->
+  <div class="hero-glow position-absolute top-50 start-50 translate-middle w-100 h-100"></div>
+  
+  <div class="col-lg-10 col-xl-8 mx-auto text-center position-relative" style="z-index: 2;">
+    
+    <!-- Top Badge -->
+    <span class="badge bg-primary-subtle text-primary mb-4 px-3 py-2 rounded-pill fw-bold text-uppercase border border-primary-subtle shadow-sm hero-badge">
+      <i class="fas fa-robot me-2"></i>Automated Content Infrastructure
+    </span>
+    
+    <!-- Main Headline -->
+    <h1 class="display-3 fw-bolder mb-4 hero-headline" style="letter-spacing: -0.03em; line-height: 1.1;">
+      Intelligent pipelines for the <span class="text-primary">modern web.</span>
+    </h1>
+    
+    <!-- Subheadline -->
+    <p class="lead text-secondary mb-5 fs-4 px-md-5 hero-subtext" style="opacity: 0.9; line-height: 1.6;">
+      Deploy AI-driven publishing architectures, dynamic web applications, and hands-free content engines that scale automatically.
+    </p>
+    
+    <!-- Call to Actions -->
+    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center mb-5">
+      
+      <!-- Projects Dropdown Button -->
+      <div class="dropdown">
+        <button class="btn btn-primary btn-lg px-5 py-3 fw-bold rounded-pill shadow-sm dropdown-toggle w-100 premium-btn" type="button" id="heroProjectsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-tools me-2"></i>Use Free Tools
+        </button>
+        <ul class="dropdown-menu shadow border-subtle mt-2 w-100 text-center premium-dropdown" aria-labelledby="heroProjectsDropdown">
+          <li><a class="dropdown-item py-2 fw-medium" href="{{ "ats-scanner/" | absURL }}">ATS Scanner</a></li>
+          <li><a class="dropdown-item py-2 fw-medium" href="{{ "cover-letter-generator/" | absURL }}">Cover Letter Generator</a></li>
+          <li><a class="dropdown-item py-2 fw-medium" href="{{ "schema-generator/" | absURL }}">Schema Generator</a></li>
+          <li><a class="dropdown-item py-2 fw-medium" href="{{ "web-scraper/" | absURL }}">Web Scraper</a></li>
+          <li><a class="dropdown-item py-2 fw-medium" href="{{ "csv-to-json/" | absURL }}">CSV to JSON</a></li>
+        </ul>
+      </div>
+
+      <!-- Blogs Button -->
+      <a href="{{ "posts/" | absURL }}" class="btn btn-outline-secondary bg-body btn-lg px-5 py-3 fw-bold rounded-pill premium-btn-outline">
+        <i class="fas fa-book-open me-2"></i>Explore Blogs
+      </a>
+    </div>
+
+    <!-- Tech Stack Trust Signals -->
+    <div class="mt-5 pt-4 border-top border-secondary border-opacity-25">
+      <p class="text-uppercase text-secondary fw-bold small mb-4" style="letter-spacing: 1.5px; font-size: 0.75rem;">Powered By</p>
+      
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+          <i class="fas fa-microchip"></i> AI Automation
+        </div>
+        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+          <i class="fas fa-database text-danger"></i> Redis Database
+        </div>
+        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+          <i class="fas fa-spider text-success"></i> Web Scraping
+        </div>
+        <!-- HTML5 -->
+        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+          <i class="fab fa-html5" style="color: #e34f26;"></i> HTML
+        </div>
+        
+        <!-- CSS3 -->
+        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+          <i class="fab fa-css3-alt" style="color: #1572b6;"></i> CSS
+        </div>
+        
+        <!-- JavaScript -->
+        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+          <i class="fab fa-js" style="color: #f7df1e;"></i> JavaScript
+        </div>
+        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+          <i class="fas fa-caret-up text-body"></i> Vercel
+        </div>
+        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+          <i class="fab fa-github text-body"></i> GitHub Actions
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
 
 <!-- ========================================== -->
-<!-- SECTION 1: THE EDITORIAL HERO AREA         -->
+<!-- SECTION 1: RECENT POSTS AS "FEATURES"      -->
 <!-- ========================================== -->
-<div class="row g-4 g-lg-5 mt-4">
+<div class="row g-4 mb-5 pb-5">
+  <div class="col-12 text-center mb-4">
+    <h2 class="fw-bolder h3">Latest Innovations & Architectures</h2>
+  </div>
   
-  <!-- 1. FEATURED STORY (Left Column) -->
-  {{ if $featured }}
-  <div class="col-lg-7">
-    <article class="featured-story position-relative article-group">
+  {{ range $heroFeatures }}
+  <div class="col-lg-4 col-md-6">
+    <article class="card h-100 border-0 bg-body-tertiary rounded-4 p-2 article-group shadow-sm" style="transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.classList.add('shadow');" onmouseout="this.style.transform='translateY(0)'; this.classList.remove('shadow');">
       
-      {{/* Featured Image */}}
-      <div class="img-wrapper rounded mb-4 shadow-sm w-100" style="aspect-ratio: 16/9; max-height: 420px;">
-        {{ $imgStr := $featured.Params.thumbnail | default (index $featured.Params.images 0) }}
-        {{ if $imgStr }}
-          {{ $res := resources.Get $imgStr }}
-          {{ if $res }}
-              {{ $optimized := $res.Resize "900x webp q80" }}
-              <img src="{{ $optimized.RelPermalink }}" loading="eager" fetchpriority="high" class="w-100 h-100 object-fit-cover" alt="{{ $featured.Title }}">
+      {{/* Image Container */}}
+      <div class="img-wrapper rounded-3 mb-3 w-100 overflow-hidden" style="aspect-ratio: 16/10;">
+        {{ $thumbStr := .Params.thumbnail | default (index .Params.images 0) }}
+        {{ if $thumbStr }}
+          {{ $thumbRes := resources.Get $thumbStr }}
+          {{ if $thumbRes }}
+              {{ $thumbOpt := $thumbRes.Resize "600x webp q80" }}
+              <img src="{{ $thumbOpt.RelPermalink }}" loading="eager" fetchpriority="high" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
           {{ else }}
-              <img src="{{ $imgStr | absURL }}" loading="eager" fetchpriority="high" class="w-100 h-100 object-fit-cover" alt="{{ $featured.Title }}">
+              <img src="{{ $thumbStr | absURL }}" loading="eager" fetchpriority="high" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
           {{ end }}
         {{ end }}
       </div>
 
-      {{/* Meta Data */}}
-      <div class="d-flex align-items-center mb-2">
-        <span class="text-uppercase fw-bold text-primary" style="font-size: 0.75rem; letter-spacing: 0.05em;">
-          {{ index $featured.Params.categories 0 | default "News" }}
-        </span>
-        <span class="mx-2 text-secondary opacity-50">&middot;</span>
-        <span class="text-secondary" style="font-size: 0.85rem;">{{ $featured.Date.Format "January 2, 2006" }}</span>
+      {{/* Card Content (Stripped of standard blog meta to look like a feature) */}}
+      <div class="card-body p-3 pt-1">
+        <div class="mb-2">
+          <span class="text-uppercase fw-bold text-primary" style="font-size: 0.7rem; letter-spacing: 0.1em;">
+            {{ index .Params.categories 0 | default "Highlight" }}
+          </span>
+        </div>
+        <h3 class="h5 fw-bold mb-2" style="line-height: 1.4;">
+          <a href="{{ .RelPermalink }}" class="text-decoration-none text-body stretched-link title-link">
+            {{ .Title }}
+          </a>
+        </h3>
+        <p class="text-secondary mb-0" style="font-size: 0.9rem; opacity: 0.85;">
+          {{ .Summary | plainify | truncate 100 }}
+        </p>
       </div>
       
-      {{/* Title & Excerpt */}}
-      <h2 class="display-6 fw-bold mb-3" style="line-height: 1.2;">
-        <a href="{{ $featured.RelPermalink }}" class="text-decoration-none text-body stretched-link title-link">
-          {{ $featured.Title }}
-        </a>
-      </h2>
-      <p class="text-secondary fs-5 mb-0" style="opacity: 0.9;">
-        {{ $featured.Summary | plainify | truncate 180 }}
-      </p>
-
     </article>
   </div>
   {{ end }}
-
-  <!-- 2. SECONDARY STORIES WITH THUMBNAILS (Right Column) -->
-  <div class="col-lg-5">
-    <div class="d-flex flex-column gap-4 mt-4 mt-lg-0">
-      
-      {{ range $index, $page := $secondary }}
-      <article class="list-story position-relative article-group {{ if not (eq $index 3) }}border-bottom pb-3{{ end }}">
-        
-        <div class="d-flex gap-3 align-items-start">
-          
-          {{/* Secondary Text Container */}}
-          <div class="flex-grow-1">
-            <div class="d-flex align-items-center mb-1">
-              <span class="text-uppercase fw-bold text-secondary" style="font-size: 0.65rem; letter-spacing: 0.05em;">
-                {{ index .Params.categories 0 | default "News" }}
-              </span>
-            </div>
-            <h3 class="h6 fw-bold mb-1" style="line-height: 1.4;">
-              <a href="{{ .RelPermalink }}" class="text-decoration-none text-body stretched-link title-link">
-                {{ .Title }}
-              </a>
-            </h3>
-            <p class="text-secondary mb-0 d-none d-sm-block" style="font-size: 0.85rem; opacity: 0.85;">
-              {{ .Summary | plainify | truncate 80 }}
-            </p>
-          </div>
-
-          {{/* Secondary Thumbnail Container */}}
-          <div class="img-wrapper rounded flex-shrink-0" style="width: 100px; height: 100px;">
-            {{ $thumbStr := .Params.thumbnail | default (index .Params.images 0) }}
-            {{ if $thumbStr }}
-              {{ $thumbRes := resources.Get $thumbStr }}
-              {{ if $thumbRes }}
-                  {{ $thumbOpt := $thumbRes.Resize "200x200 webp q80" }}
-                  <img src="{{ $thumbOpt.RelPermalink }}" loading="eager" fetchpriority="high" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
-              {{ else }}
-                  <img src="{{ $thumbStr | absURL }}" loading="eager" fetchpriority="high" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
-              {{ end }}
-            {{ end }}
-          </div>
-
-        </div>
-      </article>
-      {{ end }}
-
-    </div>
-  </div>
-
 </div>
 
-
 <!-- ========================================== -->
-<!-- SECTION 2: CLEAN EDITORIAL GRID            -->
+<!-- SECTION 2: ALTERNATING FEATURE SHOWCASE    -->
 <!-- ========================================== -->
 {{ if $gridPosts }}
 <div class="mt-5 pt-5 border-top border-secondary border-opacity-25">
-  <div class="d-flex align-items-baseline justify-content-between mb-4">
-    <h3 class="fw-bold m-0" style="font-size: 2rem; letter-spacing: -0.02em;">Deep Dives</h3>
+  
+  <div class="text-center mb-5 pb-4">
+    <h2 class="fw-bolder display-5" style="letter-spacing: -0.02em;">Deep Dives & Analysis</h2>
+    <p class="text-secondary fs-5 mt-2">Comprehensive breakdowns of the technology shaping our world.</p>
   </div>
   
-  <div class="row g-4">
+  <div class="d-flex flex-column gap-5 pb-5">
     {{ range $index, $page := $gridPosts }}
     
-    {{/* LAYOUT 1: The Massive Horizontal Featured Banner (Index 0) */}}
-    {{ if eq $index 0 }}
-    <div class="col-12 mb-4">
-      <article class="card border-0 bg-transparent article-group flex-md-row align-items-center gap-4 position-relative pb-4 border-bottom border-secondary border-opacity-25">
-        
-        {{/* Banner Image (Height increased to 380px) */}}
-        <div class="img-wrapper rounded shadow-sm w-100 skeleton-loader" style="flex: 0 0 50%; height: 380px;">
-          {{ $gridImg := .Params.thumbnail | default (index .Params.images 0) }}
-          {{ if $gridImg }}
-            {{ $gRes := resources.Get $gridImg }}
-            {{ if $gRes }}
-                {{ $gOpt := $gRes.Resize "900x webp q80" }}
-                <img src="{{ $gOpt.RelPermalink }}" loading="lazy" onload="this.parentElement.classList.remove('skeleton-loader')" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
-            {{ else }}
-                <img src="{{ $gridImg | absURL }}" loading="lazy" onload="this.parentElement.classList.remove('skeleton-loader')" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
-            {{ end }}
-          {{ end }}
-        </div>
-
-        {{/* Banner Content */}}
-        <div class="card-body p-0 mt-2 mt-md-0">
-          <div class="d-flex align-items-center mb-2">
-            <span class="badge bg-primary text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em; padding: 0.35em 0.65em;">
-              {{ index .Params.categories 0 | default "In-Depth" }}
-            </span>
-            <span class="mx-2 text-secondary opacity-50">&middot;</span>
-            <span class="text-secondary small">{{ .Date.Format "January 2, 2006" }}</span>
-          </div>
-          <h4 class="fw-bold mb-3" style="font-size: 2rem; line-height: 1.2; letter-spacing: -0.01em;">
-            <a href="{{ .RelPermalink }}" class="text-decoration-none text-body stretched-link title-link">
-              {{ .Title }}
-            </a>
-          </h4>
-          <p class="text-secondary mb-0" style="font-size: 1.05rem; opacity: 0.85; line-height: 1.5;">
-            {{ .Summary | plainify | truncate 180 }}
-          </p>
-        </div>
-        
-      </article>
-    </div>
-
-    {{/* LAYOUT 2: Standard 2-Column Grid with Text (Indices 1 through 4) */}}
-    {{ else if lt $index 5 }}
-    <div class="col-md-6 mb-4">
-      <article class="card h-100 border-0 bg-transparent article-group position-relative pb-3 border-bottom border-secondary border-opacity-25">
-        
-        {{/* Image Container - ADDED SKELETON AND LAZY LOAD */}}
-        <div class="img-wrapper rounded mb-3 shadow-sm skeleton-loader" style="height: 300px;">
+    {{/* Alternates the layout: Even items have image on left, odd have image on right */}}
+    {{ $isReversed := eq (mod $index 2) 1 }}
+    
+    <article class="row align-items-center gx-4 gx-lg-5 {{ if $isReversed }}flex-row-reverse{{ end }} article-group mb-2 mb-md-4">
+      
+      {{/* Image Column */}}
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <div class="img-wrapper rounded-4 shadow-sm w-100 skeleton-loader" style="aspect-ratio: 16/10;">
           {{ $gridImg := .Params.thumbnail | default (index .Params.images 0) }}
           {{ if $gridImg }}
             {{ $gRes := resources.Get $gridImg }}
             {{ if $gRes }}
                 {{ $gOpt := $gRes.Resize "800x webp q80" }}
-                <img src="{{ $gOpt.RelPermalink }}" loading="lazy" onload="this.parentElement.classList.remove('skeleton-loader')" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
+                <img src="{{ $gOpt.RelPermalink }}" loading="lazy" onload="this.parentElement.classList.remove('skeleton-loader')" class="w-100 h-100 object-fit-cover rounded-4" alt="{{ .Title }}">
             {{ else }}
-                <img src="{{ $gridImg | absURL }}" loading="lazy" onload="this.parentElement.classList.remove('skeleton-loader')" class="w-100 h-100 object-fit-cover rounded" alt="{{ .Title }}">
+                <img src="{{ $gridImg | absURL }}" loading="lazy" onload="this.parentElement.classList.remove('skeleton-loader')" class="w-100 h-100 object-fit-cover rounded-4" alt="{{ .Title }}">
             {{ end }}
           {{ end }}
         </div>
+      </div>
 
-        {{/* Content */}}
-        <div class="card-body p-0">
-          <div class="d-flex align-items-center mb-2">
-            <span class="text-uppercase fw-bold text-primary" style="font-size: 0.7rem; letter-spacing: 0.05em;">
-              {{ index .Params.categories 0 | default "Analysis" }}
+      {{/* Content Column */}}
+      <div class="col-lg-6">
+        <div class="pe-lg-4 {{ if $isReversed }}ps-lg-5 pe-lg-0{{ else }}pe-lg-5{{ end }}">
+          <div class="d-flex align-items-center mb-3">
+            <span class="badge bg-primary-subtle text-primary text-uppercase px-3 py-2 rounded-pill fw-bold" style="letter-spacing: 0.05em;">
+              {{ index .Params.categories 0 | default "In-Depth" }}
             </span>
-            <span class="mx-2 text-secondary opacity-50">&middot;</span>
-            <span class="text-secondary small" style="font-size: 0.8rem;">{{ .Date.Format "Jan 2, 2006" }}</span>
           </div>
-          <h4 class="h4 fw-bold mb-2" style="line-height: 1.3; letter-spacing: -0.01em;">
-            <a href="{{ .RelPermalink }}" class="text-decoration-none text-body stretched-link title-link">
+          
+          <h3 class="fw-bold mb-3 display-6" style="line-height: 1.2; letter-spacing: -0.01em;">
+            <a href="{{ .RelPermalink }}" class="text-decoration-none text-body title-link">
               {{ .Title }}
             </a>
-          </h4>
-          <p class="text-secondary mb-0" style="font-size: 0.95rem; opacity: 0.85; line-height: 1.5;">
-            {{ .Summary | plainify | truncate 130 }}
+          </h3>
+          
+          <p class="text-secondary mb-4 fs-5" style="opacity: 0.85; line-height: 1.6;">
+            {{ .Summary | plainify | truncate 180 }}
           </p>
+          
+          <a href="{{ .RelPermalink }}" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-bold d-inline-flex align-items-center modern-btn">
+            Read Analysis <i class="fas fa-arrow-right ms-2 transition-transform"></i>
+          </a>
         </div>
-        
-      </article>
-    </div>
-    {{ end }}
-    
+      </div>
+      
+    </article>
     {{ end }}
   </div>
 </div>
@@ -230,7 +307,7 @@
 <!-- SECTION 3: TYPOGRAPHY-FIRST INDEX          -->
 <!-- ========================================== -->
 {{/* Fetch the next 5 posts for the list */}}
-{{ $listPosts := first 5 (after 10 $posts) }}
+{{ $listPosts := first 5 (after 9 $posts) }}
 
 {{ if $listPosts }}
 <div class="mt-5 pt-5 border-top border-secondary border-opacity-25 mb-5">
