@@ -2,6 +2,8 @@
 title: "Free AI Cover Letter Generator | Tailored to Job Descriptions"
 description: "Upload your resume, enter a job title, and instantly generate a highly personalized, professional cover letter for free."
 type: "page"
+build:
+  list: never
 ---
 
 <!-- Custom WebApplication Schema for SEO -->

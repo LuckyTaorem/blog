@@ -2,6 +2,8 @@
 title: "Contact Us"
 description: "Get in touch with the team."
 type: "page"
+build:
+  list: never
 ---
 
 <div class="row mt-4">

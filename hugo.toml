@@ -12,7 +12,10 @@ locale = "en-us"
 
 [module]
   [[module.imports]]
-    path = "github.com/gethinode/hinode"
+  path = "github.com/gethinode/mod-blocks"
+
+  [[module.imports]]
+  path = "github.com/gethinode/hinode/v2"
 
 [params.main]
   endorse = false
@@ -54,14 +57,9 @@ locale = "en-us"
   lazyLoad = true
 
 [params.modules.fontawesome]
-  disable = true
-
-[params.search]
-  # Disables full-text content indexing to drastically shrink JS bundle size
-  indexContent = false 
-  
-  # Explicitly limits the search index to only load titles and descriptions
-  fields = ["title", "description"]
+  disable = false
+  summaryOnly = false
+  mode = "webfonts"
 
 # --- TOP NAVIGATION MENU ---
 [[menus.main]]
@@ -110,10 +108,10 @@ locale = "en-us"
     [markup.goldmark.renderer]
       unsafe = true
 
-[build]
-  [build.options]
+[main]
+  [main.build]
     transpiler = "dartsass"
-    target = "es2020"
+    silenceDeprecations = true
 
 [minify]
   disableCSS = false

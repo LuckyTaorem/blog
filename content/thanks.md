@@ -3,6 +3,8 @@ title: "Message Sent"
 description: "Thank you for contacting us."
 type: "page"
 url: "/thanks/"
+build:
+  list: never
 ---
 
 <div class="text-center py-5">

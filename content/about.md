@@ -2,6 +2,8 @@
 title: "About Us"
 description: "Meet the developer and the AI engine behind our automated tech publication."
 type: "page"
+build:
+  list: never
 ---
 
 <!-- Header -->

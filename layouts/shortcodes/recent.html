@@ -94,14 +94,11 @@
 </style>
 
 {{/* Fetch all posts */}}
-{{ $posts := where site.RegularPages "Section" "posts" }}
+{{ $posts := (where .Site.RegularPages "Section" "posts") }}
 
 {{/* Split posts for Landing Page layout */}}
 {{ $heroFeatures := first 3 $posts }}
 {{ $gridPosts := first 6 (after 3 $posts) }}
-
-<!-- Load FontAwesome CDN -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <!-- ENHANCED PROJECT & AI BLOG HERO -->
 <div class="hero-container row align-items-center py-5 my-4 my-lg-5 position-relative">

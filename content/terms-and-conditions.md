@@ -2,6 +2,8 @@
 title: "Terms and Conditions"
 date: 2026-06-20
 draft: false
+build:
+  list: never
 ---
 
 ## 1. Introduction

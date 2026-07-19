@@ -1,26 +1,26 @@
-{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML -}}
 <rss version="2.0" 
      xmlns:atom="http://www.w3.org/2005/Atom"
      xmlns:content="http://purl.org/rss/1.0/modules/content/"
      xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
-    <title>{{ .Site.Title }}</title>
-    <link>{{ .Site.BaseURL }}</link>
-    <description>Recent content on {{ .Site.Title }}</description>
-    <atom:link href="{{ .Permalink }}index.xml" rel="self" type="application/rss+xml" />
+    <!-- FIX 1: Safely escaping the global site title and description -->
+    <title>{{ .Site.Title | htmlEscape }}</title>
+    <link>{{ .Site.BaseURL | htmlEscape }}</link>
+
+    <description>Recent content on {{ .Site.Title | htmlEscape }}</description>
+    <atom:link href="{{ .Permalink | htmlEscape }}index.xml" rel="self" type="application/rss+xml" />
     
     {{ range first 20 (where .Site.RegularPages "Section" "posts") }}
     {{ if not .Params.noSitemap }}
     <item>
-      <!-- Plain text safely escaped without CDATA -->
       <title>{{ .Title | plainify | htmlEscape }}</title>
-      <link>{{ .Permalink }}</link>
-      <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
-      <guid>{{ .Permalink }}</guid>
-      
+      <link>{{ .Permalink | htmlEscape }}</link>
+      <guid>{{ .Permalink | htmlEscape }}</guid>
+      <atom:link href="{{ .Permalink | htmlEscape }}index.xml" rel="self" type="application/rss+xml" />
+
       {{ with .Params.categories }}{{ range . }}<category>{{ . | plainify | htmlEscape }}</category>{{ end }}{{ end }}
       {{ with .Params.tags }}{{ range . }}<category>{{ . | plainify | htmlEscape }}</category>{{ end }}{{ end }}
-
+      
       {{/* 🖼️ FEATURED IMAGES */}}
       {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
       {{ $imgHtml := "" }}
@@ -28,55 +28,34 @@
         {{ $res := resources.Get $imgStr }}
         {{ if $res }}
           {{ $optimized := $res.Resize "800x webp q80" }}
-          <media:content url="{{ $optimized.Permalink }}" medium="image" type="image/webp" />
-          <enclosure url="{{ $optimized.Permalink }}" type="image/webp" length="0" />
-          {{ $imgHtml = printf "<p><img src=\"%s\" alt=\"%s\" /></p>" $optimized.Permalink (.Title | plainify) }}
+          <media:content url="{{ $optimized.Permalink | htmlEscape }}" medium="image" type="image/webp" />
+          <enclosure url="{{ $optimized.Permalink | htmlEscape }}" type="image/webp" length="0" />
+          {{ $imgHtml = printf "<p><img src=\"%s\" alt=\"%s\" /></p>" $optimized.Permalink (.Title | plainify | htmlEscape) }}
         {{ else }}
-          <media:content url="{{ $imgStr | absURL }}" medium="image" />
-          <enclosure url="{{ $imgStr | absURL }}" type="image/jpeg" length="0" />
-          {{ $imgHtml = printf "<p><img src=\"%s\" alt=\"%s\" /></p>" ($imgStr | absURL) (.Title | plainify) }}
+          <media:content url="{{ $imgStr | absURL | htmlEscape }}" medium="image" />
+          <enclosure url="{{ $imgStr | absURL | htmlEscape }}" length="0" />
+          {{ $imgHtml = printf "<p><img src=\"%s\" alt=\"%s\" /></p>" ($imgStr | absURL | htmlEscape) (.Title | plainify | htmlEscape) }}
         {{ end }}
       {{ end }}
-
+      
       {{/* 🧹 HYPER-AGGRESSIVE CLEANUP PIPELINE */}}
       {{ $cleanContent := .Content }}
-      
-      {{/* 1. CHOP OFF THE BOTTOM: Strip Source, Discussion, and Firebase Comments completely */}}
       {{ $cleanContent = $cleanContent | replaceRE "(?is)<hr>\\s*<p><strong>Source:</strong>.*" "" }}
       {{ $cleanContent = $cleanContent | replaceRE "(?is)<hr class=\"my-5\".*" "" }}
       {{ $cleanContent = $cleanContent | replaceRE "(?is)<h4[^>]*id=\"discussion-title\".*" "" }}
       {{ $cleanContent = $cleanContent | replaceRE "(?is)<div[^>]*id=\"login-ui\".*" "" }}
-      
-      {{/* 2. Strip the messy heading anchor links added by Hugo */}}
       {{ $cleanContent = $cleanContent | replaceRE "(?is)<a[^>]*aria-labelledby[^>]*>.*?</a>" "" }}
-      
-      {{/* 3. Strip all inline SVGs, Scripts, and Styles */}}
       {{ $cleanContent = $cleanContent | replaceRE "(?is)<svg.*?</svg>" "" }}
       {{ $cleanContent = $cleanContent | replaceRE "(?is)<script.*?</script>" "" }}
       {{ $cleanContent = $cleanContent | replaceRE "(?is)<style.*?</style>" "" }}
-      
-      {{/* 4. PURIFY TAGS: Strip all id, class, style, aria, and role attributes */}}
       {{ $cleanContent = $cleanContent | replaceRE "\\s+(id|class|style|aria-[a-z]+|role|data-[a-z]+|tabindex)=\"[^\"]*\"" "" }}
-      
-      {{/* 5. Strip lingering HTML comments */}}
       {{ $cleanContent = $cleanContent | replaceRE "(?is)<!--.*?-->" "" }}
-
-      {{/* 6. ENTITY SCRUBBER: Convert forbidden HTML typography into XML-safe characters */}}
-      {{ $cleanContent = $cleanContent | replaceRE "&rsquo;" "'" }}
-      {{ $cleanContent = $cleanContent | replaceRE "&lsquo;" "'" }}
-      {{ $cleanContent = $cleanContent | replaceRE "&rdquo;" "\"" }}
-      {{ $cleanContent = $cleanContent | replaceRE "&ldquo;" "\"" }}
-      {{ $cleanContent = $cleanContent | replaceRE "&mdash;" "-" }}
-      {{ $cleanContent = $cleanContent | replaceRE "&ndash;" "-" }}
-      {{ $cleanContent = $cleanContent | replaceRE "&hellip;" "..." }}
-      {{ $cleanContent = $cleanContent | replaceRE "&nbsp;" " " }}
-
-      {{/* 📝 FULL ENCODED CONTENT (Raw, clean HTML tags, No CDATA) */}}
-      <content:encoded>{{ $imgHtml | safeHTML }}{{ $cleanContent | safeHTML }}</content:encoded>
       
-      {{/* 🚨 Clean Description (Plain text safely escaped) */}}
-      {{ $cleanSummary := .Summary | plainify | replaceRE "&nbsp;" " " }}
-      <description>{{ $cleanSummary | htmlEscape }}</description>
+      {{/* FIX 2: No more CDATA. We safely HTML-escape the combined image and content. */}}
+      <content:encoded>{{ $cleanContent | plainify | htmlEscape }}</content:encoded>
+      
+      {{/* 🚨 Clean Description */}}
+      <description>{{ .Summary | plainify | htmlEscape }}</description>
     </item>
     {{ end }}
     {{ end }}

@@ -4,6 +4,8 @@ description: "Upload your resume to our free AI ATS scanner. Get an instant scor
 type: "page"
 images: 
   - "/images/ats-thumbnail.png"
+build:
+  list: never
 ---
 
 <!-- Custom WebApplication Schema for SEO -->

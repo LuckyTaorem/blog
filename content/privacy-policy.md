@@ -2,6 +2,8 @@
 title: "Privacy Policy"
 date: 2026-06-20
 draft: false
+build:
+  list: never
 ---
 
 ## 1. Information We Collect

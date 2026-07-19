@@ -2,6 +2,8 @@
 title: "Cookie Policy"
 date: 2026-07-10
 draft: false
+build:
+  list: never
 ---
 
 ## 1. Introduction

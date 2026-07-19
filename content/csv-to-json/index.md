@@ -1,6 +1,8 @@
 ---
 title: "CSV to JSON Transformer"
 description: "Live browser-based CSV parsing and JSON schema transformation tool."
+build:
+  list: never
 ---
 
 <style>

@@ -2,6 +2,8 @@
 title: "Free JSON-LD SEO Schema Generator | AI & Live Preview"
 description: "Generate complex JSON-LD schema markup instantly using AI or our manual builders. Copy raw HTML or export as WordPress PHP filters."
 type: "page"
+build:
+  list: never
 ---
 
 <!-- Custom WebApplication Schema for SEO -->

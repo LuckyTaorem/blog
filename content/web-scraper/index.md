@@ -1,6 +1,8 @@
 ---
 title: "Free Web Scraper & SEO Audit Tool | Extract Data Instantly"
 description: "Use our free online web scraper to instantly extract images, videos, links, SEO metadata, and network requests from any website."
+build:
+  list: never
 ---
 <script type="application/ld+json">
 {
