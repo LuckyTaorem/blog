@@ -46,12 +46,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-hugomod-
 
-      - name: Cache Hugo Resources # 🚀 CRITICAL: STOPS 20 MINUTE IMAGE PROCESSING
+      - name: Cache Hugo Modules 
+        uses: actions/cache@v4
+        with:
+          path: /tmp/hugo_cache
+          # 🚀 FIX 1: Updated key to bust the broken cache
+          key: ${{ runner.os }}-hugomod-v3-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-hugomod-
+
+      - name: Cache Hugo Resources 
         uses: actions/cache@v4
         with:
           path: resources
-          # 🚀 FIX: Hash config files instead of commit SHA to prevent cache thrashing
-          key: ${{ runner.os }}-hugo-resources-${{ hashFiles('**/hugo.toml', '**/config.toml', '**/package-lock.json', '**/go.sum') }}
+          # 🚀 FIX 1: Updated key to bust the broken cache
+          key: ${{ runner.os }}-hugo-resources-v3-${{ hashFiles('**/hugo.toml', '**/config.toml', '**/package-lock.json', '**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-hugo-resources-
 
@@ -63,17 +72,19 @@ jobs:
 
       - name: Setup Dart Sass (1.101.0)
         run: |
-          # 1. Download the specific version you requested
+          # 1. Download the specific version
           wget https://github.com/sass/dart-sass/releases/download/1.101.0/dart-sass-1.101.0-linux-x64.tar.gz
           
           # 2. Extract it
           tar -xvf dart-sass-1.101.0-linux-x64.tar.gz
           
-          # 3. CRITICAL: Rename 'sass' to 'dartsass' so Hugo can find it
-          mv dart-sass/sass dart-sass/dartsass
-          
-          # 4. Add to PATH
+          # 🚀 FIX 2: DO NOT rename it. Hugo looks for the exact name 'sass'
+          # 3. Add to PATH
           echo "$(pwd)/dart-sass" >> $GITHUB_PATH
+
+      - name: Purge Broken Cache
+        # 🚀 FIX 3: Manually wipe any lingering corrupted files before building
+        run: rm -rf /tmp/hugo_cache/modules/filecache
 
       - name: Install npm dependencies
         run: npm install
