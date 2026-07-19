@@ -72,76 +72,120 @@
     <button class="btn btn-outline-primary mt-3 rounded-pill px-4" onclick="location.reload()">Clear All Filters</button>
   </div>
 
-  <!-- ========================================== -->
+<!-- ========================================== -->
   <!-- POSTS GRID                                 -->
   <!-- ========================================== -->
   
-  {{/* Initialize a global counter to track the absolute position of cards on the screen */}}
+  <div id="results-header" class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0 text-body h4" id="view-title">Latest Articles</h2>
+    <button id="toggleViewBtn" class="btn btn-outline-primary rounded-pill px-4 fw-bold shadow-sm hover-lift">
+      <i class="bi bi-collection me-2"></i><span id="toggleViewText">Group by Category</span>
+    </button>
+  </div>
+
+  {{/* Initialize global counter to track absolute position for lazy loading */}}
   {{ $.Scratch.Set "globalCardIndex" 0 }}
-  
-  <!-- Loop through every category on the site -->
-  {{ range $categoryName, $taxonomy := .Site.Taxonomies.categories }}
-    <div class="mb-5 category-section" data-section-category="{{ $categoryName | lower }}">
-      
-      <!-- Category Title -->
-      <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4 category-header">
-        <h2 class="fw-bold mb-0 text-capitalize">{{ $categoryName | humanize }}</h2>
-        <a href="{{ "/categories/" | relLangURL }}{{ $categoryName | urlize }}/" class="text-primary text-decoration-none fw-semibold">View All &rarr;</a>
-      </div>
 
-      <!-- 3-Column Grid -->
-      <div class="row row-cols-1 row-cols-md-3 g-4">
-        {{ range first 6 $taxonomy.Pages }}
+  <!-- 1. ALL POSTS VIEW (Default) -->
+  <div id="all-posts-view" class="view-container">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <!-- Loop through all regular pages (latest first by default in Hugo) -->
+      {{ range .Site.RegularPages }}
+        {{ $gIndex := $.Scratch.Get "globalCardIndex" }}
+        
+        <div class="col post-card" 
+             data-category="{{ if .Params.categories }}{{ index .Params.categories 0 | lower }}{{ end }}" 
+             data-tags="{{ if .Params.tags }}{{ delimit .Params.tags "," | lower }}{{ end }}" 
+             data-date="{{ .Date.Format "2006-01-02" }}">
           
-          {{/* Fetch the current global card count */}}
-          {{ $gIndex := $.Scratch.Get "globalCardIndex" }}
-          
-          <div class="col post-card" 
-               data-category="{{ $categoryName | lower }}" 
-               data-tags="{{ if .Params.tags }}{{ delimit .Params.tags "," | lower }}{{ end }}" 
-               data-date="{{ .Date.Format "2006-01-02" }}">
-            
-            <div class="card h-100 shadow-sm border-0 bg-body-tertiary hover-card overflow-hidden">
-              
-              <!-- Image Wrapper with Conditional Skeleton -->
-              <div class="img-wrapper {{ if ge $gIndex 3 }}skeleton-loader{{ end }}" style="height: 220px; overflow: hidden;">
-                {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
-                {{ if $imgStr }}
-                  <img src="{{ $imgStr | absURL }}" 
-                       class="card-img-top img-animate w-100 h-100" 
-                       style="object-fit: cover;" 
-                       alt="{{ .Title }}"
-                       
-                       {{/* Eager load the top 3 items, Lazy load everything else */}}
-                       {{ if lt $gIndex 3 }}
-                         loading="eager" fetchpriority="high"
-                       {{ else }}
-                         loading="lazy" onload="this.parentElement.classList.remove('skeleton-loader')"
-                       {{ end }}>
-                {{ end }}
-              </div>
+          <div class="card h-100 shadow-sm border-0 bg-body-tertiary hover-card overflow-hidden">
+            <!-- Image Wrapper -->
+            <div class="img-wrapper {{ if ge $gIndex 3 }}skeleton-loader{{ end }}" style="height: 220px; overflow: hidden;">
+              {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
+              {{ if $imgStr }}
+                <img src="{{ $imgStr | absURL }}" 
+                     class="card-img-top img-animate w-100 h-100" 
+                     style="object-fit: cover;" 
+                     alt="{{ .Title }}"
+                     {{ if lt $gIndex 3 }}loading="eager" fetchpriority="high"{{ else }}loading="lazy" onload="this.parentElement.classList.remove('skeleton-loader')"{{ end }}>
+              {{ end }}
+            </div>
 
-              <div class="card-body">
-                <h3 class="card-title h5 mb-3">
-                  <a href="{{ .RelPermalink }}" class="text-decoration-none text-body fw-bold stretched-link">{{ .Title }}</a>
-                </h3>
-                <p class="card-text text-body-secondary" style="font-size: 0.95rem;">{{ .Summary | plainify | truncate 100 }}</p>
+            <div class="card-body">
+              <div class="mb-2">
+                <span class="badge bg-primary-subtle text-primary text-uppercase" style="font-size: 0.65rem;">
+                  {{ if .Params.categories }}{{ index .Params.categories 0 | humanize }}{{ else }}Uncategorized{{ end }}
+                </span>
               </div>
-              <div class="card-footer bg-transparent border-0 pb-3">
-                <small class="text-body-tertiary fw-semibold text-uppercase" style="font-size: 0.75rem;">
-                  {{ .Date.Format "Jan 2, 2006" }} &bull; {{ .ReadingTime }} min read
-                </small>
-              </div>
+              <h3 class="card-title h5 mb-3">
+                <a href="{{ .RelPermalink }}" class="text-decoration-none text-body fw-bold stretched-link">{{ .Title }}</a>
+              </h3>
+              <p class="card-text text-body-secondary" style="font-size: 0.95rem;">{{ .Summary | plainify | truncate 100 }}</p>
+            </div>
+            <div class="card-footer bg-transparent border-0 pb-3">
+              <small class="text-body-tertiary fw-semibold text-uppercase" style="font-size: 0.75rem;">
+                {{ .Date.Format "Jan 2, 2006" }} &bull; {{ .ReadingTime }} min read
+              </small>
             </div>
           </div>
-          
-          {{/* Increment the global counter after rendering each card */}}
-          {{ $.Scratch.Add "globalCardIndex" 1 }}
-          
-        {{ end }}
-      </div>
+        </div>
+        {{ $.Scratch.Add "globalCardIndex" 1 }}
+      {{ end }}
     </div>
-  {{ end }}
+  </div>
+
+  <!-- 2. CATEGORIZED VIEW (Hidden by default) -->
+  <div id="categorized-view" class="view-container d-none">
+    {{ range $categoryName, $taxonomy := .Site.Taxonomies.categories }}
+      <div class="mb-5 category-section" data-section-category="{{ $categoryName | lower }}">
+        
+        <!-- Category Title -->
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4 category-header">
+          <h2 class="fw-bold mb-0 text-capitalize">{{ $categoryName | humanize }}</h2>
+          <a href="{{ "/categories/" | relLangURL }}{{ $categoryName | urlize }}/" class="text-primary text-decoration-none fw-semibold">View All &rarr;</a>
+        </div>
+
+        <!-- 3-Column Grid -->
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+          {{ range first 6 $taxonomy.Pages }}
+            {{ $gIndex := $.Scratch.Get "globalCardIndex" }}
+            
+            <div class="col post-card" 
+                 data-category="{{ $categoryName | lower }}" 
+                 data-tags="{{ if .Params.tags }}{{ delimit .Params.tags "," | lower }}{{ end }}" 
+                 data-date="{{ .Date.Format "2006-01-02" }}">
+              
+              <div class="card h-100 shadow-sm border-0 bg-body-tertiary hover-card overflow-hidden">
+                <div class="img-wrapper {{ if ge $gIndex 3 }}skeleton-loader{{ end }}" style="height: 220px; overflow: hidden;">
+                  {{ $imgStr := .Params.thumbnail | default (index .Params.images 0) }}
+                  {{ if $imgStr }}
+                    <img src="{{ $imgStr | absURL }}" 
+                         class="card-img-top img-animate w-100 h-100" 
+                         style="object-fit: cover;" 
+                         alt="{{ .Title }}"
+                         {{ if lt $gIndex 3 }}loading="eager" fetchpriority="high"{{ else }}loading="lazy" onload="this.parentElement.classList.remove('skeleton-loader')"{{ end }}>
+                  {{ end }}
+                </div>
+
+                <div class="card-body">
+                  <h3 class="card-title h5 mb-3">
+                    <a href="{{ .RelPermalink }}" class="text-decoration-none text-body fw-bold stretched-link">{{ .Title }}</a>
+                  </h3>
+                  <p class="card-text text-body-secondary" style="font-size: 0.95rem;">{{ .Summary | plainify | truncate 100 }}</p>
+                </div>
+                <div class="card-footer bg-transparent border-0 pb-3">
+                  <small class="text-body-tertiary fw-semibold text-uppercase" style="font-size: 0.75rem;">
+                    {{ .Date.Format "Jan 2, 2006" }} &bull; {{ .ReadingTime }} min read
+                  </small>
+                </div>
+              </div>
+            </div>
+            {{ $.Scratch.Add "globalCardIndex" 1 }}
+          {{ end }}
+        </div>
+      </div>
+    {{ end }}
+  </div>
 
 <!-- ========================================== -->
 <!-- CUSTOM STYLES & ANIMATIONS                 -->
@@ -224,15 +268,42 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // 2. Global Filter Logic
-  const allSections = document.querySelectorAll('.category-section');
+  // 2. Global Filter & Toggle Logic
+  const resultsHeader = document.getElementById('results-header');
   const catCheckboxes = document.querySelectorAll('.cat-checkbox');
   const tagCheckboxes = document.querySelectorAll('.tag-checkbox');
   const dateInput = document.getElementById('dateFilter');
-  const noResultsMsg = document.getElementById('no-results-message'); // The new message element
+  const noResultsMsg = document.getElementById('no-results-message'); 
   
   const catBtnText = document.getElementById('category-btn-text');
   const tagBtnText = document.getElementById('tag-btn-text');
+
+  // Toggle View Elements
+  const toggleViewBtn = document.getElementById('toggleViewBtn');
+  const toggleViewText = document.getElementById('toggleViewText');
+  const viewTitle = document.getElementById('view-title');
+  const allPostsView = document.getElementById('all-posts-view');
+  const categorizedView = document.getElementById('categorized-view');
+  let isCategorized = false; // Default state
+
+  // Handle Toggle Button Click
+  toggleViewBtn.addEventListener('click', function() {
+    isCategorized = !isCategorized;
+    if (isCategorized) {
+      allPostsView.classList.add('d-none');
+      categorizedView.classList.remove('d-none');
+      toggleViewText.textContent = "Show All Posts";
+      viewTitle.textContent = "Categorized Articles";
+      toggleViewBtn.querySelector('i').className = 'bi bi-grid-3x3-gap me-2';
+    } else {
+      categorizedView.classList.add('d-none');
+      allPostsView.classList.remove('d-none');
+      toggleViewText.textContent = "Group by Category";
+      viewTitle.textContent = "Latest Articles";
+      toggleViewBtn.querySelector('i').className = 'bi bi-collection me-2';
+    }
+    applyFilters(); // Re-trigger filters for the active view
+  });
 
   function updateButtonText(checkboxes, defaultText, buttonEl) {
     const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
@@ -247,53 +318,102 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function applyFilters() {
-    const selectedCats = Array.from(catCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
-    const selectedTags = Array.from(tagCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
-    const selectedDate = dateInput.value;
+  const selectedCats = Array.from(catCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+  const selectedTags = Array.from(tagCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+  const selectedDate = dateInput.value;
 
-    updateButtonText(catCheckboxes, 'All Categories', catBtnText);
-    updateButtonText(tagCheckboxes, 'All Tags', tagBtnText);
+  updateButtonText(catCheckboxes, 'All Categories', catBtnText);
+  updateButtonText(tagCheckboxes, 'All Tags', tagBtnText);
 
-    let totalVisibleCards = 0; // Track the total number of visible cards globally
+  let totalVisibleCards = 0;
 
-    allSections.forEach(section => {
+// ===== Update Heading =====
+const selectedCat = Array.from(catCheckboxes).find(cb => cb.checked)?.nextElementSibling.textContent.trim();
+const selectedTag = Array.from(tagCheckboxes).find(cb => cb.checked)?.nextElementSibling.textContent.trim();
+
+if (selectedCat && selectedTag) {
+  viewTitle.innerHTML = `
+    <span class="text-body fw-bold">
+      ${selectedCat}
+      <span class="text-body-secondary fw-normal">• ${selectedTag}</span>
+    </span>
+  `;
+}
+else if (selectedCat) {
+  viewTitle.innerHTML = `
+    <span class="text-body fw-bold">${selectedCat}</span>
+  `;
+}
+else if (selectedTag) {
+  viewTitle.innerHTML = `
+    <span class="text-body fw-bold">${selectedTag}</span>
+  `;
+}
+else if (selectedCats.length > 1 && selectedTags.length > 1) {
+  viewTitle.textContent = `${selectedCats.length} Categories • ${selectedTags.length} Tags`;
+}
+else if (selectedCats.length > 1) {
+  viewTitle.textContent = `${selectedCats.length} Categories`;
+}
+else if (selectedTags.length > 1) {
+  viewTitle.textContent = `${selectedTags.length} Tags`;
+}
+else {
+  viewTitle.textContent = isCategorized
+    ? "Categorized Articles"
+    : "Latest Articles";
+}
+
+  const activeContainer = isCategorized ? categorizedView : allPostsView;
+
+  if (isCategorized) {
+    activeContainer.querySelectorAll('.category-section').forEach(section => {
       let visibleCardsInSection = 0;
-      const sectionCards = section.querySelectorAll('.post-card');
 
-      sectionCards.forEach(card => {
-        const cardCat = card.getAttribute('data-category');
-        const cardTagsStr = card.getAttribute('data-tags');
-        const cardTags = cardTagsStr ? cardTagsStr.split(',') : [];
-        const cardDate = card.getAttribute('data-date');
+      section.querySelectorAll('.post-card').forEach(card => {
+        const cardCat = card.dataset.category;
+        const cardTags = card.dataset.tags ? card.dataset.tags.split(',') : [];
+        const cardDate = card.dataset.date;
 
         const matchesCat = selectedCats.length === 0 || selectedCats.includes(cardCat);
         const matchesTag = selectedTags.length === 0 || selectedTags.some(tag => cardTags.includes(tag));
-        const matchesDate = selectedDate === "" || cardDate === selectedDate;
+        const matchesDate = !selectedDate || cardDate === selectedDate;
 
         if (matchesCat && matchesTag && matchesDate) {
-          card.style.display = 'block';
+          card.style.display = '';
           visibleCardsInSection++;
-          totalVisibleCards++; // Increment global counter
+          totalVisibleCards++;
         } else {
           card.style.display = 'none';
         }
       });
 
-      // Hide category section if empty
-      if (visibleCardsInSection === 0) {
-        section.style.display = 'none';
+      section.style.display = visibleCardsInSection ? '' : 'none';
+    });
+  } else {
+    activeContainer.querySelectorAll('.post-card').forEach(card => {
+      const cardCat = card.dataset.category;
+      const cardTags = card.dataset.tags ? card.dataset.tags.split(',') : [];
+      const cardDate = card.dataset.date;
+
+      const matchesCat = selectedCats.length === 0 || selectedCats.includes(cardCat);
+      const matchesTag = selectedTags.length === 0 || selectedTags.some(tag => cardTags.includes(tag));
+      const matchesDate = !selectedDate || cardDate === selectedDate;
+
+      if (matchesCat && matchesTag && matchesDate) {
+        card.style.display = '';
+        totalVisibleCards++;
       } else {
-        section.style.display = 'block';
+        card.style.display = 'none';
       }
     });
-
-    // 3. Show/Hide the "No Results" message
-    if (totalVisibleCards === 0) {
-      noResultsMsg.classList.remove('d-none');
-    } else {
-      noResultsMsg.classList.add('d-none');
-    }
   }
+
+  const hasResults = totalVisibleCards > 0;
+
+noResultsMsg.classList.toggle('d-none', hasResults);
+resultsHeader.classList.toggle('d-none', !hasResults);
+}
 
   // 4. Attach Event Listeners
   document.querySelectorAll('.filter-checkbox').forEach(cb => {
