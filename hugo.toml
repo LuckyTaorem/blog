@@ -110,7 +110,7 @@ locale = "en-us"
 
 [main]
   [main.build]
-    transpiler = "dartsass"
+    transpiler = "libsass"
     silenceDeprecations = true
 
 [minify]

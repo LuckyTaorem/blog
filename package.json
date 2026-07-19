@@ -20,8 +20,7 @@
     "postcss-cli": "^11.0.1",
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
-    "husky": "^9.1.7",
-    "sass": "^1.80.0"
+    "husky": "^9.1.7"
   },
   "scripts": {
     "mod:update": "hugo mod npm pack && npm install",
