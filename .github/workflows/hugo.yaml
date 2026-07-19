@@ -42,7 +42,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/hugo_cache
-          key: ${{ runner.os }}-hugomod-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-hugomod-v2-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-hugomod-
 
@@ -51,7 +51,7 @@ jobs:
         with:
           path: resources
           # 🚀 FIX: Hash config files instead of commit SHA to prevent cache thrashing
-          key: ${{ runner.os }}-hugo-resources-${{ hashFiles('**/hugo.toml', '**/config.toml', '**/package-lock.json', '**/go.sum') }}
+          key: ${{ runner.os }}-hugo-resources-v2-${{ hashFiles('**/hugo.toml', '**/config.toml', '**/package-lock.json', '**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-hugo-resources-
 
@@ -71,6 +71,7 @@ jobs:
       - name: Build with Hugo
         env:
           HUGO_ENVIRONMENT: production
+          PATH: ${{ github.workspace }}/node_modules/.bin:${{ env.PATH }}
         run: hugo -F --gc --minify --baseURL "https://ltdeveloperblogs.github.io/" --logLevel error
 
         # 🚀 THE FIX: Use standard Git push instead of GitHub's broken API
