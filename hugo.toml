@@ -56,6 +56,13 @@ locale = "en-us"
 [params.modules.fontawesome]
   disable = true
 
+[params.search]
+  # Disables full-text content indexing to drastically shrink JS bundle size
+  indexContent = false 
+  
+  # Explicitly limits the search index to only load titles and descriptions
+  fields = ["title", "description"]
+
 # --- TOP NAVIGATION MENU ---
 [[menus.main]]
   name = "Home"
@@ -155,4 +162,4 @@ disableKinds = ["sitemap"]
 
 # 4. Assign these to generate on the Homepage (root directory)
 [outputs]
-  home = ["HTML", "RSS", "SitemapIndex", "SitemapLegacy", "SitemapPosts", "SitemapPages", "SitemapCategories", "SitemapTags"]
+  home = ["HTML", "JSON", "RSS", "SitemapIndex", "SitemapLegacy", "SitemapPosts", "SitemapPages", "SitemapCategories", "SitemapTags"]
