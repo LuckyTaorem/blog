@@ -64,6 +64,10 @@ jobs:
       - name: Install npm dependencies
         run: npm install
 
+      # 🚀 THIS IS THE KEY STEP
+      - name: Install Dart Sass
+        run: npm install -g sass
+
       - name: Build with Hugo
         env:
           HUGO_ENVIRONMENT: production
