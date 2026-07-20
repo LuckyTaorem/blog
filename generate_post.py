@@ -791,11 +791,16 @@ def run_publisher():
         prompt = f"""
 Act as an expert tech journalist and strict SEO specialist. Read this short news summary: {article['summary']}
 
-Write a highly engaging, in-depth technical blog post about this topic. 
-While your goal is to strictly write a comprehensive article between [WORD_COUNT] words, you MUST adhere to the following constraints to prevent AI loops:
-1. FACTS ONLY: Do not hallucinate future software versions, features, or events. Base all claims strictly on the provided summary.
-2. NO SPAM: Do not include promotional filler, coupons, or unrelated affiliate links.
-3. NO REPETITION: Do not repeat paragraphs or concluding sentences. Stop generating immediately when all factual information has been covered, even if you do not reach the word count.
+Write a highly engaging, heavily detailed, and in-depth technical blog post about this topic. 
+Your goal is to strictly write a comprehensive article between [WORD_COUNT] words. You MUST adhere to the following constraints to prevent AI loops and thin content:
+
+CRITICAL LENGTH AND STRUCTURE REQUIREMENTS:
+1. LENGTH: The article MUST be absolutely no less than 800 words. A length of 1000 to 2000 words is highly preferred. Writing under 600 words is considered a total failure.
+2. EXPANSION: Do not just summarize. You must expand heavily on the "Why it matters", "Industry Impact", "Technical Breakdown", and "Future Outlook". 
+3. STRUCTURE: Include at least 5 to 6 main sections (H2). Each section must contain at least 3 to 4 deeply detailed paragraphs.
+4. FACTS ONLY: Do not hallucinate future software versions, features, or events. Base all claims strictly on the provided summary, but unpack them thoroughly.
+5. NO REPETITION: Do not repeat paragraphs or concluding sentences to pad the word count. Provide genuine, deep analysis.
+6. NO SPAM: Do not include promotional filler, coupons, or unrelated affiliate links.
 
 Include headings, bullet points, and an FAQ section. Output in pure Markdown format.
 
@@ -835,12 +840,12 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
         # --- ROBUST MULTI-PROVIDER WATERFALL CONFIGURATION ---
         # Ordered strategically by performance, output capacity, and free tier stability
         model_settings = [
-            {"provider": "groq", "model": "llama-3.3-70b-versatile", "word_count": "1000 and 2000"},
-            {"provider": "groq", "model": "llama-3.1-8b-instant", "word_count": "1000 and 2000"},
-            {"provider": "mistral", "model": "mistral-large-latest", "word_count": "1000 and 2000"},
-            {"provider": "gemini", "model": "gemini-2.5-flash", "word_count": "1000 and 2000"},
-            {"provider": "openrouter", "model": "openrouter/free", "word_count": "1000 and 2000"},
-            {"provider": "cohere", "model": "command-r-plus", "word_count": "1000 and 2000"}
+            {"provider": "groq", "model": "openai/gpt-oss-120b", "word_count": "1500 and 2500"},
+            {"provider": "groq", "model": "llama-3.1-8b-instant", "word_count": "1500 and 2500"},
+            {"provider": "mistral", "model": "mistral-large-latest", "word_count": "1500 and 2500"},
+            {"provider": "gemini", "model": "gemini-2.5-flash", "word_count": "1500 and 2500"},
+            {"provider": "openrouter", "model": "openrouter/free", "word_count": "1500 and 2500"},
+            {"provider": "cohere", "model": "command-r-plus", "word_count": "1500 and 2500"}
         ]
 
         article_content = None
@@ -850,8 +855,13 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
             model_name = setting['model']
             diet_prompt = prompt.replace("[WORD_COUNT]", setting['word_count'])
 
-            # Stricter system prompt to prevent hallucination loops
-            system_instruction = "You are a professional tech blogger. You write factual, detailed articles. You never hallucinate information or repeat sentences."
+            # Aggressive system prompt to force long-form content and prevent hallucination loops
+            system_instruction = (
+                "You are an elite, professional tech blogger known for writing extremely detailed, long-form articles. "
+                "You must write deep, comprehensive articles that are strictly over 1000 words. "
+                "Never write short, thin content. You must thoroughly unpack technical details, market implications, and industry context. "
+                "Never hallucinate information or repeat sentences to pad the word count."
+            )
 
             print(f"  -> Attempting generation with {provider.upper()} ({model_name})...")
 
