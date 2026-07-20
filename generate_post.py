@@ -270,18 +270,156 @@ def extract_key_facts_with_ai(raw_text, title):
     {content_to_analyze}
     """
     
-    try:
-        # We use the 8b-instant model here because it is lightning fast and great at extraction
-        response = client.chat.completions.create(
-            messages=[{"role": "user", "content": prompt}],
-            model="llama-3.1-8b-instant", 
-            temperature=0.1, # Dropped slightly from 0.2 to enforce absolute adherence to text and reduce structural hallucinations
-            max_tokens=2500 # Bumped up to prevent truncation when dealing with massive feature lists
-        )
-        return response.choices[0].message.content.strip()
-    except Exception as e:
-        print(f"      -> ⚠️ AI Fact Extraction failed: {e}. Falling back to raw text.")
-        return raw_text[:3500]
+    model_settings = [
+        {"provider": "groq", "model": "llama-3.1-8b-instant"},
+        {"provider": "github", "model": "gpt-4o-mini"},
+        {"provider": "gemini", "model": "gemini-2.5-flash"},
+        {"provider": "mistral", "model": "mistral-large-latest"},
+        {"provider": "openrouter", "model": "google/gemma-4-31b-it"},
+        {"provider": "cohere", "model": "command-a-03-2025"}
+    ]
+
+    for setting in model_settings:
+        provider = setting["provider"]
+        model_name = setting["model"]
+
+        try:
+            # 1. GROQ
+            if provider == "groq":
+                api_key = os.environ.get("GROQ_API_KEY")
+                if not api_key:
+                    continue
+                response = client.chat.completions.create(
+                    messages=[{"role": "user", "content": prompt}],
+                    model=model_name,
+                    temperature=0.1,
+                    max_tokens=2500
+                )
+                content = response.choices[0].message.content or ""
+                if content.strip():
+                    return content.strip()
+
+            # 2. GITHUB MODELS API
+            elif provider == "github":
+                key = os.environ.get("GH_TOKEN")
+                if not key:
+                    continue
+                res = requests.post(
+                    "https://models.inference.ai.azure.com/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {key}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "model": model_name,
+                        "messages": [{"role": "user", "content": prompt}],
+                        "temperature": 0.1,
+                        "max_tokens": 2500
+                    },
+                    timeout=30
+                )
+                if res.status_code == 200:
+                    content = res.json().get('choices', [{}])[0].get('message', {}).get('content')
+                    if content and content.strip():
+                        return content.strip()
+
+            # 3. GEMINI
+            elif provider == "gemini":
+                key = os.environ.get("GEMINI_API_KEY")
+                if not key:
+                    continue
+                res = requests.post(
+                    f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}",
+                    headers={"Content-Type": "application/json"},
+                    json={
+                        "contents": [{"parts": [{"text": prompt}]}],
+                        "generationConfig": {
+                            "maxOutputTokens": 2500,
+                            "temperature": 0.1
+                        }
+                    },
+                    timeout=30
+                )
+                if res.status_code == 200:
+                    data = safe_json(res)
+                    content = extract_text(data)
+                    if content and content.strip():
+                        return content.strip()
+
+            # 4. MISTRAL
+            elif provider == "mistral":
+                key = os.environ.get("MISTRAL_API_KEY")
+                if not key:
+                    continue
+                res = requests.post(
+                    "https://api.mistral.ai/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                    json={
+                        "model": model_name,
+                        "messages": [{"role": "user", "content": prompt}],
+                        "temperature": 0.1,
+                        "max_tokens": 2500
+                    },
+                    timeout=30
+                )
+                if res.status_code == 200:
+                    content = res.json().get('choices', [{}])[0].get('message', {}).get('content')
+                    if content and content.strip():
+                        return content.strip()
+
+            # 5. OPENROUTER
+            elif provider == "openrouter":
+                key = os.environ.get("OPENROUTER_API_KEY")
+                if not key:
+                    continue
+                res = requests.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {key}",
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": "https://ltdeveloperblogs.github.io/", 
+                        "X-Title": "LT Developer Tech Blog"
+                    },
+                    json={
+                        "model": model_name,
+                        "messages": [{"role": "user", "content": prompt}],
+                        "temperature": 0.1,
+                        "max_tokens": 2500
+                    },
+                    timeout=30
+                )
+                if res.status_code == 200:
+                    content = res.json().get('choices', [{}])[0].get('message', {}).get('content')
+                    if content and content.strip():
+                        return content.strip()
+
+            # 6. COHERE
+            elif provider == "cohere":
+                key = os.environ.get("COHERE_API_KEY")
+                if not key:
+                    continue
+                res = requests.post(
+                    "https://api.cohere.com/v1/chat",
+                    headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                    json={
+                        "model": model_name,
+                        "message": prompt,
+                        "temperature": 0.1,
+                        "max_tokens": 2500
+                    },
+                    timeout=30
+                )
+                if res.status_code == 200:
+                    content = res.json().get('text')
+                    if content and content.strip():
+                        return content.strip()
+
+        except Exception as e:
+            print(f"      -> ⚠️ Fact extraction failed with {provider.upper()} ({model_name}): {e}")
+            continue
+
+    print("      -> 🚨 All AI providers failed for fact extraction. Falling back to raw text.")
+    return raw_text[:3500]
     
 
 import random
@@ -841,12 +979,13 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
         # --- ROBUST MULTI-PROVIDER WATERFALL CONFIGURATION ---
         # Ordered strategically by performance, output capacity, and free tier stability
         model_settings = [
-            {"provider": "groq", "model": "openai/gpt-oss-120b", "word_count": "1500 and 2500"},
-            {"provider": "groq", "model": "llama-3.1-8b-instant", "word_count": "1500 and 2500"},
-            {"provider": "mistral", "model": "mistral-large-latest", "word_count": "1500 and 2500"},
-            {"provider": "gemini", "model": "gemini-2.5-flash", "word_count": "1500 and 2500"},
-            {"provider": "openrouter", "model": "openrouter/free", "word_count": "1500 and 2500"},
-            {"provider": "cohere", "model": "command-r-plus", "word_count": "1500 and 2500"}
+            {"provider": "groq", "model": "openai/gpt-oss-120b", "word_count": "1000 and 2000"},
+            {"provider": "github", "model": "gpt-4o-mini", "word_count": "1000 and 2000"},
+            {"provider": "groq", "model": "llama-3.1-8b-instant", "word_count": "1000 and 2000"},
+            {"provider": "mistral", "model": "mistral-large-latest", "word_count": "1000 and 2000"},
+            {"provider": "gemini", "model": "gemini-2.5-flash", "word_count": "1000 and 2000"},
+            {"provider": "openrouter", "model": "google/gemma-4-31b-it", "word_count": "1000 and 2000"},
+            {"provider": "cohere", "model": "command-a-03-2025", "word_count": "1000 and 2000"}
         ]
 
         article_content = None
@@ -876,13 +1015,44 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                         ],
                         model=model_name,
                         temperature=0.7,
-                        frequency_penalty=0.6, # Added to prevent repetition
-                        presence_penalty=0.4,  # Added to encourage new topics
-                        max_tokens=8000, 
+                        frequency_penalty=0.6,
+                        presence_penalty=0.4,
+                        max_tokens=4500, 
                     )
-                    article_content = response.choices[0].message.content.strip()
+                    raw_text = response.choices[0].message.content or ""
+                    if raw_text.strip():
+                        article_content = raw_text.strip()
 
-                # 4. MISTRAL AI
+                # 2. GITHUB MODELS API
+                elif provider == "github":
+                    key = os.environ.get("GH_TOKEN")
+                    if not key:
+                        continue
+                    res = requests.post(
+                        "https://models.inference.ai.azure.com/chat/completions",
+                        headers={
+                            "Authorization": f"Bearer {key}",
+                            "Content-Type": "application/json"
+                        },
+                        json={
+                            "model": model_name,
+                            "messages": [
+                                {"role": "system", "content": system_instruction},
+                                {"role": "user", "content": diet_prompt}
+                            ],
+                            "temperature": 0.7,
+                            "max_tokens": 4500
+                        },
+                        timeout=120
+                    )
+                    if res.status_code == 200:
+                        raw_content = res.json().get('choices', [{}])[0].get('message', {}).get('content')
+                        if raw_content:
+                            article_content = raw_content.strip()
+                    else:
+                        print(f"     -> Provider error (GitHub): {res.text}")
+
+                # 3. MISTRAL AI
                 elif provider == "mistral":
                     key = os.environ.get("MISTRAL_API_KEY")
                     if not key: continue
@@ -898,14 +1068,14 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                             "temperature": 0.7, 
                             "frequency_penalty": 0.6,
                             "presence_penalty": 0.4,
-                            "max_tokens": 8000
+                            "max_tokens": 4500
                         },
                         timeout=60
                     )
                     if res.status_code == 200: article_content = res.json()['choices'][0]['message']['content'].strip()
                     else: print(f"     -> Provider error: {res.text}")
 
-                # 5. OPENROUTER (Uses Free Models)
+                # 4. OPENROUTER
                 elif provider == "openrouter":
                     key = os.environ.get("OPENROUTER_API_KEY")
                     if not key: continue
@@ -926,14 +1096,17 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                             "temperature": 0.7, 
                             "frequency_penalty": 0.6,
                             "presence_penalty": 0.4,
-                            "max_tokens": 8000
+                            "max_tokens": 4500
                         },
                         timeout=120
                     )
-                    if res.status_code == 200: article_content = res.json()['choices'][0]['message']['content'].strip()
+                    if res.status_code == 200:
+                        raw_content = res.json().get('choices', [{}])[0].get('message', {}).get('content')
+                        if raw_content:
+                            article_content = raw_content.strip()
                     else: print(f"     -> Provider error: {res.text}")
 
-                # 6. COHERE
+                # 5. COHERE
                 elif provider == "cohere":
                     key = os.environ.get("COHERE_API_KEY")
                     if not key: continue
@@ -947,14 +1120,14 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                             "temperature": 0.7,
                             "frequency_penalty": 0.6,
                             "presence_penalty": 0.4,
-                            "max_tokens": 8000
+                            "max_tokens": 4500
                         },
                         timeout=60
                     )
                     if res.status_code == 200: article_content = res.json().get('text', '').strip()
                     else: print(f"     -> Provider error: {res.text}")
 
-                # GEMINI
+                # 6. GEMINI
                 elif provider == "gemini":
                     GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
                     if not GEMINI_API_KEY:
@@ -972,7 +1145,7 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                                 }]
                             }],
                             "generationConfig": {
-                                "maxOutputTokens": 8192,
+                                "maxOutputTokens": 4500,
                                 "temperature": 0.7,
                                 "frequencyPenalty": 0.6,
                                 "presencePenalty": 0.4
