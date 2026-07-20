@@ -1,16 +1,11 @@
-// 1. Intercept the Enter key and redirect to the Search Page
+// 1. Intercept the Enter key to prevent native form submission on the search bar
 window.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
         let isSearch = e.target.tagName === 'INPUT' && 
-                       (e.target.type === 'search' || e.target.closest('.modal'));
+                       (e.target.type === 'search' || e.target.closest('.modal') || e.target.closest('form[role="search"]'));
         
         if (isSearch) {
-            e.preventDefault(); 
-            let query = e.target.value.trim();
-            if (query !== '') {
-                // Redirect to the new search page with the query in the URL
-                window.location.href = '/search/?q=' + encodeURIComponent(query);
-            }
+            e.preventDefault(); // Stop the browser from reloading the page, keeping you in the modal
         }
     }
 }, true);
@@ -18,8 +13,9 @@ window.addEventListener('keydown', function(e) {
 // 2. Restore results if you click back into the search bar
 window.addEventListener('click', function(e) {
     let isSearch = e.target.tagName === 'INPUT' && 
-                   (e.target.type === 'search' || e.target.closest('.modal'));
+                   (e.target.type === 'search' || e.target.closest('.modal') || e.target.closest('form[role="search"]'));
                    
+    // If the input is clicked and it already has text in it, re-trigger the results
     if (isSearch && e.target.value.trim() !== '') {
         e.target.dispatchEvent(new Event('input', { bubbles: true }));
     }
