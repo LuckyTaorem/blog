@@ -55,10 +55,11 @@ locale = "en-us"
   disable = true
 
 [params.flexsearch]
-  lazyLoad = false
+  lazyLoad = true
 
 [params.modules.flexsearch]
-  lazyLoad = false
+  lazyLoad = true
+  summaryOnly = true
 
 [params.modules.fontawesome]
   disable = false
@@ -68,6 +69,9 @@ locale = "en-us"
 [params.navigation.search]
   enabled = true
   modal = true
+
+[params.style]
+  purge = true
 
 # --- TOP NAVIGATION MENU ---
 [[menus.main]]

@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         if (cachedResults.length === 0) {
             list.innerHTML = `<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>`;
             try {
-                const res = await fetch('/flexsearch-index.json');
+                const res = await fetch('{{ "flexsearch-index.json" | relURL }}');
                 if (!res.ok) throw new Error("Index file not found");
                 
                 const data = await res.json();
