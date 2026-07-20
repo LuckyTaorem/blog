@@ -17,6 +17,9 @@ locale = "en-us"
   [[module.imports]]
   path = "github.com/gethinode/hinode/v2"
 
+  [[module.imports]]
+  path = "github.com/gethinode/mod-flexsearch"
+
 [params.main]
   endorse = false
 
@@ -60,6 +63,10 @@ locale = "en-us"
   disable = false
   summaryOnly = false
   mode = "webfonts"
+
+[params.navigation.search]
+  enabled = true
+  modal = true
 
 # --- TOP NAVIGATION MENU ---
 [[menus.main]]
@@ -160,4 +167,4 @@ disableKinds = ["sitemap"]
 
 # 4. Assign these to generate on the Homepage (root directory)
 [outputs]
-  home = ["HTML", "JSON", "RSS", "SitemapIndex", "SitemapLegacy", "SitemapPosts", "SitemapPages", "SitemapCategories", "SitemapTags"]
+  home = ["HTML", "JSON", "SearchIndex", "RSS", "SitemapIndex", "SitemapLegacy", "SitemapPosts", "SitemapPages", "SitemapCategories", "SitemapTags"]
