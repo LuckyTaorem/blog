@@ -99,6 +99,12 @@ build:
     <p class="mb-0">You have already scanned a resume today. You can scan another one in <strong id="timeRemaining"></strong>.</p>
   </div>
 
+  <!-- Scan History -->
+  <div id="historySection" class="card p-4 shadow-sm border-0 bg-body-tertiary rounded-4 mt-4 d-none">
+    <h5 class="fw-bold mb-3"><i class="fas fa-history text-primary me-2"></i>Recent Scans</h5>
+    <div id="historyList" class="list-group"></div>
+  </div>
+
   <div id="coverLetterSection" class="card p-5 mt-5 shadow-sm border-0 bg-body-tertiary rounded-4 d-none">
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 border-bottom pb-3">
       <div>
@@ -318,6 +324,7 @@ function updateCoverLetterUI() {
 }
 // 24h Lock Initialization & State Recovery
 document.addEventListener("DOMContentLoaded", () => {
+  renderHistoryUI();
   const lastScan = localStorage.getItem('lastScanTime');
   const savedResume = localStorage.getItem('savedResumeText');
   if (lastScan) {
@@ -349,6 +356,73 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+// --- NEW: Reusable UI Population & History Logic ---
+function populateResultsUI(data) {
+  document.getElementById('extEmail').innerText = data.extractedData?.email || 'N/A';
+  document.getElementById('extPhone').innerText = data.extractedData?.phone || 'N/A';
+  const socialContainer = document.getElementById('extSocials');
+  socialContainer.innerHTML = '';
+  if (data.extractedData?.socialLinks && data.extractedData.socialLinks.length > 0) {
+    data.extractedData.socialLinks.forEach(link => {
+      socialContainer.innerHTML += `<span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill"><i class="fas fa-link me-1"></i>${link}</span>`;
+    });
+  } else {
+    socialContainer.innerHTML = '<span class="text-muted small">No links found</span>';
+  }
+  mapListToUI('extEducation', data.extractedData?.education);
+  mapListToUI('extCertifications', data.extractedData?.certifications);
+  mapListToUI('extWork', data.extractedData?.workExperience);
+  mapListToUI('extProjects', data.extractedData?.projects);
+  mapListToUI('listGrammar', data.qualityCheck?.spellingAndGrammarIssues);
+  mapListToUI('listQuality', data.qualityCheck?.generalFeedback);
+  document.getElementById('resRole').innerText = data.detectedRole || 'N/A';
+  document.getElementById('resScore').innerText = data.atsScore || 0;
+  document.getElementById('feedFormat').innerText = data.breakdown?.formatting?.feedback || '';
+  document.getElementById('feedKeywords').innerText = data.breakdown?.keywords?.feedback || '';
+  document.getElementById('feedImpact').innerText = data.breakdown?.impact?.feedback || '';
+  mapListToUI('listStrengths', data.strengths);
+  mapListToUI('listWeaknesses', data.weaknesses);
+  mapListToUI('listSteps', data.actionableSteps);
+  const badgeContainer = document.getElementById('badgeKeywords');
+  badgeContainer.innerHTML = '';
+  if(data.missingKeywords) {
+    data.missingKeywords.forEach(kw => {
+      badgeContainer.innerHTML += `<span class="badge bg-secondary text-light me-2 mb-2 p-2 fs-6 rounded-pill">${kw}</span>`;
+    });
+  }
+  renderChart(data.breakdown?.formatting?.score || 0, data.breakdown?.keywords?.score || 0, data.breakdown?.impact?.score || 0);
+  document.getElementById('uploadSection').classList.add('d-none');
+  document.getElementById('resultsLayout').classList.remove('d-none');
+}
+function renderHistoryUI() {
+  const history = JSON.parse(localStorage.getItem('atsHistory') || '[]');
+  const historySec = document.getElementById('historySection');
+  const historyList = document.getElementById('historyList');
+  if(history.length === 0) return;
+  historySec.classList.remove('d-none');
+  historyList.innerHTML = '';
+  history.forEach((report, index) => {
+    historyList.innerHTML += `
+      <div class="list-group-item list-group-item-action d-flex flex-wrap justify-content-between align-items-center bg-transparent border-secondary-subtle gap-2 py-3">
+        <div>
+          <h6 class="mb-1 fw-bold text-body"><i class="fas fa-file-pdf text-danger me-2"></i>${report.originalFileName || 'Resume'}_report.pdf</h6>
+          <small class="text-body-secondary">${report.scanDate} • Target: ${report.detectedRole} • Score: <strong class="text-primary">${report.atsScore}</strong></small>
+        </div>
+        <button class="btn btn-sm btn-outline-primary fw-bold rounded-pill px-3" onclick="viewHistoryReport(${index})">
+          <i class="fas fa-eye me-1"></i> View Report
+        </button>
+      </div>
+    `;
+  });
+}
+function viewHistoryReport(index) {
+  const history = JSON.parse(localStorage.getItem('atsHistory') || '[]');
+  const data = history[index];
+  if(!data) return;
+  globalReportData = data;
+  populateResultsUI(data);
+  document.getElementById('resultsLayout').scrollIntoView({ behavior: 'smooth' });
+}
 // Main Logic
 async function processFile() {
   hideError();
@@ -395,49 +469,24 @@ async function processFile() {
     if (!response.ok) {
       throw new Error(data.error || 'Server Error: Check your API Key and Vercel KV settings.');
     }
-    // Lock UI & Store Cooldown & Persist Data
+    // Capture the uploaded filename and current date
+    const baseFileName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+    data.originalFileName = baseFileName;
+    data.scanDate = new Date().toLocaleDateString();
+    // Lock UI & Persist Data
     localStorage.setItem('lastScanTime', Date.now().toString());
     localStorage.setItem('savedResumeText', globalResumeText);
-    globalReportData = data; // Save to memory
-    localStorage.setItem('savedReportData', JSON.stringify(data)); // Save to browser storage
+    localStorage.setItem('savedReportData', JSON.stringify(data)); 
     localStorage.setItem('savedJD', jdText);
-    // --- Populate Extracted Data ---
-    document.getElementById('extEmail').innerText = data.extractedData.email;
-    document.getElementById('extPhone').innerText = data.extractedData.phone;
-    // Map Social Links
-    const socialContainer = document.getElementById('extSocials');
-    socialContainer.innerHTML = '';
-    if (data.extractedData.socialLinks && data.extractedData.socialLinks.length > 0) {
-      data.extractedData.socialLinks.forEach(link => {
-        socialContainer.innerHTML += `<span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill"><i class="fas fa-link me-1"></i>${link}</span>`;
-      });
-    } else {
-      socialContainer.innerHTML = '<span class="text-muted small">No links found</span>';
-    }
-    // Map Extracted Lists
-    mapListToUI('extEducation', data.extractedData.education);
-    mapListToUI('extCertifications', data.extractedData.certifications);
-    mapListToUI('extWork', data.extractedData.workExperience);
-    mapListToUI('extProjects', data.extractedData.projects);
-    // Map Grammar and Quality Checks
-    mapListToUI('listGrammar', data.qualityCheck.spellingAndGrammarIssues);
-    mapListToUI('listQuality', data.qualityCheck.generalFeedback);
-    document.getElementById('resRole').innerText = data.detectedRole;
-    document.getElementById('resScore').innerText = data.atsScore;
-    document.getElementById('feedFormat').innerText = data.breakdown.formatting.feedback;
-    document.getElementById('feedKeywords').innerText = data.breakdown.keywords.feedback;
-    document.getElementById('feedImpact').innerText = data.breakdown.impact.feedback;
-    mapListToUI('listStrengths', data.strengths);
-    mapListToUI('listWeaknesses', data.weaknesses);
-    mapListToUI('listSteps', data.actionableSteps);
-    const badgeContainer = document.getElementById('badgeKeywords');
-    badgeContainer.innerHTML = '';
-    data.missingKeywords.forEach(kw => {
-      badgeContainer.innerHTML += `<span class="badge bg-secondary text-light me-2 mb-2 p-2 fs-6 rounded-pill">${kw}</span>`;
-    });
-    renderChart(data.breakdown.formatting.score, data.breakdown.keywords.score, data.breakdown.impact.score);
-    document.getElementById('uploadSection').classList.add('d-none');
-    document.getElementById('resultsLayout').classList.remove('d-none');
+    globalReportData = data; // Save to memory
+    // Add to History Array (Keeping the last 5 scans)
+    let history = JSON.parse(localStorage.getItem('atsHistory') || '[]');
+    history.unshift(data); // Add to beginning
+    if(history.length > 5) history.pop(); // Enforce limit
+    localStorage.setItem('atsHistory', JSON.stringify(history));
+    // Render the UI
+    renderHistoryUI();
+    populateResultsUI(data);
   } catch (err) {
     showError(err.message);
     grecaptcha.reset(recaptchaWidgetId);
@@ -498,76 +547,135 @@ function renderChart(formatScore, keywordScore, impactScore) {
     }
   });
 }
-// --- UPGRADED: Professional PDF Export Logic ---
 function downloadPDF() {
   const btn = document.getElementById('downloadPdfBtn');
   const originalHTML = btn.innerHTML;
-  if (!globalReportData) {
-    return alert("Report data is missing. Please scan a resume first.");
-  }
-  // Show Loading State
+  if (!globalReportData) return alert("Report data is missing. Please scan a resume first.");
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating Document...';
-  const data = globalReportData;
-  // 1. Create container (Removed fixed width and padding to fix clipping)
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating...';
+  const data = globalReportData || JSON.parse(localStorage.getItem('savedReportData'));
   const pdfContainer = document.createElement('div');
-  pdfContainer.style.fontFamily = 'Helvetica, Arial, sans-serif';
-  pdfContainer.style.color = '#000000';      
-  pdfContainer.style.background = '#ffffff'; 
-  pdfContainer.style.lineHeight = '1.6';
-  // 2. Build the linear, page-break-safe HTML layout 
+pdfContainer.style.cssText = 'width: 700px; padding: 20px; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; color: #333; background: #fff; box-sizing: border-box;';
+  const renderList = (items) => items && items.length > 0 ? items.map(item => `<li style="margin-bottom: 8px; line-height: 1.5;">${item}</li>`).join('') : '<li>None detected</li>';
+  const renderProgressBar = (label, score, color) => `
+  <div style="margin-bottom: 15px;">
+    <div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin-bottom: 5px;">
+      <span>${label}</span>
+      <span style="color: ${color};">${score}/100</span>
+    </div>
+    <div style="width: 100%; background: #e9ecef; border-radius: 6px; height: 12px; overflow: hidden;">
+      <div style="width: ${score}%; background: ${color}; height: 100%; border-radius: 6px;"></div>
+    </div>
+  </div>
+`;
+// 🔹 Ensure all data paths are unified before rendering
+if (data.extractedData) {
+  // Merge extractedData fields into top-level for easier access
+  data.name = data.extractedData.name || data.name;
+  data.location = data.extractedData.location || data.location;
+  data.email = data.extractedData.email || data.email;
+  data.phone = data.extractedData.phone || data.phone;
+}
+// 🔹 Normalize arrays so renderList() works
+data.socialLinks = data.socialLinks || data.extractedData?.socialLinks || [];
+data.education = data.education || data.extractedData?.education || [];
+data.certifications = data.certifications || data.extractedData?.certifications || [];
+data.workExperience = data.workExperience || data.extractedData?.workExperience || [];
+data.projects = data.projects || data.extractedData?.projects || [];
   pdfContainer.innerHTML = `
-    <div style="color: #0d6efd; text-align: center; margin-bottom: 5px; font-size: 28px; font-weight: bold;">Resume ATS Report</div>
-    <div style="text-align: center; color: #555; margin-top: 0; font-size: 18px; font-weight: bold;">Target Role: ${data.detectedRole}</div>
-    <hr style="margin: 20px 0; border: 1px solid #ddd;">
-    <div style="margin-bottom: 30px;">
-        <div style="margin: 0; color: #333; font-size: 22px; font-weight: bold;">Overall ATS Score: <span style="color: #0d6efd;">${data.atsScore}/100</span></div>
-        <p style="margin: 5px 0 0 0; font-size: 14px; color: #555;"><strong>Email:</strong> ${data.extractedData.email} &nbsp;|&nbsp; <strong>Phone:</strong> ${data.extractedData.phone}</p>
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 id="pdf-title" style="color: #0d6efd; margin: 0 0 10px 0; font-size: 32px;">Resume ATS Intelligence Report</h1>
+      <h3 id="pdf-role" style="color: #555; margin: 0; font-weight: normal;">Target Role: <strong style="color:#333;">${data.detectedRole || 'General Professional'}</strong></h3>
     </div>
-    <div style="margin-bottom: 25px; page-break-inside: avoid;">
-        <div style="border-bottom: 2px solid #0d6efd; padding-bottom: 5px; font-size: 18px; font-weight: bold; margin-bottom: 10px;">Score Breakdown</div>
-        <p style="margin: 8px 0; font-size: 14px;"><strong>Formatting:</strong> ${data.breakdown.formatting.score}/100 - ${data.breakdown.formatting.feedback}</p>
-        <p style="margin: 8px 0; font-size: 14px;"><strong>Keywords:</strong> ${data.breakdown.keywords.score}/100 - ${data.breakdown.keywords.feedback}</p>
-        <p style="margin: 8px 0; font-size: 14px;"><strong>Impact:</strong> ${data.breakdown.impact.score}/100 - ${data.breakdown.impact.feedback}</p>
+    <div style="display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 5px solid #0d6efd;">
+      <div>
+        <h4 id="pdf-candidate" style="margin: 0 0 10px 0; font-size: 18px;">Candidate Details</h4>
+        <p style="margin: 0 0 5px 0; font-size: 14px;"><strong>Name:</strong> ${data.extractedData?.name || 'N/A'}</p>
+        <p style="margin: 0 0 5px 0; font-size: 14px;"><strong>Email:</strong> ${data.extractedData?.email || 'N/A'}</p>
+        <p style="margin: 0; font-size: 14px;"><strong>Phone:</strong> ${data.extractedData?.phone || 'N/A'}</p>
+        <p style="margin: 0 0 5px 0; font-size: 14px;"><strong>Location:</strong> ${data.extractedData?.location || 'N/A'}</p>
+      </div>
+      <div style="text-align: right;">
+        <p style="margin: 0 0 5px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #6c757d;">Overall ATS Score</p>
+        <div style="font-size: 48px; font-weight: bold; color: #0d6efd; line-height: 1;">${data.atsScore}</div>
+      </div>
     </div>
-    <div style="margin-bottom: 25px; page-break-inside: avoid;">
-        <div style="border-bottom: 2px solid #198754; padding-bottom: 5px; font-size: 18px; color: #198754; font-weight: bold; margin-bottom: 10px;">Key Strengths</div>
-        <ul style="margin: 10px 0; padding-left: 20px; font-size: 14px;">
-            ${data.strengths.map(s => `<li style="margin-bottom: 6px;">${s}</li>`).join('')}
-        </ul>
+    <div style="margin-bottom:30px; background:#fdfdfd; padding:20px; border-radius:8px; border-left:4px solid #0dcaf0;">
+  <h4 style="margin-top:0; font-size:20px; color:#0dcaf0;">Social Links</h4>
+  <ul style="margin:0; padding-left:20px; font-size:14px;">
+    ${Array.isArray(data.socialLinks) && data.socialLinks.length > 0 
+  ? data.socialLinks.map(link => {
+      // Ensure proper protocol
+      const cleanLink = link.startsWith('http') ? link : `https://${link}`;
+      return `<li><a href="${cleanLink}" style="color:#0d6efd; text-decoration:none;" target="_blank">${link}</a></li>`;
+    }).join('')
+  : '<li>No social links found</li>'}
+  </ul>
+</div>
+    <div style="margin-bottom:30px; background:#f8f9fa; padding:20px; border-radius:8px;">
+  <h4 style="margin-top:0; font-size:20px; color:#198754;">Education</h4>
+  <ul style="margin:0; padding-left:20px; font-size:14px;">${renderList(data.education)}</ul>
+  <h4 style="margin-top:20px; font-size:20px; color:#0dcaf0;">Certifications</h4>
+  <ul style="margin:0; padding-left:20px; font-size:14px;">${renderList(data.certifications)}</ul>
+</div>
+<div style="margin-bottom:30px; background:#fff; padding:20px; border-radius:8px; border:1px solid #e9ecef;">
+  <h4 style="margin-top:0; font-size:20px; color:#6f42c1;">Work Experience</h4>
+  <ul style="margin:0; padding-left:20px; font-size:14px;">${renderList(data.workExperience)}</ul>
+  <h4 style="margin-top:20px; font-size:20px; color:#20c997;">Projects</h4>
+  <ul style="margin:0; padding-left:20px; font-size:14px;">${renderList(data.projects)}</ul>
+</div>
+    <div style="margin-bottom: 30px; page-break-inside: avoid;">
+      <h4 id="pdf-perf" style="border-bottom: 2px solid #e9ecef; padding-bottom: 8px; margin-bottom: 15px; font-size: 20px;">Performance Analytics</h4>
+      ${renderProgressBar('Formatting & Structure', data.breakdown.formatting.score, '#0dcaf0')}
+      ${renderProgressBar('Keyword Optimization', data.breakdown.keywords.score, '#20c997')}
+      ${renderProgressBar('Impact & Achievements', data.breakdown.impact.score, '#6f42c1')}
     </div>
-    <div style="margin-bottom: 25px; page-break-inside: avoid;">
-        <div style="border-bottom: 2px solid #dc3545; padding-bottom: 5px; font-size: 18px; color: #dc3545; font-weight: bold; margin-bottom: 10px;">Areas for Improvement</div>
-        <ul style="margin: 10px 0; padding-left: 20px; font-size: 14px;">
-            ${data.weaknesses.map(s => `<li style="margin-bottom: 6px;">${s}</li>`).join('')}
-        </ul>
+    <div style="display: flex; gap: 20px; margin-bottom: 30px; page-break-inside: avoid;">
+      <div style="flex: 1; background: #f8fff9; padding: 15px; border-radius: 8px; border-top: 4px solid #198754;">
+        <h4 id="pdf-str" style="color: #198754; margin-top: 0;">Key Strengths</h4>
+        <ul style="margin: 0; padding-left: 20px; font-size: 13px;">${renderList(data.strengths)}</ul>
+      </div>
+      <div style="flex: 1; background: #fff5f5; padding: 15px; border-radius: 8px; border-top: 4px solid #dc3545;">
+        <h4 id="pdf-weak" style="color: #dc3545; margin-top: 0;">Areas for Improvement</h4>
+        <ul style="margin: 0; padding-left: 20px; font-size: 13px;">${renderList(data.weaknesses)}</ul>
+      </div>
     </div>
-    <div style="margin-bottom: 25px; page-break-inside: avoid;">
-        <div style="border-bottom: 2px solid #ffc107; padding-bottom: 5px; font-size: 18px; color: #b28602; font-weight: bold; margin-bottom: 10px;">Missing Core Keywords</div>
-        <p style="font-size: 14px; margin: 10px 0;">${data.missingKeywords.join(', ')}</p>
+    <div style="margin-bottom: 30px; page-break-inside: avoid;">
+      <h4 id="pdf-kw" style="border-bottom: 2px solid #e9ecef; padding-bottom: 8px; margin-bottom: 15px; font-size: 20px;">Missing Core Keywords</h4>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        ${data.missingKeywords && data.missingKeywords.length > 0 ? data.missingKeywords.map(kw => `<span style="background: #ffc107; color: #000; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: bold;">${kw}</span>`).join('') : '<span style="color: #198754; font-weight: bold;">All core keywords present!</span>'}
+      </div>
     </div>
-    <div style="margin-bottom: 25px; page-break-inside: avoid;">
-        <div style="border-bottom: 2px solid #0d6efd; padding-bottom: 5px; font-size: 18px; font-weight: bold; margin-bottom: 10px;">Actionable Next Steps</div>
-        <ol style="margin: 10px 0; padding-left: 20px; font-size: 14px;">
-            ${data.actionableSteps.map(s => `<li style="margin-bottom: 6px;">${s}</li>`).join('')}
-        </ol>
+    <div style="margin-bottom: 30px; page-break-inside: avoid;">
+      <h4 id="pdf-steps" style="border-bottom: 2px solid #e9ecef; padding-bottom: 8px; margin-bottom: 15px; font-size: 20px;">Actionable Next Steps</h4>
+      <ol style="margin: 0; padding-left: 20px; font-size: 14px;">${renderList(data.actionableSteps)}</ol>
+    </div>
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; page-break-inside: avoid;">
+      <h4 id="pdf-grammar" style="margin-top: 0; font-size: 18px; color: #333;">Spelling, Grammar & Quality Check</h4>
+      <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #555;">${renderList(data.qualityCheck?.spellingAndGrammarIssues)}</ul>
     </div>
   `;
-  // 3. Feed the pristine container into html2pdf
+  document.body.appendChild(pdfContainer);
   const opt = {
-    margin:       0.5, // 0.5 inch margins all around protects against edge clipping
-    filename:     'ATS_Resume_Report.pdf',
-    image:        { type: 'jpeg', quality: 1 }, 
-    html2canvas:  { 
+    margin: [0.2, 0.2, 0.2, 0.2], 
+    // UPDATE THIS LINE:
+    filename: (data.originalFileName ? `${data.originalFileName}_report.pdf` : 'ATS_Resume_Report.pdf'),
+    image: { type: 'jpeg', quality: 1 }, 
+    html2canvas: { 
       scale: 2, 
-      scrollY: 0,        // Fixes the massive top gap
-      windowWidth: 800   // Enforces a consistent virtual canvas width
+      useCORS: true, 
+      windowWidth: 700,
+      x: 0, 
+      y: 0, 
+      scrollX: 0, 
+      scrollY: 0,
+      backgroundColor: "#fff"
     },
-    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
-    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
   };
   html2pdf().set(opt).from(pdfContainer).save().then(() => {
-    // Restore Button State
+    document.body.removeChild(pdfContainer); // Cleanup the hidden container
     btn.disabled = false;
     btn.innerHTML = originalHTML;
   });
