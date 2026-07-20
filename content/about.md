@@ -5,7 +5,14 @@ type: "page"
 build:
   list: never
 ---
-
+<style>
+  /* 🚨 Force-hide the mobile TOC button and dropdown on this specific page */
+  a[href="#toc-collapse"], 
+  #toc-collapse, 
+  .toc-button { 
+      display: none !important; 
+  }
+</style>
 <!-- Header -->
 <div class="row align-items-center mt-5 mb-4">
   <div class="col-md-8 offset-md-2 text-center">

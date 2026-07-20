@@ -309,7 +309,8 @@ def get_internal_links_catalog(limit=40):
                 title_match = re.search(r'^title:\s*"(.*?)"', content, re.MULTILINE)
                 if title_match:
                     title = title_match.group(1)
-                    catalog.append(f"- [{title}](https://ltdeveloperblogs.github.io/posts/{slug}/)")
+                    # FIX: Removed the trailing slash to prevent Hugo theme crashes
+                    catalog.append(f"- [{title}](https://ltdeveloperblogs.github.io/posts/{slug})")
         except Exception:
             continue
             
@@ -1093,29 +1094,40 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
             article_content = re.sub(r'^thumbnail:\s*.*', f'thumbnail: "{image_url}"', article_content, flags=re.MULTILINE)
 
         # 🚨 STRICT INTERNAL LINK VALIDATOR
-        # Replaces the previous two-step regex with a single, bulletproof pass
         def validate_internal_links(match):
             link_text = match.group(1)
-            raw_url = match.group(2)
+            raw_url = match.group(2).strip()
             
-            # Check if this URL points to our posts directory (handles absolute and relative links)
-            if 'ltdeveloperblogs.github.io/posts/' in raw_url or raw_url.startswith('/posts/') or raw_url.startswith('posts/'):
-                # Extract strictly the slug, ignoring slashes, domains, and trailing characters
+            # Check if this URL points to our posts directory
+            if 'ltdeveloperblogs.github.io' in raw_url or 'posts/' in raw_url:
                 slug_match = re.search(r'posts/([^/#?)]+)', raw_url)
                 
                 if slug_match:
-                    slug = slug_match.group(1).strip()
+                    # Clean slug: remove .md extensions, trailing slashes, or spaces
+                    slug = slug_match.group(1).replace('.md', '').strip('/').strip()
                     expected_md_file = os.path.join(output_dir, f"{slug}.md")
                     
+                    # Strictly check if file exists AND is a valid Hugo post
+                    is_valid = False
                     if os.path.exists(expected_md_file):
-                        # The file exists! Standardize the link to a perfect absolute URL
-                        return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{slug}/)"
+                        try:
+                            with open(expected_md_file, 'r', encoding='utf-8') as f:
+                                head_content = f.read(500)
+                                # Ensure it has valid YAML frontmatter so Hugo doesn't ignore it
+                                if "---" in head_content and "title:" in head_content:
+                                    is_valid = True
+                        except Exception:
+                            pass
+                    
+                    if is_valid:
+                        # FIX: Return absolute URL without trailing slash 
+                        return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{slug})"
                     else:
-                        # Dead link detected! Strip the markdown formatting completely, leaving only plain text
-                        print(f"  -> ⚠️ Stripping hallucinated/dead link: {slug}")
+                        # If the file is corrupt or empty, strip the link to save the build
+                        print(f"  -> ⚠️ Stripping dead or corrupt internal link: {slug}")
                         return link_text
             
-            # If it's an external link or doesn't match our pattern, leave it untouched
+            # External link, leave untouched
             return match.group(0)
 
         # Find ALL markdown links [text](url) and run them through the validator

@@ -3,7 +3,7 @@ title: "Apple Watch Series 11 Drops to $279 in Early Prime Day Sale"
 date: 2026-06-23T21:51:26.610017+05:30
 draft: false
 images: ["images/amazon-slashes-apple-watch-series-11-to-279-in-early-prime-day-sale.jpg"]
-thumbnail: "images/amazon-slashes-apple-watch-series-11-to-279-in-279-in-early-prime-day-sale.jpg"
+thumbnail: "images/amazon-slashes-apple-watch-series-11-to-279-in-early-prime-day-sale.jpg"
 description: "Amazon slashes Apple Watch Series 11 prices by $200 in early Prime Day deals. Save big on GPS, cellular models, and more."
 categories: ["Hardware"]
 tags: ["Apple Watch", "Prime Day Deals", "Wearable Tech"]

@@ -1,0 +1,175 @@
+{{ define "main" }}
+<div class="container-fluid px-xl-5 mb-5" style="min-height: 60vh; padding-top: 50px;">
+    
+    <!-- Custom Clean Header -->
+    <h1 class="fw-bold display-5 mb-3">Search Results</h1>
+    <div id="search-query-display" class="text-muted mb-4 fs-5"></div>
+    
+    <div id="search-results-list" class="d-flex flex-column gap-4 mb-4">
+        <!-- Results will be injected here -->
+    </div>
+
+    <!-- Pagination Container -->
+    <nav id="search-pagination-container" aria-label="Search results pagination" class="mt-4">
+        <!-- Pagination controls injected here -->
+    </nav>
+</div>
+
+<style>
+    /* Force-hide any default theme metadata blocks that sneak in */
+    .page-meta, .article-meta, .meta-reading-time {
+        display: none !important;
+    }
+    .container-xxl {
+        position: relative;
+    }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function() {
+    const display = document.getElementById('search-query-display');
+    const list = document.getElementById('search-results-list');
+    const paginationContainer = document.getElementById('search-pagination-container');
+    
+    const ITEMS_PER_PAGE = 25;
+    let cachedResults = [];
+
+    async function handleSearch() {
+        const params = new URLSearchParams(window.location.search);
+        const query = params.get('q') || '';
+        const currentPage = parseInt(params.get('page')) || 1;
+
+        if (!query.trim()) {
+            display.innerHTML = "Please enter a search term.";
+            list.innerHTML = "";
+            paginationContainer.innerHTML = "";
+            return;
+        }
+
+        display.innerHTML = `Showing results for: <strong class="text-primary">${escapeHtml(query)}</strong>`;
+        
+        if (cachedResults.length === 0) {
+            list.innerHTML = `<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>`;
+            try {
+                const res = await fetch('/flexsearch-index.json');
+                if (!res.ok) throw new Error("Index file not found");
+                
+                const data = await res.json();
+                const q = query.toLowerCase();
+                const items = Array.isArray(data) ? data : (data.items || data.results || Object.values(data));
+
+                cachedResults = items.filter(item => {
+                    if (!item) return false;
+                    const content = [item.title, item.description, item.content].filter(Boolean).join(" ").toLowerCase();
+                    return content.includes(q);
+                });
+            } catch (err) {
+                list.innerHTML = "<p class='text-danger'>Error loading search index. Please make sure the site is built with JSON output enabled.</p>";
+                console.error(err);
+                return;
+            }
+        }
+
+        renderPage(cachedResults, query, currentPage);
+    }
+
+    function renderPage(results, query, page) {
+        list.innerHTML = "";
+        paginationContainer.innerHTML = "";
+
+        if (results.length === 0) {
+            list.innerHTML = "<p class='fs-5 text-muted'>No matching articles found.</p>";
+            return;
+        }
+
+        const totalPages = Math.ceil(results.length / ITEMS_PER_PAGE);
+        const validPage = Math.max(1, Math.min(page, totalPages));
+
+        // Slice items for the current page
+        const start = (validPage - 1) * ITEMS_PER_PAGE;
+        const end = start + ITEMS_PER_PAGE;
+        const pageItems = results.slice(start, end);
+
+        // Render Cards
+        pageItems.forEach(item => {
+            const link = item.href || item.permalink || item.url || "#";
+            const title = item.title || "Untitled";
+            const desc = item.description || item.summary || "Click to read more...";
+            
+            list.innerHTML += `
+            <div class="card border-0 shadow-sm bg-body-tertiary rounded-4 p-4">
+                <a href="${link}" class="text-decoration-none text-body fw-bold lh-sm d-block mb-2" style="font-size: 1.25rem;">
+                    ${escapeHtml(title)}
+                </a>
+                <p class="text-muted mb-0" style="font-size: 0.95rem; line-height: 1.5;">
+                    ${escapeHtml(desc)}
+                </p>
+            </div>
+            `;
+        });
+
+        // Render Pagination Controls if more than 25 items
+        if (totalPages > 1) {
+            let paginationHtml = `<ul class="pagination justify-content-center mb-0">`;
+            
+            // Previous Button
+            paginationHtml += `
+                <li class="page-item ${validPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${validPage - 1}">Previous</a>
+                </li>
+            `;
+
+            // Page Numbers
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHtml += `
+                    <li class="page-item ${i === validPage ? 'active' : ''}">
+                        <a class="page-link" href="#" data-page="${i}">${i}</a>
+                    </li>
+                `;
+            }
+
+            // Next Button
+            paginationHtml += `
+                <li class="page-item ${validPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${validPage + 1}">Next</a>
+                </li>
+            `;
+
+            paginationHtml += `</ul>`;
+            paginationContainer.innerHTML = paginationHtml;
+
+            // Attach event listeners to pagination links for seamless navigation
+            paginationContainer.querySelectorAll('.page-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetPage = parseInt(this.getAttribute('data-page'));
+                    if (targetPage >= 1 && targetPage <= totalPages && targetPage !== validPage) {
+                        const params = new URLSearchParams(window.location.search);
+                        params.set('page', targetPage);
+                        const newUrl = `${window.location.pathname}?${params.toString()}`;
+                        window.history.pushState({ path: newUrl }, '', newUrl);
+                        renderPage(results, query, targetPage);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            });
+        }
+    }
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    // Listen to browser back/forward buttons
+    window.addEventListener('popstate', handleSearch);
+
+    // Initial load
+    handleSearch();
+});
+</script>
+{{ end }}
