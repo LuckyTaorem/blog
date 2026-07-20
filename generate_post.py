@@ -43,8 +43,9 @@ RSS_FEEDS = [
     "https://www.engadget.com/rss.xml",
     "https://9to5mac.com/feed/",
     "https://feeds.macrumors.com/MacRumors-All",
-    "https://appleinsider.com/rss/news/",
-    "https://www.technologyreview.com/feed/"
+    "https://www.technologyreview.com/feed/",
+    "https://feeds.feedburner.com/nvidiablog",
+    "https://openai.com/news/rss.xml"
 ]
 
 output_dir = "content/posts"
