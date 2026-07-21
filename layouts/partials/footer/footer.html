@@ -22,23 +22,111 @@
         background-color: var(--ft-bg) !important;
         border-top: 1px solid var(--ft-border) !important;
         color: var(--ft-text-muted);
-        padding: 2.5rem 1.5rem;
+        padding: 3rem 1.5rem 1.5rem;
         font-family: system-ui, -apple-system, sans-serif;
         position: relative;
         z-index: 10;
     }
 
-    /* Responsive Flexbox Container */
-    .premium-footer-inner {
+    .premium-footer-container {
         max-width: 1200px;
         margin: 0 auto;
+    }
+
+    /* -----------------------------------------
+       Grid Layout for Desktop & Mobile
+       ----------------------------------------- */
+    .footer-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--ft-border);
+    }
+
+    @media (min-width: 640px) {
+        .footer-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .footer-grid {
+            /* Now supports 5 columns */
+            grid-template-columns: 1.2fr 0.7fr 0.7fr 0.7fr 1.2fr; 
+        }
+    }
+
+    .footer-logo {
+        max-width: 150px;
+        height: auto;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .footer-col-title {
+        color: var(--ft-text-strong);
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin: 0 0 1rem 0;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .footer-col-desc {
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: var(--ft-text-muted);
+        margin: 0;
+    }
+
+    /* Vertical Navigation Lists */
+    .footer-vert-nav {
+        list-style: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    .footer-vert-nav a {
+        color: var(--ft-text-muted) !important;
+        text-decoration: none !important;
+        font-size: 0.875rem !important;
+        font-weight: 500 !important;
+        transition: color 0.2s ease;
+    }
+
+    .footer-vert-nav a:hover {
+        color: var(--ft-link-hover) !important;
+    }
+
+    /* Google Maps Container */
+    .footer-map-wrapper {
+        width: 100%;
+        height: 180px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid var(--ft-border);
+    }
+
+    .footer-map-wrapper iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+    /* Bottom Copyright Row */
+    .premium-footer-inner {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 1.5rem;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-top: 1.5rem;
     }
 
-    /* Copyright Details */
     .footer-copyright {
         font-size: 0.875rem;
         line-height: 1.5;
@@ -61,96 +149,116 @@
         opacity: 0.4;
     }
 
-    /* -----------------------------------------
-       Navigation Links (Forced Visibility) 
-       ----------------------------------------- */
-    .premium-footer nav {
-        display: block !important;
-        width: 100%;
-    }
-
-    .premium-footer .footer-nav {
-        display: flex !important;
-        flex-wrap: wrap;
-        justify-content: center;
-        column-gap: 1rem !important;
-        row-gap: 0.5rem !important;
-        list-style: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
-
-    .premium-footer .footer-nav a {
-        color: var(--ft-text-muted) !important;
-        text-decoration: none !important;
-        font-size: 0.875rem !important;
-        font-weight: 500 !important;
-        display: inline-block !important;
-    }
-
-    .premium-footer .footer-nav a:hover {
-        color: var(--ft-text-strong) !important;
-    }
-
-    /* Desktop Layout Overrides */
     @media (min-width: 768px) {
         .premium-footer-inner {
             flex-direction: row;
-            justify-content: space-between;
         }
         .footer-copyright {
             text-align: left;
-        }
-        .premium-footer nav {
-            width: auto;
-        }
-        .premium-footer .footer-nav {
-            column-gap: 1.5rem !important; 
         }
     }
 </style>
 
 <footer class="premium-footer">
-    <div class="premium-footer-inner">
+    <div class="premium-footer-container">
         
-        <div class="footer-copyright">
-            {{- $copyright := printf "%s © %s %s %s." (T "copyright") (dateFormat "2006" now) .Site.Title (T "rights") }}
-            <span>{{ cond (gt (len .Site.Copyright) 0) .Site.Copyright $copyright | safeHTML }}</span>
+        <!-- Top Section: Multi-Column Grid -->
+        <div class="footer-grid">
             
-            {{ if .Site.Params.footer.license }}
-                <span class="footer-divider">•</span> {{ .Site.Params.footer.license | safeHTML }}
-            {{ end }}
+            <!-- Column 1: Brand & Logo -->
+            <div class="footer-col">
+                <!-- Add your actual image path here (e.g., "/images/logo.png") -->
+                <img src="/img/logo.png" alt="{{ .Site.Title }} Logo" class="footer-logo">
+                <p class="footer-col-desc">
+                    Innovative web development solutions, technical insights, and developer tools.
+                </p>
+            </div>
+
+            <!-- Column 2: Main Navigation -->
+            <div class="footer-col">
+                <h4 class="footer-col-title">Navigation</h4>
+                <nav aria-label="Footer Main Navigation">
+                    <ul class="footer-vert-nav">
+                        {{- range .Site.Menus.main }}
+                            <li><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
+                        {{- end }}
+                    </ul>
+                </nav>
+            </div>
             
-            {{ if and .Site.Params.main.endorse (index site.Params.links "hinode") }} 
-                <span class="footer-divider">•</span>
-                {{ partial "assets/link.html" (dict
-                    "href" (index site.Params.links "hinode")
-                    "text" "Hinode"
-                    "class" "link-bg-footer"
-                    "page" .Page
-                ) }}
-            {{ end }}
+            <!-- Column 3: Projects (Now its own column on the right) -->
+            <div class="footer-col">
+                <h4 class="footer-col-title">Projects</h4>
+                <nav aria-label="Footer Projects">
+                    <ul class="footer-vert-nav">
+                        <li><a href="/ats-scanner/">ATS Scanner</a></li>
+                        <li><a href="/cover-letter-generator/">Cover Letter Generator</a></li>
+                        <li><a href="/schema-generator/">Schema Generator</a></li>
+                        <li><a href="/web-scraper/">Web Scraper</a></li>
+                        <li><a href="/csv-to-json/">CSV to JSON</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Column 3: Quick Links & RSS -->
+            <div class="footer-col">
+                <h4 class="footer-col-title">Quick Links</h4>
+                <nav aria-label="Footer Quick Links">
+                    <ul class="footer-vert-nav">
+                        <li><a href="{{ "privacy-policy/" | relURL }}">Privacy Policy</a></li>
+                        <li><a href="{{ "terms-and-conditions/" | relURL }}">Terms & Conditions</a></li>
+                        <li><a href="{{ "cookie-policy/" | relURL }}">Cookie Policy</a></li>
+                        <li><a href="{{ "html-sitemap/" | relURL }}">Sitemap</a></li>
+                        <li>
+                            <a href="{{ "index.xml" | relURL }}" target="_blank" rel="alternate" type="application/rss+xml" aria-label="RSS Feed">
+                                <svg xmlns="http://www.w3.org/2005/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 4px;">
+                                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                                    <circle cx="5" cy="19" r="1"></circle>
+                                </svg>RSS
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Column 4: Google Maps Embed -->
+            <div class="footer-col">
+                <h4 class="footer-col-title">Location</h4>
+                <div class="footer-map-wrapper">
+                    <!-- Updated Map URL -->
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14508.044779188975!2d93.78101346582025!3d24.623299049355477!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3749333c412fe857%3A0xf569be8a8dc30b71!2sNoren%20Taorem!5e0!3m2!1sen!2sin!4v1784603699647!5m2!1sen!2sin" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade"
+                        title="Location Map">
+                    </iframe>
+                </div>
+            </div>
+
         </div>
 
-        <nav aria-label="Footer Legal Links">
-            <ul class="footer-nav">
-                <li><a href="{{ "privacy-policy/" | relURL }}">Privacy Policy</a></li>
-                <li><a href="{{ "terms-and-conditions/" | relURL }}">Terms & Conditions</a></li>
-                <li><a href="{{ "cookie-policy/" | relURL }}">Cookie Policy</a></li>
-                <li><a href="{{ "html-sitemap/" | relURL }}">Sitemap</a></li>
-                <li>
-                    <a href="{{ "index.xml" | relURL }}" target="_blank" rel="alternate" type="application/rss+xml" aria-label="RSS Feed">
-                        <svg xmlns="http://www.w3.org/2005/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 4px;">
-                            <path d="M4 11a9 9 0 0 1 9 9"></path>
-                            <path d="M4 4a16 16 0 0 1 16 16"></path>
-                            <circle cx="5" cy="19" r="1"></circle>
-                        </svg>RSS
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        
+        <!-- Bottom Section: Copyright & Endorsements -->
+        <div class="premium-footer-inner">
+            <div class="footer-copyright">
+                {{- $copyright := printf "%s © %s %s %s." (T "copyright") (dateFormat "2006" now) .Site.Title (T "rights") }}
+                <span>{{ cond (gt (len .Site.Copyright) 0) .Site.Copyright $copyright | safeHTML }}</span>
+                
+                {{ if .Site.Params.footer.license }}
+                    <span class="footer-divider">•</span> {{ .Site.Params.footer.license | safeHTML }}
+                {{ end }}
+                
+                {{ if and .Site.Params.main.endorse (index site.Params.links "hinode") }} 
+                    <span class="footer-divider">•</span>
+                    {{ partial "assets/link.html" (dict
+                        "href" (index site.Params.links "hinode")
+                        "text" "Hinode"
+                        "class" "link-bg-footer"
+                        "page" .Page
+                    ) }}
+                {{ end }}
+            </div>
+        </div>
+
     </div>
 </footer>

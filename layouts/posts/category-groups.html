@@ -147,7 +147,7 @@
 
         <!-- 3-Column Grid -->
         <div class="row row-cols-1 row-cols-md-3 g-4">
-          {{ range first 6 $taxonomy.Pages }}
+          {{ range $taxonomy.Pages }}
             {{ $gIndex := $.Scratch.Get "globalCardIndex" }}
             
             <div class="col post-card" 
@@ -186,11 +186,31 @@
       </div>
     {{ end }}
   </div>
-
+<!-- ========================================== -->
+  <!-- PAGINATION CONTROLS                        -->
+  <!-- ========================================== -->
+  <div id="pagination-controls" class="d-flex justify-content-center align-items-center gap-2 mt-5 mb-4 d-none">
+    <!-- JS will inject buttons here -->
+  </div>
 <!-- ========================================== -->
 <!-- CUSTOM STYLES & ANIMATIONS                 -->
 <!-- ========================================== -->
 <style>
+  /* Pagination Smooth Fade */
+.fade-page {
+  animation: pageFadeIn 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 /* Card Hover Animations */
 .hover-card {
   transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -246,9 +266,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   
-  // 1. Dropdown Search Functionality (FIXED: Toggling Bootstrap classes instead of inline styles)
+  // 1. Dropdown Search Functionality
   const dropdownSearches = document.querySelectorAll('.dropdown-search');
-  
   dropdownSearches.forEach(searchInput => {
     searchInput.addEventListener('input', function(e) {
       const searchTerm = e.target.value.toLowerCase().trim();
@@ -268,41 +287,43 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // 2. Global Filter & Toggle Logic
+  // 2. State & DOM Variables
+  const itemsPerPage = 25;
+  let currentPage = parseInt(new URLSearchParams(window.location.search).get('page')) || 1;
+  let isCategorized = false; // Default view state
+
   const resultsHeader = document.getElementById('results-header');
   const catCheckboxes = document.querySelectorAll('.cat-checkbox');
   const tagCheckboxes = document.querySelectorAll('.tag-checkbox');
   const dateInput = document.getElementById('dateFilter');
   const noResultsMsg = document.getElementById('no-results-message'); 
+  const paginationControls = document.getElementById('pagination-controls');
   
   const catBtnText = document.getElementById('category-btn-text');
   const tagBtnText = document.getElementById('tag-btn-text');
-
-  // Toggle View Elements
   const toggleViewBtn = document.getElementById('toggleViewBtn');
   const toggleViewText = document.getElementById('toggleViewText');
   const viewTitle = document.getElementById('view-title');
   const allPostsView = document.getElementById('all-posts-view');
   const categorizedView = document.getElementById('categorized-view');
-  let isCategorized = false; // Default state
 
   // Handle Toggle Button Click
   toggleViewBtn.addEventListener('click', function() {
     isCategorized = !isCategorized;
+    currentPage = 1; // Reset page on view toggle
+    
     if (isCategorized) {
       allPostsView.classList.add('d-none');
       categorizedView.classList.remove('d-none');
       toggleViewText.textContent = "Show All Posts";
-      viewTitle.textContent = "Categorized Articles";
       toggleViewBtn.querySelector('i').className = 'bi bi-grid-3x3-gap me-2';
     } else {
       categorizedView.classList.add('d-none');
       allPostsView.classList.remove('d-none');
       toggleViewText.textContent = "Group by Category";
-      viewTitle.textContent = "Latest Articles";
       toggleViewBtn.querySelector('i').className = 'bi bi-collection me-2';
     }
-    applyFilters(); // Re-trigger filters for the active view
+    applyFilters(); 
   });
 
   function updateButtonText(checkboxes, defaultText, buttonEl) {
@@ -317,110 +338,195 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  // 3. Main Filter & Pagination Core
   function applyFilters() {
-  const selectedCats = Array.from(catCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
-  const selectedTags = Array.from(tagCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
-  const selectedDate = dateInput.value;
+    const selectedCats = Array.from(catCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+    const selectedTags = Array.from(tagCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+    const selectedDate = dateInput.value;
 
-  updateButtonText(catCheckboxes, 'All Categories', catBtnText);
-  updateButtonText(tagCheckboxes, 'All Tags', tagBtnText);
+    updateButtonText(catCheckboxes, 'All Categories', catBtnText);
+    updateButtonText(tagCheckboxes, 'All Tags', tagBtnText);
 
-  let totalVisibleCards = 0;
+    // Update Heading
+    const selectedCat = Array.from(catCheckboxes).find(cb => cb.checked)?.nextElementSibling.textContent.trim();
+    const selectedTag = Array.from(tagCheckboxes).find(cb => cb.checked)?.nextElementSibling.textContent.trim();
 
-// ===== Update Heading =====
-const selectedCat = Array.from(catCheckboxes).find(cb => cb.checked)?.nextElementSibling.textContent.trim();
-const selectedTag = Array.from(tagCheckboxes).find(cb => cb.checked)?.nextElementSibling.textContent.trim();
+    if (selectedCat && selectedTag) {
+      viewTitle.innerHTML = `<span class="text-body fw-bold">${selectedCat} <span class="text-body-secondary fw-normal">• ${selectedTag}</span></span>`;
+    } else if (selectedCat) {
+      viewTitle.innerHTML = `<span class="text-body fw-bold">${selectedCat}</span>`;
+    } else if (selectedTag) {
+      viewTitle.innerHTML = `<span class="text-body fw-bold">${selectedTag}</span>`;
+    } else if (selectedCats.length > 1 && selectedTags.length > 1) {
+      viewTitle.textContent = `${selectedCats.length} Categories • ${selectedTags.length} Tags`;
+    } else if (selectedCats.length > 1) {
+      viewTitle.textContent = `${selectedCats.length} Categories`;
+    } else if (selectedTags.length > 1) {
+      viewTitle.textContent = `${selectedTags.length} Tags`;
+    } else {
+      viewTitle.textContent = isCategorized ? "Categorized Articles" : "Latest Articles";
+    }
 
-if (selectedCat && selectedTag) {
-  viewTitle.innerHTML = `
-    <span class="text-body fw-bold">
-      ${selectedCat}
-      <span class="text-body-secondary fw-normal">• ${selectedTag}</span>
-    </span>
-  `;
-}
-else if (selectedCat) {
-  viewTitle.innerHTML = `
-    <span class="text-body fw-bold">${selectedCat}</span>
-  `;
-}
-else if (selectedTag) {
-  viewTitle.innerHTML = `
-    <span class="text-body fw-bold">${selectedTag}</span>
-  `;
-}
-else if (selectedCats.length > 1 && selectedTags.length > 1) {
-  viewTitle.textContent = `${selectedCats.length} Categories • ${selectedTags.length} Tags`;
-}
-else if (selectedCats.length > 1) {
-  viewTitle.textContent = `${selectedCats.length} Categories`;
-}
-else if (selectedTags.length > 1) {
-  viewTitle.textContent = `${selectedTags.length} Tags`;
-}
-else {
-  viewTitle.textContent = isCategorized
-    ? "Categorized Articles"
-    : "Latest Articles";
-}
+    const activeContainer = isCategorized ? categorizedView : allPostsView;
+    let totalVisibleCards = 0; 
 
-  const activeContainer = isCategorized ? categorizedView : allPostsView;
+    if (isCategorized) {
+      // --------------------------------------------------------
+      // CATEGORIZED VIEW: Max 3 per category, NO pagination
+      // --------------------------------------------------------
+      paginationControls.classList.add('d-none'); // Force hide pagination
+      
+      const url = new URL(window.location);
+      url.searchParams.delete('page'); // Clear page from URL
+      window.history.replaceState({}, '', url);
 
-  if (isCategorized) {
-    activeContainer.querySelectorAll('.category-section').forEach(section => {
-      let visibleCardsInSection = 0;
+      activeContainer.querySelectorAll('.category-section').forEach(section => {
+        let visibleInSection = 0;
 
-      section.querySelectorAll('.post-card').forEach(card => {
-        const cardCat = card.dataset.category;
-        const cardTags = card.dataset.tags ? card.dataset.tags.split(',') : [];
-        const cardDate = card.dataset.date;
+        section.querySelectorAll('.post-card').forEach(card => {
+          if (matchesFilters(card, selectedCats, selectedTags, selectedDate)) {
+            // Only show up to 3 cards per category
+            if (visibleInSection < 3) {
+              card.style.display = '';
+              
+              // Trigger smooth fade animation
+              card.classList.remove('fade-page');
+              void card.offsetWidth; 
+              card.classList.add('fade-page');
+              
+              visibleInSection++;
+              totalVisibleCards++;
+            } else {
+              card.style.display = 'none'; // Hide excess
+            }
+          } else {
+            card.style.display = 'none'; // Doesn't match filters
+          }
+        });
 
-        const matchesCat = selectedCats.length === 0 || selectedCats.includes(cardCat);
-        const matchesTag = selectedTags.length === 0 || selectedTags.some(tag => cardTags.includes(tag));
-        const matchesDate = !selectedDate || cardDate === selectedDate;
+        // Hide the entire category section if it has 0 matching visible cards
+        section.style.display = visibleInSection > 0 ? '' : 'none';
+      });
 
-        if (matchesCat && matchesTag && matchesDate) {
-          card.style.display = '';
-          visibleCardsInSection++;
-          totalVisibleCards++;
+    } else {
+      // --------------------------------------------------------
+      // ALL POSTS VIEW: Standard Pagination Logic
+      // --------------------------------------------------------
+      let visibleCards = []; 
+      
+      activeContainer.querySelectorAll('.post-card').forEach(card => {
+        if (matchesFilters(card, selectedCats, selectedTags, selectedDate)) {
+          visibleCards.push(card);
         } else {
           card.style.display = 'none';
         }
       });
 
-      section.style.display = visibleCardsInSection ? '' : 'none';
-    });
-  } else {
-    activeContainer.querySelectorAll('.post-card').forEach(card => {
-      const cardCat = card.dataset.category;
-      const cardTags = card.dataset.tags ? card.dataset.tags.split(',') : [];
-      const cardDate = card.dataset.date;
-
-      const matchesCat = selectedCats.length === 0 || selectedCats.includes(cardCat);
-      const matchesTag = selectedTags.length === 0 || selectedTags.some(tag => cardTags.includes(tag));
-      const matchesDate = !selectedDate || cardDate === selectedDate;
-
-      if (matchesCat && matchesTag && matchesDate) {
-        card.style.display = '';
-        totalVisibleCards++;
+      totalVisibleCards = visibleCards.length;
+      const totalPages = Math.ceil(totalVisibleCards / itemsPerPage);
+      
+      if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+      
+      const url = new URL(window.location);
+      if (currentPage > 1) {
+        url.searchParams.set('page', currentPage);
       } else {
-        card.style.display = 'none';
+        url.searchParams.delete('page');
       }
-    });
+      window.history.replaceState({}, '', url);
+
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+
+      visibleCards.forEach((card, index) => {
+        if (index >= startIndex && index < endIndex) {
+          card.style.display = '';
+          
+          card.classList.remove('fade-page');
+          void card.offsetWidth; 
+          card.classList.add('fade-page');
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      renderPagination(totalPages);
+    }
+
+    // Final UI Updates
+    const hasResults = totalVisibleCards > 0;
+    noResultsMsg.classList.toggle('d-none', hasResults);
+    resultsHeader.classList.toggle('d-none', !hasResults);
   }
 
-  const hasResults = totalVisibleCards > 0;
+  function matchesFilters(card, cats, tags, date) {
+    const cardCat = card.dataset.category;
+    const cardTags = card.dataset.tags ? card.dataset.tags.split(',') : [];
+    const cardDate = card.dataset.date;
+    const matchesCat = cats.length === 0 || cats.includes(cardCat);
+    const matchesTag = tags.length === 0 || tags.some(tag => cardTags.includes(tag));
+    const matchesDate = !date || cardDate === date;
+    return matchesCat && matchesTag && matchesDate;
+  }
 
-noResultsMsg.classList.toggle('d-none', hasResults);
-resultsHeader.classList.toggle('d-none', !hasResults);
-}
+  // 4. Custom Numbering Generator & Renderer
+  function renderPagination(totalPages) {
+    if (totalPages <= 1) {
+      paginationControls.classList.add('d-none');
+      return;
+    }
+    paginationControls.classList.remove('d-none');
 
-  // 4. Attach Event Listeners
+    let html = `<button class="btn btn-outline-primary shadow-sm rounded-pill px-3 me-2 fw-bold" 
+                  ${currentPage === 1 ? 'disabled' : `onclick="goToPage(${currentPage - 1})"`}>Previous</button>`;
+    
+    // Logic for ellipses showing a max 5 specific blocks
+    let pages = [];
+    if (totalPages <= 6) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 3) {
+        pages = [1, 2, 3, 4, '...', totalPages];
+      } else if (currentPage >= totalPages - 2) {
+        pages = [1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+      } else {
+        pages = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+      }
+    }
+
+    pages.forEach(p => {
+      if (p === '...') {
+        html += `<span class="btn border-0 text-secondary disabled px-1 fw-bold">...</span>`;
+      } else {
+        html += `<button class="btn ${p === currentPage ? 'btn-primary shadow' : 'btn-outline-secondary border-opacity-25 bg-body-tertiary'} rounded-circle mx-1 fw-bold" 
+                  style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;" 
+                  onclick="goToPage(${p})">${p}</button>`;
+      }
+    });
+
+    html += `<button class="btn btn-outline-primary shadow-sm rounded-pill px-3 ms-2 fw-bold" 
+               ${currentPage === totalPages ? 'disabled' : `onclick="goToPage(${currentPage + 1})"`}>Next</button>`;
+    
+    paginationControls.innerHTML = html;
+  }
+
+  // Global function for buttons to call
+  window.goToPage = function(page) {
+    currentPage = page;
+    applyFilters();
+    // Smooth scroll back to top of the list
+    document.getElementById('results-header').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // 5. Attach Filter Event Listeners (Resets to page 1 on filter change)
   document.querySelectorAll('.filter-checkbox').forEach(cb => {
-    cb.addEventListener('change', applyFilters);
+    cb.addEventListener('change', () => { currentPage = 1; applyFilters(); });
   });
-  
-  dateInput.addEventListener('change', applyFilters);
+  dateInput.addEventListener('change', () => { currentPage = 1; applyFilters(); });
+
+  // Initial Load Trigger
+  applyFilters();
 });
 </script>
 {{ end }}
