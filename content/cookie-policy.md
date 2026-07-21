@@ -5,7 +5,14 @@ draft: false
 build:
   list: never
 ---
-
+<style>
+  /* 🚨 Force-hide the mobile TOC button and dropdown on this specific page */
+  a[href="#toc-collapse"], 
+  #toc-collapse, 
+  .toc-button { 
+      display: none !important; 
+  }
+</style>
 ## 1. Introduction
 
 This Cookie Policy explains how LT Developer Blogs uses cookies and similar tracking technologies when you visit our website. It explains what these technologies are, why we use them, and your rights to control our use of them. This policy works in conjunction with our standard Privacy Policy.

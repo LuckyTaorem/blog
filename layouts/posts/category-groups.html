@@ -288,7 +288,8 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // 2. State & DOM Variables
-  const itemsPerPage = 25;
+  const itemsPerPage = 15; // Changed from 25 to 15 posts per page
+  const categoriesPerPage = 10; // New variable for maximum categories per page
   let currentPage = parseInt(new URLSearchParams(window.location.search).get('page')) || 1;
   let isCategorized = false; // Default view state
 
@@ -372,24 +373,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (isCategorized) {
       // --------------------------------------------------------
-      // CATEGORIZED VIEW: Max 3 per category, NO pagination
+      // CATEGORIZED VIEW: 10 Categories per page, Max 3 posts each
       // --------------------------------------------------------
-      paginationControls.classList.add('d-none'); // Force hide pagination
-      
-      const url = new URL(window.location);
-      url.searchParams.delete('page'); // Clear page from URL
-      window.history.replaceState({}, '', url);
+      let visibleSections = [];
 
+      // First Pass: Find which category sections have matching posts
       activeContainer.querySelectorAll('.category-section').forEach(section => {
         let visibleInSection = 0;
 
         section.querySelectorAll('.post-card').forEach(card => {
           if (matchesFilters(card, selectedCats, selectedTags, selectedDate)) {
-            // Only show up to 3 cards per category
             if (visibleInSection < 3) {
               card.style.display = '';
               
-              // Trigger smooth fade animation
               card.classList.remove('fade-page');
               void card.offsetWidth; 
               card.classList.add('fade-page');
@@ -397,16 +393,54 @@ document.addEventListener('DOMContentLoaded', function () {
               visibleInSection++;
               totalVisibleCards++;
             } else {
-              card.style.display = 'none'; // Hide excess
+              card.style.display = 'none'; // Hide excess posts beyond 3
             }
           } else {
-            card.style.display = 'none'; // Doesn't match filters
+            card.style.display = 'none'; // Post doesn't match filters
           }
         });
 
-        // Hide the entire category section if it has 0 matching visible cards
-        section.style.display = visibleInSection > 0 ? '' : 'none';
+        // If the category has at least 1 matching post, save it for pagination
+        if (visibleInSection > 0) {
+          visibleSections.push(section);
+        } else {
+          section.style.display = 'none'; // Hide empty categories immediately
+        }
       });
+
+      // Pagination Math for Categories
+      const totalPages = Math.ceil(visibleSections.length / categoriesPerPage);
+      
+      if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+      
+      const url = new URL(window.location);
+      if (currentPage > 1) {
+        url.searchParams.set('page', currentPage);
+      } else {
+        url.searchParams.delete('page');
+      }
+      window.history.replaceState({}, '', url);
+
+      // Second Pass: Show only the 10 categories meant for the current page
+      const startIndex = (currentPage - 1) * categoriesPerPage;
+      const endIndex = startIndex + categoriesPerPage;
+
+      visibleSections.forEach((section, index) => {
+        if (index >= startIndex && index < endIndex) {
+          section.style.display = ''; // Show category
+          
+          // Smooth fade in for the category container
+          section.classList.remove('fade-page');
+          void section.offsetWidth;
+          section.classList.add('fade-page');
+        } else {
+          section.style.display = 'none'; // Hide off-page categories
+        }
+      });
+
+      // Render the pagination numbers at the bottom
+      renderPagination(totalPages);
 
     } else {
       // --------------------------------------------------------

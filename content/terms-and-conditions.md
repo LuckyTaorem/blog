@@ -5,7 +5,14 @@ draft: false
 build:
   list: never
 ---
-
+<style>
+  /* 🚨 Force-hide the mobile TOC button and dropdown on this specific page */
+  a[href="#toc-collapse"], 
+  #toc-collapse, 
+  .toc-button { 
+      display: none !important; 
+  }
+</style>
 ## 1. Introduction
 
 Welcome to our blog. By accessing or using this website, you agree to be bound by these Terms and Conditions and our Privacy Policy. If you do not agree with any part of these terms, you must not use this website.

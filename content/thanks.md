@@ -6,7 +6,14 @@ url: "/thanks/"
 build:
   list: never
 ---
-
+<style>
+  /* 🚨 Force-hide the mobile TOC button and dropdown on this specific page */
+  a[href="#toc-collapse"], 
+  #toc-collapse, 
+  .toc-button { 
+      display: none !important; 
+  }
+</style>
 <div class="text-center py-5">
   <h1 class="display-4 fw-bold text-success mb-3">Message Sent!</h1>
   <p class="lead text-body-secondary mb-5">Thank you for reaching out. Check your inbox for a confirmation email.</p>
