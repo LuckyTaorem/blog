@@ -934,12 +934,13 @@ Write a highly engaging, heavily detailed, and in-depth technical blog post abou
 Your goal is to strictly write a comprehensive article between [WORD_COUNT] words. You MUST adhere to the following constraints to prevent AI loops and thin content:
 
 CRITICAL LENGTH AND STRUCTURE REQUIREMENTS:
-1. LENGTH: The article MUST be absolutely no less than 800 words. A length of 1000 to 2000 words is highly preferred. Writing under 600 words is considered a total failure.
+1. DYNAMIC LENGTH: Analyze the depth of the provided summary. If information is scarce, comprehensively expand upon the core facts up to 800 words without fabricating details. If the summary is highly detailed, write an exhaustive article exceeding 1000 words.
 2. EXPANSION: Do not just summarize. You must expand heavily on the "Why it matters", "Industry Impact", "Technical Breakdown", and "Future Outlook". 
-3. STRUCTURE: Include at least 5 to 6 main sections (H2). Each section must contain at least 3 to 4 deeply detailed paragraphs.
-4. FACTS ONLY: Do not hallucinate future software versions, features, or events. Base all claims strictly on the provided summary, but unpack them thoroughly.
+3. STRUCTURE: Include at least 4 to 6 main sections (H2). Each section must contain well-thought-out paragraphs.
+4. FACTS ONLY: Do not hallucinate future software versions, features, or events. If you don't know a detail, do not invent it.
 5. NO REPETITION: Do not repeat paragraphs or concluding sentences to pad the word count. Provide genuine, deep analysis.
 6. NO SPAM: Do not include promotional filler, coupons, or unrelated affiliate links.
+7. CLEAN COMPLETION: Ensure the article has a definitive, standard conclusion. Do not cut off mid-sentence.
 
 Include headings, bullet points, and an FAQ section. Output in pure Markdown format.
 
@@ -974,6 +975,8 @@ tags: ["[Tag 1]", "[Tag 2]", "[Tag 3]"]
 
 CRITICAL BODY RULES:
 DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for main sections and H3 (`###`) for subsections.
+
+CRITICAL FORMATTING RULE: Return the final output as plain text formatted with Markdown. DO NOT wrap your entire response in a markdown code block (e.g., do not start the response with ```markdown). Start immediately with the YAML frontmatter.
 """
 
         # --- ROBUST MULTI-PROVIDER WATERFALL CONFIGURATION ---
@@ -997,11 +1000,12 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
 
             # Aggressive system prompt to force long-form content and prevent hallucination loops
             system_instruction = (
-                "You are an elite, professional tech blogger known for writing extremely detailed, long-form articles. "
-                "You must write deep, comprehensive articles that are strictly over 1000 words. "
-                "Never write short, thin content. You must thoroughly unpack technical details, market implications, and industry context. "
-                "Never hallucinate information or repeat sentences to pad the word count."
-            )
+    "You are an elite, professional tech blogger known for writing extremely detailed, authoritative articles. "
+    "If the source information is limited, write a highly focused article of up to 800 words. "
+    "If the source information is rich and detailed, you must write a comprehensive, deep-dive article exceeding 1000+ words. "
+    "NEVER hallucinate features, dates, or events. NEVER repeat sentences or use garbage characters to pad the word count. "
+    "When you reach the natural conclusion of your analysis, finish the article cleanly and stop generating."
+)
 
             print(f"  -> Attempting generation with {provider.upper()} ({model_name})...")
 
@@ -1014,9 +1018,9 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                             {"role": "user", "content": diet_prompt}
                         ],
                         model=model_name,
-                        temperature=0.7,
-                        frequency_penalty=0.6,
-                        presence_penalty=0.4,
+                        temperature=0.3,
+                        frequency_penalty=0.0,
+                        presence_penalty=0.0,
                         max_tokens=4500, 
                     )
                     raw_text = response.choices[0].message.content or ""
@@ -1040,7 +1044,7 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                                 {"role": "system", "content": system_instruction},
                                 {"role": "user", "content": diet_prompt}
                             ],
-                            "temperature": 0.7,
+                            "temperature": 0.3,
                             "max_tokens": 4500
                         },
                         timeout=120
@@ -1065,9 +1069,9 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                                 {"role": "system", "content": system_instruction},
                                 {"role": "user", "content": diet_prompt}
                             ],
-                            "temperature": 0.7, 
-                            "frequency_penalty": 0.6,
-                            "presence_penalty": 0.4,
+                            "temperature": 0.3, 
+                            "frequency_penalty": 0.0,
+                            "presence_penalty": 0.0,
                             "max_tokens": 4500
                         },
                         timeout=60
@@ -1093,9 +1097,9 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                                 {"role": "system", "content": system_instruction},
                                 {"role": "user", "content": diet_prompt}
                             ],
-                            "temperature": 0.7, 
-                            "frequency_penalty": 0.6,
-                            "presence_penalty": 0.4,
+                            "temperature": 0.3, 
+                            "frequency_penalty": 0.0,
+                            "presence_penalty": 0.0,
                             "max_tokens": 4500
                         },
                         timeout=120
@@ -1117,9 +1121,9 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                             "model": model_name,
                             "message": diet_prompt,
                             "preamble": system_instruction,
-                            "temperature": 0.7,
-                            "frequency_penalty": 0.6,
-                            "presence_penalty": 0.4,
+                            "temperature": 0.3,
+                            "frequency_penalty": 0.0,
+                            "presence_penalty": 0.0,
                             "max_tokens": 4500
                         },
                         timeout=60
@@ -1146,9 +1150,9 @@ DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for 
                             }],
                             "generationConfig": {
                                 "maxOutputTokens": 4500,
-                                "temperature": 0.7,
-                                "frequencyPenalty": 0.6,
-                                "presencePenalty": 0.4
+                                "temperature": 0.3,
+                                "frequencyPenalty": 0.0,
+                                "presencePenalty": 0.0
                             }
                         },
                         timeout=120
