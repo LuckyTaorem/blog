@@ -1,17 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Include the Homepage natively -->
   <url>
-    <loc>{{ .Site.BaseURL }}</loc>
+    <loc>https://ltdeveloperblogs.github.io/</loc>
+    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-  <!-- Loop through all regular pages that are NOT posts -->
-  {{ range (where .Site.RegularPages "Section" "!=" "posts") }}
   <url>
-    <loc>{{ .Permalink }}</loc>
-    {{ if not .Lastmod.IsZero }}<lastmod>{{ .Lastmod.Format "2006-01-02T15:04:05-07:00" }}</lastmod>{{ end }}
+    <loc>https://ltdeveloperblogs.github.io/posts</loc>
+    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
-  {{ end }}
+  <url>
+    <loc>https://ltdeveloperblogs.github.io/about</loc>
+    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ltdeveloperblogs.github.io/contact</loc>
+    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ltdeveloperblogs.github.io/ats-scanner/</loc>
+    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ltdeveloperblogs.github.io/cover-letter-generator/</loc>
+    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ltdeveloperblogs.github.io/schema-generator/</loc>
+    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ltdeveloperblogs.github.io/web-scraper/</loc>
+    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ltdeveloperblogs.github.io/csv-to-json/</loc>
+    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
