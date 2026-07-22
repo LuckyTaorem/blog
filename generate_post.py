@@ -934,7 +934,7 @@ Write a highly engaging, heavily detailed, and in-depth technical blog post abou
 Your goal is to strictly write a comprehensive article between [WORD_COUNT] words. You MUST adhere to the following constraints to prevent AI loops and thin content:
 
 CRITICAL LENGTH AND STRUCTURE REQUIREMENTS:
-1. DYNAMIC LENGTH: Analyze the depth of the provided summary. If information is scarce, comprehensively expand upon the core facts up to 800 words without fabricating details. If the summary is highly detailed, write an exhaustive article exceeding 1000 words.
+1. DYNAMIC LENGTH: Analyze the depth of the provided summary. Write a highly comprehensive article between 800 and 1,200 words. Do not attempt to drag the article out unnecessarily to reach an arbitrary token count. If the source material is fully exhausted, conclude the article cleanly.
 2. EXPANSION: Do not just summarize. You must expand heavily on the "Why it matters", "Industry Impact", "Technical Breakdown", and "Future Outlook". 
 3. STRUCTURE: Include at least 4 to 6 main sections (H2). Each section must contain well-thought-out paragraphs.
 4. FACTS ONLY: Do not hallucinate future software versions, features, or events. If you don't know a detail, do not invent it.
@@ -977,22 +977,24 @@ CRITICAL BODY RULES:
 DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for main sections and H3 (`###`) for subsections.
 
 CRITICAL FORMATTING RULE: Return the final output as plain text formatted with Markdown. DO NOT wrap your entire response in a markdown code block (e.g., do not start the response with ```markdown). Start immediately with the YAML frontmatter.
+
+CRITICAL COMPLETION RULE: 
+When you have completely finished writing the conclusion of the article, you MUST write the exact phrase "[END OF ARTICLE]" on a new line. This is mandatory.
 """
 
         # --- ROBUST MULTI-PROVIDER WATERFALL CONFIGURATION ---
         # Ordered strategically by performance, output capacity, and free tier stability
         model_settings = [
-            {"provider": "groq", "model": "openai/gpt-oss-120b", "word_count": "1000 and 2000"},
-            {"provider": "github", "model": "gpt-4o-mini", "word_count": "1000 and 2000"},
-            {"provider": "groq", "model": "llama-3.1-8b-instant", "word_count": "1000 and 2000"},
-            {"provider": "mistral", "model": "mistral-large-latest", "word_count": "1000 and 2000"},
-            {"provider": "gemini", "model": "gemini-2.5-flash", "word_count": "1000 and 2000"},
-            {"provider": "openrouter", "model": "google/gemma-4-31b-it", "word_count": "1000 and 2000"},
-            {"provider": "cohere", "model": "command-a-03-2025", "word_count": "1000 and 2000"}
+            {"provider": "groq", "model": "openai/gpt-oss-120b", "word_count": "800 and 1200"},
+            {"provider": "github", "model": "gpt-4o-mini", "word_count": "800 and 1200"},
+            {"provider": "groq", "model": "llama-3.1-8b-instant", "word_count": "800 and 1200"},
+            {"provider": "mistral", "model": "mistral-large-latest", "word_count": "800 and 1200"},
+            {"provider": "gemini", "model": "gemini-2.5-flash", "word_count": "800 and 1200"},
+            {"provider": "openrouter", "model": "google/gemma-4-31b-it", "word_count": "800 and 1200"},
+            {"provider": "cohere", "model": "command-a-03-2025", "word_count": "800 and 1200"}
         ]
 
         article_content = None
-
         for setting in model_settings:
             provider = setting['provider']
             model_name = setting['model']
@@ -1002,7 +1004,7 @@ CRITICAL FORMATTING RULE: Return the final output as plain text formatted with M
             system_instruction = (
     "You are an elite, professional tech blogger known for writing extremely detailed, authoritative articles. "
     "If the source information is limited, write a highly focused article of up to 800 words. "
-    "If the source information is rich and detailed, you must write a comprehensive, deep-dive article exceeding 1000+ words. "
+    "If the source information is rich and detailed, expand naturally up to 1,200 words. "
     "NEVER hallucinate features, dates, or events. NEVER repeat sentences or use garbage characters to pad the word count. "
     "When you reach the natural conclusion of your analysis, finish the article cleanly and stop generating."
 )
@@ -1047,7 +1049,7 @@ CRITICAL FORMATTING RULE: Return the final output as plain text formatted with M
                             "temperature": 0.3,
                             "max_tokens": 4500
                         },
-                        timeout=120
+                        timeout=240
                     )
                     if res.status_code == 200:
                         raw_content = res.json().get('choices', [{}])[0].get('message', {}).get('content')
@@ -1074,7 +1076,7 @@ CRITICAL FORMATTING RULE: Return the final output as plain text formatted with M
                             "presence_penalty": 0.0,
                             "max_tokens": 4500
                         },
-                        timeout=60
+                        timeout=240
                     )
                     if res.status_code == 200: article_content = res.json()['choices'][0]['message']['content'].strip()
                     else: print(f"     -> Provider error: {res.text}")
@@ -1102,7 +1104,7 @@ CRITICAL FORMATTING RULE: Return the final output as plain text formatted with M
                             "presence_penalty": 0.0,
                             "max_tokens": 4500
                         },
-                        timeout=120
+                        timeout=240
                     )
                     if res.status_code == 200:
                         raw_content = res.json().get('choices', [{}])[0].get('message', {}).get('content')
@@ -1126,7 +1128,7 @@ CRITICAL FORMATTING RULE: Return the final output as plain text formatted with M
                             "presence_penalty": 0.0,
                             "max_tokens": 4500
                         },
-                        timeout=60
+                        timeout=240
                     )
                     if res.status_code == 200: article_content = res.json().get('text', '').strip()
                     else: print(f"     -> Provider error: {res.text}")
@@ -1155,7 +1157,7 @@ CRITICAL FORMATTING RULE: Return the final output as plain text formatted with M
                                 "presencePenalty": 0.0
                             }
                         },
-                        timeout=120
+                        timeout=240
                     )
 
                     if res.status_code == 200:
@@ -1273,6 +1275,17 @@ CRITICAL FORMATTING RULE: Return the final output as plain text formatted with M
                 os.remove(file_path)
             remaining_queue.append(article)
             continue # 👈 ABSOLUTELY CRITICAL: Stop execution and jump to the next article!
+
+        # 🚨 THE BOUNCER: Incomplete Article Check (PREVENTS MID-WAY CUT-OFFS)
+        if "[END OF ARTICLE]" not in article_content:
+            print(f"  -> 🚨 CRITICAL: Article cut off mid-way (Timeout or Token Limit hit). Rejecting.")
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            # Push it back to the queue so it safely retries on the next run
+            remaining_queue.append(article)
+            continue
+
+        article_content = article_content.replace("[END OF ARTICLE]", "").strip()
             
         # 🚨 THE BOUNCER: Forcefully overwrite AI image hallucinations with our verified Python variable
         if re.search(r'^images:\s*\[.*\]', article_content, re.MULTILINE):
