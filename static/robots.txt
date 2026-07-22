@@ -6,3 +6,6 @@ Disallow: /search/
 Disallow: /*?q=*
 
 Sitemap: https://ltdeveloperblogs.github.io/sitemap_index.xml
+Sitemap: https://ltdeveloperblogs.github.io/sitemap.xml
+Sitemap: https://ltdeveloperblogs.github.io/post-sitemap.xml
+Sitemap: https://ltdeveloperblogs.github.io/page-sitemap.xml
