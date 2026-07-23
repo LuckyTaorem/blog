@@ -1,0 +1,837 @@
+<div class="sitemap-validator-wrapper my-4">
+    <!-- Input Section -->
+    <div class="card shadow-sm mb-4 border-0 bg-body-tertiary">
+        <div class="card-body p-4">
+            <h3 id="sitemapValidatorTitle" class="card-title h4 mb-4 text-body">Sitemap Validator & AI Analyzer</h3>
+            
+            <ul class="nav nav-pills mb-3" id="sitemapTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="url-tab" data-bs-toggle="pill" data-bs-target="#url-input" type="button" role="tab">Fetch URL</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="xml-tab" data-bs-toggle="pill" data-bs-target="#xml-input" type="button" role="tab">Paste XML</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="sitemapTabsContent">
+                <!-- URL Input Tab -->
+                <div class="tab-pane fade show active" id="url-input" role="tabpanel">
+                    <div class="input-group mb-2">
+                        <input type="url" id="sitemapUrl" class="form-control" placeholder="https://example.com/sitemap.xml">
+                        <button class="btn btn-primary" type="button" onclick="validateFromURL()">Analyze URL</button>
+                    </div>
+                    <small class="text-body-secondary">Note: Fetching external URLs may be blocked by CORS unless they are on the same domain.</small>
+                </div>
+                
+                <!-- XML Paste Tab -->
+                <div class="tab-pane fade" id="xml-input" role="tabpanel">
+                    <textarea id="sitemapXml" class="form-control mb-3" rows="6" placeholder="Paste your raw XML code here..."></textarea>
+                    <button class="btn btn-primary" type="button" onclick="validateFromXML()">Analyze Code</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="text-center d-none my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <h5 class="mt-3 text-body" id="loadingMainText">Analyzing Sitemap...</h5>
+        <p class="text-body-secondary mb-3" id="loadingSubText">Initiating fetch...</p>
+        <div class="progress mx-auto" style="max-width: 400px; height: 10px;">
+            <div id="loadingProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%;"></div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsSection" class="d-none">
+        <!-- Dashboard Overview -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 bg-body-tertiary">
+                    <div class="card-body text-center">
+                        <h5 id="HealthScore" class="text-body-secondary mb-2">Health Score</h5>
+                        <h2 id="healthScoreDisplay" class="display-4 fw-bold mb-0">100</h2>
+                        <div class="progress mt-2" style="height: 5px;">
+                            <div id="healthScoreBar" class="progress-bar bg-success" role="progressbar" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 bg-body-tertiary">
+                    <div class="card-body text-center">
+                        <h5 class="text-body-secondary mb-2">Total URLs</h5>
+                        <h2 id="totalUrlsDisplay" class="display-4 fw-bold mb-0">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 bg-body-tertiary">
+                    <div class="card-body text-center">
+                        <h5 class="text-body-secondary mb-2">Child Sitemaps</h5>
+                        <h2 id="totalSitemapsDisplay" class="display-4 fw-bold mb-0">0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Errors & AI Assistant Section -->
+        <div id="errorsContainer" class="mb-4"></div>
+
+        <!-- Child Sitemaps Table (If Parent) -->
+        <div id="childSitemapsWrapper" class="card border-0 shadow-sm mb-4 bg-body-tertiary d-none">
+            <div class="card-header bg-transparent border-bottom-0 pt-4 pb-0">
+                <h5 id="IncludeSitemap" class="card-title text-body">Included Sitemaps</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Sitemap URL</th>
+                                <th>Last Modified</th>
+                            </tr>
+                        </thead>
+                        <tbody id="childSitemapTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- URLs Table with Pagination -->
+        <div class="card border-0 shadow-sm bg-body-tertiary">
+            <div class="card-header bg-transparent border-bottom-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
+                <h5 id="URLList" class="card-title text-body mb-0">URL List</h5>
+                <span class="badge bg-primary rounded-pill" id="pageIndicator">Page 1</span>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive mb-3">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>URL Path</th>
+                                <th>Status</th>
+                                <th>Last Modified</th>
+                                <th>Change Freq</th>
+                                <th>Priority</th>
+                            </tr>
+                        </thead>
+                        <tbody id="urlTableBody"></tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <nav aria-label="URL table navigation">
+                    <ul class="pagination justify-content-center mb-0" id="paginationControls"></ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Premium Toast Notification -->
+<div class="toast-container position-fixed top-0 end-0 p-4" style="z-index: 1055;">
+    <div id="validatorToast" class="toast align-items-center border-0 shadow" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body fw-medium" id="toastMessage">
+                <!-- Message dynamically injected here -->
+            </div>
+            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<!-- AI Modal -->
+<div class="modal fade" id="aiModal" tabindex="-1" aria-labelledby="aiModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-body">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title" id="aiModalLabel">AI Assistant: Fix SEO Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="mb-4">
+                    <strong>Issue Detected:</strong>
+                    <p id="aiIssueContext" class="text-danger mb-0"></p>
+                </div>
+                <div class="bg-body-tertiary p-3 rounded shadow-sm border">
+                    <strong>AI Recommendation:</strong>
+                    <div id="aiResponseText" class="mt-3 mb-0"></div>
+                </div>
+            </div>
+            <div class="modal-footer border-top">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let globalRawXML = "";
+// State Management
+let globalUrls = [];
+let globalSitemaps = [];
+let globalErrors = [];
+let currentScore = 100;
+let currentPage = 1;
+const ITEMS_PER_PAGE = 50;
+
+// New Loading Trackers
+let fetchQueueTotal = 0;
+let fetchQueueCompleted = 0;
+
+// Reset state before new analysis
+function resetState() {
+    globalUrls = [];
+    globalSitemaps = [];
+    globalErrors = [];
+    currentScore = 100;
+    currentPage = 1;
+    fetchQueueTotal = 0;
+    fetchQueueCompleted = 0;
+    document.getElementById('resultsSection').classList.add('d-none');
+    document.getElementById('errorsContainer').innerHTML = '';
+}
+
+// State Management
+let aiTriesRemaining = 3;
+
+// NEW: Fetch limit on page load
+async function fetchAILimit() {
+    try {
+        const res = await fetch('https://resume-ats-api.vercel.app/api/sitemap-ai');
+        const data = await res.json();
+        if (data.remaining !== undefined) {
+            aiTriesRemaining = data.remaining;
+        }
+    } catch (e) {
+        console.warn("Could not sync AI limit on load.");
+    }
+}
+fetchAILimit(); // Execute immediately
+
+// Premium Toast Notification System
+function showToast(message, type = 'danger') {
+    const toastEl = document.getElementById('validatorToast');
+    const toastMsg = document.getElementById('toastMessage');
+    const closeBtn = toastEl.querySelector('.btn-close');
+    
+    // Inject the message
+    toastMsg.textContent = message;
+    
+    // Apply Bootstrap contextual colors
+    toastEl.className = `toast align-items-center border-0 shadow text-bg-${type}`;
+    
+    // Make close button white if the background is dark (like danger/primary)
+    if (type === 'warning' || type === 'light') {
+        closeBtn.classList.remove('btn-close-white');
+    } else {
+        closeBtn.classList.add('btn-close-white');
+    }
+    
+    // Show the Toast
+    const toast = new bootstrap.Toast(toastEl, { delay: 4000 });
+    toast.show();
+}
+
+// Helper for UI Progress
+function updateLoadingProgress(subText, percent) {
+    document.getElementById('loadingSubText').textContent = subText;
+    document.getElementById('loadingProgressBar').style.width = percent + '%';
+}
+
+// Triggered by URL button
+async function validateFromURL() {
+    resetState();
+    const url = document.getElementById('sitemapUrl').value.trim();
+    if (!url) {
+        showToast("Please enter a URL.", "warning");
+        return;
+    }
+    
+    // Sanity check for valid URL strings
+    try {
+        new URL(url);
+        if (!url.startsWith('http')) throw new Error('Missing HTTP');
+    } catch (e) {
+        showToast("Invalid input: Please enter a complete URL starting with http:// or https://", "danger");
+        return;
+    }
+    
+    showLoading(true);
+    fetchQueueTotal = 1; 
+    updateLoadingProgress("Connecting to root sitemap...", 10);
+    
+    try {
+        await fetchAndParseSitemap(url, true);
+        
+        updateLoadingProgress("Finalizing analysis...", 100);
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        renderDashboard();
+    } catch (error) {
+        console.error("Critical Execution Error:", error);
+        addError('Execution Failed', `Could not process ${url}.`, `Error: ${error.message}`);
+        currentScore = 0;
+        
+        updateLoadingProgress("Validation failed.", 100);
+        await new Promise(resolve => setTimeout(resolve, 600));
+        
+        renderDashboard();
+    }
+    showLoading(false);
+}
+
+// Triggered by Textarea button
+async function validateFromXML() {
+    resetState();
+    const xml = document.getElementById('sitemapXml').value.trim();
+    globalRawXML = xml; // Save for the AI
+    if (!xml) {
+        showToast("Please paste XML code.", "warning");
+        return;
+    }
+    
+    // Sanity check to ensure it resembles XML
+    if (!xml.startsWith('<')) {
+        showToast("Invalid input: This does not look like XML code. A valid sitemap must start with a '<' character.", "danger");
+        return;
+    }
+    
+    showLoading(true);
+    updateLoadingProgress("Reading XML structure...", 40);
+    
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    updateLoadingProgress("Extracting URLs...", 70);
+    await parseXMLString(xml, true);
+    
+    updateLoadingProgress("Finalizing analysis...", 100);
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    renderDashboard();
+    showLoading(false);
+}
+
+function showLoading(show) {
+    document.getElementById('loadingSpinner').classList.toggle('d-none', !show);
+}
+
+// Fetch routing with Multi-Proxy Fallback Matrix
+async function fetchAndParseSitemap(url, isRoot = false) {
+    let response = null;
+    let success = false;
+
+    // Removed direct fetch to prevent browser CORS console spam
+    const proxyEndpoints = [
+        (target) => `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
+        (target) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(target)}`,
+        (target) => `https://corsproxy.io/?${encodeURIComponent(target)}`
+    ];
+
+    for (const getProxyUrl of proxyEndpoints) {
+        try {
+            const proxyUrl = getProxyUrl(url);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 sec timeout per proxy
+
+            response = await fetch(proxyUrl, { signal: controller.signal });
+            clearTimeout(timeoutId);
+
+            if (response.ok) {
+                success = true;
+                break; // Stop trying proxies, we got it!
+            }
+        } catch (e) {
+            // Silently fail over to the next proxy
+        }
+    }
+
+    // ... (keep your existing proxy loop above this)
+
+    if (!success || !response) {
+        throw new Error(`All network attempts failed or timed out for: ${url}`);
+    }
+
+    // New: Update UI when the download starts
+    if (isRoot) updateLoadingProgress("Downloading XML data...", 40);
+    
+    const xmlString = await response.text();
+    globalRawXML = xmlString; // Save for the AI
+    
+    // New: Update UI when parsing begins
+    if (isRoot) updateLoadingProgress("Parsing XML nodes...", 70);
+    
+    await parseXMLString(xmlString, isRoot, true);
+}
+
+// Core Strict XML Parsing Logic
+async function parseXMLString(xmlString, isRoot, allowFetch = false) {
+    if (isRoot && !xmlString.trim().startsWith('<?xml')) {
+        addError('Missing XML Declaration', 'Missing `<?xml ... ?>` declaration at the top of the file.', 'Add `<?xml version="1.0" encoding="utf-8" standalone="yes"?>` as the absolute first line. Blank spaces before it will cause rejection.');
+        deductScore(15);
+    }
+
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+    
+    // 1. EXTRACT EXACT SYNTAX ERRORS
+    const parserError = xmlDoc.querySelector("parsererror");
+    if (parserError) {
+        // Browsers generate a specific error message inside this node. We clean it up for the user.
+        let exactError = parserError.textContent.replace('This page contains the following errors:', '').split('\n')[0].trim();
+        if (!exactError || exactError.length < 5) exactError = "Missing closing tag, unescaped characters, or broken brackets.";
+        
+        addError('Fatal Syntax Error', exactError, 'Check the specific line mentioned in the error. Look for unclosed tags (e.g., missing `</url>`) or unescaped characters like `&` (must be `&amp;`).');
+        deductScore(50);
+        return; 
+    }
+
+    // 2. CHECK NAMESPACE
+    const rootElement = xmlDoc.documentElement;
+    if (rootElement.namespaceURI !== "http://www.sitemaps.org/schemas/sitemap/0.9") {
+        addError('Missing required xmlns attribute', 'Root tag is missing the correct namespace.', 'Google requires the root tag to include exactly: `xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"`.');
+        deductScore(20);
+    }
+
+    const isIndex = xmlDoc.getElementsByTagName("sitemapindex").length > 0;
+    const isUrlSet = xmlDoc.getElementsByTagName("urlset").length > 0;
+
+    if (isIndex) {
+        const sitemaps = xmlDoc.getElementsByTagName("sitemap");
+        
+        if (sitemaps.length > 50000) {
+             addError('Limit Exceeded', 'Contains more than 50,000 child sitemaps.', 'Google limits sitemap indexes to 50,000 files.');
+             deductScore(40);
+        }
+
+        if (allowFetch) fetchQueueTotal += sitemaps.length;
+
+        let fetchPromises = [];
+        for (let s of sitemaps) {
+            const loc = s.getElementsByTagName("loc")[0]?.textContent;
+            const lastmod = s.getElementsByTagName("lastmod")[0]?.textContent || '';
+            
+            if (loc) {
+                globalSitemaps.push({ loc, lastmod });
+                if (allowFetch) {
+                    fetchPromises.push(
+                        fetchAndParseSitemap(loc, false).then(() => {
+                            fetchQueueCompleted++;
+                            let pct = Math.min(95, Math.round((fetchQueueCompleted / fetchQueueTotal) * 100));
+                            updateLoadingProgress(`Reading sitemap ${fetchQueueCompleted} of ${fetchQueueTotal} (${loc.split('/').pop()})...`, pct);
+                        }).catch(e => {
+                            fetchQueueCompleted++; 
+                            addError('Child Sitemap Failed', `Could not fetch ${loc}.`, 'Ensure this child sitemap is live and not blocking requests.');
+                            deductScore(10);
+                        })
+                    );
+                }
+            } else {
+                addError('Missing <loc> tag', 'A <sitemap> block is missing the <loc> tag.', 'Ensure every block includes a `<loc>` tag containing the URL.');
+                deductScore(5);
+            }
+        }
+        if (allowFetch && fetchPromises.length > 0) await Promise.all(fetchPromises);
+        
+    } else if (isUrlSet) {
+        const urls = xmlDoc.getElementsByTagName("url");
+        const validFreqs = ['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never'];
+
+        if (urls.length > 50000) {
+             addError('Limit Exceeded', 'Contains more than 50,000 URLs.', 'Google limits sitemaps to 50,000 URLs.');
+             deductScore(40);
+        }
+
+        for (let u of urls) {
+            const loc = u.getElementsByTagName("loc")[0]?.textContent;
+            const lastmod = u.getElementsByTagName("lastmod")[0]?.textContent || '';
+            const changefreq = u.getElementsByTagName("changefreq")[0]?.textContent || '';
+            const priority = u.getElementsByTagName("priority")[0]?.textContent || '';
+
+            if (!loc) {
+                addError('Missing URL', 'A <url> block is missing the <loc> tag.', 'Ensure every <url> container includes a `<loc>` tag.');
+                deductScore(2);
+                continue; 
+            }
+
+            // 3. CHECK ABSOLUTE URLS
+            try {
+                new URL(loc);
+                if (!loc.startsWith('http://') && !loc.startsWith('https://')) {
+                    throw new Error("Not absolute");
+                }
+            } catch (e) {
+                addError('Not absolute URL (missing https://)', `"${loc}" is not a valid absolute URL.`, 'Search engines require full absolute URLs starting with http:// or https://. Relative URLs like `/about` will be rejected.');
+                deductScore(5);
+            }
+            
+            // 4. CHECK MISSING OPTIONAL TAGS
+            if (!changefreq || !priority) {
+                addError('Missing changefreq and priority', `URL ${loc} is missing metadata.`, 'While optional, adding `<changefreq>` and `<priority>` helps guide search engine crawlers.');
+                deductScore(1); 
+            }
+
+            // 5. CHECK INVALID VALUES
+            if (priority) {
+                const p = parseFloat(priority);
+                if (isNaN(p) || p < 0.0 || p > 1.0) {
+                    addError('Invalid value (Priority)', `Priority "${priority}" is not valid.`, 'Must be a numerical value between 0.0 and 1.0.');
+                    deductScore(1);
+                }
+            }
+
+            if (changefreq && !validFreqs.includes(changefreq.toLowerCase())) {
+                addError('Invalid value (Changefreq)', `Changefreq "${changefreq}" is not valid.`, `Must be exactly one of: ${validFreqs.join(', ')}.`);
+                deductScore(1);
+            }
+
+            // 6. CHECK DATE FORMATTING & SEPARATORS
+            if (lastmod) {
+                 if (lastmod.includes('/')) {
+                     addError('Wrong date separator', `Date "${lastmod}" uses slashes.`, 'Dates must use dashes (YYYY-MM-DD) per the W3C standard.');
+                     deductScore(2);
+                 } else {
+                     const dateCheck = new Date(lastmod);
+                     if (isNaN(dateCheck.getTime())) {
+                         addError('Wrong date format', `Date "${lastmod}" is improperly formatted.`, 'Ensure dates use the W3C Datetime format, typically YYYY-MM-DD or YYYY-MM-DDThh:mm:ssTZD.');
+                         deductScore(2);
+                     }
+                 }
+            }
+
+            globalUrls.push({ loc, lastmod, changefreq, priority });
+        }
+    } else {
+        addError('Fatal Structure Error', 'No <urlset> or <sitemapindex> found.', 'A valid sitemap must be wrapped entirely in either a `<urlset>` or a `<sitemapindex>`.');
+        deductScore(50); 
+    }
+}
+
+// Error & Score Handlers
+function addError(type, msg, aiFix, severity = 'danger', affectedUrl = '') {
+    let existingError = globalErrors.find(e => e.type === type);
+    
+    if (existingError) {
+        existingError.count += 1;
+        if (affectedUrl && !existingError.samples.includes(affectedUrl) && existingError.samples.length < 50) {
+            existingError.samples.push(affectedUrl);
+        }
+    } else {
+        globalErrors.push({
+            type: type,
+            msg: msg,
+            aiFix: aiFix,
+            severity: severity, // 'danger' or 'warning'
+            count: 1,
+            samples: affectedUrl ? [affectedUrl] : []
+        });
+    }
+}
+
+function deductScore(points) {
+    if (currentScore > 0) {
+        currentScore = Math.max(0, currentScore - points);
+    }
+}
+
+// Render Dashboard UI
+function renderDashboard() {
+    document.getElementById('resultsSection').classList.remove('d-none');
+    
+    // Update Score & Bars
+    const scoreDisplay = document.getElementById('healthScoreDisplay');
+    const scoreBar = document.getElementById('healthScoreBar');
+    scoreDisplay.textContent = currentScore;
+    scoreBar.style.width = currentScore + '%';
+    
+    if (currentScore > 80) scoreBar.className = 'progress-bar bg-success';
+    else if (currentScore > 50) scoreBar.className = 'progress-bar bg-warning';
+    else scoreBar.className = 'progress-bar bg-danger';
+
+    document.getElementById('totalUrlsDisplay').textContent = globalUrls.length;
+    document.getElementById('totalSitemapsDisplay').textContent = globalSitemaps.length;
+
+    // Render Grouped Error Accordion
+    const errorsContainer = document.getElementById('errorsContainer');
+    errorsContainer.innerHTML = '';
+
+    if (globalErrors.length > 0) {
+        const accordion = document.createElement('div');
+        accordion.className = 'accordion shadow-sm mb-4';
+        accordion.id = 'sitemapErrorAccordion';
+
+        globalErrors.forEach((err, index) => {
+            const itemId = `error-item-${index}`;
+            const collapseId = `error-collapse-${index}`;
+            const isDanger = err.severity === 'danger';
+            
+            // Red for Danger, Yellow/Amber for Warning
+            const alertClass = isDanger ? 'border-danger-subtle bg-danger-subtle text-danger-emphasis' : 'border-warning-subtle bg-warning-subtle text-warning-emphasis';
+            const badgeClass = isDanger ? 'text-bg-danger' : 'text-bg-warning text-dark';
+            
+            const initialSamples = err.samples.slice(0, 10);
+            const remainingCount = err.samples.length - 10;
+
+            const accordionItem = document.createElement('div');
+            accordionItem.className = `accordion-item border ${alertClass} mb-2 rounded overflow-hidden`;
+            accordionItem.innerHTML = `
+                <h2 class="accordion-header" id="${itemId}">
+                    <button class="accordion-button collapsed bg-transparent text-reset shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}">
+                        <div class="d-flex align-items-center justify-content-between w-100 me-3">
+                            <div>
+                                <strong class="me-2">${err.type}</strong>
+                                <span class="badge ${badgeClass} rounded-pill">${err.count.toLocaleString()} ${err.count === 1 ? 'issue' : 'issues'}</span>
+                            </div>
+                            <span class="badge bg-body text-body-secondary border me-2">${isDanger ? 'Critical Error' : 'Warning'}</span>
+                        </div>
+                    </button>
+                </h2>
+                <div id="${collapseId}" class="accordion-collapse collapse" data-bs-parent="#sitemapErrorAccordion">
+                    <div class="accordion-body bg-body text-body">
+                        <p class="mb-3">${err.msg}</p>
+                        
+                        ${err.samples.length > 0 ? `
+                            <div class="mb-3">
+                                <small class="text-body-secondary fw-bold d-block mb-1">Affected URLs (Showing ${initialSamples.length} of ${err.count}):</small>
+                                <ul class="list-group list-group-flush border rounded">
+                                    ${initialSamples.map(url => `<li class="list-group-item py-1 px-2 text-truncate small bg-body-tertiary"><a href="${url}" target="_blank" class="text-decoration-none">${url}</a></li>`).join('')}
+                                </ul>
+                                ${remainingCount > 0 ? `<small class="text-body-secondary mt-1 d-block">+ ${err.count - 10} more URLs with this issue.</small>` : ''}
+                            </div>
+                        ` : ''}
+
+                        <button class="btn btn-sm ${aiTriesRemaining > 0 ? 'btn-dark' : 'btn-secondary'} d-flex align-items-center gap-2" onclick="askAIFix(${index})" ${aiTriesRemaining <= 0 ? 'disabled' : ''}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-robot" viewBox="0 0 16 16"><path d="M6 12.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5ZM3 8.062C3 6.76 4.235 5.765 5.53 5.889a2.89 2.89 0 0 0 4.94 0C11.765 5.765 13 6.76 13 8.062v1.157a.933.933 0 0 1-.765.935c-.845.147-2.34.346-4.235.346-1.895 0-3.39-.2-4.235-.346A.933.933 0 0 1 3 9.219V8.062Zm4.542-.827a.25.25 0 0 0-.217.068l-.92.9a24.767 24.767 0 0 1-1.871-.183.25.25 0 0 0-.068.495c.55.076 1.232.149 2.02.193a.25.25 0 0 0 .189-.071l.754-.736.847 1.71a.25.25 0 0 0 .404.062l.932-.97a25.286 25.286 0 0 0 1.922-.188.25.25 0 0 0-.068-.495c-.538.074-1.207.145-1.98.189a.25.25 0 0 0-.166.076l-.754.785-.842-1.7a.25.25 0 0 0-.182-.135Z"/><path d="M8.5 1.866a1 1 0 1 0-1 0V3h-2A4.5 4.5 0 0 0 1 7.5V8a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1v1a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1v-.5A4.5 4.5 0 0 0 10.5 3h-2V1.866ZM14 7.5V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.5A3.5 3.5 0 0 1 5.5 4h5A3.5 3.5 0 0 1 14 7.5Z"/></svg>
+                            ${aiTriesRemaining > 0 ? `Ask AI How To Fix (${aiTriesRemaining} left)` : 'AI Limit Reached For Today'}
+                        </button>
+                    </div>
+                </div>
+            `;
+            accordion.appendChild(accordionItem);
+        });
+
+        errorsContainer.appendChild(accordion);
+    }
+
+    // Render Child Sitemaps
+    const childWrapper = document.getElementById('childSitemapsWrapper');
+    const childBody = document.getElementById('childSitemapTableBody');
+    childBody.innerHTML = '';
+    if (globalSitemaps.length > 0) {
+        childWrapper.classList.remove('d-none');
+        globalSitemaps.forEach(s => {
+            childBody.innerHTML += `<tr><td><a href="${s.loc}" target="_blank" class="text-decoration-none">${s.loc}</a></td><td><span class="badge text-bg-dark border">${s.lastmod}</span></td></tr>`;
+        });
+    } else {
+        childWrapper.classList.add('d-none');
+    }
+
+    renderTablePage(1);
+}
+
+// Pagination & DOM Node Rendering (Fixes rowId reference error)
+function renderTablePage(page) {
+    currentPage = page;
+    const totalPages = Math.ceil(globalUrls.length / ITEMS_PER_PAGE) || 1;
+    document.getElementById('pageIndicator').textContent = `Page ${page} of ${totalPages}`;
+    
+    const start = (page - 1) * ITEMS_PER_PAGE;
+    const paginatedUrls = globalUrls.slice(start, start + ITEMS_PER_PAGE);
+    
+    const tbody = document.getElementById('urlTableBody');
+    tbody.innerHTML = '';
+    
+    if (paginatedUrls.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-body-secondary py-4">No valid URLs found in the sitemap.</td></tr>';
+    } else {
+        paginatedUrls.forEach((u, index) => {
+            const absoluteIndex = start + index; // Track position in the global array
+            const rowId = 'url-status-' + page + '-' + index;
+            
+            // If we already cached the status, use it. Otherwise, show the spinner.
+            const statusDisplay = u.statusCache || `<span class="spinner-border spinner-border-sm text-secondary" role="status"></span>`;
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><div class="text-truncate" style="max-width: 350px;" title="${u.loc}"><a href="${u.loc}" target="_blank" class="text-decoration-none">${u.loc}</a></div></td>
+                <td id="${rowId}">${statusDisplay}</td>
+                <td>${u.lastmod ? `<span class="badge text-bg-dark border">${u.lastmod}</span>` : '-'}</td>
+                <td>${u.changefreq || '-'}</td>
+                <td>${u.priority || '-'}</td>
+            `;
+            tbody.appendChild(tr);
+            
+            // Only run the ping if we haven't cached it yet
+            if (!u.statusCache) {
+                checkLinkStatus(u.loc, rowId, absoluteIndex);
+            }
+        });
+    }
+
+    const pgControls = document.getElementById('paginationControls');
+    pgControls.innerHTML = '';
+    if (totalPages > 1) {
+        pgControls.innerHTML += `<li class="page-item ${page === 1 ? 'disabled' : ''}"><button class="page-link" onclick="renderTablePage(1)">&laquo; First</button></li>`;
+        pgControls.innerHTML += `<li class="page-item ${page === 1 ? 'disabled' : ''}"><button class="page-link" onclick="renderTablePage(${page - 1})">Prev</button></li>`;
+        
+        let startBtn = Math.max(1, page - 2);
+        let endBtn = Math.min(totalPages, page + 2);
+        
+        for (let i = startBtn; i <= endBtn; i++) {
+            pgControls.innerHTML += `<li class="page-item ${i === page ? 'active' : ''}"><button class="page-link" onclick="renderTablePage(${i})">${i}</button></li>`;
+        }
+        
+        pgControls.innerHTML += `<li class="page-item ${page === totalPages ? 'disabled' : ''}"><button class="page-link" onclick="renderTablePage(${page + 1})">Next</button></li>`;
+        pgControls.innerHTML += `<li class="page-item ${page === totalPages ? 'disabled' : ''}"><button class="page-link" onclick="renderTablePage(${totalPages})">Last &raquo;</button></li>`;
+    }
+}
+
+// Check individual URL status and cache the result
+async function checkLinkStatus(url, elementId, globalIndex) {
+    const proxies = [
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+        `https://corsproxy.io/?${encodeURIComponent(url)}`
+    ];
+
+    let success = false;
+    let finalStatusHTML = '';
+
+    for (const proxyUrl of proxies) {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 4000); 
+
+            const response = await fetch(proxyUrl, { method: 'GET', signal: controller.signal });
+            clearTimeout(timeoutId);
+
+            if (response.ok) {
+                finalStatusHTML = '<span class="badge bg-success">200 OK</span>';
+                success = true;
+                break; 
+            } else if (response.status >= 400 && response.status < 500) {
+                finalStatusHTML = `<span class="badge bg-danger" title="Dead link detected!">${response.status} Error</span>`;
+                addError('Dead Link Found', `URL ${url} returned a ${response.status} response.`, 'Check if the post was deleted or redirected.');
+                deductScore(2);
+                document.getElementById('healthScoreDisplay').textContent = currentScore;
+                document.getElementById('healthScoreBar').style.width = currentScore + '%';
+                success = true;
+                break;
+            }
+        } catch (error) {
+            // Silently fail over
+        }
+    }
+
+    if (!success) {
+        finalStatusHTML = '<span class="badge text-bg-dark border" title="Status check timed out or blocked">Unreachable</span>';
+    }
+
+    // 1. Update the table visually
+    const statusCell = document.getElementById(elementId);
+    if (statusCell) {
+        statusCell.innerHTML = finalStatusHTML;
+    }
+
+    // 2. Cache it globally so it doesn't run again on page change
+    if (globalUrls[globalIndex]) {
+        globalUrls[globalIndex].statusCache = finalStatusHTML;
+    }
+}
+
+// AI Modal & API Connection
+async function askAIFix(errorIndex) {
+    if (aiTriesRemaining <= 0) {
+        showToast("You have reached the daily limit of 3 AI requests. Please try again tomorrow.", "warning");
+        return; 
+    }
+    const errorData = globalErrors[errorIndex];
+    
+    document.getElementById('aiIssueContext').textContent = `${errorData.type} (${errorData.count.toLocaleString()} occurrences)`;
+    
+    document.getElementById('aiResponseText').innerHTML = `
+        <div class="d-flex flex-column align-items-center justify-content-center py-5 text-secondary">
+            <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h5 class="text-body">Analyzing Your Sitemap</h5>
+            <p class="mb-0 text-body-secondary">Pinpointing the exact fix in your XML...</p>
+        </div>
+    `;
+    
+    const aiModal = new bootstrap.Modal(document.getElementById('aiModal'));
+    aiModal.show();
+
+    try {
+        const response = await fetch('https://resume-ats-api.vercel.app/api/sitemap-ai', { // Update this URL if needed
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                errorType: errorData.type,
+                errorMsg: errorData.msg,
+                sampleUrl: errorData.samples[0] || 'https://example.com/',
+                rawXML: globalRawXML.substring(0, 2500) // Send a snippet of the user's XML to save tokens
+            })
+        });
+
+        if (!response.ok) {
+            // NEW: If the backend throws a 429 rate limit error, catch it gracefully
+            if (response.status === 429) {
+                aiTriesRemaining = 0;
+                renderDashboard(); // Re-render to disable buttons
+                bootstrap.Modal.getInstance(document.getElementById('aiModal')).hide();
+                showToast("You have reached the daily limit of 3 AI requests.", "warning");
+                return;
+            }
+            
+            const errorPayload = await response.json().catch(() => ({}));
+            throw new Error(errorPayload.error || `Server Error ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        // NEW: Sync the remaining tries from the backend and update all buttons
+        if (data.remainingTries !== undefined) {
+            aiTriesRemaining = data.remainingTries;
+            renderDashboard(); // Re-render UI in the background to show new button counts
+        }
+
+        // Premium Animated UI Rendering
+        document.getElementById('aiResponseText').innerHTML = `
+            <div class="fade-in-up" style="animation-delay: 0.1s;">
+                <strong class="text-body-emphasis">Reason:</strong> 
+                <span class="text-body">${escapeHtml(data.explanation)}</span>
+            </div>
+            
+            <div class="fade-in-up mt-4" style="animation-delay: 0.2s;">
+                <strong class="d-block mb-2 text-body-emphasis">Corrected Code (Based on your XML):</strong>
+                <pre class="ai-code-block text-light p-3 rounded shadow-sm mb-0" style="font-size: 0.875rem; overflow-x: auto;"><code>${escapeHtml(data.fixedSnippet)}</code></pre>
+            </div>
+            
+            <div class="fade-in-up mt-4" style="animation-delay: 0.3s;">
+                <strong class="text-body-emphasis">Implementation Tip:</strong> 
+                <span class="text-body">${escapeHtml(data.implementationTip)}</span>
+            </div>
+        `;
+    } catch (err) {
+        document.getElementById('aiResponseText').innerHTML = `
+            <div class="alert alert-danger border-danger-subtle d-flex gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 text-danger" viewBox="0 0 16 16"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+                <div>
+                    <strong class="d-block mb-1">Backend Connection Failed:</strong>
+                    <span class="text-danger fw-bold">${escapeHtml(err.message)}</span><br><br>
+                    <strong>Standard Fix:</strong> ${escapeHtml(errorData.aiFix)}
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Ensure angle brackets render as code, not active HTML
+function escapeHtml(str) {
+    if (!str) return "";
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+</script>

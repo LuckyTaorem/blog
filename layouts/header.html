@@ -24,7 +24,9 @@
 {{ if and site.Params.main.titleCase (not .Page.Params.exact) }}{{ $title = title $title }}{{ end }}
 
 {{/* Render breadcrumb */}}
-{{ if .Site.Params.navigation.breadcrumb }}{{ partial "assets/breadcrumb.html" (dict "page" .) }}{{ end -}}
+<div class="{{ if eq .Type "page" }}pt-5 mt-4{{ end }}">
+    {{ if .Site.Params.navigation.breadcrumb }}{{ partial "assets/breadcrumb.html" (dict "page" .) }}{{ end -}}
+</div>
                
 {{/* Display title and metadata */}}
 {{ with $title }}<h1 id="{{ anchorize . }}" class="{{ $headingStyle }}-{{ $size }} pt-1">{{ . }}</h1>{{ end }}

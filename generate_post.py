@@ -271,7 +271,7 @@ def extract_key_facts_with_ai(raw_text, title):
     """
     
     model_settings = [
-        {"provider": "groq", "model": "llama-3.1-8b-instant"},
+        {"provider": "groq", "model": "openai/gpt-oss-20b"},
         {"provider": "github", "model": "gpt-4o-mini"},
         {"provider": "gemini", "model": "gemini-2.5-flash"},
         {"provider": "mistral", "model": "mistral-large-latest"},
@@ -888,6 +888,105 @@ def ping_bing_indexing_api(post_slug):
     except Exception as e:
         print(f"  🚨 Failed to notify Bing: {e}")
 
+def complete_truncated_article(partial_text, article_summary):
+    """Takes a truncated article draft and calls fallback APIs to complete it from the cutoff point."""
+    print("  -> 🔄 Output was cut off. Attempting continuation with fallback AI...")
+    
+    continuation_prompt = f"""
+The following technical article was cut off mid-sentence because it hit an API generation token limit.
+
+ORIGINAL TOPIC SUMMARY:
+{article_summary}
+
+INCOMPLETE ARTICLE WRITTEN SO FAR:
+{partial_text}
+
+YOUR TASK:
+1. Continue writing the article seamlessly starting EXACTLY from the word where it was cut off.
+2. Do NOT repeat any of the text already written above.
+3. Do NOT re-generate the YAML frontmatter or title block.
+4. Maintain the exact same Markdown formatting, tone, and style.
+5. Provide the remaining sections, conclusion, and FAQ if missing.
+6. MANDATORY: When completely finished, write the exact phrase "[END OF ARTICLE]" on a new line.
+"""
+
+    # Lightweight/Fast fallback models ideal for completions
+    continuation_models = [
+        {"provider": "gemini", "model": "gemini-2.5-flash"},
+        {"provider": "github", "model": "gpt-4o-mini"},
+        {"provider": "mistral", "model": "mistral-large-latest"}
+    ]
+
+    for setting in continuation_models:
+        provider = setting['provider']
+        model_name = setting['model']
+        
+        try:
+            # 1. GEMINI
+            if provider == "gemini":
+                key = os.environ.get("GEMINI_API_KEY")
+                if not key: continue
+                res = requests.post(
+                    f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}",
+                    headers={"Content-Type": "application/json"},
+                    json={
+                        "contents": [{"parts": [{"text": continuation_prompt}]}],
+                        "generationConfig": {"maxOutputTokens": 2500, "temperature": 0.3}
+                    },
+                    timeout=60
+                )
+                if res.status_code == 200:
+                    data = safe_json(res)
+                    continuation = extract_text(data)
+                    if continuation and len(continuation.strip()) > 50:
+                        return partial_text + "\n\n" + continuation.strip()
+
+            # 2. GITHUB MODELS API
+            elif provider == "github":
+                key = os.environ.get("GH_TOKEN")
+                if not key: continue
+                res = requests.post(
+                    "https://models.inference.ai.azure.com/chat/completions",
+                    headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                    json={
+                        "model": model_name,
+                        "messages": [{"role": "user", "content": continuation_prompt}],
+                        "temperature": 0.3,
+                        "max_tokens": 2500
+                    },
+                    timeout=60
+                )
+                if res.status_code == 200:
+                    content = res.json().get('choices', [{}])[0].get('message', {}).get('content')
+                    if content and len(content.strip()) > 50:
+                        return partial_text + "\n\n" + content.strip()
+
+            # 3. MISTRAL AI
+            elif provider == "mistral":
+                key = os.environ.get("MISTRAL_API_KEY")
+                if not key: continue
+                res = requests.post(
+                    "https://api.mistral.ai/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                    json={
+                        "model": model_name,
+                        "messages": [{"role": "user", "content": continuation_prompt}],
+                        "temperature": 0.3,
+                        "max_tokens": 2500
+                    },
+                    timeout=60
+                )
+                if res.status_code == 200:
+                    content = res.json().get('choices', [{}])[0].get('message', {}).get('content')
+                    if content and len(content.strip()) > 50:
+                        return partial_text + "\n\n" + content.strip()
+
+        except Exception as e:
+            print(f"     -> Completion attempt with {provider.upper()} failed: {e}")
+            continue
+
+    return partial_text  # Return unchanged if all attempts fail
+
 # ==========================================
 # 4. PUBLISH MODE (Runs every hour)
 # ==========================================
@@ -987,7 +1086,7 @@ When you have completely finished writing the conclusion of the article, you MUS
         model_settings = [
             {"provider": "groq", "model": "openai/gpt-oss-120b", "word_count": "800 and 1200"},
             {"provider": "github", "model": "gpt-4o-mini", "word_count": "800 and 1200"},
-            {"provider": "groq", "model": "llama-3.1-8b-instant", "word_count": "800 and 1200"},
+            {"provider": "groq", "model": "openai/gpt-oss-20b", "word_count": "800 and 1200"},
             {"provider": "mistral", "model": "mistral-large-latest", "word_count": "800 and 1200"},
             {"provider": "gemini", "model": "gemini-2.5-flash", "word_count": "800 and 1200"},
             {"provider": "openrouter", "model": "google/gemma-4-31b-it", "word_count": "800 and 1200"},
@@ -1275,16 +1374,23 @@ When you have completely finished writing the conclusion of the article, you MUS
                 os.remove(file_path)
             remaining_queue.append(article)
             continue # 👈 ABSOLUTELY CRITICAL: Stop execution and jump to the next article!
+        
+        # 🚨 UPDATE THIS BLOCK IN run_publisher()
 
-        # 🚨 THE BOUNCER: Incomplete Article Check (PREVENTS MID-WAY CUT-OFFS)
+        # 1. Check if the article was cut off mid-way
         if "[END OF ARTICLE]" not in article_content:
-            print(f"  -> 🚨 CRITICAL: Article cut off mid-way (Timeout or Token Limit hit). Rejecting.")
+            # Attempt to complete the text using a secondary model
+            article_content = complete_truncated_article(article_content, article['summary'])
+        
+        # 2. Final check: If it STILL lacks [END OF ARTICLE] after the completion attempt, reject it safely
+        if "[END OF ARTICLE]" not in article_content:
+            print(f"  -> 🚨 CRITICAL: Article cut off mid-way and completion failed. Rejecting.")
             if os.path.exists(file_path):
                 os.remove(file_path)
-            # Push it back to the queue so it safely retries on the next run
             remaining_queue.append(article)
             continue
-
+        
+        # Strip the marker tag out before saving
         article_content = article_content.replace("[END OF ARTICLE]", "").strip()
             
         # 🚨 THE BOUNCER: Forcefully overwrite AI image hallucinations with our verified Python variable
