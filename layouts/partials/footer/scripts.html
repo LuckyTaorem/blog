@@ -1,0 +1,324 @@
+{{/* 
+    Copyright © 2022 - 2026 The Hinode Team / Mark Dumay. All rights reserved.
+    Use of this source code is governed by The MIT License (MIT) that can be found in the LICENSE file.
+    Visit gethinode.com/license for more details.
+*/}}
+
+{{- $error := false -}}
+
+{{/* Define inline partials */}}
+{{- define "_partials/inline/match.html" -}}
+    {{- $result := "" -}}
+    {{- $matches := slice -}}
+    {{- if gt (len .modules) 0 -}}
+        {{- range .modules -}}
+            {{- $matches = $matches | append (printf "js/modules/%s/**.*js" .) -}}
+        {{- end -}}
+        {{- $result = printf "{%s}" (delimit $matches ",") -}}
+    {{- end -}}
+
+    {{- return $result -}}
+{{- end -}}
+
+{{- define "_partials/inline/bundle-script.html" -}}
+    {{- $page := .page -}}
+    {{- $match := .match -}}
+    {{- $destination := .destination -}}
+    {{- $cat := .cat -}}
+    {{- $localize := .localize -}}
+    {{- $modules := partial "utilities/ToStringSlice.html" .modules -}}
+    {{- $skipTemplate := .skipTemplate -}}
+    {{- $enableTemplate := .enableTemplate }}
+    {{- $absoluteURL := .absoluteURL -}}
+    {{- $state := .state -}}
+    {{- $engine := .engine | default "bundlev2" -}}
+    {{- $globals := .globals | default dict -}}
+    {{- $externals := partial "utilities/ToStringSlice.html" (.externals | default slice) -}}
+    {{- $params := .params | default dict -}}
+
+    {{- if and $cat (ne $cat "other") -}}
+        {{- $destination = path.Join (path.Dir $destination) (printf "%s-%s%s" (path.BaseName $destination) $cat (path.Ext $destination)) -}}
+    {{- end -}}
+
+    {{- if $localize -}}
+        {{- $destination = path.Join (path.Dir $destination) (printf "%s.%s%s" (path.BaseName $destination) $page.Language.Lang (path.Ext $destination)) -}}
+    {{- end -}}
+
+    {{- $bundle := "" -}}
+    {{- if eq $engine "bundlev3" -}}
+        {{- $bundle = partialCached "utilities/bundlev3.html" (dict
+            "page"            $page
+            "match"           $match
+            "filename"        $destination
+            "modules"         $modules
+            "basepath"        "js/modules"
+            "all"             true
+            "skip-template"   $skipTemplate
+            "enable-template" $enableTemplate
+            "globals"         $globals
+            "externals"       $externals
+            "params"          $params
+            "target"          "es2022"
+            "sourcemap"       (not hugo.IsProduction)
+            "debugging"       site.Params.debugging.showJS
+        ) $destination (delimit (or $modules slice) ",") -}}
+    {{- else -}}
+        {{- $bundle = partialCached "utilities/bundlev2.html" (dict
+            "page"            $page
+            "match"           $match
+            "filename"        $destination
+            "modules"         $modules
+            "basepath"        "js/modules"
+            "all"             true
+            "skip-template"   $skipTemplate
+            "enable-template" $enableTemplate
+            "debugging"       site.Params.debugging.showJS
+        ) $destination (delimit (or $modules slice) ",") -}}
+    {{- end -}}
+    {{- $js := $bundle.bundle -}}
+    {{- $jsmod := $bundle.module -}}
+
+    {{/* Strip js and Hugo comments then trim whitespace to detect whether the bundle contains actual code. A bundle
+        that renders to comments only would otherwise produce a fingerprint of empty content while hugo server serves
+         the unminified comment, causing an SRI/CSP integrity mismatch. */}}
+    {{- $jsCode := $js.Content | replaceRE `(?m)//[^\n]*` "" | replaceRE `(?s)/\*.*?\*/` "" | strings.TrimSpace -}}
+    {{- if gt (len $jsCode) 0 -}}
+        {{- if eq $state "immediate" -}}
+            {{- if hugo.IsProduction -}}
+                {{- if ne $engine "bundlev3" }}{{ $js = $js | minify }}{{ end -}}
+            {{- end -}}
+            <script>{{ $js.Content | safeJS }}</script>
+        {{- else -}}
+            {{- $integrity := "" -}}
+            {{- if hugo.IsProduction -}}
+                {{- if ne $engine "bundlev3" }}{{ $js = $js | minify }}{{ end -}}
+                {{- $js = $js | fingerprint -}}
+                {{- $integrity = $js.Data.Integrity -}}
+            {{- end -}}
+
+            {{- partial "templates/script.html" (dict
+                "link"        (cond $absoluteURL $js.Permalink $js.RelPermalink)
+                "category"    $cat
+                "state"       $state
+                "integrity"   $integrity
+            ) -}}
+        {{- end -}}
+    {{- end -}}
+
+    {{- $jsmodCode := $jsmod.Content | replaceRE `(?m)//[^\n]*` "" | replaceRE `(?s)/\*.*?\*/` "" | strings.TrimSpace -}}
+    {{- if gt (len $jsmodCode) 0 -}}
+        {{- if eq $state "immediate" -}}
+            {{- if hugo.IsProduction -}}
+                {{- if ne $engine "bundlev3" }}{{ $jsmod = $jsmod | minify }}{{ end -}}
+            {{- end -}}
+            <script type="module">{{ $jsmod.Content | safeJS }}</script>
+        {{- else -}}
+            {{- $integrity := "" -}}
+            {{- if hugo.IsProduction -}}
+                {{- if ne $engine "bundlev3" }}{{ $jsmod = $jsmod | minify }}{{ end -}}
+                {{- $jsmod = $jsmod | fingerprint -}}
+                {{- $integrity = $jsmod.Data.Integrity -}}
+            {{- end -}}
+
+            {{- partial "templates/script.html" (dict
+                "link"        (cond $absoluteURL $jsmod.Permalink $jsmod.RelPermalink)
+                "category"    $cat
+                "state"       $state
+                "integrity"   $integrity
+                "script-type" "module"
+            ) -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+
+{{/* Initialize arguments */}}
+{{- $args := partial "utilities/InitArgs.html" (dict "structure" "scripts" "args" .) -}}
+{{- if $args.err -}}
+    {{- partial "utilities/LogErr.html" (dict 
+        "partial" "footer/scripts.html" 
+        "msg"     "Invalid arguments"
+        "details" $args.errmsg
+        "file"    (or $args.page page).File
+    )}}
+    {{- $error = true -}}
+{{- end -}}
+
+{{/* Initialize local arguments */}}
+{{- $patterns := dict 
+    "other"         "js/critical/*.*js"
+    "functional"    "js/critical/functional/**.*js"
+    "analytics"     "js/critical/analytics/**.*js"
+    "performance"   "js/critical/performance/**.*js"
+    "advertisement" "js/critical/advertisement/**.*js"
+    "core"          "{js/*.*js,js/vendor/**.*js}"
+}}
+
+{{- $absoluteURL := site.Params.main.canonifyAssetsURLs | default false -}}
+{{- $state := "immediate" -}}
+{{- $config := $args.page.Scratch.Get "modules" -}}
+
+{{- $page_modules := slice -}}
+{{- if reflect.IsMap $args.page.Params.modules -}}
+    {{- $page_modules = $args.page.Params.modules -}}
+{{- else -}}
+    {{- $page_modules = $page_modules | append $args.page.Params.modules -}}
+{{- end -}}
+{{/* Module dependencies are registered in the page's Scratch and Store as a side effect of
+    content rendering (utilities/AddModule.html). Only the "optional" bundle consumes them,
+    and it renders after the body — but materialize the content explicitly so the read is
+    contract-based rather than an ordering accident. .Content is cached, so this is cheap.
+    The critical/functional calls render in the head and must not touch .Content. */}}
+{{- if eq $args.type "optional" -}}
+    {{- $_ := $args.page.Content -}}
+{{- end -}}
+{{- with $args.page.Scratch.Get "dependencies" -}}{{- $page_modules = append $page_modules . | uniq -}}{{- end -}}
+{{- with $args.page.Store.Get "dependencies" -}}{{- $page_modules = append $page_modules . | uniq -}}{{- end -}}
+
+{{- $categories := dict "other" slice -}}
+
+{{- $modules := slice -}}
+{{- if eq $args.type "critical" -}}
+    {{- $modules = $config.critical -}}
+    {{- $categories = merge $categories (dict "functional" slice "analytics" slice "performance" slice "advertisement" slice) -}}
+{{- else if eq $args.type "core" -}}
+    {{- $modules = $config.core -}}
+{{- else if eq $args.type "optional" -}}
+    {{- $modules = $config.optional | intersect $page_modules  -}}
+{{- end -}}
+
+{{- range $cat, $val := $config.categories -}}
+    {{- $categories = merge $categories (dict $cat (intersect $val $modules)) -}}
+{{- end -}}
+
+{{- $localize := false -}}
+{{- if gt (intersect (or $config.localize slice) $modules | len) 0 }}{{ $localize = true }}{{ end -}}
+
+{{/* Main code */}}
+{{- if not $error -}}
+    {{/* include external scripts first */}}
+    {{- range $mod, $cfg := $config.modules -}}
+        {{- if in $modules $mod -}}
+            {{- if or (index $cfg "local") (not hugo.IsServer) -}}
+                {{- with index $cfg "url" -}}
+                    {{/* Preconnect to the external script host so the DNS + TLS handshake overlaps
+                        earlier work on the critical path. Hosts are declared per-module via the
+                        'preconnect' parameter and only emitted for the critical (head) lane. No
+                        'crossorigin' — a plain <script src> reuses the anonymous-credentialled
+                        connection this hint opens. */}}
+                    {{- if eq $args.type "critical" -}}
+                        {{- with (index $cfg "preconnect") -}}
+                            {{- range $pc := (partial "utilities/ToStringSlice.html" .) -}}
+                                <link rel="preconnect" href="{{ $pc }}">
+                            {{- end -}}
+                        {{- end -}}
+                    {{- end -}}
+                    {{- partial "templates/script.html" (dict
+                        "link"     .
+                        "category" (index $cfg "category")
+                        "state"    (index $cfg "state"))
+                    -}}
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+
+    {{/* Bundle the critical and core scripts by category. These lanes use the js.Build
+        engine (bundlev3): the theme's own scripts are template-free ES modules imported
+        from the assets filesystem (skip-template), whereas modules with templated glue
+        (no `disableTemplate` in their module config) keep the inline ExecuteAsTemplate
+        lane via enable-template. */}}
+    {{- if ne $args.type "optional" -}}
+        {{- range $cat, $val := $categories -}}
+            {{- if or (gt ($val | len) 0) (eq $args.type "critical") -}}
+                {{- $match := "" -}}
+                {{- if eq $args.type "critical" -}}
+                    {{- $match = index $patterns $cat -}}
+                {{- else if eq $cat "other" -}}
+                    {{- $match = index $patterns $args.type -}}
+                {{- end -}}
+
+                {{- $templated := slice -}}
+                {{- range $val -}}
+                    {{- $modconfig := index $config.modules . -}}
+                    {{- if not $modconfig.disabletemplate -}}
+                        {{- $templated = $templated | append (printf "js/modules/%s/**.*js" .) -}}
+                    {{- end -}}
+                {{- end -}}
+                {{- $enableTemplate := "" -}}
+                {{- with $templated }}{{ $enableTemplate = printf "{%s}" (delimit . ",") }}{{ end -}}
+
+                {{/* UMD distributions do not register their window global when bundled by
+                    esbuild; a module exposes its documented global(s) through the bundle
+                    entry by declaring 'globals' in its own module config. A module whose
+                    UMD distribution guards a require behind a Node-only code path (never
+                    executed in browsers) declares that path via 'externals' so esbuild
+                    does not try to resolve it. Both are read generically from each active
+                    module's config rather than hardcoded per module here. */}}
+                {{- $globals := slice -}}
+                {{- $externals := slice -}}
+                {{- $params := dict -}}
+                {{- if eq $args.type "critical" -}}
+                    {{- $params = dict
+                        "darkMode"         (or site.Params.main.enableDarkMode site.Params.main.colorMode.enabled | default false)
+                        "languageSelector" (site.Params.main.enableLanguageSelectionStorage | default false)
+                        "languageFolder"   ((urls.Parse site.BaseURL).Path | default "/")
+                    -}}
+                {{- else -}}
+                    {{- $params = dict
+                        "navbarFixed"     (site.Params.navigation.fixed | default false)
+                        "copyToClipboard" (i18n "copyToClipboard")
+                        "webshare"        (site.Params.sharing.webshare | default false)
+                    -}}
+                    {{- range $val -}}
+                        {{- $modconfig := index $config.modules . -}}
+                        {{/* globals is an array of {path, name} tables; a legacy path-keyed
+                            map is still accepted (older modules) and normalized to the same shape */}}
+                        {{- with $modconfig.globals -}}
+                            {{- if reflect.IsMap . -}}
+                                {{- range $path, $name := . -}}{{- $globals = $globals | append (dict "path" $path "name" $name) -}}{{- end -}}
+                            {{- else -}}
+                                {{- range . -}}{{- $globals = $globals | append . -}}{{- end -}}
+                            {{- end -}}
+                        {{- end -}}
+                        {{- range ($modconfig.externals | default slice) -}}{{ $externals = $externals | append . }}{{- end -}}
+                    {{- end -}}
+                {{- end -}}
+
+                {{- partial "inline/bundle-script.html" (dict
+                    "page"           $args.page
+                    "match"          $match
+                    "destination"    (printf "js/%s.bundle.js" $args.type)
+                    "cat"            $cat
+                    "modules"        $val
+                    "localize"       $localize
+                    "skipTemplate"   true
+                    "enableTemplate" $enableTemplate
+                    "absoluteURL"    $absoluteURL
+                    "state"          (cond (eq $args.type "critical") "immediate" "defer")
+                    "engine"         "bundlev3"
+                    "globals"        $globals
+                    "externals"      $externals
+                    "params"         $params
+                )}}
+            {{- end -}}
+        {{- end -}}
+    {{- else -}}
+        {{/* Bundle the optional scripts by module name and category */}}
+        {{- range $cat, $val := $categories -}}
+            {{- range $val -}}
+                {{- $modconfig := index $config.modules . -}}
+                {{- partial "inline/bundle-script.html" (dict 
+                    "page"           $args.page
+                    "destination"    (printf "js/%s.js" .)
+                    "cat"            $cat
+                    "modules"        (slice .)
+                    "localize"       $modconfig.localize
+                    "skipTemplate"   $modconfig.disabletemplate
+                    "enableTemplate" $modconfig.enableTemplate
+                    "absoluteURL"    $absoluteURL
+                    "state"          $modconfig.state
+                )}} 
+            {{- end -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
