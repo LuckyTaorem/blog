@@ -5,37 +5,101 @@ type: "page"
 build:
   list: never
 ---
-
+<style>
+  a[href="#toc-collapse"], 
+  #toc-collapse, 
+  .toc-button { 
+      display: none !important; 
+  }
+</style>
 <!-- Custom WebApplication Schema for SEO -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Free AI Cover Letter Generator",
-  "description": "Upload your resume, paste a job description, and instantly generate a highly personalized, professional cover letter for free using AI.",
-  "applicationCategory": "BusinessApplication",
-  "operatingSystem": "Web browser",
-  "url": "https://ltdeveloperblogs.github.io/cover-letter-generator/",
-  "provider": {
-    "@type": "Person",
-    "name": "Taorem Lucky Singh",
-    "jobTitle": "WordPress and PHP Developer"
-  },
-  "featureList": [
-    "Instant AI Cover Letter Generation",
-    "Target Job Description Matching",
-    "Automated Resume Data Extraction",
-    "One-Click Copy to Clipboard",
-    "No Sign-Up Required"
-  ],
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD",
-    "description": "100% Free AI Cover Letter Generation"
-  }
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Free AI Cover Letter Generator",
+      "description": "Upload your resume, paste a job description, and instantly generate a highly personalized, professional cover letter for free using AI.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web browser",
+      "url": "https://ltdeveloperblogs.github.io/cover-letter-generator/",
+      "provider": {
+        "@type": "Person",
+        "name": "Taorem Lucky Singh",
+        "jobTitle": "WordPress and PHP Developer"
+      },
+      "featureList": [
+        "Instant AI Cover Letter Generation",
+        "Target Job Description Matching",
+        "Automated Resume Data Extraction",
+        "One-Click Copy to Clipboard",
+        "No Sign-Up Required"
+      ],
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "description": "100% Free AI Cover Letter Generation (limited to 3 tries per day)"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does the cover letter generator work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Upload your resume and paste the job description. The AI analyzes your resume content and job role to instantly generate a tailored, professional cover letter."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is my resume data secure?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, your resume is processed securely in the browser. No personal data is stored or shared externally, ensuring your privacy is protected."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I edit the generated cover letter?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, once generated, you can edit the cover letter text to add personal touches, adjust tone, or highlight specific experiences before downloading or using it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What file formats can I export my cover letter in?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can copy the text directly or export the cover letter as a downloadable file, such as plain text or PDF, for easy submission with your job application."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will the cover letter be unique for each job title?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, the generator tailors each cover letter to the specific job title you enter, ensuring the content is relevant and personalized for every application."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is the tool free to use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, the cover letter generator is completely free to use. However, it is limited to 3 cover letter generations per day to ensure fair usage for all users."
+          }
+        }
+      ]
+    }
+  ]
 }
 </script>
+
 
 <!-- Client-Side Parsing Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -222,3 +286,96 @@ function copyCoverLetter() {
   }, 2000);
 }
 </script>
+
+<!-- Cover Letter Generator FAQ Section Container -->
+<div class="faq-section mt-5 pt-5 border-top border-light-subtle">
+  <!-- FAQ Header Inside Container -->
+  <div class="mb-4">
+    <h2 id="cover-letter-faq" class="fw-bold">Frequently Asked Questions</h2>
+    <p class="text-secondary">
+      Upload your resume, enter a job title, and instantly generate a personalized cover letter. 
+      Browse our FAQs below to learn how the tool works and its usage limits.
+    </p>
+  </div>
+  <!-- FAQ Accordion -->
+  <div class="accordion faq-premium" id="coverLetterFaqAccordion">
+    <!-- Question 1 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingOne">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseOne" aria-expanded="false" aria-controls="faqCollapseOne">
+          How does the cover letter generator work?
+        </button>
+      </h3>
+      <div id="faqCollapseOne" class="accordion-collapse collapse" aria-labelledby="faqHeadingOne" data-bs-parent="#coverLetterFaqAccordion">
+        <div class="accordion-body">
+          Upload your resume and enter the job title you’re applying for. The tool analyzes your resume content and job role to instantly generate a tailored, professional cover letter.
+        </div>
+      </div>
+    </div>
+    <!-- Question 2 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingTwo">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseTwo" aria-expanded="false" aria-controls="faqCollapseTwo">
+          Is my resume data secure?
+        </button>
+      </h3>
+      <div id="faqCollapseTwo" class="accordion-collapse collapse" aria-labelledby="faqHeadingTwo" data-bs-parent="#coverLetterFaqAccordion">
+        <div class="accordion-body">
+          Yes, your resume is processed securely in the browser. No personal data is stored or shared externally, ensuring your privacy is protected.
+        </div>
+      </div>
+    </div>
+    <!-- Question 3 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingThree">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseThree" aria-expanded="false" aria-controls="faqCollapseThree">
+          Can I edit the generated cover letter?
+        </button>
+      </h3>
+      <div id="faqCollapseThree" class="accordion-collapse collapse" aria-labelledby="faqHeadingThree" data-bs-parent="#coverLetterFaqAccordion">
+        <div class="accordion-body">
+          Absolutely. Once generated, you can edit the cover letter text to add personal touches, adjust tone, or highlight specific experiences before downloading or using it.
+        </div>
+      </div>
+    </div>
+    <!-- Question 4 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingFour">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseFour" aria-expanded="false" aria-controls="faqCollapseFour">
+          What file formats can I export my cover letter in?
+        </button>
+      </h3>
+      <div id="faqCollapseFour" class="accordion-collapse collapse" aria-labelledby="faqHeadingFour" data-bs-parent="#coverLetterFaqAccordion">
+        <div class="accordion-body">
+          You can copy the text directly or export the cover letter as a downloadable file (such as plain text or PDF) for easy submission with your job application.
+        </div>
+      </div>
+    </div>
+    <!-- Question 5 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingFive">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseFive" aria-expanded="false" aria-controls="faqCollapseFive">
+          Will the cover letter be unique for each job title?
+        </button>
+      </h3>
+      <div id="faqCollapseFive" class="accordion-collapse collapse" aria-labelledby="faqHeadingFive" data-bs-parent="#coverLetterFaqAccordion">
+        <div class="accordion-body">
+          Yes, the generator tailors each cover letter to the specific job title you enter, ensuring the content is relevant and personalized for every application.
+        </div>
+      </div>
+    </div>
+    <!-- Question 6 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingSix">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseSix" aria-expanded="false" aria-controls="faqCollapseSix">
+          Is the tool free to use?
+        </button>
+      </h3>
+      <div id="faqCollapseSix" class="accordion-collapse collapse" aria-labelledby="faqHeadingSix" data-bs-parent="#coverLetterFaqAccordion">
+        <div class="accordion-body">
+          Yes, the cover letter generator is completely free to use. However, it is limited to <strong>3 cover letter generations per day</strong> to ensure fair usage for all users.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

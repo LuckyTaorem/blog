@@ -21,34 +21,92 @@ build:
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "AI Resume ATS Scanner & Cover Letter Generator",
-  "description": "An AI-powered Applicant Tracking System (ATS) resume scanner and cover letter generator that provides instant compatibility scores, targeted job description matching, keyword optimization, and downloadable PDF reports.",
-  "applicationCategory": "BusinessApplication",
-  "operatingSystem": "Web browser",
-  "url": "https://ltdeveloperblogs.github.io/ats-scanner/",
-  "provider": {
-    "@type": "Person",
-    "name": "Taorem Lucky Singh",
-    "jobTitle": "WordPress and PHP Developer"
-  },
-  "featureList": [
-    "Instant ATS Score Calculation",
-    "Target Job Description Matching",
-    "Missing Keyword Detection",
-    "Spelling and Grammar Checks",
-    "Actionable Resume Feedback",
-    "AI Cover Letter Generation",
-    "Downloadable PDF Reports"
-  ],
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD",
-    "description": "100% Free Resume Scan and Cover Letter Generation"
-  }
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "AI Resume ATS Scanner & Cover Letter Generator",
+      "description": "An AI-powered Applicant Tracking System (ATS) resume scanner and cover letter generator that provides instant compatibility scores, targeted job description matching, keyword optimization, and downloadable PDF reports.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web browser",
+      "url": "https://ltdeveloperblogs.github.io/ats-scanner/",
+      "provider": {
+        "@type": "Person",
+        "name": "Taorem Lucky Singh",
+        "jobTitle": "WordPress and PHP Developer"
+      },
+      "featureList": [
+        "Instant ATS Score Calculation",
+        "Target Job Description Matching",
+        "Missing Keyword Detection",
+        "Spelling and Grammar Checks",
+        "Actionable Resume Feedback",
+        "AI Cover Letter Generation",
+        "Downloadable PDF Reports"
+      ],
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "description": "100% Free Resume Scan (1 per day) and Cover Letter Generation (3 per day)"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does the AI ATS scanner work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The scanner analyzes your resume against ATS criteria, checking formatting, keyword usage, and job description alignment to provide an instant score and feedback."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How many times can I scan my resume per day?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Resume scanning is limited to 1 try per day to ensure fair usage and accurate results for all users."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How many cover letters can I generate per day?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can generate up to 3 personalized cover letters per day. Each cover letter is tailored to the job title and description you provide."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is my resume data secure?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, your resume is processed securely. No personal data is stored or shared externally, ensuring your privacy is protected."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I edit the generated cover letter?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, once generated, you can edit the cover letter text to add personal touches, adjust tone, or highlight specific experiences before downloading or using it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What kind of feedback does the ATS scanner provide?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The scanner highlights missing keywords, formatting issues, and areas where your resume may not align with the job description. This helps you improve your resume for better ATS compatibility."
+          }
+        }
+      ]
+    }
+  ]
 }
 </script>
+
 
 <!-- Client-Side Parsing Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -752,3 +810,96 @@ function copyCoverLetter() {
   }, 2000);
 }
 </script>
+
+<!-- AI ATS Resume Scanner FAQ Section Container -->
+<div class="faq-section mt-5 pt-5 border-top border-light-subtle">
+  <!-- FAQ Header Inside Container -->
+  <div class="mb-4">
+    <h2 id="ats-scanner-faq" class="fw-bold">Frequently Asked Questions</h2>
+    <p class="text-secondary">
+      Upload your resume to our free AI ATS scanner. Get an instant score, match job descriptions, find missing keywords, and generate tailored cover letters. 
+      Browse our FAQs below to learn more about how it works and usage limits.
+    </p>
+  </div>
+  <!-- FAQ Accordion -->
+  <div class="accordion faq-premium" id="atsScannerFaqAccordion">
+    <!-- Question 1 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingOne">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseOne" aria-expanded="false" aria-controls="faqCollapseOne">
+          How does the AI ATS scanner work?
+        </button>
+      </h3>
+      <div id="faqCollapseOne" class="accordion-collapse collapse" aria-labelledby="faqHeadingOne" data-bs-parent="#atsScannerFaqAccordion">
+        <div class="accordion-body">
+          The scanner analyzes your resume against applicant tracking system (ATS) criteria. It checks formatting, keyword usage, and job description alignment to provide an instant score and feedback.
+        </div>
+      </div>
+    </div>
+    <!-- Question 2 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingTwo">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseTwo" aria-expanded="false" aria-controls="faqCollapseTwo">
+          How many times can I scan my resume per day?
+        </button>
+      </h3>
+      <div id="faqCollapseTwo" class="accordion-collapse collapse" aria-labelledby="faqHeadingTwo" data-bs-parent="#atsScannerFaqAccordion">
+        <div class="accordion-body">
+          Resume scanning is limited to <strong>1 try per day</strong> to ensure fair usage and accurate results for all users.
+        </div>
+      </div>
+    </div>
+    <!-- Question 3 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingThree">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseThree" aria-expanded="false" aria-controls="faqCollapseThree">
+          How many cover letters can I generate per day?
+        </button>
+      </h3>
+      <div id="faqCollapseThree" class="accordion-collapse collapse" aria-labelledby="faqHeadingThree" data-bs-parent="#atsScannerFaqAccordion">
+        <div class="accordion-body">
+          You can generate up to <strong>3 personalized cover letters per day.</strong> Each cover letter is tailored to the job title and description you provide.
+        </div>
+      </div>
+    </div>
+    <!-- Question 4 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingFour">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseFour" aria-expanded="false" aria-controls="faqCollapseFour">
+          Is my resume data secure?
+        </button>
+      </h3>
+      <div id="faqCollapseFour" class="accordion-collapse collapse" aria-labelledby="faqHeadingFour" data-bs-parent="#atsScannerFaqAccordion">
+        <div class="accordion-body">
+          Yes, your resume is processed securely. No personal data is stored or shared externally, ensuring your privacy is protected.
+        </div>
+      </div>
+    </div>
+    <!-- Question 5 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingFive">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseFive" aria-expanded="false" aria-controls="faqCollapseFive">
+          Can I edit the generated cover letter?
+        </button>
+      </h3>
+      <div id="faqCollapseFive" class="accordion-collapse collapse" aria-labelledby="faqHeadingFive" data-bs-parent="#atsScannerFaqAccordion">
+        <div class="accordion-body">
+          Yes, once generated, you can edit the cover letter text to add personal touches, adjust tone, or highlight specific experiences before downloading or using it.
+        </div>
+      </div>
+    </div>
+    <!-- Question 6 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingSix">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseSix" aria-expanded="false" aria-controls="faqCollapseSix">
+          What kind of feedback does the ATS scanner provide?
+        </button>
+      </h3>
+      <div id="faqCollapseSix" class="accordion-collapse collapse" aria-labelledby="faqHeadingSix" data-bs-parent="#atsScannerFaqAccordion">
+        <div class="accordion-body">
+          The scanner highlights missing keywords, formatting issues, and areas where your resume may not align with the job description. This helps you improve your resume for better ATS compatibility.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -6,37 +6,118 @@ build:
   list: never
 ---
 
-<!-- Custom WebApplication Schema for SEO -->
+<style>
+  a[href="#toc-collapse"], 
+  #toc-collapse, 
+  .toc-button { 
+      display: none !important; 
+  }
+  </style>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Live JSON-LD Schema Generator",
-  "description": "Generate complex JSON-LD schema markup instantly. Features AI generation, live preview, syntax validation, and WordPress PHP export.",
-  "applicationCategory": "BusinessApplication",
-  "operatingSystem": "Web browser",
-  "url": "https://ltdeveloperblogs.github.io/schema-generator/",
-  "provider": {
-    "@type": "Person",
-    "name": "Taorem Lucky Singh",
-    "jobTitle": "WordPress and PHP Developer"
-  },
-  "featureList": [
-    "AI Schema Generation",
-    "Live Code Preview",
-    "Real-time Syntax Validation",
-    "24-Hour Local History",
-    "FAQ Schema Generation",
-    "Course Schema Generation",
-    "WordPress PHP Filter Export"
-  ],
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  }
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Live JSON-LD Schema Generator",
+      "description": "Generate complex JSON-LD schema markup instantly. Features AI generation, live preview, syntax validation, and WordPress PHP export.",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web browser",
+      "url": "https://ltdeveloperblogs.github.io/schema-generator/",
+      "provider": {
+        "@type": "Person",
+        "name": "Taorem Lucky Singh",
+        "jobTitle": "WordPress and PHP Developer"
+      },
+      "featureList": [
+        "AI Schema Generation",
+        "Live Code Preview",
+        "Real-time Syntax Validation",
+        "24-Hour Local History",
+        "FAQ Schema Generation",
+        "Course Schema Generation",
+        "WordPress PHP Filter Export"
+      ],
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is JSON-LD schema markup?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "JSON-LD is a standardized format used to structure data on your webpage. It helps search engines instantly understand the context of your content, making your page eligible for rich snippets."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I add the generated schema to my WordPress site?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can add the generated script directly into your page HTML or use wp_head hooks in a custom theme. Page builders also allow pasting JSON-LD into custom HTML blocks."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use multiple schema types on a single page?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, you can combine multiple schema types such as Article and FAQPage. Use @graph to include them in a single JSON-LD block."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I test if my generated schema is valid?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Use Google's Rich Results Test or the Schema Markup Validator at schema.org to check for syntax errors and missing required properties."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why does Google Search Console show 'Schema could not be read'?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "This usually means your JSON-LD has syntax errors, missing required fields, or is blocked by robots.txt. Validate your schema and ensure the page is crawlable."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why are my rich snippets not appearing in search results?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Google decides whether to display rich snippets. Ensure your schema matches page content, avoid spammy markup, and build site authority."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to update schema after editing my content?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, schema must reflect the actual page content. Update JSON-LD whenever you change titles, prices, or FAQs to avoid mismatches."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can invalid schema harm my SEO?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Invalid schema won’t directly lower rankings but can prevent rich results. Misleading markup may trigger manual actions, so keep schema accurate."
+          }
+        }
+      ]
+    }
+  ]
 }
 </script>
+
 
 <style>
   /* Force the layout to break out of the theme's narrow reading column */
@@ -168,3 +249,121 @@ build:
   </div>
 </div>
 <script src="/js/schema-builder.js"></script>
+
+<!-- Premium FAQ Section Container -->
+<div class="faq-section mt-5 pt-5 border-top border-light-subtle">
+  
+  <!-- FAQ Header Inside Container -->
+  <div class="mb-4">
+    <h2 id="schema-generator-faq" class="fw-bold">Frequently Asked Questions</h2>
+    <p class="text-secondary">Learn how to generate, implement, and test structured data to boost your search engine visibility.</p>
+  </div>
+
+  <!-- FAQ Accordion -->
+  <div class="accordion faq-premium" id="schemaFaqAccordion">
+    <!-- Question 1 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingOne">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseOne" aria-expanded="false" aria-controls="faqCollapseOne">
+          What is JSON-LD schema markup?
+        </button>
+      </h3>
+      <div id="faqCollapseOne" class="accordion-collapse collapse" aria-labelledby="faqHeadingOne" data-bs-parent="#schemaFaqAccordion">
+        <div class="accordion-body">
+          JSON-LD (JavaScript Object Notation for Linked Data) is a standardized format used to structure data on your webpage. It helps search engines like Google instantly understand the context of your content, which can make your page eligible for rich snippets in search results.
+        </div>
+      </div>
+    </div>
+    <!-- Question 2 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingTwo">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseTwo" aria-expanded="false" aria-controls="faqCollapseTwo">
+          How do I add the generated schema to my WordPress site?
+        </button>
+      </h3>
+      <div id="faqCollapseTwo" class="accordion-collapse collapse" aria-labelledby="faqHeadingTwo" data-bs-parent="#schemaFaqAccordion">
+        <div class="accordion-body">
+          You can add the generated script directly into the HTML of your specific page or post. If you are building a custom theme, you can dynamically inject the JSON-LD into your PHP templates using <code>wp_head</code> hooks, or simply paste it into a custom HTML block in your page builder.
+        </div>
+      </div>
+    </div>
+    <!-- Question 3 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingThree">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseThree" aria-expanded="false" aria-controls="faqCollapseThree">
+          Can I use multiple schema types on a single page?
+        </button>
+      </h3>
+      <div id="faqCollapseThree" class="accordion-collapse collapse" aria-labelledby="faqHeadingThree" data-bs-parent="#schemaFaqAccordion">
+        <div class="accordion-body">
+          Yes, you can combine multiple schema types on one page. For example, a tech publication might include both <code>Article</code> schema for the content and <code>FAQPage</code> schema for a question section. You can combine them into a single script block using a JSON array.
+        </div>
+      </div>
+    </div>
+    <!-- Question 4 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingFour">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseFour" aria-expanded="false" aria-controls="faqCollapseFour">
+          How do I test if my generated schema is valid?
+        </button>
+      </h3>
+      <div id="faqCollapseFour" class="accordion-collapse collapse" aria-labelledby="faqHeadingFour" data-bs-parent="#schemaFaqAccordion">
+        <div class="accordion-body">
+          Once you have generated and added the schema to your site, you should test it using the <a href="https://search.google.com/test/rich-results" target="_blank" rel="noopener noreferrer">Google Rich Results Test</a> tool or the Schema Markup Validator at schema.org to ensure there are no syntax errors or missing required properties.
+        </div>
+      </div>
+    </div>
+    <!-- Question 5 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingFive">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseFive" aria-expanded="false" aria-controls="faqCollapseFive">
+          Why does Google Search Console show “Schema could not be read”?
+        </button>
+      </h3>
+      <div id="faqCollapseFive" class="accordion-collapse collapse" aria-labelledby="faqHeadingFive" data-bs-parent="#schemaFaqAccordion">
+        <div class="accordion-body">
+          This error usually means your JSON-LD has syntax issues, missing required fields, or is blocked by robots.txt. Double-check your script formatting, validate with Google’s Rich Results Test, and ensure the page is crawlable.
+        </div>
+      </div>
+    </div>
+    <!-- Question 6 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingSix">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseSix" aria-expanded="false" aria-controls="faqCollapseSix">
+          Why are my rich snippets not appearing in search results?
+        </button>
+      </h3>
+      <div id="faqCollapseSix" class="accordion-collapse collapse" aria-labelledby="faqHeadingSix" data-bs-parent="#schemaFaqAccordion">
+        <div class="accordion-body">
+          Even if your schema is valid, Google decides whether to display rich snippets. Factors include site authority, content relevance, and compliance with structured data guidelines. Ensure your schema matches the page content and avoid spammy markup.
+        </div>
+      </div>
+    </div>
+    <!-- Question 7 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingSeven">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseSeven" aria-expanded="false" aria-controls="faqCollapseSeven">
+          Do I need to update schema after editing my content?
+        </button>
+      </h3>
+      <div id="faqCollapseSeven" class="accordion-collapse collapse" aria-labelledby="faqHeadingSeven" data-bs-parent="#schemaFaqAccordion">
+        <div class="accordion-body">
+          Yes, schema should always reflect the actual content on the page. If you change titles, prices, or FAQs, update the JSON-LD accordingly to avoid mismatches that can cause errors or penalties.
+        </div>
+      </div>
+    </div>
+    <!-- Question 8 -->
+    <div class="accordion-item">
+      <h3 class="accordion-header" id="faqHeadingEight">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapseEight" aria-expanded="false" aria-controls="faqCollapseEight">
+          Can invalid schema harm my SEO?
+        </button>
+      </h3>
+      <div id="faqCollapseEight" class="accordion-collapse collapse" aria-labelledby="faqHeadingEight" data-bs-parent="#schemaFaqAccordion">
+        <div class="accordion-body">
+          Invalid or misleading schema won’t directly lower rankings, but it can prevent rich results and may trigger manual actions if Google sees it as deceptive. Always keep schema accurate and error-free.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

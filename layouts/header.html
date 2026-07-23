@@ -80,3 +80,57 @@
 {{- if and .Site.Params.navigation.toc .Params.includeToc | default true -}}
     <div class="d-{{ $breakpoint.current }}-none pb-5">{{ partial "assets/toc-dropdown.html" (dict "page" .) }}</div>
 {{- end -}}
+
+<style>
+/* Premium FAQ Accordion Styles */
+  .faq-premium .accordion-item {
+      border: 1px solid var(--bs-border-color) !important;
+      border-radius: 12px !important;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+      background-color: var(--bs-body-bg); /* Seamless theme background */
+      overflow: hidden;
+      padding: 0 !important; /* FIX: Removes the gap creating the double border */
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .faq-premium .accordion-item .accordion-header{
+    margin-top:0 !important;
+  }
+  
+  /* Lift effect on hover */
+  .faq-premium .accordion-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .faq-premium .accordion-button {
+      border-radius: 12px !important;
+      font-weight: 600;
+      font-size: 1.05rem;
+      padding: 1.25rem 1.5rem;
+      background-color: transparent !important; /* FIX: Removes the inner box color */
+      color: var(--bs-body-color);
+      box-shadow: none !important; /* FIX: Prevents Bootstrap from adding weird outlines */
+      transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Highlight active question with a soft primary tint */
+  .faq-premium .accordion-button:not(.collapsed) {
+      background-color: rgba(13, 110, 253, 0.04) !important; 
+      color: var(--bs-primary);
+      border-bottom: 1px solid var(--bs-border-color-translucent);
+  }
+
+  /* Focus ring for accessibility */
+  .faq-premium .accordion-button:focus {
+      outline: none;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15) !important;
+  }
+
+  .faq-premium .accordion-body {
+      padding: 1.25rem 1.5rem;
+      color: var(--bs-secondary-color);
+      line-height: 1.7;
+  }
+</style>
