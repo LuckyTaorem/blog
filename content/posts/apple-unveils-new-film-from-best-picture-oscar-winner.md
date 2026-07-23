@@ -87,8 +87,6 @@ If the debut film performs well in viewership metrics and critical reception, Ap
 
 Apple may seek to host virtual screenings at festivals like Sundance or Cannes, using Apple TV as the streaming conduit. Such collaborations would further cement Apple’s role as a cultural conduit.
 
-For a perspective on how video platforms are navigating monetization and content quality, the recent analysis of Vimeo’s promotional strategy offers useful parallels: https://ltdeveloperblogs.github.io/posts/vimeo-promo-codes-and-discounts-up-to-40-off-this-july
-
 ## Frequently Asked Questions
 
 **Q: Which Oscar‑winning director is involved?**  
