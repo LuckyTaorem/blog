@@ -1405,39 +1405,55 @@ When you have completely finished writing the conclusion of the article, you MUS
             link_text = match.group(1)
             raw_url = match.group(2).strip()
             
-            # Check if this URL points to our posts directory
-            if 'ltdeveloperblogs.github.io' in raw_url or 'posts/' in raw_url:
-                slug_match = re.search(r'posts/([^/#?)]+)', raw_url)
-                
-                if slug_match:
-                    # Clean slug: remove .md extensions, trailing slashes, or spaces
-                    slug = slug_match.group(1).replace('.md', '').strip('/').strip()
-                    expected_md_file = os.path.join(output_dir, f"{slug}.md")
-                    
-                    # Strictly check if file exists AND is a valid Hugo post
-                    is_valid = False
-                    if os.path.exists(expected_md_file):
-                        try:
-                            with open(expected_md_file, 'r', encoding='utf-8') as f:
-                                head_content = f.read(500)
-                                # Ensure it has valid YAML frontmatter so Hugo doesn't ignore it
-                                if "---" in head_content and "title:" in head_content:
-                                    is_valid = True
-                        except Exception:
-                            pass
-                    
-                    if is_valid:
-                        # FIX: Return absolute URL without trailing slash 
-                        return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{slug})"
-                    else:
-                        # If the file is corrupt or empty, strip the link to save the build
-                        print(f"  -> ⚠️ Stripping dead or corrupt internal link: {slug}")
-                        return link_text
-            
-            # External link, leave untouched
-            return match.group(0)
+            # Clean out any markdown titles in the URL (e.g., [text](url "Title") -> url)
+            clean_url = raw_url.split()[0].strip()
 
-        # Find ALL markdown links [text](url) and run them through the validator
+            # TRAP: Is this an internal link? 
+            # Catches absolute domain links, relative root links, and 'posts/' links
+            is_internal = False
+            if 'ltdeveloperblogs.github.io' in clean_url or clean_url.startswith('/') or 'posts/' in clean_url:
+                is_internal = True
+
+            # External link? Pass it through untouched.
+            if not is_internal:
+                return match.group(0)
+
+            # --- Process Internal Link ---
+            # Strip query parameters (?), anchors (#), and leading/trailing slashes
+            url_no_params = clean_url.split('?')[0].split('#')[0].strip('/')
+            
+            # Extract the absolute last segment of the path as the slug
+            parts = [p for p in url_no_params.split('/') if p]
+            
+            if parts:
+                slug = parts[-1].replace('.md', '').replace('.html', '').strip()
+                expected_md_file = os.path.join(output_dir, f"{slug}.md")
+                
+                # Strictly check if file exists AND is a valid Hugo post
+                is_valid = False
+                if os.path.exists(expected_md_file):
+                    try:
+                        with open(expected_md_file, 'r', encoding='utf-8') as f:
+                            head_content = f.read(500)
+                            # Ensure it has valid YAML frontmatter so Hugo doesn't ignore it
+                            if "---" in head_content and "title:" in head_content:
+                                is_valid = True
+                    except Exception:
+                        pass
+                
+                if is_valid:
+                    # Reconstruct as a perfect absolute link to prevent relative pathing issues
+                    return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{slug})"
+                else:
+                    # The file does not exist or is corrupt. Strip the link to save the build!
+                    print(f"  -> ⚠️ Stripping dead or corrupt internal link: {slug}")
+                    return link_text
+            else:
+                # If we couldn't parse a slug but it flagged as internal, nuke it to be safe.
+                print(f"  -> ⚠️ Stripping unparseable internal link: {clean_url}")
+                return link_text
+
+        # Find ALL markdown links [text](url) and run them through the aggressive validator
         article_content = re.sub(
             r'\[([^\]]+)\]\(([^)]+)\)',
             validate_internal_links,
