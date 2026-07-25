@@ -1399,6 +1399,19 @@ When you have completely finished writing the conclusion of the article, you MUS
         
         if re.search(r'^thumbnail:\s*.*', article_content, re.MULTILINE):
             article_content = re.sub(r'^thumbnail:\s*.*', f'thumbnail: "{image_url}"', article_content, flags=re.MULTILINE)
+        
+        # 🚀 NEW: Catch bare internal URLs, strip trailing punctuation (e.g., '.', ','), and force them into markdown links
+        def convert_bare_internal_urls(match):
+            url = match.group(0)
+            clean_url = url.rstrip('.,;:)')
+            trailing_punct = url[len(clean_url):]
+            return f"[{clean_url}]({clean_url}){trailing_punct}"
+
+        article_content = re.sub(
+            r'https?://ltdeveloperblogs\.github\.io/posts/[^\s]+',
+            convert_bare_internal_urls,
+            article_content
+        )
 
         # 🚨 STRICT INTERNAL LINK VALIDATOR
         def validate_internal_links(match):
