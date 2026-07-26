@@ -1402,13 +1402,19 @@ When you have completely finished writing the conclusion of the article, you MUS
         
         # 🚀 NEW: Catch bare internal URLs, strip trailing punctuation (e.g., '.', ','), and force them into markdown links
         def convert_bare_internal_urls(match):
-            url = match.group(0)
+            # If group 1 matched, the URL is already safely inside a markdown link. Leave it alone!
+            if match.group(1):
+                return match.group(1)
+            
+            # Otherwise, it's a bare URL (group 2). Wrap it.
+            url = match.group(2)
             clean_url = url.rstrip('.,;:)')
             trailing_punct = url[len(clean_url):]
             return f"[{clean_url}]({clean_url}){trailing_punct}"
 
+        # Matches correctly formatted markdown links in Group 1 OR bare URLs in Group 2
         article_content = re.sub(
-            r'https?://ltdeveloperblogs\.github\.io/posts/[^\s]+',
+            r'(\[[^\]]+\]\s*\(\s*https?://ltdeveloperblogs\.github\.io/posts/[^\s\)]+\s*\))|(https?://ltdeveloperblogs\.github\.io/posts/[^\s>"]+)',
             convert_bare_internal_urls,
             article_content
         )
