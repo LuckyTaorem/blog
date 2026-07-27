@@ -1419,7 +1419,7 @@ When you have completely finished writing the conclusion of the article, you MUS
             article_content
         )
 
-        # 🚨 STRICT INTERNAL LINK VALIDATOR
+        # 🚨 STRICT INTERNAL LINK VALIDATOR WITH FUZZY FIX
         def validate_internal_links(match):
             link_text = match.group(1)
             raw_url = match.group(2).strip()
@@ -1445,27 +1445,52 @@ When you have completely finished writing the conclusion of the article, you MUS
             parts = [p for p in url_no_params.split('/') if p]
             
             if parts:
-                slug = parts[-1].replace('.md', '').replace('.html', '').strip()
+                original_slug = parts[-1].replace('.md', '').replace('.html', '').strip()
+                slug = original_slug
                 expected_md_file = os.path.join(output_dir, f"{slug}.md")
                 
-                # Strictly check if file exists AND is a valid Hugo post
-                is_valid = False
-                if os.path.exists(expected_md_file):
-                    try:
-                        with open(expected_md_file, 'r', encoding='utf-8') as f:
-                            head_content = f.read(500)
-                            # Ensure it has valid YAML frontmatter so Hugo doesn't ignore it
-                            if "---" in head_content and "title:" in head_content:
-                                is_valid = True
-                    except Exception:
-                        pass
+                # Helper function to ensure the file has valid frontmatter
+                def check_valid_hugo_post(md_file_path):
+                    if os.path.exists(md_file_path):
+                        try:
+                            with open(md_file_path, 'r', encoding='utf-8') as f:
+                                head_content = f.read(500)
+                                if "---" in head_content and "title:" in head_content:
+                                    return True
+                        except Exception:
+                            pass
+                    return False
+
+                is_valid = check_valid_hugo_post(expected_md_file)
                 
+                # 🚀 NEW: Fuzzy Matching Fallback if the URL is broken
+                if not is_valid:
+                    print(f"  -> ⚠️ Link broken for slug: {slug}. Attempting fuzzy fix...")
+                    from difflib import get_close_matches
+                    
+                    # Grab all available post slugs from the directory
+                    all_files = [f for f in os.listdir(output_dir) if f.endswith('.md') and f != '_index.md']
+                    valid_slugs = [f.replace('.md', '') for f in all_files]
+                    
+                    # Search for a 50% or greater match to the broken slug
+                    closest_matches = get_close_matches(slug, valid_slugs, n=1, cutoff=0.5)
+                    
+                    if closest_matches:
+                        matched_slug = closest_matches[0]
+                        matched_md_file = os.path.join(output_dir, f"{matched_slug}.md")
+                        
+                        # Verify the newly matched file is actually valid
+                        if check_valid_hugo_post(matched_md_file):
+                            print(f"  -> 🔧 FIXED: Replaced broken '{slug}' with closest match '{matched_slug}'")
+                            slug = matched_slug
+                            is_valid = True
+
                 if is_valid:
                     # Reconstruct as a perfect absolute link to prevent relative pathing issues
                     return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{slug})"
                 else:
-                    # The file does not exist or is corrupt. Strip the link to save the build!
-                    print(f"  -> ⚠️ Stripping dead or corrupt internal link: {slug}")
+                    # The file does not exist, is corrupt, or couldn't be fuzzy-matched. Strip the link to save the build!
+                    print(f"  -> ⚠️ Stripping unfixable dead internal link: {original_slug}")
                     return link_text
             else:
                 # If we couldn't parse a slug but it flagged as internal, nuke it to be safe.
@@ -1650,6 +1675,69 @@ def run_emergency_broadcaster():
 
     print("\n✅ Emergency broadcast complete.")
 
+def run_link_fixer():
+    print("\n--- 🔧 STARTING PRE-DEPLOYMENT LINK FIXER ---")
+    if not os.path.exists(output_dir):
+        print("No content directory found.")
+        return
+
+    from difflib import get_close_matches
+
+    # Grab all valid files to act as our dictionary of safe URLs
+    all_files = [f for f in os.listdir(output_dir) if f.endswith('.md') and f != '_index.md']
+    valid_slugs = [f.replace('.md', '') for f in all_files]
+    
+    files_modified = 0
+
+    for filename in all_files:
+        filepath = os.path.join(output_dir, filename)
+        
+        try:
+            with open(filepath, "r", encoding="utf-8") as f:
+                content = f.read()
+        except Exception as e:
+            continue
+
+        original_content = content
+
+        # Function to evaluate and fix each link found in the file
+        def link_replacer(match):
+            link_text = match.group(1)
+            raw_url = match.group(2).strip()
+            
+            # Check if it's an internal link targeting your blog
+            if 'ltdeveloperblogs.github.io' in raw_url or raw_url.startswith('/posts/'):
+                clean_url = raw_url.split('?')[0].split('#')[0].strip('/')
+                parts = [p for p in clean_url.split('/') if p]
+                
+                if parts:
+                    slug = parts[-1].replace('.md', '').replace('.html', '').strip()
+                    expected_md_file = os.path.join(output_dir, f"{slug}.md")
+                    
+                    # If the file does NOT exist, Hugo will crash. Fix it!
+                    if not os.path.exists(expected_md_file):
+                        closest_matches = get_close_matches(slug, valid_slugs, n=1, cutoff=0.5)
+                        
+                        if closest_matches:
+                            new_slug = closest_matches[0]
+                            print(f"  -> 🔧 Fixed broken link in {filename}: '{slug}' -> '{new_slug}'")
+                            return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{new_slug})"
+                        else:
+                            print(f"  -> ⚠️ Stripped unfixable dead link in {filename}: '{slug}'")
+                            return link_text # Safely revert to plain text
+                            
+            return match.group(0) # Leave external or valid links untouched
+
+        # Regex to find all Markdown links [text](url)
+        updated_content = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', link_replacer, content)
+
+        # Only overwrite the file if changes were actually made
+        if updated_content != original_content:
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(updated_content)
+            files_modified += 1
+
+    print(f"✅ Link fixer complete. Fixed {files_modified} files to prevent Hugo crashes.")
 
 # ==========================================
 # 5. EXECUTION ROUTER
@@ -1660,6 +1748,7 @@ if __name__ == "__main__":
     parser.add_argument("--publish", action="store_true", help="Publish next batch from the queue")
     parser.add_argument("--broadcast", action="store_true", help="Share published articles to social media")
     parser.add_argument("--force-recent", action="store_true", help="Force broadcast the most recent batch of articles, bypassing the queue")
+    parser.add_argument("--fix-links", action="store_true", help="Scan and fix broken links before Hugo build") # <-- ADD THIS
     args = parser.parse_args()
 
     if args.scrape:
@@ -1671,5 +1760,7 @@ if __name__ == "__main__":
     elif args.force_recent:
         # 🚨 Calling the updated function with dynamic detection
         run_emergency_broadcaster()
+    elif args.fix-links: # <-- ADD THIS
+        run_link_fixer()
     else:
         print("Please provide a flag: --scrape, --publish, --broadcast, or --force-recent")

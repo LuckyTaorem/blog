@@ -85,6 +85,23 @@ jobs:
       - name: Install npm dependencies
         run: npm install
 
+      # 🚀 MOVED PYTHON SETUP UP: Python must be ready so we can run the Link Fixer before Hugo builds!
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+          cache-dependency-path: 'requirements.txt'
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 🚀 NEW STEP: Scan and fix broken links so Hugo doesn't crash
+      - name: Run Pre-Deployment Link Fixer
+        run: python generate_post.py --fix-links
+
       - name: Build with Hugo
         env:
           HUGO_ENVIRONMENT: production
@@ -100,20 +117,8 @@ jobs:
           publish_branch: main
           publish_dir: ./public
           keep_files: false
-      
-      # --- BROADCAST STEPS REMAIN UNCHANGED ---
-      - name: Setup Python for Broadcast
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-          cache: 'pip'
-          cache-dependency-path: 'requirements.txt'
-
-      - name: Install Python Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
+          
+      # --- BROADCAST STEPS ---
       - name: Smart Wait for GitHub Pages (Prevent 404s)
         run: |
           COMMIT_MSG="${{ github.event.head_commit.message }}"
