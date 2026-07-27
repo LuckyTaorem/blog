@@ -1676,14 +1676,13 @@ def run_emergency_broadcaster():
     print("\n✅ Emergency broadcast complete.")
 
 def run_link_fixer():
-    print("\n--- 🔧 STARTING PRE-DEPLOYMENT LINK FIXER ---")
+    print("\n--- 🔧 STARTING BULLETPROOF LINK FIXER ---")
     if not os.path.exists(output_dir):
         print("No content directory found.")
         return
 
     from difflib import get_close_matches
 
-    # Grab all valid files to act as our dictionary of safe URLs
     all_files = [f for f in os.listdir(output_dir) if f.endswith('.md') and f != '_index.md']
     valid_slugs = [f.replace('.md', '') for f in all_files]
     
@@ -1691,50 +1690,89 @@ def run_link_fixer():
 
     for filename in all_files:
         filepath = os.path.join(output_dir, filename)
-        
         try:
             with open(filepath, "r", encoding="utf-8") as f:
                 content = f.read()
-        except Exception as e:
+        except Exception:
             continue
 
         original_content = content
 
-        # Function to evaluate and fix each link found in the file
-        def link_replacer(match):
+        # FIX 1: Standard Markdown Links e.g. [Text](/posts/slug "Title")
+        def markdown_link_healer(match):
             link_text = match.group(1)
             raw_url = match.group(2).strip()
             
-            # Check if it's an internal link targeting your blog
-            if 'ltdeveloperblogs.github.io' in raw_url or raw_url.startswith('/posts/'):
-                clean_url = raw_url.split('?')[0].split('#')[0].strip('/')
-                parts = [p for p in clean_url.split('/') if p]
-                
-                if parts:
-                    slug = parts[-1].replace('.md', '').replace('.html', '').strip()
-                    expected_md_file = os.path.join(output_dir, f"{slug}.md")
+            # Extract pure URL, ignoring quotes
+            clean_url = raw_url.split()[0].strip()
+            
+            if 'posts/' in clean_url or clean_url.startswith('/'):
+                slug_match = re.search(r'posts/([-a-zA-Z0-9_]+)', clean_url)
+                if slug_match:
+                    slug = slug_match.group(1)
+                    expected_md = os.path.join(output_dir, f"{slug}.md")
                     
-                    # If the file does NOT exist, Hugo will crash. Fix it!
-                    if not os.path.exists(expected_md_file):
-                        closest_matches = get_close_matches(slug, valid_slugs, n=1, cutoff=0.5)
-                        
-                        if closest_matches:
-                            new_slug = closest_matches[0]
-                            print(f"  -> 🔧 Fixed broken link in {filename}: '{slug}' -> '{new_slug}'")
+                    if not os.path.exists(expected_md):
+                        closest = get_close_matches(slug, valid_slugs, n=1, cutoff=0.3)
+                        if closest:
+                            new_slug = closest[0]
+                            print(f"  -> 🔧 FIXED Standard Link in {filename}: '{slug}' -> '{new_slug}'")
                             return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{new_slug})"
                         else:
-                            print(f"  -> ⚠️ Stripped unfixable dead link in {filename}: '{slug}'")
-                            return link_text # Safely revert to plain text
-                            
-            return match.group(0) # Leave external or valid links untouched
+                            print(f"  -> ⚠️ STRIPPED Dead Link in {filename}: '{slug}'")
+                            return link_text # Safely demote to plain text
+                    else:
+                        # Force absolute URL to ensure safety
+                        return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{slug})"
+            return match.group(0)
 
-        # Regex to find all Markdown links [text](url)
-        updated_content = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', link_replacer, content)
+        content = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', markdown_link_healer, content)
 
-        # Only overwrite the file if changes were actually made
-        if updated_content != original_content:
+        # FIX 2: Autolinks e.g. <https://.../posts/slug>
+        def autolink_healer(match):
+            raw_url = match.group(1).strip()
+            if 'posts/' in raw_url:
+                slug_match = re.search(r'posts/([-a-zA-Z0-9_]+)', raw_url)
+                if slug_match:
+                    slug = slug_match.group(1)
+                    if not os.path.exists(os.path.join(output_dir, f"{slug}.md")):
+                        closest = get_close_matches(slug, valid_slugs, n=1, cutoff=0.3)
+                        if closest:
+                            new_slug = closest[0]
+                            print(f"  -> 🔧 FIXED Autolink in {filename}: '{slug}' -> '{new_slug}'")
+                            return f"<https://ltdeveloperblogs.github.io/posts/{new_slug}>"
+                        else:
+                            print(f"  -> ⚠️ STRIPPED Dead Autolink in {filename}: '{slug}'")
+                            return slug.replace('-', ' ') # Strip angle brackets to make it harmless plain text
+            return match.group(0)
+
+        content = re.sub(r'<([^>]+posts/[^>]+)>', autolink_healer, content)
+        
+        # FIX 3: Reference Links e.g. [1]: /posts/slug
+        def reference_healer(match):
+            ref_id = match.group(1)
+            raw_url = match.group(2).strip()
+            if 'posts/' in raw_url:
+                slug_match = re.search(r'posts/([-a-zA-Z0-9_]+)', raw_url)
+                if slug_match:
+                    slug = slug_match.group(1)
+                    if not os.path.exists(os.path.join(output_dir, f"{slug}.md")):
+                        closest = get_close_matches(slug, valid_slugs, n=1, cutoff=0.3)
+                        if closest:
+                            new_slug = closest[0]
+                            print(f"  -> 🔧 FIXED Reference Link in {filename}: '{slug}' -> '{new_slug}'")
+                            return f"[{ref_id}]: https://ltdeveloperblogs.github.io/posts/{new_slug}"
+                        else:
+                            print(f"  -> ⚠️ NEUTRALIZED Dead Reference Link in {filename}: '{slug}'")
+                            # Convert to an external anchor tag. This prevents Hugo from checking if the page exists!
+                            return f"[{ref_id}]: #removed-broken-link"
+            return match.group(0)
+
+        content = re.sub(r'^\[([^\]]+)\]:\s*(.+)$', reference_healer, content, flags=re.MULTILINE)
+
+        if content != original_content:
             with open(filepath, "w", encoding="utf-8") as f:
-                f.write(updated_content)
+                f.write(content)
             files_modified += 1
 
     print(f"✅ Link fixer complete. Fixed {files_modified} files to prevent Hugo crashes.")
