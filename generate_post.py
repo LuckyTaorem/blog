@@ -1760,7 +1760,7 @@ if __name__ == "__main__":
     elif args.force_recent:
         # 🚨 Calling the updated function with dynamic detection
         run_emergency_broadcaster()
-    elif args.fix-links: # <-- ADD THIS
+    elif args.fix_links: # <-- ADD THIS
         run_link_fixer()
     else:
         print("Please provide a flag: --scrape, --publish, --broadcast, or --force-recent")
