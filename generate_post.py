@@ -424,7 +424,7 @@ def extract_key_facts_with_ai(raw_text, title):
 
 import random
 
-def get_internal_links_catalog(limit=40):
+def get_internal_links_catalog(limit=5):
     """Grabs a catalog of recent articles so the AI can choose the most relevant ones."""
     if not os.path.exists(output_dir): 
         return "No internal links available yet."
@@ -1024,7 +1024,7 @@ def run_publisher():
         current_iso = datetime.now(ist_timezone).isoformat()
         
         # 🚀 NEW: Get a catalog of existing articles for the AI to choose from
-        internal_links_catalog = get_internal_links_catalog(40)
+        internal_links_catalog = get_internal_links_catalog(5)
 
         prompt = f"""
 Act as an expert tech journalist and strict SEO specialist. Read this short news summary: {article['summary']}
@@ -1122,7 +1122,7 @@ When you have completely finished writing the conclusion of the article, you MUS
                         temperature=0.3,
                         frequency_penalty=0.0,
                         presence_penalty=0.0,
-                        max_tokens=4500, 
+                        max_tokens=3500, 
                     )
                     raw_text = response.choices[0].message.content or ""
                     if raw_text.strip():
@@ -1146,7 +1146,7 @@ When you have completely finished writing the conclusion of the article, you MUS
                                 {"role": "user", "content": diet_prompt}
                             ],
                             "temperature": 0.3,
-                            "max_tokens": 4500
+                            "max_tokens": 3500
                         },
                         timeout=240
                     )
@@ -1173,7 +1173,7 @@ When you have completely finished writing the conclusion of the article, you MUS
                             "temperature": 0.3, 
                             "frequency_penalty": 0.0,
                             "presence_penalty": 0.0,
-                            "max_tokens": 4500
+                            "max_tokens": 3500
                         },
                         timeout=240
                     )
@@ -1201,7 +1201,7 @@ When you have completely finished writing the conclusion of the article, you MUS
                             "temperature": 0.3, 
                             "frequency_penalty": 0.0,
                             "presence_penalty": 0.0,
-                            "max_tokens": 4500
+                            "max_tokens": 3500
                         },
                         timeout=240
                     )
@@ -1225,7 +1225,7 @@ When you have completely finished writing the conclusion of the article, you MUS
                             "temperature": 0.3,
                             "frequency_penalty": 0.0,
                             "presence_penalty": 0.0,
-                            "max_tokens": 4500
+                            "max_tokens": 3500
                         },
                         timeout=240
                     )
@@ -1250,7 +1250,7 @@ When you have completely finished writing the conclusion of the article, you MUS
                                 }]
                             }],
                             "generationConfig": {
-                                "maxOutputTokens": 4500,
+                                "maxOutputTokens": 3500,
                                 "temperature": 0.3,
                                 "frequencyPenalty": 0.0,
                                 "presencePenalty": 0.0
