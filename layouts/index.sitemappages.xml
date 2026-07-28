@@ -1,56 +1,56 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://ltdeveloperblogs.github.io/</loc>
-    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://ltdeveloperblogs.github.io/posts</loc>
-    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ltdeveloperblogs.github.io/about</loc>
-    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ltdeveloperblogs.github.io/contact</loc>
-    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ltdeveloperblogs.github.io/ats-scanner/</loc>
-    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ltdeveloperblogs.github.io/cover-letter-generator/</loc>
-    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ltdeveloperblogs.github.io/schema-generator/</loc>
-    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ltdeveloperblogs.github.io/web-scraper/</loc>
-    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ltdeveloperblogs.github.io/csv-to-json/</loc>
-    <lastmod>2026-07-22T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
