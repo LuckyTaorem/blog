@@ -692,6 +692,209 @@ def share_to_social_media(file_path, slug, image_path):
     except Exception as e:
         print(f"  ❌ Failed LinkedIn: {e}")
 
+    # -----------------------------------------
+    # 5. MASTODON
+    # -----------------------------------------
+    try:
+        masto_token = os.environ.get("MASTODON_ACCESS_TOKEN")
+        masto_instance = os.environ.get("MASTODON_INSTANCE", "https://mastodon.social")
+        
+        if masto_token:
+            headers = {"Authorization": f"Bearer {masto_token}"}
+            media_id = None
+            
+            # Upload Image First
+            if os.path.exists(image_path):
+                with open(image_path, 'rb') as img:
+                    m_res = requests.post(f"{masto_instance}/api/v2/media", headers=headers, files={'file': img})
+                    if m_res.status_code == 200:
+                        media_id = m_res.json().get('id')
+            
+            # Post Status
+            status_text = f"{title} | {today}\n\n{extended_summary}\n\nRead the full breakdown: {post_url}"
+            data = {"status": status_text}
+            if media_id:
+                data["media_ids[]"] = [media_id]
+                
+            res = requests.post(f"{masto_instance}/api/v1/statuses", headers=headers, data=data)
+            if res.status_code == 200:
+                print("  🐘 Success: Posted to Mastodon")
+            else:
+                print(f"  ❌ Failed Mastodon: {res.status_code} - {res.text}")
+        else:
+            print("  ⚠️ Skipped Mastodon: Credentials missing")
+    except Exception as e:
+        print(f"  ❌ Failed Mastodon: {e}")
+
+    # -----------------------------------------
+    # 6. DEV.TO
+    # -----------------------------------------
+    try:
+        devto_api_key = os.environ.get("DEVTO_API_KEY")
+        if devto_api_key:
+            devto_headers = {
+                "api-key": devto_api_key,
+                "Content-Type": "application/json"
+            }
+            
+            # --- Extract and Format Tags from Hugo Frontmatter ---
+            post_tags = ["tech", "news"] # Fallback tags
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    file_content = f.read()
+                    tags_match = re.search(r'^tags:\s*\[(.*?)\]', file_content, re.MULTILINE | re.IGNORECASE)
+                    if tags_match:
+                        raw_tags = tags_match.group(1).split(',')
+                        # DEV.to requires alphanumeric lowercase tags. Strip quotes, spaces, and special characters.
+                        cleaned_tags = [re.sub(r'[^a-z0-9]', '', t.replace('"', '').replace("'", "").strip().lower()) for t in raw_tags if t.strip()]
+                        # DEV.to API has a strict limit of 4 tags max
+                        post_tags = [t for t in cleaned_tags if t][:4]
+                        
+                        # Failsafe if regex strips everything out
+                        if not post_tags:
+                            post_tags = ["tech", "news"]
+            except Exception as e:
+                print(f"  ⚠️ Could not extract tags for DEV.to: {e}")
+
+            # --- Construct Payload with Summary ---
+            devto_payload = {
+                "article": {
+                    "title": title,
+                    "published": True, 
+                    "body_markdown": f"{extended_summary}\n\n*Read the full breakdown originally published at [{post_url}]({post_url})*",
+                    "canonical_url": post_url,
+                    "tags": post_tags
+                }
+            }
+            
+            res = requests.post("https://dev.to/api/articles", headers=devto_headers, json=devto_payload)
+            
+            if res.status_code in [200, 201]:
+                print(f"  👩‍💻 Success: Published to DEV.to with tags {post_tags}")
+            else:
+                print(f"  ❌ Failed DEV.to: {res.status_code} - {res.text}")
+        else:
+            print("  ⚠️ Skipped DEV.to: Credentials missing")
+    except Exception as e:
+        print(f"  ❌ Failed DEV.to: {e}")
+
+    # -----------------------------------------
+    # 7. BLOGGER (OAuth2 Refresh Token)
+    # -----------------------------------------
+    try:
+        blogger_blog_id = os.environ.get("BLOGGER_BLOG_ID")
+        client_id = os.environ.get("GOOGLE_CLIENT_ID")
+        client_secret = os.environ.get("GOOGLE_CLIENT_SECRET")
+        refresh_token = os.environ.get("GOOGLE_REFRESH_TOKEN")
+        
+        if all([blogger_blog_id, client_id, client_secret, refresh_token]):
+            # 1. Exchange Refresh Token for a fresh Access Token
+            token_url = "https://oauth2.googleapis.com/token"
+            token_payload = {
+                "client_id": client_id,
+                "client_secret": client_secret,
+                "refresh_token": refresh_token,
+                "grant_type": "refresh_token"
+            }
+            
+            token_res = requests.post(token_url, data=token_payload)
+            
+            if token_res.status_code == 200:
+                access_token = token_res.json().get("access_token")
+                
+                # 2. Publish post to Blogger
+                blogger_url = f"https://www.googleapis.com/blogger/v3/blogs/{blogger_blog_id}/posts/"
+                headers = {
+                    "Authorization": f"Bearer {access_token}",
+                    "Content-Type": "application/json"
+                }
+                
+                blogger_payload = {
+                    "kind": "blogger#post",
+                    "title": title,
+                    "content": f"{extended_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>"
+                }
+                
+                post_res = requests.post(blogger_url, headers=headers, json=blogger_payload)
+                
+                if post_res.status_code == 200:
+                    print("  🅱️ Success: Published to Blogger")
+                else:
+                    print(f"  ❌ Failed Blogger: {post_res.status_code} - {post_res.text}")
+            else:
+                print(f"  ❌ Failed Blogger Token Refresh: {token_res.status_code} - {token_res.text}")
+        else:
+            print("  ⚠️ Skipped Blogger: Credentials missing")
+    except Exception as e:
+        print(f"  ❌ Failed Blogger: {e}")
+
+    # -----------------------------------------
+    # 8. WORDPRESS.COM
+    # -----------------------------------------
+    try:
+        wp_client_id = os.environ.get("WP_COM_CLIENT_ID")
+        wp_client_secret = os.environ.get("WP_COM_CLIENT_SECRET")
+        wp_username = os.environ.get("WP_COM_USERNAME")
+        wp_password = os.environ.get("WP_COM_PASSWORD")
+        wp_site_domain = os.environ.get("WP_COM_SITE_DOMAIN", "ltdeveloperblogs.wordpress.com")
+
+        if all([wp_client_id, wp_client_secret, wp_username, wp_password]):
+            # --- Extract Tags from Hugo Frontmatter ---
+            wp_tags = "tech, news"  # Fallback tags
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    file_content = f.read()
+                    tags_match = re.search(r'^tags:\s*\[(.*?)\]', file_content, re.MULTILINE | re.IGNORECASE)
+                    if tags_match:
+                        raw_tags = tags_match.group(1).split(',')
+                        cleaned_tags = [t.replace('"', '').replace("'", "").strip() for t in raw_tags if t.strip()]
+                        if cleaned_tags:
+                            wp_tags = ", ".join(cleaned_tags)
+            except Exception as e:
+                print(f"  ⚠️ Could not extract tags for WordPress.com: {e}")
+
+            # 1. Obtain OAuth2 Token via Password Grant
+            auth_url = "https://public-api.wordpress.com/oauth2/token"
+            auth_payload = {
+                "client_id": wp_client_id,
+                "client_secret": wp_client_secret,
+                "grant_type": "password",
+                "username": wp_username,
+                "password": wp_password
+            }
+
+            token_res = requests.post(auth_url, data=auth_payload)
+
+            if token_res.status_code == 200:
+                access_token = token_res.json().get("access_token")
+
+                # 2. Publish Post to WordPress.com
+                post_api_url = f"https://public-api.wordpress.com/rest/v1.1/sites/{wp_site_domain}/posts/new"
+                headers = {
+                    "Authorization": f"Bearer {access_token}"
+                }
+
+                post_data = {
+                    "title": title,
+                    "content": f"{extended_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>",
+                    "status": "publish",  # Set to live publication
+                    "tags": wp_tags
+                }
+
+                res = requests.post(post_api_url, headers=headers, data=post_data)
+
+                if res.status_code == 200:
+                    published_url = res.json().get("URL")
+                    print(f"  📝 Success: Published to WordPress.com ({published_url})")
+                else:
+                    print(f"  ❌ Failed WordPress.com: {res.status_code} - {res.text}")
+            else:
+                print(f"  ❌ Failed WordPress.com Auth: {token_res.status_code} - {token_res.text}")
+        else:
+            print("  ⚠️ Skipped WordPress.com: Credentials missing")
+    except Exception as e:
+        print(f"  ❌ Failed WordPress.com: {e}")
+
 # ==========================================
 # 3. SCRAPE MODE (Runs at 8 AM / 8 PM)
 # ==========================================

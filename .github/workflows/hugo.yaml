@@ -160,6 +160,18 @@ jobs:
           REDDIT_SECRET: ${{ secrets.REDDIT_SECRET }}
           REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
           REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
+          MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
+          MASTODON_INSTANCE: ${{ secrets.MASTODON_INSTANCE }}
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+          BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          WP_COM_CLIENT_ID: ${{ secrets.WP_COM_CLIENT_ID }}
+          WP_COM_CLIENT_SECRET: ${{ secrets.WP_COM_CLIENT_SECRET }}
+          WP_COM_USERNAME: ${{ secrets.WP_COM_USERNAME }}
+          WP_COM_PASSWORD: ${{ secrets.WP_COM_PASSWORD }}
+          WP_COM_SITE_DOMAIN: ${{ secrets.WP_COM_SITE_DOMAIN }}
           BING_API_KEY: ${{ secrets.BING_API_KEY }}
         run: |
           COMMIT_MSG="${{ github.event.head_commit.message }}"
