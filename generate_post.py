@@ -524,6 +524,22 @@ def share_to_social_media(file_path, slug, image_path):
     # 🚨 Create a generous 600-character extended summary for FB, Tumblr, and LinkedIn
     extended_summary = article_body[:600] + "..." if len(article_body) > 600 else article_body
 
+    # 🚨 Extract live image URL from frontmatter for APIs that require hosted images
+    absolute_image_url = ""
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            frontmatter = f.read()
+            img_match = re.search(r'^images:\s*\["(.*?)"\]', frontmatter, re.MULTILINE)
+            if img_match:
+                img_val = img_match.group(1)
+                # If it's already an absolute URL (from RSS), use it. If local, append your domain.
+                if img_val.startswith("http"):
+                    absolute_image_url = img_val
+                else:
+                    absolute_image_url = f"https://ltdeveloperblogs.github.io/{img_val.lstrip('/')}"
+    except Exception as e:
+        print(f"  ⚠️ Could not extract live image URL: {e}")
+
     # -----------------------------------------
     # 1. BLUESKY (Requires strict dynamic truncation)
     # -----------------------------------------
@@ -703,15 +719,30 @@ def share_to_social_media(file_path, slug, image_path):
             headers = {"Authorization": f"Bearer {masto_token}"}
             media_id = None
             
-            # Upload Image First
+            # Upload Image First (Fixed with explicit MIME type to prevent silent rejection)
             if os.path.exists(image_path):
                 with open(image_path, 'rb') as img:
-                    m_res = requests.post(f"{masto_instance}/api/v2/media", headers=headers, files={'file': img})
+                    file_tuple = (os.path.basename(image_path), img, 'image/jpeg')
+                    m_res = requests.post(f"{masto_instance}/api/v2/media", headers=headers, files={'file': file_tuple})
                     if m_res.status_code == 200:
                         media_id = m_res.json().get('id')
+                    else:
+                        print(f"  ⚠️ Mastodon image upload failed: {m_res.text}")
             
-            # Post Status
-            status_text = f"{title} | {today}\n\n{extended_summary}\n\nRead the full breakdown: {post_url}"
+            # Dynamic Truncation for Mastodon's 500-char limit
+            masto_footer = f"\n\nRead the full breakdown: {post_url}"
+            masto_header = f"{title} | {today}\n\n"
+            
+            masto_max_allowed = 495 
+            masto_used_chars = len(masto_header) + len(masto_footer)
+            masto_available_chars = masto_max_allowed - masto_used_chars
+            
+            if masto_available_chars > 15:
+                masto_summary = article_body[:masto_available_chars - 3] + "..."
+                status_text = f"{masto_header}{masto_summary}{masto_footer}"
+            else:
+                status_text = f"{masto_header.strip()}{masto_footer}"
+                
             data = {"status": status_text}
             if media_id:
                 data["media_ids[]"] = [media_id]
@@ -738,25 +769,22 @@ def share_to_social_media(file_path, slug, image_path):
             }
             
             # --- Extract and Format Tags from Hugo Frontmatter ---
-            post_tags = ["tech", "news"] # Fallback tags
+            post_tags = ["tech", "news"] 
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     file_content = f.read()
                     tags_match = re.search(r'^tags:\s*\[(.*?)\]', file_content, re.MULTILINE | re.IGNORECASE)
                     if tags_match:
                         raw_tags = tags_match.group(1).split(',')
-                        # DEV.to requires alphanumeric lowercase tags. Strip quotes, spaces, and special characters.
                         cleaned_tags = [re.sub(r'[^a-z0-9]', '', t.replace('"', '').replace("'", "").strip().lower()) for t in raw_tags if t.strip()]
-                        # DEV.to API has a strict limit of 4 tags max
                         post_tags = [t for t in cleaned_tags if t][:4]
                         
-                        # Failsafe if regex strips everything out
                         if not post_tags:
                             post_tags = ["tech", "news"]
             except Exception as e:
                 print(f"  ⚠️ Could not extract tags for DEV.to: {e}")
 
-            # --- Construct Payload with Summary ---
+            # --- Construct Payload with Summary and Image ---
             devto_payload = {
                 "article": {
                     "title": title,
@@ -767,10 +795,19 @@ def share_to_social_media(file_path, slug, image_path):
                 }
             }
             
+            if absolute_image_url:
+                devto_payload["article"]["main_image"] = absolute_image_url
+            
             res = requests.post("https://dev.to/api/articles", headers=devto_headers, json=devto_payload)
             
+            # Handle DEV.to 429 Rate Limit Cooldown
+            if res.status_code == 429:
+                print("  ⚠️ DEV.to rate limit hit. Waiting 32 seconds and retrying...")
+                time.sleep(32)
+                res = requests.post("https://dev.to/api/articles", headers=devto_headers, json=devto_payload)
+            
             if res.status_code in [200, 201]:
-                print(f"  👩‍💻 Success: Published to DEV.to with tags {post_tags}")
+                print(f"  👩‍💻 Success: Published to DEV.to")
             else:
                 print(f"  ❌ Failed DEV.to: {res.status_code} - {res.text}")
         else:
@@ -788,7 +825,6 @@ def share_to_social_media(file_path, slug, image_path):
         refresh_token = os.environ.get("GOOGLE_REFRESH_TOKEN")
         
         if all([blogger_blog_id, client_id, client_secret, refresh_token]):
-            # 1. Exchange Refresh Token for a fresh Access Token
             token_url = "https://oauth2.googleapis.com/token"
             token_payload = {
                 "client_id": client_id,
@@ -801,18 +837,19 @@ def share_to_social_media(file_path, slug, image_path):
             
             if token_res.status_code == 200:
                 access_token = token_res.json().get("access_token")
-                
-                # 2. Publish post to Blogger
                 blogger_url = f"https://www.googleapis.com/blogger/v3/blogs/{blogger_blog_id}/posts/"
                 headers = {
                     "Authorization": f"Bearer {access_token}",
                     "Content-Type": "application/json"
                 }
                 
+                # Dynamically inject the HTML Image Tag
+                html_image = f'<img src="{absolute_image_url}" alt="{title}" style="max-width:100%; height:auto; border-radius:8px;"><br><br>' if absolute_image_url else ''
+                
                 blogger_payload = {
                     "kind": "blogger#post",
                     "title": title,
-                    "content": f"{extended_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>"
+                    "content": f"{html_image}{extended_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>"
                 }
                 
                 post_res = requests.post(blogger_url, headers=headers, json=blogger_payload)
@@ -839,8 +876,7 @@ def share_to_social_media(file_path, slug, image_path):
         wp_site_domain = os.environ.get("WP_COM_SITE_DOMAIN", "ltdeveloperblogs.wordpress.com")
 
         if all([wp_client_id, wp_client_secret, wp_username, wp_password]):
-            # --- Extract Tags from Hugo Frontmatter ---
-            wp_tags = "tech, news"  # Fallback tags
+            wp_tags = "tech, news"
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     file_content = f.read()
@@ -851,9 +887,8 @@ def share_to_social_media(file_path, slug, image_path):
                         if cleaned_tags:
                             wp_tags = ", ".join(cleaned_tags)
             except Exception as e:
-                print(f"  ⚠️ Could not extract tags for WordPress.com: {e}")
+                pass
 
-            # 1. Obtain OAuth2 Token via Password Grant
             auth_url = "https://public-api.wordpress.com/oauth2/token"
             auth_payload = {
                 "client_id": wp_client_id,
@@ -867,25 +902,25 @@ def share_to_social_media(file_path, slug, image_path):
 
             if token_res.status_code == 200:
                 access_token = token_res.json().get("access_token")
-
-                # 2. Publish Post to WordPress.com
                 post_api_url = f"https://public-api.wordpress.com/rest/v1.1/sites/{wp_site_domain}/posts/new"
                 headers = {
                     "Authorization": f"Bearer {access_token}"
                 }
+                
+                # Dynamically inject the HTML Image Tag
+                html_image = f'<img src="{absolute_image_url}" alt="{title}" style="max-width:100%; height:auto; border-radius:8px;"><br><br>' if absolute_image_url else ''
 
                 post_data = {
                     "title": title,
-                    "content": f"{extended_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>",
-                    "status": "publish",  # Set to live publication
+                    "content": f"{html_image}{extended_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>",
+                    "status": "publish", 
                     "tags": wp_tags
                 }
 
                 res = requests.post(post_api_url, headers=headers, data=post_data)
 
                 if res.status_code == 200:
-                    published_url = res.json().get("URL")
-                    print(f"  📝 Success: Published to WordPress.com ({published_url})")
+                    print(f"  📝 Success: Published to WordPress.com")
                 else:
                     print(f"  ❌ Failed WordPress.com: {res.status_code} - {res.text}")
             else:
@@ -929,7 +964,7 @@ def run_scraper():
                 "job post", "hiring", "vacancy", "internship", 
                 "call for papers", "call for blogs", "apply now", "register",
                 "coupon", "coupon code", "promo code", "discount code", 
-                "promo codes", "discount codes", "save big", "deal of the day","promo","discount","promos","coupons","codes","offers","offer","sale","sales","clearance","clearance sale","flash sale","limited time offer","limited time deal","limited time discount"
+                "promo codes", "discount codes", "save big", "deal of the day","promo","discount","promos","coupons","codes","offers","offer","sale","sales","clearance","clearance sale","flash sale","limited time offer","limited time deal","limited time discount","black friday","deals","deal"
             ]
             if any(keyword in news_title.lower() for keyword in skip_keywords):
                 print(f"Skipping non-news post: {news_title}")
