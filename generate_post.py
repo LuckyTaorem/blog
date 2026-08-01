@@ -523,6 +523,12 @@ def share_to_social_media(file_path, slug, image_path):
     
     # 🚨 Create a generous 600-character extended summary for FB, Tumblr, and LinkedIn
     extended_summary = article_body[:600] + "..." if len(article_body) > 600 else article_body
+    # 🚨 Translate Markdown to HTML for Blogger and WordPress.com
+    html_summary = extended_summary
+    html_summary = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', html_summary) # Bold
+    html_summary = re.sub(r'\*(.*?)\*', r'<em>\1</em>', html_summary)             # Italics
+    html_summary = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', html_summary) # Links
+    html_summary = html_summary.replace('\n', '<br>')
 
     # 🚨 Extract live image URL from frontmatter for APIs that require hosted images
     absolute_image_url = ""
@@ -849,7 +855,7 @@ def share_to_social_media(file_path, slug, image_path):
                 blogger_payload = {
                     "kind": "blogger#post",
                     "title": title,
-                    "content": f"{html_image}{extended_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>"
+                    "content": f"{html_image}{html_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>"
                 }
                 
                 post_res = requests.post(blogger_url, headers=headers, json=blogger_payload)
@@ -912,7 +918,7 @@ def share_to_social_media(file_path, slug, image_path):
 
                 post_data = {
                     "title": title,
-                    "content": f"{html_image}{extended_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>",
+                    "content": f"{html_image}{html_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>",
                     "status": "publish", 
                     "tags": wp_tags
                 }
