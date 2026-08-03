@@ -1942,7 +1942,6 @@ def run_link_fixer():
         try:
             with open(filepath, "r", encoding="utf-8") as f:
                 head = f.read(1000)
-                # Ensure it's a real Hugo post, not a corrupted AI output
                 if "---" in head and "title:" in head:
                     valid_slugs.append(filename.replace('.md', ''))
         except Exception:
@@ -1960,33 +1959,74 @@ def run_link_fixer():
 
         original_content = content
 
-        # 2. Universal Path Healer (Catches Markdown, HTML, and Bare URLs)
-        def universal_path_healer(match):
-            full_match = match.group(0) # e.g. "https://.../posts/y" or "/posts/y"
-            prefix = match.group(1)     # e.g. "/posts/"
-            slug = match.group(2)       # e.g. "y"
+        # ==========================================
+        # PASS 1: Catch standard Markdown Links [text](url)
+        # ==========================================
+        def markdown_link_healer(match):
+            link_text = match.group(1)
+            raw_url = match.group(2).strip()
+
+            # Ignore anchors and external links (unless they point to your own domain)
+            if raw_url.startswith("#") or raw_url.startswith("mailto:"):
+                return match.group(0)
+            if raw_url.startswith("http") and 'ltdeveloperblogs.github.io' not in raw_url:
+                return match.group(0) 
+
+            # Clean the URL
+            clean_url = raw_url.split('?')[0].split('#')[0].strip('/')
+            clean_url = clean_url.replace('.md', '').replace('.html', '')
             
-            # Strip trailing punctuation just in case
-            clean_slug = slug.strip('.,;:\'\"()[]')
+            # Extract slug
+            parts = [p for p in clean_url.split('/') if p]
+            slug = parts[-1] if parts else ""
 
-            if clean_slug in valid_slugs:
-                return full_match # Valid link, do not touch
+            if not slug:
+                return link_text
 
-            # Broken link detected! Try to fix it with a fuzzy match.
-            closest = get_close_matches(clean_slug, valid_slugs, n=1, cutoff=0.4)
+            if slug in valid_slugs:
+                # Force absolute format to fix Hugo relative issues
+                return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{slug})"
+            
+            # Broken! Try fuzzy match.
+            closest = get_close_matches(slug, valid_slugs, n=1, cutoff=0.4)
             if closest:
-                new_slug = closest[0]
-                print(f"  -> 🔧 FIXED URL path in {filename}: '{clean_slug}' -> '{new_slug}'")
-                return full_match.replace(clean_slug, new_slug)
+                print(f"  -> 🔧 FIXED MD link in {filename}: '{slug}' -> '{closest[0]}'")
+                return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{closest[0]})"
             else:
-                # 🚨 THE FIX: Replace the dead path entirely with a safe anchor
-                # This guarantees Hugo's link.html never tries to look up the dead page
-                print(f"  -> ☢️ NUKED dead URL path in {filename}: '{clean_slug}'")
+                # 🚨 Nuke the link, but clean up the remaining text!
+                print(f"  -> ☢️ NUKED dead MD link in {filename}: '{slug}'")
+                
+                # Smart Cleanup: If the AI lazily used the slug as the display text, 
+                # remove the dashes and extensions so it looks like regular English words.
+                if '-' in link_text and (slug in link_text or link_text.lower() == raw_url.lower()):
+                    clean_text = link_text.replace('-', ' ').replace('.md', '').replace('.html', '').title()
+                    return clean_text
+                    
+                return link_text
+
+        content = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', markdown_link_healer, content)
+
+        # ==========================================
+        # PASS 2: Catch Bare Paths or HTML Links (/posts/slug or posts/slug)
+        # ==========================================
+        def path_healer(match):
+            full_match = match.group(0)
+            slug = match.group(2).strip('.,;:\'\"()[]')
+            
+            if slug in valid_slugs:
+                return full_match
+                
+            closest = get_close_matches(slug, valid_slugs, n=1, cutoff=0.4)
+            if closest:
+                print(f"  -> 🔧 FIXED path in {filename}: '{slug}' -> '{closest[0]}'")
+                return full_match.replace(slug, closest[0])
+            else:
+                # Replace the dead path entirely with a safe anchor
+                print(f"  -> ☢️ NUKED dead path in {filename}: '{slug}'")
                 return "#link-removed"
 
-        # Targets any string that looks like: https://.../posts/slug OR /posts/slug OR posts/slug
         path_pattern = r'(https?://ltdeveloperblogs\.github\.io/posts/|/posts/|posts/)([-a-zA-Z0-9_]+)'
-        content = re.sub(path_pattern, universal_path_healer, content, flags=re.IGNORECASE)
+        content = re.sub(path_pattern, path_healer, content, flags=re.IGNORECASE)
 
         if content != original_content:
             with open(filepath, "w", encoding="utf-8") as f:
