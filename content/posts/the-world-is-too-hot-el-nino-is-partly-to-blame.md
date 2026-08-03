@@ -1,9 +1,11 @@
 ---
 title: "Heatwave Surge: El Niño, Fires, and Climate Crisis"
+aliases:
+  - /posts/the-world-is-too-hot-el-niño-is-partly-to-blame/
 date: 2026-08-03T12:15:16.038799+05:30
 draft: false
-images: ["images/the-world-is-too-hot-el-niño-is-partly-to-blame.jpg"]
-thumbnail: "images/the-world-is-too-hot-el-niño-is-partly-to-blame.jpg"
+images: ["images/the-world-is-too-hot-el-nino-is-partly-to-blame.jpg"]
+thumbnail: "images/the-world-is-too-hot-el-nino-is-partly-to-blame.jpg"
 description: "Record‑breaking heat across Europe, the U.S., and Asia fuels wildfires and stresses infrastructure. Explore the science, impacts, and future risks."
 categories: ["Business"]
 tags: ["Climate Change", "Wildfires", "Heatwave"]

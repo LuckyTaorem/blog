@@ -1,5 +1,6 @@
 import os
 import feedparser
+import unicodedata
 from groq import Groq
 import re
 import time
@@ -987,7 +988,10 @@ def run_scraper():
             if news_title in existing_queue_titles: continue
             
             # Generate the slug immediately
-            filename_slug = re.sub(r'[^\w\s-]', '', news_title).strip().lower()
+            # Normalize accents (e.g., ñ -> n, é -> e) before regex stripping
+            normalized_title = unicodedata.normalize('NFKD', news_title).encode('ASCII', 'ignore').decode('utf-8')
+            
+            filename_slug = re.sub(r'[^\w\s-]', '', normalized_title).strip().lower()
             filename_slug = re.sub(r'[-\s]+', '-', filename_slug)
 
             # 2. Skip if already Published by checking if the file exists directly
