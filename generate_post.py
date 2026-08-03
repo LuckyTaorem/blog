@@ -1928,7 +1928,6 @@ def run_link_fixer():
     from difflib import get_close_matches
 
     # 1. STRICT VALIDATION: Only accept slugs if the file exists AND has valid frontmatter.
-    # If a file is corrupted or empty, Hugo ignores it. We must ignore it too!
     valid_slugs = []
     all_files = [f for f in os.listdir(output_dir) if f.endswith('.md') and f != '_index.md']
     
@@ -1955,28 +1954,55 @@ def run_link_fixer():
 
         original_content = content
 
-        # 2. Universal Link Healer
-        def universal_healer(match):
-            full_match = match.group(0) # e.g., https://.../posts/slug or /posts/slug
-            slug = match.group(2)
-            
-            if slug not in valid_slugs:
-                closest = get_close_matches(slug, valid_slugs, n=1, cutoff=0.3)
+        # 2. Aggressive Markdown Link Healer
+        def markdown_link_healer(match):
+            link_text = match.group(1)
+            raw_url = match.group(2).strip()
+
+            # Ignore anchor/hash links
+            if raw_url.startswith("#"):
+                return match.group(0)
+
+            # Check if it's an external link (leave external links alone)
+            is_internal = False
+            if 'ltdeveloperblogs.github.io' in raw_url or not raw_url.startswith('http'):
+                is_internal = True
+
+            if not is_internal:
+                return match.group(0)
+
+            # --- Process Internal Link ---
+            # Strip query params, hashes, trailing slashes, and extensions
+            clean_url = raw_url.split('?')[0].split('#')[0].strip('/')
+            clean_url = clean_url.replace('.md', '').replace('.html', '')
+
+            # Extract the absolute last segment of the path as the slug
+            parts = [p for p in clean_url.split('/') if p]
+            slug = parts[-1] if parts else ""
+
+            # If no slug could be parsed, just strip the link to be safe
+            if not slug:
+                print(f"  -> ☢️ NUKED unparseable link in {filename}: '{raw_url}'")
+                return link_text
+
+            if slug in valid_slugs:
+                # Reconstruct as a perfect absolute link to prevent Hugo relative pathing issues
+                return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{slug})"
+            else:
+                # Broken link detected! Try to fix it with a fuzzy match.
+                closest = get_close_matches(slug, valid_slugs, n=1, cutoff=0.4)
                 if closest:
                     new_slug = closest[0]
                     print(f"  -> 🔧 FIXED in {filename}: '{slug}' -> '{new_slug}'")
-                    return full_match.replace(slug, new_slug)
+                    return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{new_slug})"
                 else:
+                    # 🚨 THE FIX: If the link is completely dead, strip the markdown completely.
+                    # Returning just `link_text` changes [Click Here](dead-link) into just "Click Here"
                     print(f"  -> ☢️ NUKED dead link in {filename}: '{slug}'")
-                    # If completely unfixable, replace the URL with a safe hash anchor.
-                    # This guarantees Hugo's strict link.html won't try to look it up!
-                    return "#link-removed"
-                    
-            return full_match
+                    return link_text
 
-        # Catches Markdown links, bare URLs, and HTML links ending in a slug
-        url_pattern = r'(https?://[^\s\)\>\"\'\]]+)?/posts/([-a-zA-Z0-9_]+)/?'
-        content = re.sub(url_pattern, universal_healer, content, flags=re.IGNORECASE)
+        # Target ALL markdown links explicitly: [text](url)
+        content = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', markdown_link_healer, content)
 
         if content != original_content:
             with open(filepath, "w", encoding="utf-8") as f:
