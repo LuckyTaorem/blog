@@ -516,6 +516,9 @@ def share_to_social_media(file_path, slug, image_path):
     print(f"\n📣 Broadcasting to Social Media: {title}")
     
     post_url = f"https://ltdeveloperblogs.github.io/posts/{slug}/"
+
+    post_categories = []
+    post_tags = []
     
     # 🚨 IST Calculation
     ist_timezone = timezone(timedelta(hours=5, minutes=30))
@@ -535,6 +538,19 @@ def share_to_social_media(file_path, slug, image_path):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             frontmatter = f.read()
+
+            # Match categories: ["Category Name"]
+            cat_match = re.search(r'^categories:\s*\[(.*?)\]', frontmatter, re.MULTILINE | re.IGNORECASE)
+            if cat_match:
+                raw_cats = cat_match.group(1).split(',')
+                post_categories = [c.replace('"', '').replace("'", "").strip() for c in raw_cats if c.strip()]
+
+            # Match tags: ["Tag1", "Tag2"]
+            tags_match = re.search(r'^tags:\s*\[(.*?)\]', frontmatter, re.MULTILINE | re.IGNORECASE)
+            if tags_match:
+                raw_tags = tags_match.group(1).split(',')
+                post_tags = [t.replace('"', '').replace("'", "").strip() for t in raw_tags if t.strip()]
+                            
             img_match = re.search(r'^images:\s*\["(.*?)"\]', frontmatter, re.MULTILINE)
             if img_match:
                 img_val = img_match.group(1)
@@ -544,7 +560,7 @@ def share_to_social_media(file_path, slug, image_path):
                 else:
                     absolute_image_url = f"https://ltdeveloperblogs.github.io/{img_val.lstrip('/')}"
     except Exception as e:
-        print(f"  ⚠️ Could not extract live image URL: {e}")
+        print(f"  ⚠️ Could not extract frontmatter data: {e}")
 
     # -----------------------------------------
     # 1. BLUESKY (Requires strict dynamic truncation)
@@ -630,11 +646,13 @@ def share_to_social_media(file_path, slug, image_path):
             client = pytumblr.TumblrRestClient(t_key, t_secret, t_oauth, t_oauth_secret)
             
             caption_html = f"<h2>{title} | {today}</h2><p>{extended_summary}</p><p><a href='{post_url}'>Read full breakdown below: {post_url}</a></p>"
+
+            tumblr_tags = list(set(post_categories + post_tags))
             
             if os.path.exists(image_path):
-                client.create_photo(t_blog, state="published", data=image_path, caption=caption_html, link=post_url)
+                client.create_photo(t_blog, state="published", data=image_path, caption=caption_html, link=post_url, tags=tumblr_tags)
             else:
-                client.create_link(t_blog, state="published", title=f"{title} | {today}", url=post_url, description=caption_html)
+                client.create_link(t_blog, state="published", title=f"{title} | {today}", url=post_url, description=caption_html, tags=tumblr_tags)
                 
             print("  🆃 Success: Posted to Tumblr")
         else:
@@ -774,21 +792,15 @@ def share_to_social_media(file_path, slug, image_path):
                 "Content-Type": "application/json"
             }
             
-            # --- Extract and Format Tags from Hugo Frontmatter ---
-            post_tags = ["tech", "news"] 
-            try:
-                with open(file_path, "r", encoding="utf-8") as f:
-                    file_content = f.read()
-                    tags_match = re.search(r'^tags:\s*\[(.*?)\]', file_content, re.MULTILINE | re.IGNORECASE)
-                    if tags_match:
-                        raw_tags = tags_match.group(1).split(',')
-                        cleaned_tags = [re.sub(r'[^a-z0-9]', '', t.replace('"', '').replace("'", "").strip().lower()) for t in raw_tags if t.strip()]
-                        post_tags = [t for t in cleaned_tags if t][:4]
+            # --- Format Tags for DEV.to ---
+            # Put category first, followed by tags
+            combined_tags = post_categories + post_tags
+            cleaned_dev_tags = [re.sub(r'[^a-z0-9]', '', t.lower()) for t in combined_tags if t]
+            devto_tags = cleaned_dev_tags[:4]  # DEV.to allows a max of 4 tags
                         
-                        if not post_tags:
-                            post_tags = ["tech", "news"]
-            except Exception as e:
-                print(f"  ⚠️ Could not extract tags for DEV.to: {e}")
+            # Fallback if empty
+            if not devto_tags:
+                devto_tags = ["tech", "news"]
 
             # --- Construct Payload with Summary and Image ---
             devto_payload = {
@@ -797,7 +809,7 @@ def share_to_social_media(file_path, slug, image_path):
                     "published": True, 
                     "body_markdown": f"{extended_summary}\n\n*Read the full breakdown originally published at [{post_url}]({post_url})*",
                     "canonical_url": post_url,
-                    "tags": post_tags
+                    "tags": devto_tags
                 }
             }
             
@@ -851,11 +863,13 @@ def share_to_social_media(file_path, slug, image_path):
                 
                 # Dynamically inject the HTML Image Tag
                 html_image = f'<img src="{absolute_image_url}" alt="{title}" style="max-width:100%; height:auto; border-radius:8px;"><br><br>' if absolute_image_url else ''
+                blogger_labels = list(set(post_categories + post_tags))
                 
                 blogger_payload = {
                     "kind": "blogger#post",
                     "title": title,
-                    "content": f"{html_image}{html_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>"
+                    "content": f"{html_image}{html_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>",
+                    "labels": blogger_labels
                 }
                 
                 post_res = requests.post(blogger_url, headers=headers, json=blogger_payload)
@@ -882,18 +896,9 @@ def share_to_social_media(file_path, slug, image_path):
         wp_site_domain = os.environ.get("WP_COM_SITE_DOMAIN", "ltdeveloperblogs.wordpress.com")
 
         if all([wp_client_id, wp_client_secret, wp_username, wp_password]):
-            wp_tags = "tech, news"
-            try:
-                with open(file_path, "r", encoding="utf-8") as f:
-                    file_content = f.read()
-                    tags_match = re.search(r'^tags:\s*\[(.*?)\]', file_content, re.MULTILINE | re.IGNORECASE)
-                    if tags_match:
-                        raw_tags = tags_match.group(1).split(',')
-                        cleaned_tags = [t.replace('"', '').replace("'", "").strip() for t in raw_tags if t.strip()]
-                        if cleaned_tags:
-                            wp_tags = ", ".join(cleaned_tags)
-            except Exception as e:
-                pass
+            # Format categories & tags as comma-separated strings
+            wp_categories = ", ".join(post_categories) if post_categories else "Uncategorized"
+            wp_tags = ", ".join(post_tags) if post_tags else "tech, news"
 
             auth_url = "https://public-api.wordpress.com/oauth2/token"
             auth_payload = {
@@ -920,6 +925,7 @@ def share_to_social_media(file_path, slug, image_path):
                     "title": title,
                     "content": f"{html_image}{html_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>",
                     "status": "publish", 
+                    "categories": wp_categories,
                     "tags": wp_tags
                 }
 
@@ -1954,55 +1960,33 @@ def run_link_fixer():
 
         original_content = content
 
-        # 2. Aggressive Markdown Link Healer
-        def markdown_link_healer(match):
-            link_text = match.group(1)
-            raw_url = match.group(2).strip()
+        # 2. Universal Path Healer (Catches Markdown, HTML, and Bare URLs)
+        def universal_path_healer(match):
+            full_match = match.group(0) # e.g. "https://.../posts/y" or "/posts/y"
+            prefix = match.group(1)     # e.g. "/posts/"
+            slug = match.group(2)       # e.g. "y"
+            
+            # Strip trailing punctuation just in case
+            clean_slug = slug.strip('.,;:\'\"()[]')
 
-            # Ignore anchor/hash links
-            if raw_url.startswith("#"):
-                return match.group(0)
+            if clean_slug in valid_slugs:
+                return full_match # Valid link, do not touch
 
-            # Check if it's an external link (leave external links alone)
-            is_internal = False
-            if 'ltdeveloperblogs.github.io' in raw_url or not raw_url.startswith('http'):
-                is_internal = True
-
-            if not is_internal:
-                return match.group(0)
-
-            # --- Process Internal Link ---
-            # Strip query params, hashes, trailing slashes, and extensions
-            clean_url = raw_url.split('?')[0].split('#')[0].strip('/')
-            clean_url = clean_url.replace('.md', '').replace('.html', '')
-
-            # Extract the absolute last segment of the path as the slug
-            parts = [p for p in clean_url.split('/') if p]
-            slug = parts[-1] if parts else ""
-
-            # If no slug could be parsed, just strip the link to be safe
-            if not slug:
-                print(f"  -> ☢️ NUKED unparseable link in {filename}: '{raw_url}'")
-                return link_text
-
-            if slug in valid_slugs:
-                # Reconstruct as a perfect absolute link to prevent Hugo relative pathing issues
-                return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{slug})"
+            # Broken link detected! Try to fix it with a fuzzy match.
+            closest = get_close_matches(clean_slug, valid_slugs, n=1, cutoff=0.4)
+            if closest:
+                new_slug = closest[0]
+                print(f"  -> 🔧 FIXED URL path in {filename}: '{clean_slug}' -> '{new_slug}'")
+                return full_match.replace(clean_slug, new_slug)
             else:
-                # Broken link detected! Try to fix it with a fuzzy match.
-                closest = get_close_matches(slug, valid_slugs, n=1, cutoff=0.4)
-                if closest:
-                    new_slug = closest[0]
-                    print(f"  -> 🔧 FIXED in {filename}: '{slug}' -> '{new_slug}'")
-                    return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{new_slug})"
-                else:
-                    # 🚨 THE FIX: If the link is completely dead, strip the markdown completely.
-                    # Returning just `link_text` changes [Click Here](dead-link) into just "Click Here"
-                    print(f"  -> ☢️ NUKED dead link in {filename}: '{slug}'")
-                    return link_text
+                # 🚨 THE FIX: Replace the dead path entirely with a safe anchor
+                # This guarantees Hugo's link.html never tries to look up the dead page
+                print(f"  -> ☢️ NUKED dead URL path in {filename}: '{clean_slug}'")
+                return "#link-removed"
 
-        # Target ALL markdown links explicitly: [text](url)
-        content = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', markdown_link_healer, content)
+        # Targets any string that looks like: https://.../posts/slug OR /posts/slug OR posts/slug
+        path_pattern = r'(https?://ltdeveloperblogs\.github\.io/posts/|/posts/|posts/)([-a-zA-Z0-9_]+)'
+        content = re.sub(path_pattern, universal_path_healer, content, flags=re.IGNORECASE)
 
         if content != original_content:
             with open(filepath, "w", encoding="utf-8") as f:
