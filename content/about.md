@@ -145,7 +145,7 @@ build:
           <div class="input-group flex-nowrap shadow-sm border border-secondary-subtle rounded-pill overflow-hidden support-input-group">
             <span class="input-group-text bg-body-secondary border-0 text-body fw-bold fs-5 ps-4 pe-2">₹</span>
             <!-- Added min-width: 0 to allow the input to shrink on tiny screens without pushing the button out -->
-            <input type="number" id="donation-amount" class="form-control bg-body text-body border-0 py-3 px-2 shadow-none fw-semibold fs-5" placeholder="50" min="1" style="min-width: 0;">
+            <input type="number" id="donation-amount" class="form-control bg-body text-body border-0 py-3 px-2 shadow-none fw-semibold fs-5" placeholder="50" min="1" max="100000" style="min-width: 0;">
             <!-- Added flex-shrink-0 so the button never gets squished -->
             <button id="generate-qr" class="btn btn-primary px-3 px-sm-4 fw-semibold d-flex align-items-center gap-2 transition-all flex-shrink-0">
               <i class="fa-solid fa-qrcode"></i> Generate
@@ -277,9 +277,18 @@ document.getElementById("generate-qr").addEventListener("click", function () {
   const amount = amountInput.value;
   const generateBtn = this;
   
-  if (!amount || isNaN(amount) || amount <= 0) {
+  // Added || amount > 100000 to block amounts over 1 Lakh
+  if (!amount || isNaN(amount) || amount <= 0 || amount > 100000) {
     amountInput.classList.add("is-invalid");
-    setTimeout(() => { amountInput.classList.remove("is-invalid"); }, 1500);
+    
+    // Optional: Add a visual cue to the placeholder so the user knows the limit
+    amountInput.value = ""; 
+    amountInput.placeholder = "Max: ₹1,00,000";
+    
+    setTimeout(() => { 
+        amountInput.classList.remove("is-invalid"); 
+        amountInput.placeholder = "50"; // Reset placeholder back to default
+    }, 2000);
     return;
   }
 
