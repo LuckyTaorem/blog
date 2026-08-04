@@ -1677,6 +1677,10 @@ When you have completely finished writing the conclusion of the article, you MUS
         def validate_internal_links(match):
             link_text = match.group(1)
             raw_url = match.group(2).strip()
+
+            if not raw_url:
+                print(f"  -> ⚠️ Stripping empty markdown link: {link_text}")
+                return link_text
             
             # Clean out any markdown titles in the URL (e.g., [text](url "Title") -> url)
             clean_url = raw_url.split()[0].strip()
