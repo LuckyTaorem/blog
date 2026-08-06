@@ -1768,11 +1768,16 @@ When you have completely finished writing the conclusion of the article, you MUS
         # Destroys AI-generated headings that lack text (which crash Hugo's TOC)
         def clean_empty_headings(match):
             heading_text = match.group(1)
-            if not re.search(r'[a-zA-Z0-9]', heading_text):
+            
+            clean_text = re.sub(r'<!--.*?-->', '', heading_text)
+            clean_text = re.sub(r'<[^>]+>', '', clean_text)
+            
+            if not re.search(r'[a-zA-Z0-9]', clean_text):
                 return "" 
             return match.group(0)
 
-        article_content = re.sub(r'^#{1,6}\s*(.*)$', clean_empty_headings, article_content, flags=re.MULTILINE)
+        # Swallows the newline so no blank artifacts are left behind
+        article_content = re.sub(r'^#{1,6}\s*([^\r\n]*)\r?\n?', clean_empty_headings, article_content, flags=re.MULTILINE)
 
         # 🚀 NEW: Append the External Source Link safely
         source_url = article.get('source_url', '#')
@@ -2051,17 +2056,22 @@ def run_link_fixer():
         # ==========================================
         # PASS 3: Catch and Destroy Empty Headings
         # ==========================================
-        # Hugo crashes if a heading produces an empty ID (e.g., "## " or "## 🛑")
         def empty_heading_healer(match):
             heading_text = match.group(1)
-            # If the heading lacks any letters or numbers, Hugo strips it to an empty ID
-            if not re.search(r'[a-zA-Z0-9]', heading_text):
+            
+            # Strip out markdown links, images, HTML tags, and comments
+            clean_text = re.sub(r'<!--.*?-->', '', heading_text)
+            clean_text = re.sub(r'<[^>]+>', '', clean_text)
+            clean_text = re.sub(r'!\[.*?\]\(.*?\)', '', clean_text)
+            clean_text = re.sub(r'\[.*?\]\(.*?\)', '', clean_text)
+            
+            if not re.search(r'[a-zA-Z0-9]', clean_text):
                 print(f"  -> 🧹 SWEPT empty/invalid heading in {filename}")
-                return "" # Delete the broken heading entirely
+                return "" # Completely annihilates the line
             return match.group(0)
 
-        # Matches lines starting with 1 to 6 hashes, explicitly ignoring Windows line endings
-        content = re.sub(r'^#{1,6}\s*([^\r\n]*)', empty_heading_healer, content, flags=re.MULTILINE)
+        # The \r?\n? at the end ensures we swallow the invisible line breaks
+        content = re.sub(r'^#{1,6}\s*([^\r\n]*)\r?\n?', empty_heading_healer, content, flags=re.MULTILINE)
 
         if content != original_content:
             with open(filepath, "w", encoding="utf-8") as f:

@@ -64,7 +64,6 @@ Historically, iPhone upgrades follow a **two‑year cadence** for most users. By
 ### Ecosystem Synergy  
 A larger iPhone screen also benefits **cross‑device continuity**. Features like **Universal Control**, **AirPlay**, and **Sidecar** become more fluid when the iPhone can act as a secondary display for a Mac or iPad. This reinforces Apple’s **“one seamless ecosystem”** narrative, making the iPhone a more viable hub for creative professionals.
 
-###
 
 ### Environmental and Sustainability Considerations
 
