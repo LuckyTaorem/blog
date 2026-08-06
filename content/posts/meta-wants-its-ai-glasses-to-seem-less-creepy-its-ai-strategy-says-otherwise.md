@@ -24,15 +24,15 @@ Meta's AI strategy has significant implications for user privacy. The company's 
 * Data breaches: The storage of large amounts of user data creates a significant risk of data breaches, which can have serious consequences for individuals.
 * Lack of control: Users may have limited control over their data, which can be used in ways that they do not consent to.
 
-As we discussed in our previous article, [Anthropic’s Fable 5: The AI Safety Crisis](/posts/who-decides-when-ai-is-too-dangerous/), the development of AI technology raises important questions about safety and responsibility. Meta's AI strategy must be considered in the context of these broader concerns.
+As we discussed in our previous article, [Anthropic’s Fable 5: The AI Safety Crisis](https://ltdeveloperblogs.github.io/posts/who-decides-when-ai-is-too-dangerous), the development of AI technology raises important questions about safety and responsibility. Meta's AI strategy must be considered in the context of these broader concerns.
 
 ## Comparison with Other Companies
 Other companies, such as Apple and Google, have also developed AI-powered products and services. However, these companies have taken a different approach to user privacy. For example, Apple has emphasized the importance of user privacy and has implemented features such as end-to-end encryption to protect user data. In contrast, Meta's AI strategy prioritizes the collection of user data, which can be used to create detailed profiles of individuals.
 
-As we noted in our article, [Valve's Steam Machine: Price, Specs & Lottery Explained](/posts/valves-steam-machine-starts-at-1049-with-512gb-storage-and-no-controller/), the development of AI-powered products and services requires a careful consideration of user privacy and safety. Meta's AI strategy must be evaluated in the context of these broader concerns.
+As we noted in our article, [Valve's Steam Machine: Price, Specs & Lottery Explained](https://ltdeveloperblogs.github.io/posts/valves-steam-machine-starts-at-1049-with-512gb-storage-and-no-controller), the development of AI-powered products and services requires a careful consideration of user privacy and safety. Meta's AI strategy must be evaluated in the context of these broader concerns.
 
 ## Conclusion
-In conclusion, Meta's AI glasses update is a step in the right direction, but the company's AI strategy raises significant concerns about user privacy. The collection of user data can lead to a range of issues, including surveillance, data breaches, and a lack of control. As we discussed in our article, [The Verge Newsletter Update](/posts/why-corporate-ai-super-pacs-spent-27-million-on-a-local-election/), the development of AI technology requires a careful consideration of these issues. Meta must prioritize user privacy and take steps to address the concerns raised by its AI strategy.
+In conclusion, Meta's AI glasses update is a step in the right direction, but the company's AI strategy raises significant concerns about user privacy. The collection of user data can lead to a range of issues, including surveillance, data breaches, and a lack of control. As we discussed in our article, [The Verge Newsletter Update](https://ltdeveloperblogs.github.io/posts/why-corporate-ai-super-pacs-spent-27-million-on-a-local-election), the development of AI technology requires a careful consideration of these issues. Meta must prioritize user privacy and take steps to address the concerns raised by its AI strategy.
 
 ## FAQ
 ### What are Meta AI glasses?
@@ -48,7 +48,7 @@ Other companies, such as Apple and Google, have taken a different approach to us
 The implications of Meta's AI strategy include surveillance, data breaches, and a lack of control. The collection of user data can lead to a range of issues, including the creation of detailed profiles of individuals and the use of data for targeted advertising.
 
 ### What can users do to protect their privacy?
-Users can take steps to protect their privacy by being aware of the data they share and the companies they share it with. Users can also use features such as end-to-end encryption and opt-out of data collection whenever possible. As we discussed in our article, [Uber Board Sued Over Alleged Oversight Failures](/posts/ubers-board-sued-for-alleged-poor-oversight-that-led-to-sexual-abuse-of-its-passengers/), users must be vigilant in protecting their privacy and holding companies accountable for their actions.
+Users can take steps to protect their privacy by being aware of the data they share and the companies they share it with. Users can also use features such as end-to-end encryption and opt-out of data collection whenever possible. As we discussed in our article, [Uber Board Sued Over Alleged Oversight Failures](https://ltdeveloperblogs.github.io/posts/ubers-board-sued-for-alleged-poor-oversight-that-led-to-sexual-abuse-of-its-passengers), users must be vigilant in protecting their privacy and holding companies accountable for their actions.
 
 ---
 **Source:** [*Original Article*](https://techcrunch.com/2026/07/08/meta-wants-its-ai-glasses-to-seem-less-creepy-its-ai-strategy-says-otherwise/)

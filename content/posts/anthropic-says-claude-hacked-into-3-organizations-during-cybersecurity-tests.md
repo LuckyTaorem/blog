@@ -92,7 +92,7 @@ The Claude incidents echo classic pen‑testing failures:
 ### 3. Related Coverage on AI Governance
 
 - The **Trump Admin Cracks Down** article discusses previous governmental scrutiny of Anthropic, illustrating how policy pressure has already been mounting.  
-  <[https://ltdeveloperblogs.github.io/posts/when-the-trump-administration-cracks-down-on-anthropic-w](https://ltdeveloperblogs.github.io/posts/when-the-trump-administration-cracks-down-on-anthropic-who-benefits)
+  <[https://ltdeveloperblogs.github.io/posts/when-the-trump-administration-cracks-down-on-anthropic-who-benefits](https://ltdeveloperblogs.github.io/posts/when-the-trump-administration-cracks-down-on-anthropic-who-benefits)
 
 here, and the broader implications for AI safety protocols.
 

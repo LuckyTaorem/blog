@@ -29,7 +29,7 @@ Traditional rocket engines, like those used in SpaceX’s Merlin or NASA’s RS-
 - **Simpler Design**: Fewer moving parts mean **lower manufacturing costs** and **increased reliability**.
 - **Reusability**: The engine’s architecture is inherently more durable, making it suitable for **rapid turnaround missions**, a critical factor for both commercial and defense applications.
 
-For a deeper dive into how propulsion technology is evolving, check out our analysis of [SpaceX’s Starfall launch and its implications for global cargo delivery from orbit](/posts/with-starfall-spacex-eyes-an-edge-in-global-cargo-delivery-from-orbit/).
+For a deeper dive into how propulsion technology is evolving, check out our analysis of [SpaceX’s Starfall launch and its implications for global cargo delivery from orbit](https://ltdeveloperblogs.github.io/posts/with-starfall-spacex-eyes-an-edge-in-global-cargo-delivery-from-orbit).
 
 ---
 
@@ -59,7 +59,7 @@ One of the biggest challenges in developing RDREs has been **controlling the det
 
 Venus Aerospace’s CTO, Andrew Duggleby, emphasized this point: *"Our propulsion architecture combines efficiency, throttling, reusability, and manufacturability in a way that customers need for real defense and space missions."* The company has already conducted **600 tests** of its RDRE, with the longest test duration reaching **32 seconds**—a significant milestone, though still short of the **6-15 minutes** required for operational missions.
 
-For more on how cutting-edge manufacturing is transforming aerospace, explore our coverage of [Valve’s Steam Machine and its DIY potential with SteamOS for desktop](/posts/valve-will-finally-let-you-build-your-own-steam-machine-with-steamos-for-desktop/).
+For more on how cutting-edge manufacturing is transforming aerospace, explore our coverage of [Valve’s Steam Machine and its DIY potential with SteamOS for desktop](https://ltdeveloperblogs.github.io/posts/valve-will-finally-let-you-build-your-own-steam-machine-with-steamos-for-desktop).
 
 ---
 
@@ -88,7 +88,7 @@ Venus Aerospace’s Series B funding round was led by **Mercury Fund**, with par
 
 This diverse group of investors underscores the **broad appeal** of RDRE technology, from **commercial spaceflight** to **national defense**.
 
-For insights into how venture capital is shaping the future of aerospace, read our analysis of [Vermilion Cliffs Ventures Fund II and its focus on AI and security startups](/posts/solo-gp-ashley-smith-announces-second-25m-fund-to-back-startups-in-ai-security-and-more/).
+For insights into how venture capital is shaping the future of aerospace, read our analysis of [Vermilion Cliffs Ventures Fund II and its focus on AI and security startups](https://ltdeveloperblogs.github.io/posts/solo-gp-ashley-smith-announces-second-25m-fund-to-back-startups-in-ai-security-and-more).
 
 ---
 
@@ -138,7 +138,7 @@ RDREs represent a **fundamental shift** in how we think about rocket propulsion.
 
 The success of Venus Aerospace highlights the growing role of **private companies** in driving space innovation. Unlike traditional aerospace giants, startups like Venus are **agile, risk-tolerant, and laser-focused on disruptive technologies**. This shift is reminiscent of the early days of **SpaceX and Blue Origin**, which challenged the status quo and forced legacy players to adapt.
 
-For a broader perspective on how private industry is reshaping space exploration, don’t miss our deep dive into [Meta’s $900M investment in India’s CRED and its implications for global tech](/posts/whatsapp-gets-new-chief-as-meta-taps-indias-cred-founder-kunal-shah-and-invests-900m-in-startup/).
+For a broader perspective on how private industry is reshaping space exploration, don’t miss our deep dive into [Meta’s $900M investment in India’s CRED and its implications for global tech](https://ltdeveloperblogs.github.io/posts/whatsapp-gets-new-chief-as-meta-taps-indias-cred-founder-kunal-shah-and-invests-900m-in-startup).
 
 ---
 
@@ -205,7 +205,7 @@ While challenges remain—**thermal management, test duration, and regulatory ap
 
 As Sassie Duggleby put it: *"The world looked at us and said, 'oh my gosh, you have a working RDRE, would you sell us one?'"*. If Venus Aerospace succeeds, the answer will be a resounding **yes**—and the aerospace industry will never be the same.
 
-For more on the future of space technology, explore our coverage of [SpaceX’s Starfall launch and its impact on global cargo delivery](/posts/with-starfall-spacex-eyes-an-edge-in-global-cargo-delivery-from-orbit/).
+For more on the future of space technology, explore our coverage of [SpaceX’s Starfall launch and its impact on global cargo delivery](https://ltdeveloperblogs.github.io/posts/with-starfall-spacex-eyes-an-edge-in-global-cargo-delivery-from-orbit).
 
 ---
 **Source:** [*Original Article*](https://techcrunch.com/2026/07/08/venus-aerospace-raises-90m-series-b-to-build-a-new-kind-of-rocket-engine/)

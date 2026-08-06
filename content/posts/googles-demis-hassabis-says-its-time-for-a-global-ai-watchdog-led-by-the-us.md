@@ -22,10 +22,10 @@ Some key features of the proposed watchdog include:
 * Representation from open-source communities
 * Leadership by the US
 
-The proposed watchdog would be similar to existing regulators like the Financial Industry Regulatory Authority. For more information on regulatory bodies, you can refer to our article on [Anthropic’s Fable 5: The AI Safety Crisis](https://ltdeveloperblogs.github.io/posts/who-decides-when-ai-is-too-dangerous/).
+The proposed watchdog would be similar to existing regulators like the Financial Industry Regulatory Authority. For more information on regulatory bodies, you can refer to our article on [Anthropic’s Fable 5: The AI Safety Crisis](https://ltdeveloperblogs.github.io/posts/who-decides-when-ai-is-too-dangerous).
 
 ## Importance of AI Regulation
-The importance of AI regulation cannot be overstated. As AI systems become increasingly powerful and pervasive, the need for regulation to ensure their safe and responsible development grows. Our article on [Uber Board Sued Over Alleged Oversight Failures](https://ltdeveloperblogs.github.io/posts/ubers-board-sued-for-alleged-poor-oversight-that-led-to-sexual-abuse-of-its-passengers/) highlights the consequences of inadequate oversight and regulation.
+The importance of AI regulation cannot be overstated. As AI systems become increasingly powerful and pervasive, the need for regulation to ensure their safe and responsible development grows. Our article on [Uber Board Sued Over Alleged Oversight Failures](https://ltdeveloperblogs.github.io/posts/ubers-board-sued-for-alleged-poor-oversight-that-led-to-sexual-abuse-of-its-passengers) highlights the consequences of inadequate oversight and regulation.
 
 ### Benefits of Regulation
 Some benefits of AI regulation include:
@@ -34,7 +34,7 @@ Some benefits of AI regulation include:
 * Protection of public safety and well-being
 * Promotion of transparency and accountability
 
-For more information on the benefits of regulation, you can refer to our article on [Trump Admin Cracks Down](https://ltdeveloperblogs.github.io/posts/when-the-trump-administration-cracks-down-on-anthropic-who-benefits/).
+For more information on the benefits of regulation, you can refer to our article on [Trump Admin Cracks Down](https://ltdeveloperblogs.github.io/posts/when-the-trump-administration-cracks-down-on-anthropic-who-benefits).
 
 ## Conclusion
 The proposal for a global AI watchdog led by the US is an important step towards ensuring the safe and responsible development of AI. As AI continues to evolve and become increasingly pervasive, the need for regulation will only grow. By establishing a watchdog with the authority to evaluate and respond to AI risks, we can help to prevent the misuse of AI and ensure that its development is aligned with human values.

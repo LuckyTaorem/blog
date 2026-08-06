@@ -85,7 +85,7 @@ Apple’s handling of security updates also plays into broader regulatory scruti
 
 While Apple dominates the premium segment, the broader smartphone market includes players like Xiaomi. The [Why Xiaomi Phones Rarely Sold in the US](https://ltdeveloperblogs.github.io/posts/why-xiaomi-phones-arent-banned-but-are-rarely-sold-in-the-us)
 
-sold in the US]([https://ltdeveloperblogs.github.io/posts/why-xiaomi-phones-arent-sold-in-us](https://ltdeveloperblogs.github.io/posts/why-xiaomi-phones-arent-banned-but-are-rarely-sold-in-the-us)) article highlights how software support—particularly the frequency and longevity of updates—remains a key differentiator. Apple’s ability to push updates to devices as old as the iPhone 8 (released in 2017) sets a benchmark that many Android manufacturers struggle to match. iOS 26.6’s rollout to older models reinforces this advantage, further solidifying Apple’s position in markets where device longevity is a critical factor in consumer decision-making.
+sold in the US]([https://ltdeveloperblogs.github.io/posts/why-xiaomi-phones-arent-banned-but-are-rarely-sold-in-the-us](https://ltdeveloperblogs.github.io/posts/why-xiaomi-phones-arent-banned-but-are-rarely-sold-in-the-us)) article highlights how software support—particularly the frequency and longevity of updates—remains a key differentiator. Apple’s ability to push updates to devices as old as the iPhone 8 (released in 2017) sets a benchmark that many Android manufacturers struggle to match. iOS 26.6’s rollout to older models reinforces this advantage, further solidifying Apple’s position in markets where device longevity is a critical factor in consumer decision-making.
 
 ## Developer Implications
 

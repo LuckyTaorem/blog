@@ -31,7 +31,7 @@ Some of the key features of Talk to Spotify include:
 * Asking about your own taste and history with voice commands like "When did I first listen to this song?" or "What genres have I been into recently?"
 
 ### Comparison to Other Voice-Controlled Services
-Talk to Spotify is similar to other voice-controlled services, such as those found in [Noise Canceling Tech](https://ltdeveloperblogs.github.io/posts/whats-the-difference-between-active-noise-canceling-and-passive/), which can also be controlled with voice commands. However, Talk to Spotify is specifically designed for music streaming and provides a more personalized experience.
+Talk to Spotify is similar to other voice-controlled services, such as those found in [Noise Canceling Tech](https://ltdeveloperblogs.github.io/posts/whats-the-difference-between-active-noise-canceling-and-passive), which can also be controlled with voice commands. However, Talk to Spotify is specifically designed for music streaming and provides a more personalized experience.
 
 ### Benefits of Talk to Spotify
 The benefits of Talk to Spotify include increased convenience and a more personalized music streaming experience. With Talk to Spotify, users can easily control their music playback and discover new songs and artists without having to manually search for them. This feature is also useful for users who want to learn more about the music they listen to and explore their listening history.
@@ -44,9 +44,9 @@ Talk to Spotify is available to Premium users 18 or older in the US, Ireland, an
 * What devices is Talk to Spotify available on?
 Talk to Spotify is available on iOS and Android devices in English.
 * Can I use Talk to Spotify to learn more about the music I listen to?
-Yes, Talk to Spotify allows users to learn more about the music they listen to, including the inspiration behind songs and albums, and the genre of a song. For more information on music streaming and discovery, check out our article on [Valve's Steam Machine](https://ltdeveloperblogs.github.io/posts/valve-is-working-with-amd-to-bring-fsr-4-to-the-steam-machine/), which also discusses the importance of personalized recommendations.
+Yes, Talk to Spotify allows users to learn more about the music they listen to, including the inspiration behind songs and albums, and the genre of a song. For more information on music streaming and discovery, check out our article on [Valve's Steam Machine](https://ltdeveloperblogs.github.io/posts/valve-is-working-with-amd-to-bring-fsr-4-to-the-steam-machine), which also discusses the importance of personalized recommendations.
 * Can I use Talk to Spotify to control my music playback?
-Yes, Talk to Spotify allows users to control their music playback with voice or text commands, including playing, pausing, and skipping songs. This feature is similar to those found in [Robotaxi Recall](https://ltdeveloperblogs.github.io/posts/waymo-recalls-robotaxis-over-risk-theyll-drive-at-speed-into-freeway-construction-zones/), which also uses voice commands to control the vehicle.
+Yes, Talk to Spotify allows users to control their music playback with voice or text commands, including playing, pausing, and skipping songs. This feature is similar to those found in [Robotaxi Recall](https://ltdeveloperblogs.github.io/posts/waymo-recalls-robotaxis-over-risk-theyll-drive-at-speed-into-freeway-construction-zones), which also uses voice commands to control the vehicle.
 
 ---
 **Source:** [*Original Article*](https://www.engadget.com/2214520/talk-to-spotify-curate-playlists-with-voice/)

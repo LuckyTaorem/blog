@@ -22,7 +22,7 @@ U.S. companies, including domain registrars, are required to comply with U.S. sa
 The t.me domain was back online after the "serverhold" was lifted. According to a statement by Predrag Lešić, Chief Executive of Domain ME, "The t.me domain is back online. We will be issuing an official statement shortly." Domain ME also responded to Pavel Durov, the founder of Telegram, stating that the domain was "on hold due to the OFAC compliance, but it is back online now."
 
 ## Related Incidents and Articles
-The suspension of Telegram's shortlink domain highlights the importance of compliance with U.S. sanctions laws. For more information on the impact of sanctions on tech companies, see our article on [Cyberattack on US Water](https://ltdeveloperblogs.github.io/posts/what-happens-if-china-hacks-the-us-water-supply-i-went-to-a-secret-war-game-to-find-out/). Additionally, our article on [UK's Flawed AI Face Scans for Asylum Seekers Spark Outrage](https://ltdeveloperblogs.github.io/posts/the-uk-will-scan-asylum-seekers-faces-for-age-checksdespite-knowing-the-tech-is-flawed/) discusses the use of technology in compliance with regulations.
+The suspension of Telegram's shortlink domain highlights the importance of compliance with U.S. sanctions laws. For more information on the impact of sanctions on tech companies, see our article on [Cyberattack on US Water](https://ltdeveloperblogs.github.io/posts/what-happens-if-china-hacks-the-us-water-supply-i-went-to-a-secret-war-game-to-find-out). Additionally, our article on [UK's Flawed AI Face Scans for Asylum Seekers Spark Outrage](https://ltdeveloperblogs.github.io/posts/the-uk-will-scan-asylum-seekers-faces-for-age-checksdespite-knowing-the-tech-is-flawed) discusses the use of technology in compliance with regulations.
 
 ## FAQ
 * Q: Why was Telegram's shortlink domain suspended?
@@ -32,7 +32,7 @@ A: The domain was suspended for a day.
 * Q: Is the domain back online?
 A: Yes, the domain is back online after the "serverhold" was lifted.
 * Q: What is the relationship between the suspension and U.S. sanctions laws?
-A: The suspension may have been related to the sanctions imposed on a VPN provider called First VPN, which had a link to its public group on Telegram using the shortened t.me domain. For more information on sanctions and tech, see our article on [Trump Admin Cracks Down](https://ltdeveloperblogs.github.io/posts/when-the-trump-administration-cracks-down-on-anthropic-who-benefits/).
+A: The suspension may have been related to the sanctions imposed on a VPN provider called First VPN, which had a link to its public group on Telegram using the shortened t.me domain. For more information on sanctions and tech, see our article on [Trump Admin Cracks Down](https://ltdeveloperblogs.github.io/posts/when-the-trump-administration-cracks-down-on-anthropic-who-benefits).
 
 ---
 **Source:** [*Original Article*](https://techcrunch.com/2026/07/14/telegrams-shortlink-domain-is-back-online-after-day-long-suspension/)

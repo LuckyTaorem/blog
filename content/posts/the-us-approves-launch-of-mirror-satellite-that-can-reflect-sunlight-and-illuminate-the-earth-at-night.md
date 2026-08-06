@@ -21,16 +21,16 @@ Reflect Orbital envisions operating a constellation of 50,000 satellites by 2035
 * Supporting critical infrastructure during emergencies
 * Extending productive hours for solar energy facilities
 * Temporarily lighting remote construction sites
-For more information on innovative space technology, you can refer to our article on [SpaceX Starfall Launch](https://ltdeveloperblogs.github.io/posts/with-starfall-spacex-eyes-an-edge-in-global-cargo-delivery-from-orbit/).
+For more information on innovative space technology, you can refer to our article on [SpaceX Starfall Launch](https://ltdeveloperblogs.github.io/posts/with-starfall-spacex-eyes-an-edge-in-global-cargo-delivery-from-orbit).
 
 ## Concerns and Regulations
-The launch of Eärendil-1 has raised concerns among astronomers, who fear that the satellite could interfere with optical astronomy. According to Tony Tyson, a researcher at UC Davis, "Imagine the sky filled with moons." The FCC has stated that concerns regarding Eärendil-1's impact on optical astronomy fall outside the scope of their review and authorization of this space station. For more information on the intersection of technology and astronomy, you can refer to our article on [T-Rex Auction Raises Concerns](https://ltdeveloperblogs.github.io/posts/sothebys-big-t-rex-auction-raises-concerns-hype-and-wealth-are-upending-science/).
+The launch of Eärendil-1 has raised concerns among astronomers, who fear that the satellite could interfere with optical astronomy. According to Tony Tyson, a researcher at UC Davis, "Imagine the sky filled with moons." The FCC has stated that concerns regarding Eärendil-1's impact on optical astronomy fall outside the scope of their review and authorization of this space station. For more information on the intersection of technology and astronomy, you can refer to our article on [T-Rex Auction Raises Concerns](https://ltdeveloperblogs.github.io/posts/sothebys-big-t-rex-auction-raises-concerns-hype-and-wealth-are-upending-science).
 
 ## Quotes from Key Figures
 * "We're grateful to the FCC for granting our application to fly our test mission. This ruling is hugely validating for our company and reflects America's leadership in testing innovative space technology." - Reflect Orbital
 * "For optical astronomy, this is an existential threat, and we hope that the regulators will share that view." - Betty Kioko, institutional affairs officer for the European Southern Observatory
 * "We find that concerns regarding Eärendil-1's impact on optical astronomy fall outside the scope of our review and authorization of this space station and therefore do not provide a basis for denying Reflect Orbital's application or imposing additional operating conditions." - FCC
-For more information on the latest developments in space technology, you can refer to our article on [Venus Aerospace's $90M RDRE: A Rocket Engine Revolution](https://ltdeveloperblogs.github.io/posts/venus-aerospace-raises-90m-series-b-to-build-a-new-kind-of-rocket-engine/).
+For more information on the latest developments in space technology, you can refer to our article on [Venus Aerospace's $90M RDRE: A Rocket Engine Revolution](https://ltdeveloperblogs.github.io/posts/venus-aerospace-raises-90m-series-b-to-build-a-new-kind-of-rocket-engine).
 
 ### FAQ
 * What is the primary goal of the Eärendil-1 satellite?

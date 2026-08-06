@@ -31,7 +31,7 @@ The Apple-Broadcom deal has far-reaching implications for both companies, the te
 ### Context: Trump Administration's Pressure on Apple
 The Apple-Broadcom deal comes amidst the Trump administration's pressure on Apple to move its core iPhone manufacturing to the U.S. In recent years, the administration has been urging Apple to bring its manufacturing operations back to the United States, citing concerns over trade deficits and job creation. While Apple has not fully acquiesced to these demands, the company has made significant investments in the U.S. economy, including the recent deal with Broadcom.
 
-As we discussed in our previous article on [Trump Admin Cracks Down](/posts/when-the-trump-administration-cracks-down-on-anthropic-who-benefits/), the Trump administration's policies have had a profound impact on the tech industry, with many companies facing increased scrutiny and pressure to comply with the administration's demands.
+As we discussed in our previous article on [Trump Admin Cracks Down](https://ltdeveloperblogs.github.io/posts/when-the-trump-administration-cracks-down-on-anthropic-who-benefits), the Trump administration's policies have had a profound impact on the tech industry, with many companies facing increased scrutiny and pressure to comply with the administration's demands.
 
 ## Technical Specifications and Hardware Details
 The custom wireless connectivity chips designed and produced by Broadcom will be used in a range of Apple products, including iPhones, iPads, and Macs. These chips will provide advanced wireless connectivity capabilities, enabling faster data transfer rates, improved reliability, and enhanced overall performance.
@@ -43,7 +43,7 @@ The new wireless chips are expected to offer significant improvements over exist
 * **Improved Reliability**: The chips will provide improved reliability, reducing the risk of dropped connections and ensuring that users can stay connected wherever they are.
 * **Enhanced Security**: The custom wireless chips will incorporate advanced security features, protecting user data and preventing unauthorized access.
 
-As we explored in our review of the [Wooting 60HE v2](/posts/wooting-60he-v2-peak-keyboard-perfection/), the importance of high-quality hardware components cannot be overstated. The custom wireless chips designed and produced by Broadcom are expected to deliver exceptional performance and reliability, further enhancing the overall user experience.
+As we explored in our review of the [Wooting 60HE v2](https://ltdeveloperblogs.github.io/posts/wooting-60he-v2-peak-keyboard-perfection), the importance of high-quality hardware components cannot be overstated. The custom wireless chips designed and produced by Broadcom are expected to deliver exceptional performance and reliability, further enhancing the overall user experience.
 
 ## Conclusion
 The Apple-Broadcom deal marks a significant milestone in the tech industry, highlighting the importance of partnerships and collaborations in driving innovation and growth. As Apple continues to invest in the U.S. economy and create American jobs, the company is poised to play an even more critical role in shaping the future of the tech industry.
@@ -60,7 +60,7 @@ A: Apple has promised to create "hundreds of American jobs" through this initiat
 #### Q: What is the broader context of Apple's investment in the U.S. economy?
 A: Apple has committed to investing $600 billion in the U.S. economy over four years, with the Broadcom deal being a part of this initiative.
 
-As we look to the future, it will be exciting to see how this deal unfolds and what implications it has for the tech industry. For more information on Apple's investment in the U.S. economy, check out our article on [Apple Insider News](/posts/three-reasons-to-suspect-the-apple-price-increases-could-be-imminent/). Additionally, for insights into the latest tech deals and promotions, be sure to visit our page on [Prime Day 2026 Unveiled: A Tech Deep Dive](/posts/the-verges-guide-to-amazon-prime-day-2026/).
+As we look to the future, it will be exciting to see how this deal unfolds and what implications it has for the tech industry. For more information on Apple's investment in the U.S. economy, check out our article on [Apple Insider News](https://ltdeveloperblogs.github.io/posts/three-reasons-to-suspect-the-apple-price-increases-could-be-imminent). Additionally, for insights into the latest tech deals and promotions, be sure to visit our page on [Prime Day 2026 Unveiled: A Tech Deep Dive](https://ltdeveloperblogs.github.io/posts/the-verges-guide-to-amazon-prime-day-2026).
 
 ---
 **Source:** [*Original Article*](https://techcrunch.com/2026/07/08/apple-to-produce-made-in-america-wireless-chips-with-broadcom/)

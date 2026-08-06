@@ -41,7 +41,7 @@ Pop‑up ads interrupt workflow, consume screen real estate, and can be mistaken
 
 ### Consent and Transparency
 
-The incident spotlights a broader industry challenge: balancing OEM partnerships with transparent user consent. As seen in the debate around *Meta’s* verified badge rollout—where user consent and clear communication were central concerns—software ecosystems must prioritize informed choice. (Read more in the coverage of Meta’s badge launch: [https://ltdeveloperblogs.github.io/posts/meta-launches-free-facebook-verified-badge-for-humans](https://ltdeveloperblogs.github.io/posts/meta-launches-new-facebook-verified-badge-for-actual-real-humans))
+The incident spotlights a broader industry challenge: balancing OEM partnerships with transparent user consent. As seen in the debate around *Meta’s* verified badge rollout—where user consent and clear communication were central concerns—software ecosystems must prioritize informed choice. (Read more in the coverage of Meta’s badge launch: [https://ltdeveloperblogs.github.io/posts/meta-launches-new-facebook-verified-badge-for-actual-real-humans](https://ltdeveloperblogs.github.io/posts/meta-launches-new-facebook-verified-badge-for-actual-real-humans))
 
 ### Potential for Malware Propagation
 

@@ -51,7 +51,7 @@ In the digital realm, entropy measures the unpredictability of a data source. A 
 
 Modern AI models often incorporate entropy‑based loss functions. **Cross‑entropy loss**, for instance, quantifies the distance between the predicted probability distribution and the true distribution. Minimizing cross‑entropy drives models toward higher confidence and lower uncertainty.
 
-The debate over large open‑weight AI models in Silicon Valley highlights how entropy influences model scaling, data diversity, and security concerns: https://ltdeveloperblogs.github.io/posts/silicon-valley-is-completely-divided-over-chinese-open-weight-ai-models  
+The debate over large open‑weight AI models in Silicon Valley highlights how entropy influences model scaling, data diversity, and security concerns: https://ltdeveloperblogs.github.io/posts/silicon-valley-is-completely-divided-over-chinese-ai  
 
 Similarly, Anthropic’s recent safety analysis discusses entropy in the context of model interpretability and risk assessment: [https://ltdeveloperblogs.github.io/posts/who-decides-when-ai-is-too-dangerous](https://ltdeveloperblogs.github.io/posts/who-decides-when-ai-is-too-dangerous)  
 

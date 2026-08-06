@@ -92,7 +92,7 @@ Memory bandwidth directly influences the **training throughput** of large transf
 * **Lower power per FLOP**, crucial for sustainable AI compute.
 * **Edge‑optimized LPDDR5X** variants for on‑device inference, enabling personal AI assistants that run locally.
 
-These hardware advances also address concerns raised by platforms like YouTube about AI‑generated content quality and moderation, discussed in: https://ltdeveloperblogs.github.io/posts/y
+These hardware advances also address concerns raised by platforms like YouTube about AI‑generated content quality and moderation, discussed in: #link-removed
 
 ouTube’s new AI policies for creators.
 

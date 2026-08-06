@@ -22,7 +22,7 @@ Clement Delangue, an executive at Hugging Face, argues that owning one's AI mode
 #### GLM-5.2: A Case Study in Open AI Excellence
 One of the most compelling examples of open AI's potential is **GLM-5.2**, an open-weight model released by Beijing-based AI company Z.ai. This model has demonstrated remarkable capabilities in **agentic coding**—automating complex software development tasks—and competes directly with Anthropic's latest proprietary models in identifying security vulnerabilities. The success of GLM-5.2 underscores the competitive edge that open models can achieve, even against well-funded proprietary alternatives.
 
-For a deeper dive into how open AI models are challenging industry norms, explore our analysis of [Anthropic’s Fable 5: The AI Safety Crisis](https://ltdeveloperblogs.github.io/posts/who-decides-when-ai-is-too-dangerous/), which examines the ethical and practical dilemmas of AI development.
+For a deeper dive into how open AI models are challenging industry norms, explore our analysis of [Anthropic’s Fable 5: The AI Safety Crisis](https://ltdeveloperblogs.github.io/posts/who-decides-when-ai-is-too-dangerous), which examines the ethical and practical dilemmas of AI development.
 
 ---
 
@@ -30,7 +30,7 @@ For a deeper dive into how open AI models are challenging industry norms, explor
 
 While open AI models are gaining traction, not all industry leaders are convinced. Dario Amodei, CEO of Anthropic—a company known for its proprietary AI systems—has raised concerns about the potential dangers of scaling powerful open model weights. "The biggest risk in AI is concentration of power," Delangue countered, arguing that transparency levels the playing field and enhances safety. "You don't really make it safe by keeping it behind closed doors for just a few players. You make it more dangerous because you create asymmetry of power and asymmetry of capabilities."
 
-This debate is not merely theoretical. It has real-world implications for how AI is developed, deployed, and regulated. For instance, the [AI Arms Race Warning](https://ltdeveloperblogs.github.io/posts/this-former-deepmind-exec-thinks-the-ai-arms-race-could-end-in-disaster/) highlights the risks of unchecked competition in AI, where proprietary systems could exacerbate power imbalances.
+This debate is not merely theoretical. It has real-world implications for how AI is developed, deployed, and regulated. For instance, the [AI Arms Race Warning](https://ltdeveloperblogs.github.io/posts/this-former-deepmind-exec-thinks-the-ai-arms-race-could-end-in-disaster) highlights the risks of unchecked competition in AI, where proprietary systems could exacerbate power imbalances.
 
 ### Microsoft’s Stance: Avoiding Single-Provider Lock-In
 Satya Nadella, CEO of Microsoft, has also weighed in on the debate, advocating for greater control over data while warning against single-provider lock-in—a scenario where companies become overly dependent on a single AI vendor. Nadella’s comments reflect Microsoft’s broader strategy of balancing proprietary innovation with open ecosystems. "While the great innovation that comes from model providers having fair use rights to train models on public data is needed, I find it ironic that the status quo is to then turn around and impose restrictive terms on distillation, and to reserve the right to learn from customer usage and interaction data," he remarked.
@@ -50,7 +50,7 @@ For businesses, the choice between open and proprietary AI models is not just ph
 
 Hugging Face’s Delangue emphasizes that these benefits extend beyond individual companies. "The way you make the world safer, in my opinion," he said, "is by leveling up the playing fields and creating transparency on these models." This philosophy aligns with broader trends in open-source software, where transparency and collaboration have driven rapid innovation.
 
-For a historical perspective on how proprietary AI systems have clashed with regulatory bodies, read our coverage of [when the Trump administration cracked down on Anthropic](https://ltdeveloperblogs.github.io/posts/when-the-trump-administration-cracks-down-on-anthropic-who-benefits/).
+For a historical perspective on how proprietary AI systems have clashed with regulatory bodies, read our coverage of [when the Trump administration cracked down on Anthropic](https://ltdeveloperblogs.github.io/posts/when-the-trump-administration-cracks-down-on-anthropic-who-benefits).
 
 ---
 
@@ -60,7 +60,7 @@ One of the most contentious aspects of the open vs. proprietary AI debate is sec
 
 This paradox is not unique to AI. In cybersecurity, open-source tools like **OpenSSL** and **Linux** have long been lauded for their transparency, which allows for rapid identification and patching of vulnerabilities by the global developer community. The same principles apply to AI: openness can enhance security by enabling collective oversight.
 
-To explore how vulnerabilities in critical infrastructure can have far-reaching consequences, check out our investigation into [what happens if China hacks the US water supply](https://ltdeveloperblogs.github.io/posts/what-happens-if-china-hacks-the-us-water-supply-i-went-to-a-secret-war-game-to-find-out/).
+To explore how vulnerabilities in critical infrastructure can have far-reaching consequences, check out our investigation into [what happens if China hacks the US water supply](https://ltdeveloperblogs.github.io/posts/what-happens-if-china-hacks-the-us-water-supply-i-went-to-a-secret-war-game-to-find-out).
 
 ---
 

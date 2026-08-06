@@ -29,7 +29,7 @@ Selecting the right games for your family can be a daunting task, especially wit
 * Think about your family's interests: If your family enjoys adventure and exploration, games like [Sea of Thieves](https://www.seaofthieves.com/) or [Breath of the Wild](https://www.zelda.com/breath-of-the-wild/) may be a great fit. If your family enjoys creativity and building, games like [Minecraft](https://www.minecraft.net/) may be more suitable.
 * Look for games with multiplayer options: Games that allow for multiplayer can be a great way to encourage teamwork and communication among family members.
 
-For more information on selecting the right games for your family, be sure to check out our article on [Valve's Steam Machine: Price, Specs & Lottery Explained](https://ltdeveloperblogs.github.io/posts/valves-steam-machine-starts-at-1049-with-512gb-storage-and-no-controller/).
+For more information on selecting the right games for your family, be sure to check out our article on [Valve's Steam Machine: Price, Specs & Lottery Explained](https://ltdeveloperblogs.github.io/posts/valves-steam-machine-starts-at-1049-with-512gb-storage-and-no-controller).
 
 ## The Importance of Parental Involvement
 Parental involvement is crucial when it comes to family gaming. Not only can parents help to ensure that their children are playing games that are suitable for their age and skill level, but they can also participate in the gaming experience themselves.
@@ -41,7 +41,7 @@ There are many benefits to parental involvement in family gaming, including:
 * Enhanced learning experience: Parents can help to enhance the learning experience for their children, providing guidance and support as they navigate the game world.
 * Increased safety: Parents can help to ensure that their children are playing games that are safe and suitable for their age and skill level, protecting them from potential online dangers.
 
-For more information on the importance of parental involvement in gaming, be sure to check out our article on [Valve Enables DIY Steam Machines with SteamOS Desktop Release](https://ltdeveloperblogs.github.io/posts/valve-will-finally-let-you-build-your-own-steam-machine-with-steamos-for-desktop/).
+For more information on the importance of parental involvement in gaming, be sure to check out our article on [Valve Enables DIY Steam Machines with SteamOS Desktop Release](https://ltdeveloperblogs.github.io/posts/valve-will-finally-let-you-build-your-own-steam-machine-with-steamos-for-desktop).
 
 ## Conclusion
 Family gaming is a powerful tool for bonding and learning, offering a wide range of benefits for families with children of all ages. By creating a gaming routine, selecting the right games, and encouraging parental involvement, families can create lasting memories and strengthen their bonds.
@@ -56,7 +56,7 @@ A: Creating a gaming routine can be as simple as setting aside one evening a wee
 * Q: Why is parental involvement important in family gaming?
 A: Parental involvement is crucial when it comes to family gaming, as it can help to improve communication and bonding, enhance the learning experience, and increase safety.
 
-For more information on family gaming and related topics, be sure to check out our articles on [Valve's Steam Machine: Price, Specs & Lottery Explained](https://ltdeveloperblogs.github.io/posts/valves-steam-machine-starts-at-1049-with-512gb-storage-and-no-controller/), [Valve Enables DIY Steam Machines with SteamOS Desktop Release](https://ltdeveloperblogs.github.io/posts/valve-will-finally-let-you-build-your-own-steam-machine-with-steamos-for-desktop/), and [Steam Machine Tech Review](https://ltdeveloperblogs.github.io/posts/valve-is-working-with-amd-to-bring-fsr-4-to-the-steam-machine/).
+For more information on family gaming and related topics, be sure to check out our articles on [Valve's Steam Machine: Price, Specs & Lottery Explained](https://ltdeveloperblogs.github.io/posts/valves-steam-machine-starts-at-1049-with-512gb-storage-and-no-controller), [Valve Enables DIY Steam Machines with SteamOS Desktop Release](https://ltdeveloperblogs.github.io/posts/valve-will-finally-let-you-build-your-own-steam-machine-with-steamos-for-desktop), and [Steam Machine Tech Review](https://ltdeveloperblogs.github.io/posts/valve-is-working-with-amd-to-bring-fsr-4-to-the-steam-machine).
 
 ---
 **Source:** [*Original Article*](https://www.theverge.com/games/964262/blue-prince-family-bonding)

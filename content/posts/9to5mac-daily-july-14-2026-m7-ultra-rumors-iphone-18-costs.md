@@ -26,7 +26,7 @@ The 9to5Mac Daily newsletter provides several benefits to readers, including:
 * Access to exclusive deals and discounts, such as the 20% discount on Backblaze with code 9to5daily
 * Ability to access the newsletter from multiple platforms
 
-For more information on Apple products and services, readers can check out our article on [Apple Wallet Insights](https://ltdeveloperblogs.github.io/posts/wallet-app-gets-new-insights-feature-in-ios-27-beta-2/). Additionally, readers can learn more about the latest tech trends and news on our blog, including articles on [SpaceX Starfall Launch](https://ltdeveloperblogs.github.io/posts/with-starfall-spacex-eyes-an-edge-in-global-cargo-delivery-from-orbit/) and [Mac Antivirus Intego One](https://ltdeveloperblogs.github.io/posts/your-mac-isnt-immune-to-viruses-surveillance-tools-intego-one-is-here-to-help/).
+For more information on Apple products and services, readers can check out our article on [Apple Wallet Insights](https://ltdeveloperblogs.github.io/posts/wallet-app-gets-new-insights-feature-in-ios-27-beta-2). Additionally, readers can learn more about the latest tech trends and news on our blog, including articles on [SpaceX Starfall Launch](https://ltdeveloperblogs.github.io/posts/with-starfall-spacex-eyes-an-edge-in-global-cargo-delivery-from-orbit) and [Mac Antivirus Intego One](https://ltdeveloperblogs.github.io/posts/your-mac-isnt-immune-to-viruses-surveillance-tools-intego-one-is-here-to-help).
 
 ## FAQ
 ### What is 9to5Mac Daily?

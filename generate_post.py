@@ -24,7 +24,9 @@ print("WORKDIR:", os.getcwd())
 # ==========================================
 # 1. SETUP & CONFIGURATION
 # ==========================================
-client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+# Provide a dummy fallback so local utility flags (like --fix-links) don't crash on startup
+groq_key = os.environ.get("GROQ_API_KEY") or "local_dummy_key"
+client = Groq(api_key=groq_key)
 UNSPLASH_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
 QUEUE_FILE = "queue.json"
 
@@ -1762,6 +1764,16 @@ When you have completely finished writing the conclusion of the article, you MUS
             article_content
         )
 
+        # 🚨 THE BOUNCER: Empty Heading Sanitizer
+        # Destroys AI-generated headings that lack text (which crash Hugo's TOC)
+        def clean_empty_headings(match):
+            heading_text = match.group(1)
+            if not re.search(r'[a-zA-Z0-9]', heading_text):
+                return "" 
+            return match.group(0)
+
+        article_content = re.sub(r'^#{1,6}\s*(.*)$', clean_empty_headings, article_content, flags=re.MULTILINE)
+
         # 🚀 NEW: Append the External Source Link safely
         source_url = article.get('source_url', '#')
         if source_url and source_url != '#':
@@ -2010,7 +2022,7 @@ def run_link_fixer():
                     clean_text = link_text.replace('-', ' ').replace('.md', '').replace('.html', '').title()
                     return clean_text
                     
-                return link_text
+                return link_text 
 
         content = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', markdown_link_healer, content)
 
@@ -2036,13 +2048,28 @@ def run_link_fixer():
         path_pattern = r'(https?://ltdeveloperblogs\.github\.io/posts/|/posts/|posts/)([-a-zA-Z0-9_]+)'
         content = re.sub(path_pattern, path_healer, content, flags=re.IGNORECASE)
 
+        # ==========================================
+        # PASS 3: Catch and Destroy Empty Headings
+        # ==========================================
+        # Hugo crashes if a heading produces an empty ID (e.g., "## " or "## 🛑")
+        def empty_heading_healer(match):
+            heading_text = match.group(1)
+            # If the heading lacks any letters or numbers, Hugo strips it to an empty ID
+            if not re.search(r'[a-zA-Z0-9]', heading_text):
+                print(f"  -> 🧹 SWEPT empty/invalid heading in {filename}")
+                return "" # Delete the broken heading entirely
+            return match.group(0)
+
+        # Matches lines starting with 1 to 6 hashes, explicitly ignoring Windows line endings
+        content = re.sub(r'^#{1,6}\s*([^\r\n]*)', empty_heading_healer, content, flags=re.MULTILINE)
+
         if content != original_content:
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(content)
             files_modified += 1
 
     print(f"✅ Link fixer complete. Fixed {files_modified} files to prevent Hugo crashes.")
-
+    
 # ==========================================
 # 5. EXECUTION ROUTER
 # ==========================================

@@ -84,7 +84,7 @@ A: With 45 hours of playback, the Daisy One offers ample battery life for extend
 **Q: Where can I find more information about headphone jack compatibility?**  
 A: For a deeper dive into headphone jack usage
 
-and compatibility with various devices, check out our guide on [headphone jack standards and usage](link-to-guide).
+and compatibility with various devices, check out our guide on headphone jack standards and usage.
 
 ---
 
