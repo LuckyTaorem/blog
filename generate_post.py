@@ -245,6 +245,24 @@ def clean_scraped_content(raw_text):
     
     return cleaned.strip()
 
+def truncate_to_sentence(text, max_chars):
+    """Truncates text to fit max_chars, ending cleanly at a complete sentence boundary."""
+    if len(text) <= max_chars:
+        return text.strip()
+    
+    cut_text = text[:max_chars]
+    # Find the last sentence-ending punctuation (. ! ?) inside the cut threshold
+    match = list(re.finditer(r'[.!?](?=\s|$)', cut_text))
+    
+    if match and match[-1].end() >= 20: # Ensure we don't end up with an unnaturally short snippet
+        return cut_text[:match[-1].end()].strip()
+    
+    # Failsafe: if no full sentence fits, cut gracefully at the last complete word
+    space_cut = cut_text.rfind(' ')
+    if space_cut > 0:
+        return cut_text[:space_cut].strip() + "..."
+    return cut_text.strip() + "..."
+
 def extract_key_facts_with_ai(raw_text, title):
     """Uses AI to extract critical facts from raw scraped text before saving to queue."""
     if not raw_text or len(raw_text) < 300:
@@ -527,14 +545,49 @@ def share_to_social_media(file_path, slug, image_path):
     ist_timezone = timezone(timedelta(hours=5, minutes=30))
     today = datetime.now(ist_timezone).strftime('%B %d, %Y')
     
-    # 🚨 Create a generous 600-character extended summary for FB, Tumblr, and LinkedIn
-    extended_summary = article_body[:600] + "..." if len(article_body) > 600 else article_body
-    # 🚨 Translate Markdown to HTML for Blogger and WordPress.com
+    # 🚨 Create a 60% extended summary that ends cleanly at a sentence boundary
+    target_length = int(len(article_body) * 0.60)
+    
+    if len(article_body) > target_length:
+        # Find the nearest period, exclamation, or question mark after the 60% mark
+        match = re.search(r'[.!?](?=\s|$)', article_body[target_length:])
+        if match:
+            # Cut off right after the punctuation mark
+            cut_index = target_length + match.end()
+            extended_summary = article_body[:cut_index].strip()
+        else:
+            # Fallback if no sentence ending is found
+            extended_summary = article_body[:target_length].strip() + "..."
+    else:
+        extended_summary = article_body
+
+    # 🚨 Translate Markdown to HTML for Blogger, WordPress.com, and Tumblr
     html_summary = extended_summary
-    html_summary = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', html_summary) # Bold
-    html_summary = re.sub(r'\*(.*?)\*', r'<em>\1</em>', html_summary)             # Italics
-    html_summary = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', html_summary) # Links
+    
+    # 1. Convert Headings (H1 to H6)
+    html_summary = re.sub(r'^######\s*(.*?)$', r'<h6>\1</h6>', html_summary, flags=re.MULTILINE)
+    html_summary = re.sub(r'^#####\s*(.*?)$', r'<h5>\1</h5>', html_summary, flags=re.MULTILINE)
+    html_summary = re.sub(r'^####\s*(.*?)$', r'<h4>\1</h4>', html_summary, flags=re.MULTILINE)
+    html_summary = re.sub(r'^###\s*(.*?)$', r'<h3>\1</h3>', html_summary, flags=re.MULTILINE)
+    html_summary = re.sub(r'^##\s*(.*?)$', r'<h2>\1</h2>', html_summary, flags=re.MULTILINE)
+    html_summary = re.sub(r'^#\s*(.*?)$', r'<h1>\1</h1>', html_summary, flags=re.MULTILINE)
+    
+    # 2. Convert Bold and Italics
+    html_summary = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', html_summary)
+    html_summary = re.sub(r'\*(.*?)\*', r'<em>\1</em>', html_summary)
+    
+    # 3. Convert Links
+    html_summary = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', html_summary)
+    
+    # 4. Convert Bullet Points (Standard unordered lists)
+    html_summary = re.sub(r'(?m)^[*-]\s+(.*)$', r'<li>\1</li>', html_summary)
+    # Group consecutive <li> elements and wrap them in a <ul> tag
+    html_summary = re.sub(r'(<li>.*?</li>(?:\s*<li>.*?</li>)*)', r'<ul>\g<1></ul>', html_summary, flags=re.DOTALL)
+    
+    # 5. Fix Spacing (Convert newlines to <br> without breaking HTML block elements)
     html_summary = html_summary.replace('\n', '<br>')
+    html_summary = re.sub(r'(</h[1-6]>|</ul>|<ul>)[\s<br>]+', r'\1', html_summary)
+    html_summary = re.sub(r'[\s<br>]+(<h[1-6]>|<ul>)', r'\1', html_summary)
 
     # 🚨 Extract live image URL from frontmatter for APIs that require hosted images
     absolute_image_url = ""
@@ -582,9 +635,9 @@ def share_to_social_media(file_path, slug, image_path):
             used_chars = len(header) + len(footer)
             available_chars = max_allowed - used_chars
             
-            # Safe routing for character overflow
-            if available_chars > 15:
-                bsky_summary = article_body[:available_chars - 3] + "..."
+            if available_chars > 20:
+                # Use sentence truncation helper instead of hard string slicing
+                bsky_summary = truncate_to_sentence(article_body, available_chars)
                 bsky_text = f"{header}{bsky_summary}{footer}"
             else:
                 if used_chars > max_allowed:
@@ -746,7 +799,6 @@ def share_to_social_media(file_path, slug, image_path):
             headers = {"Authorization": f"Bearer {masto_token}"}
             media_id = None
             
-            # Upload Image First (Fixed with explicit MIME type to prevent silent rejection)
             if os.path.exists(image_path):
                 with open(image_path, 'rb') as img:
                     file_tuple = (os.path.basename(image_path), img, 'image/jpeg')
@@ -756,7 +808,6 @@ def share_to_social_media(file_path, slug, image_path):
                     else:
                         print(f"  ⚠️ Mastodon image upload failed: {m_res.text}")
             
-            # Dynamic Truncation for Mastodon's 500-char limit
             masto_footer = f"\n\nRead the full breakdown: {post_url}"
             masto_header = f"{title} | {today}\n\n"
             
@@ -764,8 +815,9 @@ def share_to_social_media(file_path, slug, image_path):
             masto_used_chars = len(masto_header) + len(masto_footer)
             masto_available_chars = masto_max_allowed - masto_used_chars
             
-            if masto_available_chars > 15:
-                masto_summary = article_body[:masto_available_chars - 3] + "..."
+            if masto_available_chars > 20:
+                # Use sentence truncation helper instead of hard string slicing
+                masto_summary = truncate_to_sentence(article_body, masto_available_chars)
                 status_text = f"{masto_header}{masto_summary}{masto_footer}"
             else:
                 status_text = f"{masto_header.strip()}{masto_footer}"
