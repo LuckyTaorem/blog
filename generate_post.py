@@ -263,6 +263,47 @@ def truncate_to_sentence(text, max_chars):
         return cut_text[:space_cut].strip() + "..."
     return cut_text.strip() + "..."
 
+def convert_markdown_tables_to_lists(text):
+    """Converts Markdown tables into readable bulleted lists for social media."""
+    lines = text.split('\n')
+    output = []
+    in_table = False
+    headers = []
+    
+    for line in lines:
+        stripped = line.strip()
+        # Detect standard markdown table rows (starts and ends with |)
+        if stripped.startswith('|') and stripped.endswith('|'):
+            # Check if this is the structural separator line (e.g., |---|---|)
+            if re.match(r'^\|[\-\s:]+\|$', stripped.replace('|', '')):
+                continue
+                
+            # Extract the cells
+            cells = [cell.strip() for cell in stripped.strip('|').split('|')]
+            
+            if not in_table:
+                # The first row of a table is always the header
+                headers = cells
+                in_table = True
+                output.append("") # Ensure space before the new list starts
+            else:
+                # Data rows
+                if cells:
+                    item_title = cells[0]
+                    # Make the first column the bold/main header of the list item
+                    output.append(f"🔹 **{item_title}**")
+                    
+                    # Iterate through the remaining columns
+                    for i in range(1, len(cells)):
+                        if i < len(headers) and cells[i] and cells[i] != '-':
+                            output.append(f"  • {headers[i]}: {cells[i]}")
+                    output.append("") # Space between items
+        else:
+            in_table = False
+            output.append(line)
+            
+    return '\n'.join(output).strip()
+
 def extract_key_facts_with_ai(raw_text, title):
     """Uses AI to extract critical facts from raw scraped text before saving to queue."""
     if not raw_text or len(raw_text) < 300:
@@ -536,6 +577,9 @@ def share_to_social_media(file_path, slug, image_path):
     if not article_body:
         print(f"  ❌ Aborting broadcast for {slug}: No article body content found.")
         return
+
+    # 🚨 FIX: Convert any Markdown tables into mobile-friendly lists FIRST
+    article_body = convert_markdown_tables_to_lists(article_body)
 
     print(f"\n📣 Broadcasting to Social Media: {title}")
     
