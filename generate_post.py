@@ -564,12 +564,12 @@ def share_to_social_media(file_path, slug, image_path):
     # 🚨 2. PLAIN TEXT SUMMARY (For Facebook, LinkedIn, Mastodon, Bluesky)
     extended_summary = base_markdown_summary
     
-    # Convert Markdown headings into ALL CAPS so they look like distinct sections
-    extended_summary = re.sub(r'^#+\s+(.*)$', lambda m: m.group(1).upper(), extended_summary, flags=re.MULTILINE)
+    # FIX: Robustly convert Markdown headings into ALL CAPS for plain text readability
+    extended_summary = re.sub(r'(?m)^#+\s+(.*)$', lambda m: m.group(1).upper(), extended_summary)
     # Remove Bold and Italics asterisks cleanly
     extended_summary = re.sub(r'\*\*(.*?)\*\*', r'\1', extended_summary)
     extended_summary = re.sub(r'\*(.*?)\*', r'\1', extended_summary)
-    # Clean up links to just show the readable text (removes the URL bracket format)
+    # Clean up links to just show the readable text
     extended_summary = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'\1', extended_summary)
 
     # 🚨 3. HTML SUMMARY (For Blogger, WordPress, Tumblr)
@@ -586,9 +586,11 @@ def share_to_social_media(file_path, slug, image_path):
     html_summary = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', html_summary)
     html_summary = re.sub(r'(?m)^[*-]\s+(.*)$', r'<li>\1</li>', html_summary)
     html_summary = re.sub(r'(<li>.*?</li>(?:\s*<li>.*?</li>)*)', r'<ul>\g<1></ul>', html_summary, flags=re.DOTALL)
+    
+    # FIX: Safely convert newlines without destroying the brackets on HTML tags
     html_summary = html_summary.replace('\n', '<br>')
-    html_summary = re.sub(r'(</h[1-6]>|</ul>|<ul>)[\s<br>]+', r'\1', html_summary)
-    html_summary = re.sub(r'[\s<br>]+(<h[1-6]>|<ul>)', r'\1', html_summary)
+    html_summary = re.sub(r'(</h[1-6]>|</ul>|<ul>|</li>)(?:<br>|\s)+', r'\1', html_summary)
+    html_summary = re.sub(r'(?:<br>|\s)+(<h[1-6]>|<ul>|<li>)', r'\1', html_summary)
 
     # 🚨 Extract live image URL from frontmatter for APIs that require hosted images
     absolute_image_url = ""
@@ -638,7 +640,7 @@ def share_to_social_media(file_path, slug, image_path):
             
             if available_chars > 20:
                 # Use sentence truncation helper instead of hard string slicing
-                bsky_summary = truncate_to_sentence(article_body, available_chars)
+                bsky_summary = truncate_to_sentence(extended_summary, available_chars)
                 bsky_text = f"{header}{bsky_summary}{footer}"
             else:
                 if used_chars > max_allowed:
@@ -702,7 +704,8 @@ def share_to_social_media(file_path, slug, image_path):
         if all([t_key, t_secret, t_oauth, t_oauth_secret, t_blog]):
             client = pytumblr.TumblrRestClient(t_key, t_secret, t_oauth, t_oauth_secret)
             
-            caption_html = f"<h2>{title} | {today}</h2><p>{extended_summary}</p><p><a href='{post_url}'>Read full breakdown below: {post_url}</a></p>"
+            # FIX: Swapped extended_summary for html_summary
+            caption_html = f"<h2>{title} | {today}</h2><div>{html_summary}</div><p><a href='{post_url}'>Read full breakdown below: {post_url}</a></p>"
 
             tumblr_tags = list(set(post_categories + post_tags))
             
@@ -827,8 +830,8 @@ def share_to_social_media(file_path, slug, image_path):
             masto_available_chars = masto_max_allowed - masto_used_chars
             
             if masto_available_chars > 20:
-                # Use sentence truncation helper instead of hard string slicing
-                masto_summary = truncate_to_sentence(article_body, masto_available_chars)
+                # FIX: Feed it the clean plain text, NOT the raw markdown
+                masto_summary = truncate_to_sentence(extended_summary, masto_available_chars)
                 status_text = f"{masto_header}{masto_summary}{masto_footer}"
             else:
                 status_text = f"{masto_header.strip()}{masto_footer}"
