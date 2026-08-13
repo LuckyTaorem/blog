@@ -514,14 +514,17 @@ def get_clean_content_from_markdown(file_path):
     # Split frontmatter away to get pure body content
     parts = content.split("---")
     if len(parts) >= 3:
-        body = " ".join(parts[2:]).strip()
+        # Safely rejoin in case the article body contains '---'
+        body = "---".join(parts[2:]).strip()
     else:
         body = content
 
-    # Clean up markdown headers, comments tags, and shortcodes
-    body = re.sub(r'#+\s+', '', body) 
+    # Clean up comments tags
     body = body.replace("{{< comments >}}", "")
-    body = re.sub(r'\s+', ' ', body) 
+    
+    # 🚨 FIX: Normalize spacing but PRESERVE newlines for proper paragraphs!
+    body = re.sub(r'[ \t]+', ' ', body)        # Fix double spaces/tabs
+    body = re.sub(r'\n{3,}', '\n\n', body)     # Keep paragraph breaks, remove massive empty gaps
     
     return title, body.strip()
 
@@ -545,46 +548,44 @@ def share_to_social_media(file_path, slug, image_path):
     ist_timezone = timezone(timedelta(hours=5, minutes=30))
     today = datetime.now(ist_timezone).strftime('%B %d, %Y')
     
-    # 🚨 Create a 60% extended summary that ends cleanly at a sentence boundary
+    # 🚨 1. BASE MARKDOWN SUMMARY (Preserves everything for DEV.to)
     target_length = int(len(article_body) * 0.60)
     
     if len(article_body) > target_length:
-        # Find the nearest period, exclamation, or question mark after the 60% mark
         match = re.search(r'[.!?](?=\s|$)', article_body[target_length:])
         if match:
-            # Cut off right after the punctuation mark
             cut_index = target_length + match.end()
-            extended_summary = article_body[:cut_index].strip()
+            base_markdown_summary = article_body[:cut_index].strip()
         else:
-            # Fallback if no sentence ending is found
-            extended_summary = article_body[:target_length].strip() + "..."
+            base_markdown_summary = article_body[:target_length].strip() + "..."
     else:
-        extended_summary = article_body
+        base_markdown_summary = article_body
 
-    # 🚨 Translate Markdown to HTML for Blogger, WordPress.com, and Tumblr
-    html_summary = extended_summary
+    # 🚨 2. PLAIN TEXT SUMMARY (For Facebook, LinkedIn, Mastodon, Bluesky)
+    extended_summary = base_markdown_summary
     
-    # 1. Convert Headings (H1 to H6)
+    # Convert Markdown headings into ALL CAPS so they look like distinct sections
+    extended_summary = re.sub(r'^#+\s+(.*)$', lambda m: m.group(1).upper(), extended_summary, flags=re.MULTILINE)
+    # Remove Bold and Italics asterisks cleanly
+    extended_summary = re.sub(r'\*\*(.*?)\*\*', r'\1', extended_summary)
+    extended_summary = re.sub(r'\*(.*?)\*', r'\1', extended_summary)
+    # Clean up links to just show the readable text (removes the URL bracket format)
+    extended_summary = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'\1', extended_summary)
+
+    # 🚨 3. HTML SUMMARY (For Blogger, WordPress, Tumblr)
+    html_summary = base_markdown_summary
+    
     html_summary = re.sub(r'^######\s*(.*?)$', r'<h6>\1</h6>', html_summary, flags=re.MULTILINE)
     html_summary = re.sub(r'^#####\s*(.*?)$', r'<h5>\1</h5>', html_summary, flags=re.MULTILINE)
     html_summary = re.sub(r'^####\s*(.*?)$', r'<h4>\1</h4>', html_summary, flags=re.MULTILINE)
     html_summary = re.sub(r'^###\s*(.*?)$', r'<h3>\1</h3>', html_summary, flags=re.MULTILINE)
     html_summary = re.sub(r'^##\s*(.*?)$', r'<h2>\1</h2>', html_summary, flags=re.MULTILINE)
     html_summary = re.sub(r'^#\s*(.*?)$', r'<h1>\1</h1>', html_summary, flags=re.MULTILINE)
-    
-    # 2. Convert Bold and Italics
     html_summary = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', html_summary)
     html_summary = re.sub(r'\*(.*?)\*', r'<em>\1</em>', html_summary)
-    
-    # 3. Convert Links
     html_summary = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', html_summary)
-    
-    # 4. Convert Bullet Points (Standard unordered lists)
     html_summary = re.sub(r'(?m)^[*-]\s+(.*)$', r'<li>\1</li>', html_summary)
-    # Group consecutive <li> elements and wrap them in a <ul> tag
     html_summary = re.sub(r'(<li>.*?</li>(?:\s*<li>.*?</li>)*)', r'<ul>\g<1></ul>', html_summary, flags=re.DOTALL)
-    
-    # 5. Fix Spacing (Convert newlines to <br> without breaking HTML block elements)
     html_summary = html_summary.replace('\n', '<br>')
     html_summary = re.sub(r'(</h[1-6]>|</ul>|<ul>)[\s<br>]+', r'\1', html_summary)
     html_summary = re.sub(r'[\s<br>]+(<h[1-6]>|<ul>)', r'\1', html_summary)
@@ -872,7 +873,7 @@ def share_to_social_media(file_path, slug, image_path):
                 "article": {
                     "title": title,
                     "published": True, 
-                    "body_markdown": f"{extended_summary}\n\n*Read the full breakdown originally published at [{post_url}]({post_url})*",
+                    "body_markdown": f"{base_markdown_summary}\n\n*Read the full breakdown originally published at [{post_url}]({post_url})*",
                     "canonical_url": post_url,
                     "tags": devto_tags
                 }
