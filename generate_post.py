@@ -730,16 +730,26 @@ def share_to_social_media(file_path, slug, image_path):
                 "Content-Type": "application/json"
             }
             
+            # 🚨 Calculate strict character limits for LinkedIn (Max 4000 chars)
+            li_footer = f"\n\nRead the full breakdown: {post_url}"
+            li_header = f"{title}\n\n"
+            
+            # Leave a buffer (3700 instead of 4000) to be safe
+            li_available_chars = 3700 - len(li_header) - len(li_footer)
+            
+            # Cap the 60% summary to the LinkedIn limit, ending on a clean sentence
+            linkedin_summary = truncate_to_sentence(extended_summary, li_available_chars)
+            
             li_payload = {
                 "author": li_urn,
                 "lifecycleState": "PUBLISHED",
                 "specificContent": {
                     "com.linkedin.ugc.ShareContent": {
-                        "shareCommentary": {"text": f"{title}\n\n{extended_summary}\n\nRead the full breakdown: {post_url}"},
+                        "shareCommentary": {"text": f"{li_header}{linkedin_summary}{li_footer}"},
                         "shareMediaCategory": "ARTICLE",
                         "media": [{
                             "status": "READY",
-                            "description": {"text": extended_summary},
+                            "description": {"text": linkedin_summary[:200]}, # Capped description metadata
                             "originalUrl": post_url,
                             "title": {"text": title}
                         }]
