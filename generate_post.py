@@ -1031,16 +1031,17 @@ def share_to_social_media(file_path, slug, image_path):
                     "Authorization": f"Bearer {access_token}"
                 }
                 
-                # Dynamically inject the HTML Image Tag
-                html_image = f'<img src="{absolute_image_url}" alt="{title}" style="max-width:100%; height:auto; border-radius:8px;"><br><br>' if absolute_image_url else ''
-
                 post_data = {
                     "title": title,
-                    "content": f"{html_image}{html_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>",
+                    "content": f"{html_summary}<br><br><em>Read the full breakdown originally published at <a href='{post_url}'>{post_url}</a></em>",
                     "status": "publish", 
                     "categories": wp_categories,
                     "tags": wp_tags
                 }
+
+                # 🚨 FIX: Pass the URL to the featured_image API parameter instead of injecting HTML
+                if absolute_image_url:
+                    post_data["featured_image"] = absolute_image_url
 
                 res = requests.post(post_api_url, headers=headers, data=post_data)
 
