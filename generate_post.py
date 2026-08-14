@@ -1039,9 +1039,18 @@ def share_to_social_media(file_path, slug, image_path):
                     "tags": wp_tags
                 }
 
-                # 🚨 FIX: Pass the URL to the featured_image API parameter instead of injecting HTML
+                # 🚨 FIX: Bypass GitHub Pages Build Delay for Featured Images
                 if absolute_image_url:
-                    post_data["featured_image"] = absolute_image_url
+                    wp_featured_image = absolute_image_url
+                    
+                    # Convert the live URL to an instant Raw GitHub URL
+                    if "ltdeveloperblogs.github.io" in wp_featured_image:
+                        wp_featured_image = wp_featured_image.replace(
+                            "https://ltdeveloperblogs.github.io/", 
+                            "https://raw.githubusercontent.com/ltdeveloperblogs/ltdeveloperblogs.github.io/main/assets/"
+                        )
+                        
+                    post_data["featured_image"] = wp_featured_image
 
                 res = requests.post(post_api_url, headers=headers, data=post_data)
 
