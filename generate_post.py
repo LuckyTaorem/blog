@@ -1984,11 +1984,11 @@ def run_emergency_broadcaster():
 
     articles = []
     
-    # 1. Scan all markdown files in the folder
-    for filename in os.listdir(output_dir):
-        if not filename.endswith(".md") or filename == "_index.md":
-            continue
-            
+    # 1. Scan and sort files by OS modification time (Newest first)
+    all_files = [f for f in os.listdir(output_dir) if f.endswith('.md') and f != '_index.md']
+    all_files.sort(key=lambda x: os.path.getmtime(os.path.join(output_dir, x)), reverse=True)
+    
+    for filename in all_files[:10]:
         filepath = os.path.join(output_dir, filename)
         with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()
@@ -2093,8 +2093,15 @@ def run_link_fixer():
             continue
 
     files_modified = 0
+    current_time = time.time()
+    
+    # 🚀 OPTIMIZATION: Only process files added or modified in the last 24 hours (86400 seconds)
+    recent_files = [
+        f for f in all_files 
+        if (current_time - os.path.getmtime(os.path.join(output_dir, f))) < 43200
+    ]
 
-    for filename in all_files:
+    for filename in recent_files:
         filepath = os.path.join(output_dir, filename)
         try:
             with open(filepath, "r", encoding="utf-8") as f:
