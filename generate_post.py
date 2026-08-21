@@ -1973,7 +1973,7 @@ def run_broadcaster():
 
 
 # ==========================================
-# 4.6 EMERGENCY OVERRIDE (Force Broadcast Recent Batch)
+# 4.6 EMERGENCY OVERRIDE (Dynamic Batch Detection)
 # ==========================================
 def run_emergency_broadcaster():
     print(f"\n--- 🚨 STARTING EMERGENCY BROADCASTER (Dynamic Batch Detection) ---")
@@ -1982,91 +1982,88 @@ def run_emergency_broadcaster():
         print("No content directory found.")
         return
 
-    articles = []
-    
-    # 1. Scan and sort files by OS modification time (Newest first)
-    all_files = [f for f in os.listdir(output_dir) if f.endswith('.md') and f != '_index.md']
-    all_files.sort(key=lambda x: os.path.getmtime(os.path.join(output_dir, x)), reverse=True)
-    
-    for filename in all_files[:10]:
-        filepath = os.path.join(output_dir, filename)
-        with open(filepath, "r", encoding="utf-8") as f:
-            content = f.read()
+    batch_articles = []
 
-        # 2. Extract the exact publication date and title
-        date_match = re.search(r'^date:\s*(.+)$', content, re.MULTILINE)
-        title_match = re.search(r'^title:\s*"(.*?)"', content, re.MULTILINE)
-
-        if date_match and title_match:
-            date_str = date_match.group(1).strip().strip('"').strip("'")
-            title = title_match.group(1)
-            slug = filename.replace(".md", "")
-
-            try:
-                # Parse the ISO timestamp into a real Python datetime object for sorting
-                post_date = datetime.fromisoformat(date_str)
-                articles.append({
+    # 🚀 METHOD 1: Instant & 100% Accurate Git Detection (Gets exact files added in the latest commit)
+    try:
+        git_output = subprocess.check_output(
+            ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD"], 
+            text=True
+        ).strip()
+        
+        changed_files = [f.strip() for f in git_output.split('\n') if f.strip().startswith(output_dir) and f.endswith('.md')]
+        
+        for filepath in changed_files:
+            if os.path.exists(filepath):
+                filename = os.path.basename(filepath)
+                slug = filename.replace(".md", "")
+                with open(filepath, "r", encoding="utf-8") as f:
+                    content = f.read(500) # Read only header
+                title_match = re.search(r'^title:\s*"(.*?)"', content, re.MULTILINE)
+                title = title_match.group(1) if title_match else slug
+                batch_articles.append({
                     "title": title,
                     "slug": slug,
-                    "date": post_date,
                     "filepath": filepath
                 })
-            except Exception as e:
-                pass # Skip files with malformed dates
+        if batch_articles:
+            print(f"🔍 Git Detection: Found {len(batch_articles)} articles in the latest commit batch.")
+    except Exception as e:
+        print(f"⚠️ Git diff detection skipped ({e}), falling back to frontmatter date scan...")
 
-    # 3. Sort articles from Newest to Oldest
-    articles.sort(key=lambda x: x['date'], reverse=True)
-    
-    if not articles:
-        print("No valid articles found to broadcast.")
-        return
+    # 🚀 METHOD 2: Fallback date scanner (Reads only top 500 bytes per file for speed)
+    if not batch_articles:
+        all_articles = []
+        for filename in os.listdir(output_dir):
+            if not filename.endswith(".md") or filename == "_index.md":
+                continue
+            filepath = os.path.join(output_dir, filename)
+            try:
+                with open(filepath, "r", encoding="utf-8") as f:
+                    head = f.read(500) # Fast partial read
+                date_match = re.search(r'^date:\s*(.+)$', head, re.MULTILINE)
+                title_match = re.search(r'^title:\s*"(.*?)"', head, re.MULTILINE)
+                if date_match and title_match:
+                    date_str = date_match.group(1).strip().strip('"').strip("'")
+                    all_articles.append({
+                        "title": title_match.group(1),
+                        "slug": filename.replace(".md", ""),
+                        "date": datetime.fromisoformat(date_str),
+                        "filepath": filepath
+                    })
+            except Exception:
+                continue
 
-    # 🚨 THE FIX: Absolute Time Check! 🚨
-    ist_timezone = timezone(timedelta(hours=5, minutes=30))
-    now_ist = datetime.now(ist_timezone)
-    most_recent_date = articles[0]['date']
-    
-    # Calculate exactly how old the newest article is
-    age_of_newest = now_ist - most_recent_date
-    
-    # 🚀 FIX: Removed the strict 10-hour abort limit so broadcasts ALWAYS process the latest batch
-    if age_of_newest > timedelta(hours=10):
-        print(f"⚠️ Notice: The newest article is {age_of_newest.total_seconds() / 3600:.1f} hours old. Proceeding with broadcast anyway to prevent stalling.")
+        if not all_articles:
+            print("No valid articles found to broadcast.")
+            return
 
-    # 🚨 Dynamic Batch Detection (Groups everything published alongside the newest post)
-    batch_articles = []
-    
-    for article in articles:
-        # Calculate the time difference between the absolute newest post and this post
-        time_diff = most_recent_date - article['date']
+        all_articles.sort(key=lambda x: x['date'], reverse=True)
+        most_recent_date = all_articles[0]['date']
         
-        # If the article was published within a 30-minute window, it belongs to this batch
-        if time_diff <= timedelta(minutes=30):
-            batch_articles.append(article)
-        else:
-            # Since the list is sorted, as soon as we hit a post older than 30 mins, we stop
-            break
+        for article in all_articles:
+            if (most_recent_date - article['date']) <= timedelta(minutes=30):
+                batch_articles.append(article)
+            else:
+                break
+        print(f"🔍 Fallback Scan: Detected {len(batch_articles)} articles published in the newest batch.")
 
-    print(f"🔍 Detected {len(batch_articles)} articles published in the most recent fresh batch.")
-
-    # 4. Push them out to social media
+    # 4. Broadcast the batch
     for article in batch_articles:
         print(f"\nProcessing social broadcast for: {article['title']}")
         try:
             ping_google_indexing_api(article['slug'])
             ping_bing_indexing_api(article['slug'])
         
-            # Define paths for the image and the local markdown file
             local_img_path = os.path.join("assets", "images", f"{article['slug']}.jpg")
-            local_file_path = os.path.join(output_dir, f"{article['slug']}.md")
+            local_file_path = article['filepath']
         
-            # Pass the local file path instead of the raw RSS summary
             share_to_social_media(local_file_path, article['slug'], local_img_path)
             
         except Exception as e:
             print(f"🚨 Failed to broadcast '{article['title']}': {e}")
 
-    print("\n✅ Emergency broadcast complete.")
+    print("\n✅ Broadcast complete.")
 
 def run_link_fixer():
     print("\n--- ☢️ STARTING NUCLEAR LINK FIXER (STRICT MODE) ---")
