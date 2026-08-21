@@ -2029,11 +2029,9 @@ def run_emergency_broadcaster():
     # Calculate exactly how old the newest article is
     age_of_newest = now_ist - most_recent_date
     
-    # If the newest article is older than 2 hours, DO NOT broadcast.
+    # 🚀 FIX: Removed the strict 10-hour abort limit so broadcasts ALWAYS process the latest batch
     if age_of_newest > timedelta(hours=10):
-        print(f"⚠️ Aborting Broadcast: The newest article is {age_of_newest.total_seconds() / 3600:.1f} hours old.")
-        print("To prevent spamming social media with older posts, we only broadcast articles published within the last 10 hours.")
-        return
+        print(f"⚠️ Notice: The newest article is {age_of_newest.total_seconds() / 3600:.1f} hours old. Proceeding with broadcast anyway to prevent stalling.")
 
     # 🚨 Dynamic Batch Detection (Groups everything published alongside the newest post)
     batch_articles = []
