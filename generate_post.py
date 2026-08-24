@@ -815,7 +815,13 @@ def share_to_social_media(file_path, slug, image_path):
                         "serviceRelationships": [{"relationshipType": "OWNER", "identifier": "urn:li:userGeneratedContent"}]
                     }
                 }
-                reg_res = requests.post(reg_url, headers=li_headers, json=reg_data).json()
+                
+                # FIX: Check the raw response before assuming "value" exists
+                reg_request = requests.post(reg_url, headers=li_headers, json=reg_data)
+                reg_res = reg_request.json()
+                
+                if "value" not in reg_res:
+                    raise Exception(f"Image API Error: {reg_request.status_code} - {reg_res}")
                 
                 upload_url = reg_res["value"]["uploadMechanism"]["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"]["uploadUrl"]
                 asset_id = reg_res["value"]["asset"]
