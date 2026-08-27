@@ -1045,29 +1045,24 @@ def share_to_social_media(file_path, slug, image_path):
                     "tags": wp_tags
                 }
 
-                # 🚨 FIX: Bypass GitHub Pages Build Delay for Featured Images
-                if absolute_image_url:
-                    wp_featured_image = absolute_image_url
-                    
-                    # Convert the live URL to an instant Raw GitHub URL
-                    if "ltdeveloperblogs.github.io" in wp_featured_image:
-                        wp_featured_image = wp_featured_image.replace(
-                            "https://ltdeveloperblogs.github.io/", 
-                            "https://raw.githubusercontent.com/ltdeveloperblogs/ltdeveloperblogs.github.io/main/assets/"
-                        )
-                        
-                    # STEP 1: Sideload the image into the WordPress Media Library first
+                # 🚨 FIX: Upload the local image directly to bypass GitHub CDN caching delays
+                if os.path.exists(image_path):
+                    # STEP 1: Sideload the image into the WordPress Media Library from local disk
                     media_api_url = f"https://public-api.wordpress.com/rest/v1.1/sites/{wp_site_domain}/media/new"
-                    media_res = requests.post(media_api_url, headers=headers, data={"media_urls[]": wp_featured_image})
+                    
+                    with open(image_path, 'rb') as img_file:
+                        files = {'media[]': img_file}
+                        # Send as multipart/form-data
+                        media_res = requests.post(media_api_url, headers=headers, files=files)
                                         
                     if media_res.status_code == 200:
-                            media_data = media_res.json()
-                            # STEP 2: Extract the generated Media ID and attach it to the post
-                            if "media" in media_data and len(media_data["media"]) > 0:
-                                media_id = media_data["media"][0].get("ID")
-                                if media_id:
-                                    # The WP.com API requires the numeric ID, not the URL!
-                                    post_data["featured_image"] = str(media_id)
+                        media_data = media_res.json()
+                        # STEP 2: Extract the generated Media ID and attach it to the post
+                        if "media" in media_data and len(media_data["media"]) > 0:
+                            media_id = media_data["media"][0].get("ID")
+                            if media_id:
+                                # The WP.com API requires the numeric ID
+                                post_data["featured_image"] = str(media_id)
                     else:
                         print(f"  ⚠️ WP.com Media Upload Failed: {media_res.text}")
 
