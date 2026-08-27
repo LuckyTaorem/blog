@@ -323,44 +323,56 @@ async function fetchAndParseSitemap(url, isRoot = false) {
     let response = null;
     let success = false;
 
-    // Removed direct fetch to prevent browser CORS console spam
-    const proxyEndpoints = [
-        (target) => `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
-        (target) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(target)}`,
-        (target) => `https://corsproxy.io/?${encodeURIComponent(target)}`
-    ];
+    // 1. Try a direct fetch first (Fixes same-domain github.io blocking instantly)
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+        response = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+            success = true;
+        }
+    } catch (e) {
+        console.warn("Direct fetch blocked (likely cross-domain CORS). Falling back to proxies...");
+    }
 
-    for (const getProxyUrl of proxyEndpoints) {
-        try {
-            const proxyUrl = getProxyUrl(url);
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 sec timeout per proxy
+    // 2. If direct fetch fails, fallback to the proxy waterfall
+    if (!success) {
+        const proxyEndpoints = [
+            (target) => `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`,
+            (target) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(target)}`,
+            (target) => `https://corsproxy.io/?${encodeURIComponent(target)}`
+        ];
 
-            response = await fetch(proxyUrl, { signal: controller.signal });
-            clearTimeout(timeoutId);
+        for (const getProxyUrl of proxyEndpoints) {
+            try {
+                const proxyUrl = getProxyUrl(url);
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-            if (response.ok) {
-                success = true;
-                break; // Stop trying proxies, we got it!
+                response = await fetch(proxyUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (response.ok) {
+                    success = true;
+                    break; 
+                }
+            } catch (e) {
+                // Silently fail over to the next proxy
             }
-        } catch (e) {
-            // Silently fail over to the next proxy
         }
     }
 
-    // ... (keep your existing proxy loop above this)
-
     if (!success || !response) {
-        throw new Error(`All network attempts failed or timed out for: ${url}`);
+        throw new Error(`All network attempts (direct & proxies) failed or timed out for: ${url}`);
     }
 
-    // New: Update UI when the download starts
     if (isRoot) updateLoadingProgress("Downloading XML data...", 40);
     
     const xmlString = await response.text();
     globalRawXML = xmlString; // Save for the AI
     
-    // New: Update UI when parsing begins
     if (isRoot) updateLoadingProgress("Parsing XML nodes...", 70);
     
     await parseXMLString(xmlString, isRoot, true);
@@ -690,52 +702,70 @@ function renderTablePage(page) {
 
 // Check individual URL status and cache the result
 async function checkLinkStatus(url, elementId, globalIndex) {
-    const proxies = [
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-        `https://corsproxy.io/?${encodeURIComponent(url)}`
-    ];
-
     let success = false;
     let finalStatusHTML = '';
+    let response = null;
 
-    for (const proxyUrl of proxies) {
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4000); 
+    // 1. Direct Fetch First
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000); 
+        // Use HEAD instead of GET if possible to save bandwidth, fallback to GET
+        response = await fetch(url, { method: 'GET', signal: controller.signal });
+        clearTimeout(timeoutId);
+        success = true; // Even if it's a 404, the network request succeeded
+    } catch (error) {
+        // CORS blocked direct fetch
+    }
 
-            const response = await fetch(proxyUrl, { method: 'GET', signal: controller.signal });
-            clearTimeout(timeoutId);
+    // 2. Proxy Fallback
+    if (!success) {
+        const proxies = [
+            `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+            `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+            `https://corsproxy.io/?${encodeURIComponent(url)}`
+        ];
 
-            if (response.ok) {
-                finalStatusHTML = '<span class="badge bg-success">200 OK</span>';
-                success = true;
-                break; 
-            } else if (response.status >= 400 && response.status < 500) {
-                finalStatusHTML = `<span class="badge bg-danger" title="Dead link detected!">${response.status} Error</span>`;
-                addError('Dead Link Found', `URL ${url} returned a ${response.status} response.`, 'Check if the post was deleted or redirected.');
-                deductScore(2);
-                document.getElementById('healthScoreDisplay').textContent = currentScore;
-                document.getElementById('healthScoreBar').style.width = currentScore + '%';
-                success = true;
-                break;
+        for (const proxyUrl of proxies) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 4000); 
+                response = await fetch(proxyUrl, { method: 'GET', signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (response) {
+                    success = true;
+                    break; 
+                }
+            } catch (error) {
+                // Silently fail over
             }
-        } catch (error) {
-            // Silently fail over
         }
     }
 
-    if (!success) {
+    if (success && response) {
+        if (response.ok) {
+            finalStatusHTML = '<span class="badge bg-success">200 OK</span>';
+        } else if (response.status >= 400 && response.status < 500) {
+            finalStatusHTML = `<span class="badge bg-danger" title="Dead link detected!">${response.status} Error</span>`;
+            addError('Dead Link Found', `URL ${url} returned a ${response.status} response.`, 'Check if the post was deleted or redirected.');
+            deductScore(2);
+            document.getElementById('healthScoreDisplay').textContent = currentScore;
+            document.getElementById('healthScoreBar').style.width = currentScore + '%';
+        } else {
+             finalStatusHTML = `<span class="badge bg-warning text-dark">${response.status}</span>`;
+        }
+    } else {
         finalStatusHTML = '<span class="badge text-bg-dark border" title="Status check timed out or blocked">Unreachable</span>';
     }
 
-    // 1. Update the table visually
+    // Update the table visually
     const statusCell = document.getElementById(elementId);
     if (statusCell) {
         statusCell.innerHTML = finalStatusHTML;
     }
 
-    // 2. Cache it globally so it doesn't run again on page change
+    // Cache it globally
     if (globalUrls[globalIndex]) {
         globalUrls[globalIndex].statusCache = finalStatusHTML;
     }
