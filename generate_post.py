@@ -1056,7 +1056,8 @@ def share_to_social_media(file_path, slug, image_path):
                             "https://raw.githubusercontent.com/ltdeveloperblogs/ltdeveloperblogs.github.io/main/assets/"
                         )
                         
-                    post_data["featured_image"] = wp_featured_image
+                    # CHANGED: 'featured_image' is invalid for WP.com API v1.1. It MUST be 'post_thumbnail'.
+                    post_data["post_thumbnail"] = wp_featured_image
 
                 res = requests.post(post_api_url, headers=headers, data=post_data)
 
@@ -1294,18 +1295,37 @@ YOUR TASK:
 
     # Lightweight/Fast fallback models ideal for completions
     continuation_models = [
-        {"provider": "gemini", "model": "gemini-2.5-flash"},
-        {"provider": "github", "model": "gpt-4o-mini"},
-        {"provider": "mistral", "model": "mistral-large-latest"}
-    ]
+            {"provider": "groq", "model": "openai/gpt-oss-120b"},
+            {"provider": "gemini", "model": "gemini-2.5-flash"},
+            {"provider": "github", "model": "gpt-4o-mini"},
+            {"provider": "openrouter", "model": "google/gemma-4-31b-it"},
+            {"provider": "mistral", "model": "mistral-large-latest"},
+            {"provider": "cohere", "model": "command-a-03-2025"},
+            {"provider": "groq", "model": "openai/gpt-oss-20b"}
+        ]
 
     for setting in continuation_models:
         provider = setting['provider']
         model_name = setting['model']
         
         try:
-            # 1. GEMINI
-            if provider == "gemini":
+            # 1. GROQ
+            if provider == "groq":
+                key = os.environ.get("GROQ_API_KEY")
+                if not key: continue
+                temp_client = Groq(api_key=key)
+                response = temp_client.chat.completions.create(
+                    messages=[{"role": "user", "content": continuation_prompt}],
+                    model=model_name,
+                    temperature=0.3,
+                    max_tokens=2500
+                )
+                content = response.choices[0].message.content or ""
+                if content and len(content.strip()) > 50:
+                    return partial_text + "\n\n" + content.strip()
+
+            # 2. GEMINI
+            elif provider == "gemini":
                 key = os.environ.get("GEMINI_API_KEY")
                 if not key: continue
                 res = requests.post(
@@ -1323,7 +1343,7 @@ YOUR TASK:
                     if continuation and len(continuation.strip()) > 50:
                         return partial_text + "\n\n" + continuation.strip()
 
-            # 2. GITHUB MODELS API
+            # 3. GITHUB MODELS API
             elif provider == "github":
                 key = os.environ.get("GH_TOKEN")
                 if not key: continue
@@ -1343,7 +1363,27 @@ YOUR TASK:
                     if content and len(content.strip()) > 50:
                         return partial_text + "\n\n" + content.strip()
 
-            # 3. MISTRAL AI
+            # 4. OPENROUTER
+            elif provider == "openrouter":
+                key = os.environ.get("OPENROUTER_API_KEY")
+                if not key: continue
+                res = requests.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                    json={
+                        "model": model_name,
+                        "messages": [{"role": "user", "content": continuation_prompt}],
+                        "temperature": 0.3,
+                        "max_tokens": 2500
+                    },
+                    timeout=60
+                )
+                if res.status_code == 200:
+                    content = res.json().get('choices', [{}])[0].get('message', {}).get('content')
+                    if content and len(content.strip()) > 50:
+                        return partial_text + "\n\n" + content.strip()
+
+            # 5. MISTRAL AI
             elif provider == "mistral":
                 key = os.environ.get("MISTRAL_API_KEY")
                 if not key: continue
@@ -1360,6 +1400,26 @@ YOUR TASK:
                 )
                 if res.status_code == 200:
                     content = res.json().get('choices', [{}])[0].get('message', {}).get('content')
+                    if content and len(content.strip()) > 50:
+                        return partial_text + "\n\n" + content.strip()
+
+            # 6. COHERE
+            elif provider == "cohere":
+                key = os.environ.get("COHERE_API_KEY")
+                if not key: continue
+                res = requests.post(
+                    "https://api.cohere.com/v1/chat",
+                    headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                    json={
+                        "model": model_name,
+                        "message": continuation_prompt,
+                        "temperature": 0.3,
+                        "max_tokens": 2500
+                    },
+                    timeout=60
+                )
+                if res.status_code == 200:
+                    content = res.json().get('text')
                     if content and len(content.strip()) > 50:
                         return partial_text + "\n\n" + content.strip()
 
