@@ -1056,8 +1056,20 @@ def share_to_social_media(file_path, slug, image_path):
                             "https://raw.githubusercontent.com/ltdeveloperblogs/ltdeveloperblogs.github.io/main/assets/"
                         )
                         
-                    # CHANGED: 'featured_image' is invalid for WP.com API v1.1. It MUST be 'post_thumbnail'.
-                    post_data["post_thumbnail"] = wp_featured_image
+                    # STEP 1: Sideload the image into the WordPress Media Library first
+                    media_api_url = f"https://public-api.wordpress.com/rest/v1.1/sites/{wp_site_domain}/media/new"
+                    media_res = requests.post(media_api_url, headers=headers, data={"media_urls[]": wp_featured_image})
+                                        
+                    if media_res.status_code == 200:
+                            media_data = media_res.json()
+                            # STEP 2: Extract the generated Media ID and attach it to the post
+                            if "media" in media_data and len(media_data["media"]) > 0:
+                                media_id = media_data["media"][0].get("ID")
+                                if media_id:
+                                    # The WP.com API requires the numeric ID, not the URL!
+                                    post_data["featured_image"] = str(media_id)
+                    else:
+                        print(f"  ⚠️ WP.com Media Upload Failed: {media_res.text}")
 
                 res = requests.post(post_api_url, headers=headers, data=post_data)
 
