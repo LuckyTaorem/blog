@@ -1962,15 +1962,27 @@ When you have completely finished writing the conclusion of the article, you MUS
         def clean_empty_headings(match):
             heading_text = match.group(1)
             
+            # 1. Strip out HTML comments and tags
             clean_text = re.sub(r'<!--.*?-->', '', heading_text)
             clean_text = re.sub(r'<[^>]+>', '', clean_text)
             
+            # 2. Strip Hugo attributes (e.g., {#id}, {.class}) that hide inside headings
+            clean_text = re.sub(r'\{[^}]+\}', '', clean_text)
+            
+            # 3. Extract display text from Markdown images and links
+            clean_text = re.sub(r'!\[([^\]]*)\]\([^)]*\)', r'\1', clean_text)
+            clean_text = re.sub(r'\[([^\]]*)\]\([^)]*\)', r'\1', clean_text)
+            
+            # 4. Unescape HTML entities (converts things like &nbsp; to actual blank spaces)
+            clean_text = html.unescape(clean_text)
+            
+            # 5. If nothing alphanumeric is left, annihilate the heading entirely
             if not re.search(r'[a-zA-Z0-9]', clean_text):
                 return "" 
             return match.group(0)
 
-        # Swallows the newline so no blank artifacts are left behind
-        article_content = re.sub(r'^#{1,6}\s*([^\r\n]*)\r?\n?', clean_empty_headings, article_content, flags=re.MULTILINE)
+        # Swallows the newline so no blank artifacts are left behind (now handles indented headings!)
+        article_content = re.sub(r'^[ \t]*#{1,6}\s*([^\r\n]*)\r?\n?', clean_empty_headings, article_content, flags=re.MULTILINE)
 
         # 🚀 NEW: Append the External Source Link safely
         source_url = article.get('source_url', '#')
@@ -2254,11 +2266,19 @@ def run_link_fixer():
         def empty_heading_healer(match):
             heading_text = match.group(1)
             
-            # Strip out markdown links, images, HTML tags, and comments
+            # 1. Strip out HTML comments and tags
             clean_text = re.sub(r'<!--.*?-->', '', heading_text)
             clean_text = re.sub(r'<[^>]+>', '', clean_text)
-            clean_text = re.sub(r'!\[.*?\]\(.*?\)', '', clean_text)
-            clean_text = re.sub(r'\[.*?\]\(.*?\)', '', clean_text)
+            
+            # 2. Strip Hugo attributes (e.g., {#id}, {.class})
+            clean_text = re.sub(r'\{[^}]+\}', '', clean_text)
+            
+            # 3. Extract display text from Markdown images and links
+            clean_text = re.sub(r'!\[([^\]]*)\]\([^)]*\)', r'\1', clean_text)
+            clean_text = re.sub(r'\[([^\]]*)\]\([^)]*\)', r'\1', clean_text)
+            
+            # 4. Unescape HTML entities
+            clean_text = html.unescape(clean_text)
             
             if not re.search(r'[a-zA-Z0-9]', clean_text):
                 print(f"  -> 🧹 SWEPT empty/invalid heading in {filename}")
@@ -2266,7 +2286,7 @@ def run_link_fixer():
             return match.group(0)
 
         # The \r?\n? at the end ensures we swallow the invisible line breaks
-        content = re.sub(r'^#{1,6}\s*([^\r\n]*)\r?\n?', empty_heading_healer, content, flags=re.MULTILINE)
+        content = re.sub(r'^[ \t]*#{1,6}\s*([^\r\n]*)\r?\n?', empty_heading_healer, content, flags=re.MULTILINE)
 
         if content != original_content:
             with open(filepath, "w", encoding="utf-8") as f:
