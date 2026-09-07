@@ -1522,7 +1522,9 @@ tags: ["[Tag 1]", "[Tag 2]", "[Tag 3]"]
 ---
 
 CRITICAL BODY RULES:
-DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for main sections and H3 (`###`) for subsections.
+1. DO NOT use any H1 (`#`) tags in the body of the article. Only use H2 (`##`) for main sections and H3 (`###`) for subsections.
+2. NEVER place headings inside blockquotes or lists (e.g., do not write `> ## Heading` or `- ## Heading`). Headings must always be on their own independent line.
+3. NEVER create empty headings. Every single heading must contain descriptive text.
 
 CRITICAL FORMATTING RULE: Return the final output as plain text formatted with Markdown. DO NOT wrap your entire response in a markdown code block (e.g., do not start the response with ```markdown). Start immediately with the YAML frontmatter.
 
@@ -1550,11 +1552,12 @@ When you have completely finished writing the conclusion of the article, you MUS
 
             # Aggressive system prompt to force long-form content and prevent hallucination loops
             system_instruction = (
-    "You are an elite, professional tech blogger known for writing extremely detailed, authoritative articles. "
-    "If the source information is limited, write a highly focused article of up to 800 words. "
-    "If the source information is rich and detailed, expand naturally up to 1,200 words. "
-    "NEVER hallucinate features, dates, or events. NEVER repeat sentences or use garbage characters to pad the word count. "
-    "When you reach the natural conclusion of your analysis, finish the article cleanly and stop generating."
+"You are an elite, professional tech blogger known for writing extremely detailed, authoritative articles. "
+"If the source information is limited, write a highly focused article of up to 800 words. "
+"If the source information is rich and detailed, expand naturally up to 1,200 words. "
+"NEVER hallucinate features, dates, or events. NEVER repeat sentences or use garbage characters to pad the word count. "
+"NEVER place headings inside blockquotes or lists. Always ensure headings contain visible text. "
+"When you reach the natural conclusion of your analysis, finish the article cleanly and stop generating."
 )
 
             print(f"  -> Attempting generation with {provider.upper()} ({model_name})...")
@@ -1958,31 +1961,34 @@ When you have completely finished writing the conclusion of the article, you MUS
         )
 
         # 🚨 THE BOUNCER: Empty Heading Sanitizer
-        # Destroys AI-generated headings that lack text (which crash Hugo's TOC)
         def clean_empty_headings(match):
-            heading_text = match.group(1)
-            
-            # 1. Strip out HTML comments and tags
+            prefix = match.group(1)
+            hashes = match.group(2)
+            heading_text = match.group(3)
+        
+            # 1. Remove explicitly empty Hugo IDs (e.g., {#} or {#-}) that force empty IDs
+            heading_text = re.sub(r'\{#[^\w]*\}', '', heading_text, flags=re.UNICODE)
+        
+            # 2. Extract purely visible text to see if the heading is genuinely empty
             clean_text = re.sub(r'<!--.*?-->', '', heading_text)
             clean_text = re.sub(r'<[^>]+>', '', clean_text)
-            
-            # 2. Strip Hugo attributes (e.g., {#id}, {.class}) that hide inside headings
             clean_text = re.sub(r'\{[^}]+\}', '', clean_text)
-            
-            # 3. Extract display text from Markdown images and links
             clean_text = re.sub(r'!\[([^\]]*)\]\([^)]*\)', r'\1', clean_text)
             clean_text = re.sub(r'\[([^\]]*)\]\([^)]*\)', r'\1', clean_text)
-            
-            # 4. Unescape HTML entities (converts things like &nbsp; to actual blank spaces)
             clean_text = html.unescape(clean_text)
+        
+            # 3. Check for alphanumeric chars (supporting all languages via [^\W_])
+            if not re.search(r'[^\W_]', clean_text, flags=re.UNICODE):
+                # If it's a structural prefix (list/blockquote), preserve the structure
+                if re.search(r'[>-*+\d]', prefix):
+                    return prefix.rstrip() + "\n"
+                return "" # Annihilate the line
             
-            # 5. If nothing alphanumeric is left, annihilate the heading entirely
-            if not re.search(r'[a-zA-Z0-9]', clean_text):
-                return "" 
-            return match.group(0)
+            return f"{prefix}{hashes} {heading_text.strip()}\n"
 
-        # Swallows the newline so no blank artifacts are left behind (now handles indented headings!)
-        article_content = re.sub(r'^[ \t]*#{1,6}\s*([^\r\n]*)\r?\n?', clean_empty_headings, article_content, flags=re.MULTILINE)
+        # Upgraded regex catches headings inside blockquotes, lists, and non-breaking spaces
+        heading_pattern = r'^([^\S\r\n]*(?:>[^\S\r\n]*)*(?:(?:[-*+]|\d+\.)[^\S\r\n]+)?)(#{1,6})\s*([^\r\n]*)\r?\n?'
+        article_content = re.sub(heading_pattern, clean_empty_headings, article_content, flags=re.MULTILINE)
 
         # 🚀 NEW: Append the External Source Link safely
         source_url = article.get('source_url', '#')
@@ -2264,29 +2270,29 @@ def run_link_fixer():
         # PASS 3: Catch and Destroy Empty Headings
         # ==========================================
         def empty_heading_healer(match):
-            heading_text = match.group(1)
-            
-            # 1. Strip out HTML comments and tags
+            prefix = match.group(1)
+            hashes = match.group(2)
+            heading_text = match.group(3)
+        
+            heading_text = re.sub(r'\{#[^\w]*\}', '', heading_text, flags=re.UNICODE)
+        
             clean_text = re.sub(r'<!--.*?-->', '', heading_text)
             clean_text = re.sub(r'<[^>]+>', '', clean_text)
-            
-            # 2. Strip Hugo attributes (e.g., {#id}, {.class})
             clean_text = re.sub(r'\{[^}]+\}', '', clean_text)
-            
-            # 3. Extract display text from Markdown images and links
             clean_text = re.sub(r'!\[([^\]]*)\]\([^)]*\)', r'\1', clean_text)
             clean_text = re.sub(r'\[([^\]]*)\]\([^)]*\)', r'\1', clean_text)
-            
-            # 4. Unescape HTML entities
             clean_text = html.unescape(clean_text)
-            
-            if not re.search(r'[a-zA-Z0-9]', clean_text):
+        
+            if not re.search(r'[^\W_]', clean_text, flags=re.UNICODE):
                 print(f"  -> 🧹 SWEPT empty/invalid heading in {filename}")
-                return "" # Completely annihilates the line
-            return match.group(0)
+                if re.search(r'[>-*+\d]', prefix):
+                    return prefix.rstrip() + "\n"
+                return ""
+            
+            return f"{prefix}{hashes} {heading_text.strip()}\n"
 
-        # The \r?\n? at the end ensures we swallow the invisible line breaks
-        content = re.sub(r'^[ \t]*#{1,6}\s*([^\r\n]*)\r?\n?', empty_heading_healer, content, flags=re.MULTILINE)
+        heading_pattern = r'^([^\S\r\n]*(?:>[^\S\r\n]*)*(?:(?:[-*+]|\d+\.)[^\S\r\n]+)?)(#{1,6})\s*([^\r\n]*)\r?\n?'
+        content = re.sub(heading_pattern, empty_heading_healer, content, flags=re.MULTILINE)
 
         if content != original_content:
             with open(filepath, "w", encoding="utf-8") as f:

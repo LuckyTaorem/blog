@@ -75,7 +75,6 @@ Future plans include real‑time targeting for ads, expanded loan products (e.g.
 
 Key risks involve regulatory changes in fintech and advertising, data privacy concerns, and the potential for driver burnout if the platform’s expectations become too demanding. Additionally, the company’s reliance on emerging markets exposes it to macroeconomic volatility.
 
-##
 
 ### Mitigation Strategies
 
