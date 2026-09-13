@@ -173,3 +173,8 @@ disableKinds = ["sitemap"]
 # 4. Assign these to generate on the Homepage (root directory)
 [outputs]
   home = ["HTML", "JSON", "RSS", "SitemapIndex", "SitemapLegacy", "SitemapPosts", "SitemapPages", "SitemapCategories", "SitemapTags"]
+
+# --- IMAGE PROCESSING OVERRIDE ---
+[params.modules.picture]
+  widths = [800]
+  formats = ["webp"]
