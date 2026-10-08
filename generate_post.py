@@ -1079,6 +1079,75 @@ def share_to_social_media(file_path, slug, image_path):
     except Exception as e:
         print(f"  ❌ Failed WordPress.com: {e}")
 
+    # -----------------------------------------
+    # 9. CODERLEGION
+    # -----------------------------------------
+    try:
+        coderlegion_api_key = os.environ.get("CODERLEGION_API_KEY")
+        if coderlegion_api_key:
+            # Base headers for auth (Do not set Content-Type yet)
+            cl_base_headers = {
+                "X-API-Key": coderlegion_api_key,
+                "Accept": "application/json"
+            }
+            
+            cover_blobid = None
+            
+            # STEP 1: Upload the local image to get a CoderLegion blobid
+            if os.path.exists(image_path):
+                upload_url = "https://coderlegion.com/api/v1/uploads/image"
+                try:
+                    with open(image_path, 'rb') as img_file:
+                        # The API expects the file under the 'file' key and allows a 'type' parameter
+                        files = {'file': img_file}
+                        data = {'type': 'cover'}
+                        
+                        # Let the requests library automatically set the multipart/form-data boundary
+                        img_res = requests.post(upload_url, headers=cl_base_headers, files=files, data=data)
+                        
+                        if img_res.status_code == 200:
+                            cover_blobid = img_res.json().get('data', {}).get('blobid')
+                            print(f"  🖼️ CoderLegion Image Uploaded: {cover_blobid}")
+                        else:
+                            print(f"  ⚠️ CoderLegion Image Upload Failed: {img_res.text}")
+                except Exception as img_e:
+                    print(f"  ⚠️ CoderLegion Image Error: {img_e}")
+
+            # STEP 2: Format tags (alphanumeric, lowercase, max 5)
+            combined_cl_tags = post_categories + post_tags
+            cleaned_cl_tags = [re.sub(r'[^a-z0-9]', '', t.lower()) for t in combined_cl_tags if t]
+            cl_tags = cleaned_cl_tags[:5]
+            if not cl_tags:
+                cl_tags = ["tech", "news"]
+
+            # STEP 3: Construct the final post payload
+            cl_payload = {
+                "title": title,
+                "content": f"{base_markdown_summary}\n\n*Read the full breakdown originally published at [{post_url}]({post_url})*",
+                "category_id": 2, # Defaults to 2 ("Articles")
+                "tags": cl_tags
+            }
+            
+            # Inject the image blobid if the upload was successful
+            if cover_blobid:
+                cl_payload["cover_image_blobid"] = cover_blobid
+                
+            # Set the JSON header for the final post creation
+            cl_post_headers = cl_base_headers.copy()
+            cl_post_headers["Content-Type"] = "application/json"
+            
+            # STEP 4: Publish the Post
+            res = requests.post("https://coderlegion.com/api/v1/posts", headers=cl_post_headers, json=cl_payload)
+            
+            if res.status_code in [200, 201, 202]:
+                print(f"  👨‍💻 Success: Published to CoderLegion")
+            else:
+                print(f"  ❌ Failed CoderLegion: {res.status_code} - {res.text}")
+        else:
+            print("  ⚠️ Skipped CoderLegion: Credentials missing")
+    except Exception as e:
+        print(f"  ❌ Failed CoderLegion: {e}")
+
 # ==========================================
 # 3. SCRAPE MODE (Runs at 8 AM / 8 PM)
 # ==========================================

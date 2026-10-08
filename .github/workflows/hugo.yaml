@@ -172,6 +172,7 @@ jobs:
           WP_COM_USERNAME: ${{ secrets.WP_COM_USERNAME }}
           WP_COM_PASSWORD: ${{ secrets.WP_COM_PASSWORD }}
           WP_COM_SITE_DOMAIN: ${{ secrets.WP_COM_SITE_DOMAIN }}
+          CODERLEGION_API_KEY: ${{ secrets.CODERLEGION_API_KEY }}
           BING_API_KEY: ${{ secrets.BING_API_KEY }}
         run: |
           COMMIT_MSG="${{ github.event.head_commit.message }}"

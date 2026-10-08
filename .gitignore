@@ -14,3 +14,4 @@ _vendor
 test_ai_providers.py
 test.png
 fix_wp_images.py
+test_coderlegion.py
