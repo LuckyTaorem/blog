@@ -65,11 +65,7 @@ These components work in concert to sustain the site’s hallmark “publish‑i
 - **Zoom Annotation Flaw Patched After AI‑Prompt Exploit** – A security‑focused article that demonstrates how rapid, community‑sourced reporting can surface vulnerabilities before they are widely exploited. The methodology mirrors 9to5Mac’s verification pipeline, highlighting a cross‑industry adoption of similar practices.  
   <[https://ltdeveloperblogs.github.io/posts/zoomsday-hack-uncovered-using-fewer-than-20-ai-prompts](https://ltdeveloperblogs.github.io/posts/zoomsday-hack-uncovered-using-fewer-than-20-ai-prompts)>
 
-- **Chinese Auto Giant Moves to Apple Wallet Car Keys** – This piece illustrates how Apple’s ecosystem extensions (like Car Keys) are now covered by a broader set of tech outlets, many of which have adopted 9to5Mac’s editorial cadence to stay competitive.  
-  <https://ltdeveloperblogs.github.io/posts/y
-
-- **Chinese Auto Giant Moves to Apple Wallet Car Keys** – This piece illustrates how Apple’s ecosystem extensions (like Car Keys) are now covered by a broader set of tech outlets, many of which have adopted 9to5Mac’s editorial cadence to stay competitive.  
-  <https://ltdeveloperblogs.github.io/posts/y2026-chinese-auto-giant-apple-wallet-car-keys>
+- **Chinese Auto Giant Moves to Apple Wallet Car Keys** – This piece illustrates how Apple’s ecosystem extensions (like Car Keys) are now covered by a broader set of tech outlets, many of which have adopted 9to5Mac’s editorial cadence to stay competitive.
 
 ## Monetization Strategy and Revenue Streams
 
