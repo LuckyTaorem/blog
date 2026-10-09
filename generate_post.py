@@ -2248,13 +2248,31 @@ def run_link_fixer():
             continue
 
     files_modified = 0
-    current_time = time.time()
-    
-    # 🚀 OPTIMIZATION: Only process files added or modified in the last 24 hours (86400 seconds)
-    recent_files = [
-        f for f in all_files 
-        if (current_time - os.path.getmtime(os.path.join(output_dir, f))) < 43200
-    ]
+    recent_files = []
+
+    try:
+        # 🚀 STRICT GIT TARGETING: Find EXACTLY the markdown files added/changed in this specific commit
+        git_output = subprocess.check_output(
+            ["git", "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD"], 
+            text=True
+        ).strip()
+        
+        changed_paths = [p.strip() for p in git_output.split('\n') if p.strip()]
+        for path in changed_paths:
+            if path.startswith(output_dir) and path.endswith('.md'):
+                recent_files.append(os.path.basename(path))
+                
+        if not recent_files:
+            print("✅ Git diff confirmed no new markdown files to process. Skipping.")
+            return
+            
+    except Exception as e:
+        print(f"⚠️ Git diff detection failed ({e}). Falling back to time-based scan...")
+        current_time = time.time()
+        recent_files = [
+            f for f in all_files 
+            if (current_time - os.path.getmtime(os.path.join(output_dir, f))) < 43200
+        ]
 
     for filename in recent_files:
         filepath = os.path.join(output_dir, filename)
