@@ -59,6 +59,7 @@ jobs:
           key: ${{ runner.os }}-hugo-resources-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-hugo-resources-
+          save-always: true
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
