@@ -2346,7 +2346,7 @@ def run_link_fixer():
                 print(f"  -> ☢️ NUKED dead path in {filename}: '{slug}'")
                 return ""
 
-        path_pattern = r'(https?://ltdeveloperblogs\.github\.io/posts/|/posts/|posts/)([-a-zA-Z0-9_]+)'
+        path_pattern = r'(https?://ltdeveloperblogs\.github\.io/posts/|/posts/|posts/)([-\w%]+)'
         content = re.sub(path_pattern, path_healer, content, flags=re.IGNORECASE)
 
         # 🧹 SMART CLEANUP: Remove lingering empty parentheses, brackets, or orphaned "see " artifacts across line breaks
