@@ -2342,12 +2342,16 @@ def run_link_fixer():
                 print(f"  -> 🔧 FIXED path in {filename}: '{slug}' -> '{closest[0]}'")
                 return full_match.replace(slug, closest[0])
             else:
-                # Replace the dead path entirely with a safe anchor
+                # Delete the dead path completely instead of using a placeholder
                 print(f"  -> ☢️ NUKED dead path in {filename}: '{slug}'")
-                return "#link-removed"
+                return ""
 
         path_pattern = r'(https?://ltdeveloperblogs\.github\.io/posts/|/posts/|posts/)([-a-zA-Z0-9_]+)'
         content = re.sub(path_pattern, path_healer, content, flags=re.IGNORECASE)
+
+        # 🧹 SMART CLEANUP: Remove lingering empty parentheses, brackets, or orphaned "see " artifacts across line breaks
+        content = re.sub(r'\(\s*(?:see|read|via)?\s*\)', '', content, flags=re.IGNORECASE | re.DOTALL)
+        content = re.sub(r'\[\s*\]', '', content)
 
         # ==========================================
         # PASS 3: Catch and Destroy Empty Headings
