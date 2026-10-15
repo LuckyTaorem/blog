@@ -2269,15 +2269,8 @@ def run_link_fixer():
             continue
 
     files_modified = 0
-    current_time = time.time()
-    
-    # 🚀 OPTIMIZATION: Only process files added or modified in the last 24 hours (86400 seconds)
-    recent_files = [
-        f for f in all_files 
-        if (current_time - os.path.getmtime(os.path.join(output_dir, f))) < 43200
-    ]
 
-    for filename in recent_files:
+    for filename in all_files:
         filepath = os.path.join(output_dir, filename)
         try:
             with open(filepath, "r", encoding="utf-8") as f:
