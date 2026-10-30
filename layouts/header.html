@@ -76,6 +76,10 @@
     <div class="{{ $contentStyle }} py-{{ $padding.y }}">{{ . | page.RenderString | safeHTML }}</div>
 {{ end }}
 
+<div class="my-3">
+    <div google-add-preferred-source-btn data-theme="dark"></div>
+</div>
+
 {{/* Display TOC dropdown on smaller screens */}}
 {{- if and .Site.Params.navigation.toc .Params.includeToc | default true -}}
     <div class="d-{{ $breakpoint.current }}-none pb-5">{{ partial "assets/toc-dropdown.html" (dict "page" .) }}</div>
