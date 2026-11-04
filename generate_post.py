@@ -13,7 +13,7 @@ import subprocess
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
 from difflib import SequenceMatcher
-from atproto import Client as BskyClient
+from atproto import Client as BskyClient, client_utils
 import pytumblr
 
 from google.oauth2 import service_account
@@ -666,42 +666,45 @@ def share_to_social_media(file_path, slug, image_path):
         print(f"  ⚠️ Could not extract frontmatter data: {e}")
 
     # -----------------------------------------
-    # 1. BLUESKY (Requires strict dynamic truncation)
+    # 1. BLUESKY (Clickable Link Facet via TextBuilder)
     # -----------------------------------------
     try:
         bsky_handle = os.environ.get("BSKY_HANDLE")
         bsky_password = os.environ.get("BSKY_PASSWORD")
         if bsky_handle and bsky_password:
-            client = BskyClient()
-            client.login(bsky_handle, bsky_password)
+            bsky_client = BskyClient()
+            bsky_client.login(bsky_handle, bsky_password)
             
-            footer = f"\n\nFull breakdown:\n{post_url}"
+            footer_label = "\n\nFull breakdown:\n"
             header = f"{title} | {today}\n\n"
             
             max_allowed = 295 
-            used_chars = len(header) + len(footer)
+            used_chars = len(header) + len(footer_label) + len(post_url)
             available_chars = max_allowed - used_chars
             
+            tb = client_utils.TextBuilder()
             if available_chars > 20:
-                # Use sentence truncation helper instead of hard string slicing
                 bsky_summary = truncate_to_sentence(extended_summary, available_chars)
-                bsky_text = f"{header}{bsky_summary}{footer}"
+                tb.text(f"{header}{bsky_summary}{footer_label}")
             else:
                 if used_chars > max_allowed:
-                    title_space = max_allowed - len(footer) - len(f" | {today}\n\n") - 3
-                    short_title = title[:title_space] + "..."
-                    bsky_text = f"{short_title} | {today}{footer}"
+                    title_space = max_allowed - len(footer_label) - len(post_url) - len(f" | {today}\n\n") - 3
+                    short_title = title[:max(10, title_space)] + "..."
+                    tb.text(f"{short_title} | {today}{footer_label}")
                 else:
-                    bsky_text = f"{header.strip()}{footer}"
+                    tb.text(f"{header.strip()}{footer_label}")
+            
+            # Attach clickable URL facet
+            tb.link(post_url, post_url)
             
             if os.path.exists(image_path):
                 with open(image_path, 'rb') as f:
                     img_data = f.read()
-                client.send_image(text=bsky_text, image=img_data, image_alt=title)
+                bsky_client.send_image(text=tb, image=img_data, image_alt=title)
             else:
-                client.send_post(text=bsky_text)
+                bsky_client.send_post(text=tb)
                 
-            print("  🦋 Success: Posted to Bluesky")
+            print("  🦋 Success: Posted to Bluesky (with clickable link)")
         else:
             print("  ⚠️ Skipped Bluesky: Credentials missing")
     except Exception as e:
@@ -1078,96 +1081,6 @@ def share_to_social_media(file_path, slug, image_path):
             print("  ⚠️ Skipped WordPress.com: Credentials missing")
     except Exception as e:
         print(f"  ❌ Failed WordPress.com: {e}")
-
-    # -----------------------------------------
-    # 9. CODERLEGION (Max 3 Posts Per Day)
-    # -----------------------------------------
-    try:
-        coderlegion_api_key = os.environ.get("CODERLEGION_API_KEY")
-        if coderlegion_api_key:
-            cl_tracker_file = "coderlegion_tracker.json"
-            cl_tracker = {"date": "", "count": 0}
-            
-            # Read existing tracker state
-            if os.path.exists(cl_tracker_file):
-                try:
-                    with open(cl_tracker_file, "r") as f:
-                        cl_tracker = json.load(f)
-                except Exception:
-                    pass
-
-            # Check if daily limit is hit (using the 'today' variable already calculated in IST)
-            if cl_tracker.get("date") == today and cl_tracker.get("count", 0) >= 3:
-                print("  ⚠️ Skipped CoderLegion: Daily limit of 3 posts reached.")
-            else:
-                # Base headers for auth (Do not set Content-Type yet)
-                cl_base_headers = {
-                    "X-API-Key": coderlegion_api_key,
-                    "Accept": "application/json"
-                }
-                
-                cover_blobid = None
-                
-                # STEP 1: Upload the local image to get a CoderLegion blobid
-                if os.path.exists(image_path):
-                    upload_url = "https://coderlegion.com/api/v1/uploads/image"
-                    try:
-                        with open(image_path, 'rb') as img_file:
-                            files = {'file': img_file}
-                            data = {'type': 'cover'}
-                            
-                            img_res = requests.post(upload_url, headers=cl_base_headers, files=files, data=data)
-                            
-                            if img_res.status_code == 200:
-                                cover_blobid = img_res.json().get('data', {}).get('blobid')
-                                print(f"  🖼️ CoderLegion Image Uploaded: {cover_blobid}")
-                            else:
-                                print(f"  ⚠️ CoderLegion Image Upload Failed: {img_res.text}")
-                    except Exception as img_e:
-                        print(f"  ⚠️ CoderLegion Image Error: {img_e}")
-
-                # STEP 2: Format tags (alphanumeric, lowercase, max 5)
-                combined_cl_tags = post_categories + post_tags
-                cleaned_cl_tags = [re.sub(r'[^a-z0-9]', '', t.lower()) for t in combined_cl_tags if t]
-                cl_tags = cleaned_cl_tags[:5]
-                if not cl_tags:
-                    cl_tags = ["tech", "news"]
-
-                # STEP 3: Construct the final post payload
-                cl_payload = {
-                    "title": title,
-                    "content": f"{base_markdown_summary}\n\n*Read the full breakdown originally published at [{post_url}]({post_url})*",
-                    "category_id": 2, # Defaults to 2 ("Articles")
-                    "tags": cl_tags
-                }
-                
-                if cover_blobid:
-                    cl_payload["cover_image_blobid"] = cover_blobid
-                    
-                cl_post_headers = cl_base_headers.copy()
-                cl_post_headers["Content-Type"] = "application/json"
-                
-                # STEP 4: Publish the Post
-                res = requests.post("https://coderlegion.com/api/v1/posts", headers=cl_post_headers, json=cl_payload)
-                
-                if res.status_code in [200, 201, 202]:
-                    print(f"  👨‍💻 Success: Published to CoderLegion")
-                    
-                    # Update tracker file strictly upon success
-                    if cl_tracker.get("date") == today:
-                        cl_tracker["count"] += 1
-                    else:
-                        cl_tracker["date"] = today
-                        cl_tracker["count"] = 1
-                        
-                    with open(cl_tracker_file, "w") as f:
-                        json.dump(cl_tracker, f)
-                else:
-                    print(f"  ❌ Failed CoderLegion: {res.status_code} - {res.text}")
-        else:
-            print("  ⚠️ Skipped CoderLegion: Credentials missing")
-    except Exception as e:
-        print(f"  ❌ Failed CoderLegion: {e}")
 
 # ==========================================
 # 3. SCRAPE MODE (Runs at 8 AM / 8 PM)
@@ -2549,19 +2462,17 @@ if __name__ == "__main__":
         run_link_fixer()
     elif args.heal_hugo:
         print("\n--- 🩺 RUNNING HUGO BUILD SELF-HEALER ---")
-        # Uses baseURL directly from hugo.toml to avoid CLI URL parsing issues
         hugo_cmd = ["hugo", "-F", "--gc", "--minify", "--logLevel", "error"]
         for attempt in range(1, 6):
             res = subprocess.run(hugo_cmd, capture_output=True, text=True)
             if res.returncode == 0:
                 print(f"✅ Hugo build succeeded cleanly on attempt {attempt}!")
-                break
+                exit(0)
+            
             err_log = res.stderr + "\n" + res.stdout
             print(f"⚠️ Hugo build failed (Attempt {attempt}):\n{err_log[:1000]}")
 
-            # 1. Catch Hinode broken link errors: Cannot find page or asset: '...'
             dead_assets = re.findall(r"Cannot find page or asset:\s*'([^']+)'", err_log)
-            # Match any .md file mentioned in the error log
             crashing_files = re.findall(r"([a-zA-Z0-9_\-\u00C0-\u017F]+\.md)", err_log)
 
             fixed_something = False
@@ -2576,7 +2487,6 @@ if __name__ == "__main__":
                         bad_content = f.read()
                     new_content = bad_content
 
-                    # Surgically strip any dead asset URLs reported by Hugo
                     for asset in dead_assets:
                         slug_part = asset.strip("/").split("/")[-1].rstrip("])")
                         if slug_part:
@@ -2590,7 +2500,7 @@ if __name__ == "__main__":
                     if new_content != bad_content:
                         with open(bad_file, "w", encoding="utf-8") as f:
                             f.write(new_content)
-                        print(f"🔧 Surgically stripped dead links {dead_assets} from {bad_file}!")
+                        print(f"🔧 Surgically stripped dead links from {bad_file}!")
                         fixed_something = True
                     else:
                         print(f"🧠 Sending crashing file {bad_file} to AI for repair...")
@@ -2601,7 +2511,7 @@ ERROR:
 FILE CONTENT:
 {bad_content}
 
-Fix the broken link, YAML frontmatter, or Markdown syntax error causing the crash. If a link is broken, remove the link syntax and keep only the anchor text. Return ONLY the complete, valid Markdown file starting with --- and ending with the article content. Do NOT wrap in ```markdown codeblocks."""
+Fix the broken link, YAML frontmatter, or Markdown syntax error causing the crash. Return ONLY the complete, valid Markdown file starting with --- and ending with the article content. Do NOT wrap in ```markdown codeblocks."""
                         healed = ai_quick_fix(fix_prompt, max_tokens=3500)
                         if healed and "---" in healed and attempt < 4:
                             healed = re.sub(r'^```(?:markdown|md|yaml)?\s*\n', '', healed, flags=re.IGNORECASE)
@@ -2618,69 +2528,7 @@ Fix the broken link, YAML frontmatter, or Markdown syntax error causing the cras
             if not fixed_something:
                 print("❌ Could not isolate a specific markdown file from error log.")
                 exit(1)
-            res = subprocess.run(hugo_cmd, capture_output=True, text=True)
-            if res.returncode == 0:
-                print(f"✅ Hugo build succeeded cleanly on attempt {attempt}!")
-                break
-            err_log = res.stderr + "\n" + res.stdout
-            print(f"⚠️ Hugo build failed (Attempt {attempt}):\n{err_log[:800]}")
-
-            # 1. Catch Hinode broken link errors: Cannot find page or asset: '...'
-            dead_assets = re.findall(r"Cannot find page or asset:\s*'([^']+)'", err_log)
-            crashing_files = re.findall(r"(?:content[/\\])?posts[/\\]([^\s:\"'`]+\.md)", err_log)
-
-            fixed_something = False
-            if crashing_files:
-                for fname in set(crashing_files):
-                    bad_file = os.path.join(output_dir, fname)
-                    if not os.path.exists(bad_file):
-                        continue
-                    with open(bad_file, "r", encoding="utf-8") as f:
-                        bad_content = f.read()
-                    new_content = bad_content
-
-                    # Surgically strip any dead asset URLs reported by Hugo
-                    for asset in dead_assets:
-                        slug_part = asset.strip("/").split("/")[-1]
-                        # Replace [Anchor](...asset...) with just Anchor
-                        new_content = re.sub(
-                            rf'\[([^\]]+)\]\([^\)]*{re.escape(slug_part)}[^\)]*\)',
-                            r'\1',
-                            new_content
-                        )
-                        new_content = new_content.replace(asset, "")
-
-                    if new_content != bad_content:
-                        with open(bad_file, "w", encoding="utf-8") as f:
-                            f.write(new_content)
-                        print(f"🔧 Surgically stripped dead links {dead_assets} from {bad_file}!")
-                        fixed_something = True
-                    else:
-                        # Ask Groq AI to repair the file based on the exact Hugo error log
-                        print(f"🧠 Sending crashing file {bad_file} to AI for repair...")
-                        fix_prompt = f"""The following Hugo Markdown file caused this build error:
-ERROR:
-{err_log[:800]}
-
-FILE CONTENT:
-{bad_content}
-
-Fix the broken link, YAML frontmatter, or Markdown syntax error causing the crash. If a link is broken, remove the link syntax and keep only the anchor text. Return ONLY the complete, valid Markdown file starting with --- and ending with the article content. Do NOT wrap in ```markdown codeblocks."""
-                        healed = ai_quick_fix(fix_prompt, max_tokens=3500)
-                        if healed and "---" in healed:
-                            healed = re.sub(r'^```(?:markdown|md|yaml)?\s*\n', '', healed, flags=re.IGNORECASE)
-                            healed = re.sub(r'\n```\s*$', '', healed).strip()
-                            with open(bad_file, "w", encoding="utf-8") as f:
-                                f.write(healed + "\n")
-                            print(f"🔧 AI repaired {bad_file}. Retrying build...")
-                            fixed_something = True
-                        else:
-                            print(f"🗑️ AI could not repair {bad_file}. Removing file to save site build.")
-                            os.remove(bad_file)
-                            fixed_something = True
-
-            if not fixed_something:
-                print("❌ Could not isolate a specific markdown file from error log.")
-                exit(1)
+        print("❌ Maximum self-healing attempts reached.")
+        exit(1)
     else:
         print("Please provide a flag: --scrape, --publish, --broadcast, --force-recent, --fix-links, or --heal-hugo")
