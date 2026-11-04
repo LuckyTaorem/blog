@@ -1526,6 +1526,96 @@ YOUR TASK:
 
     return partial_text  # Return unchanged if all attempts fail
 
+def ai_quick_fix(prompt, max_tokens=600):
+    """Uses active Groq models (and fallback APIs) to auto-repair broken frontmatter, headings, or links."""
+    fix_models = [
+        {"provider": "groq", "model": "openai/gpt-oss-20b"},
+        {"provider": "groq", "model": "openai/gpt-oss-120b"},
+        {"provider": "gemini", "model": "gemini-2.5-flash"},
+        {"provider": "github", "model": "gpt-4o-mini"}
+    ]
+    for setting in fix_models:
+        provider = setting["provider"]
+        model_name = setting["model"]
+        try:
+            if provider == "groq":
+                key = os.environ.get("GROQ_API_KEY")
+                if not key or key == "local_dummy_key": continue
+                res = client.chat.completions.create(
+                    messages=[{"role": "user", "content": prompt}],
+                    model=model_name,
+                    temperature=0.1,
+                    max_tokens=max_tokens
+                )
+                out = res.choices[0].message.content or ""
+                if out.strip(): return out.strip()
+            elif provider == "gemini":
+                key = os.environ.get("GEMINI_API_KEY")
+                if not key: continue
+                res = requests.post(
+                    f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}",
+                    headers={"Content-Type": "application/json"},
+                    json={"contents": [{"parts": [{"text": prompt}]}], "generationConfig": {"maxOutputTokens": max_tokens, "temperature": 0.1}},
+                    timeout=30
+                )
+                if res.status_code == 200:
+                    out = extract_text(safe_json(res))
+                    if out and out.strip(): return out.strip()
+            elif provider == "github":
+                key = os.environ.get("GH_TOKEN")
+                if not key: continue
+                res = requests.post(
+                    "https://models.inference.ai.azure.com/chat/completions",
+                    headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+                    json={"model": model_name, "messages": [{"role": "user", "content": prompt}], "temperature": 0.1, "max_tokens": max_tokens},
+                    timeout=30
+                )
+                if res.status_code == 200:
+                    out = res.json().get('choices', [{}])[0].get('message', {}).get('content')
+                    if out and out.strip(): return out.strip()
+        except Exception as e:
+            print(f"     -> ⚠️ AI Quick Fix error ({provider} - {model_name}): {e}")
+            continue
+    return None
+
+def ai_auto_heal_frontmatter(article_content, original_title, summary, current_iso, image_url):
+    """Repairs broken or missing YAML frontmatter using AI instead of rejecting the post."""
+    print("  -> 🧠 AI Auto-Fixer: Repairing malformed YAML frontmatter...")
+    parts = article_content.split("---")
+    broken_fm = parts[1] if len(parts) >= 3 else article_content[:600]
+    body = "---".join(parts[2:]).strip() if len(parts) >= 3 else article_content
+
+    prompt = f"""Fix this broken Hugo YAML frontmatter.
+Original Title: {original_title}
+Summary: {summary[:400]}
+Broken Frontmatter:
+{broken_fm}
+
+ALLOWED CATEGORIES (Pick EXACTLY ONE):
+{', '.join(VALID_CATEGORIES)}
+
+Return ONLY a valid YAML frontmatter block starting and ending with ---. No markdown codeblocks (no ```yaml).
+Exact format required:
+---
+title: "[45-55 char clean title, NO double quotes inside]"
+date: {current_iso}
+draft: false
+images: ["{image_url}"]
+thumbnail: "{image_url}"
+description: "[140-150 char clean description, NO double quotes inside]"
+categories: ["[EXACTLY ONE ALLOWED CATEGORY]"]
+tags: ["[Tag1]", "[Tag2]", "[Tag3]"]
+---"""
+
+    fixed_fm = ai_quick_fix(prompt, max_tokens=400)
+    if fixed_fm:
+        fixed_fm = re.sub(r'^```(?:yaml|markdown)?\s*\n', '', fixed_fm, flags=re.IGNORECASE)
+        fixed_fm = re.sub(r'\n```\s*$', '', fixed_fm).strip()
+        if not fixed_fm.startswith("---"): fixed_fm = "---\n" + fixed_fm
+        if not fixed_fm.endswith("---"): fixed_fm = fixed_fm + "\n---"
+        return fixed_fm + "\n\n" + body
+    return article_content
+
 # ==========================================
 # 4. PUBLISH MODE (Runs every hour)
 # ==========================================
@@ -1906,16 +1996,29 @@ When you have completely finished writing the conclusion of the article, you MUS
         article_content = article_content.replace("---\n```\n", "---\n")
         
 
-        # 🚨 THE BOUNCER (MOVED HERE: After title and category are safely formatted!) 🚨
+        # 🚨 THE BOUNCER (WITH AI SELF-HEALING) 🚨
         has_title = re.search(r'^title:\s*".+"', article_content, re.MULTILINE)
         has_category = re.search(r'^categories:\s*\[.+\]', article_content, re.MULTILINE)
         
         if not has_title or not has_category:
-            print(f"  -> 🚨 CRITICAL: AI generated malformed frontmatter (Missing Title/Category). Rejecting.")
+            print(f"  -> ⚠️ Malformed frontmatter detected. Triggering AI Auto-Healer...")
+            article_content = ai_auto_heal_frontmatter(
+                article_content, article['title'], article['summary'], current_iso, image_url
+            )
+            # Re-sanitize after AI repair
+            article_content = sanitize_frontmatter_line("title", article_content)
+            article_content = sanitize_frontmatter_line("description", article_content)
+            
+            # Re-verify after AI repair
+            has_title = re.search(r'^title:\s*".+"', article_content, re.MULTILINE)
+            has_category = re.search(r'^categories:\s*\[.+\]', article_content, re.MULTILINE)
+
+        if not has_title or not has_category:
+            print(f"  -> 🚨 CRITICAL: AI Auto-Healer could not fix frontmatter. Rejecting.")
             if os.path.exists(file_path):
                 os.remove(file_path)
             remaining_queue.append(article)
-            continue # 👈 ABSOLUTELY CRITICAL: Stop execution and jump to the next article!
+            continue # 👈 Stop execution and jump to the next article!
         
         # 🚨 UPDATE THIS BLOCK IN run_publisher()
 
@@ -2078,7 +2181,39 @@ When you have completely finished writing the conclusion of the article, you MUS
 
         # Upgraded regex catches headings inside blockquotes, lists, and non-breaking spaces
         heading_pattern = r'^([^\S\r\n]*(?:>[^\S\r\n]*)*(?:(?:[-*+]|\d+\.)[^\S\r\n]+)?)(#{1,6})\s*([^\r\n]*)\r?\n?'
-        article_content = re.sub(heading_pattern, clean_empty_headings, article_content, flags=re.MULTILINE)
+        
+        # First, strip list/blockquote prefixes off valid headings so Hugo doesn't crash on `- ## Heading`
+        article_content = re.sub(
+            r'^[^\S\r\n]*(?:>[^\S\r\n]*)*(?:(?:[-*+]|\d+\.)[^\S\r\n]+)+(#{1,6}\s+[^\r\n]+)',
+            r'\1',
+            article_content,
+            flags=re.MULTILINE
+        )
+
+        # Next, find empty headings and ask AI to write a real title based on the next paragraph (or delete if none)
+        def ai_heal_or_clean_headings(match):
+            hashes = match.group(2)
+            heading_text = match.group(3)
+            
+            # Check if it's genuinely empty
+            clean_check = re.sub(r'\{#[^\w]*\}|<!--.*?-->|<[^>]+>|\{[^}]+\}', '', heading_text)
+            if not re.search(r'[^\W_]', clean_check, flags=re.UNICODE):
+                # Look ahead in article_content after this match to grab context
+                start_pos = match.end()
+                next_chunk = article_content[start_pos:start_pos+350].strip()
+                if len(next_chunk) > 40:
+                    print("  -> 🧠 AI Auto-Fixer: Generating title for empty heading...")
+                    ai_title = ai_quick_fix(
+                        f"Write a short, punchy 3 to 6 word subheading for this paragraph. Output ONLY the plain text words (no #, no quotes, no markdown):\n\n{next_chunk}",
+                        max_tokens=30
+                    )
+                    if ai_title:
+                        ai_title = re.sub(r'[#*"`\r\n]', '', ai_title).strip()
+                        if re.search(r'[^\W_]', ai_title):
+                            return f"{hashes} {ai_title}\n"
+            return clean_empty_headings(match)
+
+        article_content = re.sub(heading_pattern, ai_heal_or_clean_headings, article_content, flags=re.MULTILINE)
 
         # 🚀 NEW: Append the External Source Link safely
         source_url = article.get('source_url', '#')
@@ -2308,22 +2443,34 @@ def run_link_fixer():
                 # Force absolute format to fix Hugo relative issues
                 return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{slug})"
             
-            # Broken! Try fuzzy match.
+            # Broken! Try fuzzy match first.
             closest = get_close_matches(slug, valid_slugs, n=1, cutoff=0.4)
             if closest:
                 print(f"  -> 🔧 FIXED MD link in {filename}: '{slug}' -> '{closest[0]}'")
                 return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{closest[0]})"
-            else:
-                # 🚨 Nuke the link, but clean up the remaining text!
-                print(f"  -> ☢️ NUKED dead MD link in {filename}: '{slug}'")
+            
+            # 🧠 AI SEMANTIC MATCH: Ask Groq if one of our recent valid slugs matches the broken link topic
+            if valid_slugs:
+                sample_slugs = valid_slugs[:40] # Send up to 40 valid slugs
+                ai_pick = ai_quick_fix(
+                    f"Broken link slug: '{slug}' (Anchor text: '{link_text}').\n"
+                    f"Available valid slugs:\n{', '.join(sample_slugs)}\n\n"
+                    f"If one of the available slugs is clearly about the same topic, reply with ONLY that exact slug string. Otherwise, reply with NONE.",
+                    max_tokens=40
+                )
+                if ai_pick:
+                    ai_pick = ai_pick.strip().strip("'\"`")
+                    if ai_pick in valid_slugs:
+                        print(f"  -> 🧠 AI MATCHED MD link in {filename}: '{slug}' -> '{ai_pick}'")
+                        return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{ai_pick})"
+
+            # 🚨 Nuke the link, but clean up the remaining text!
+            print(f"  -> ☢️ NUKED dead MD link in {filename}: '{slug}'")
+            if '-' in link_text and (slug in link_text or link_text.lower() == raw_url.lower()):
+                clean_text = link_text.replace('-', ' ').replace('.md', '').replace('.html', '').title()
+                return clean_text
                 
-                # Smart Cleanup: If the AI lazily used the slug as the display text, 
-                # remove the dashes and extensions so it looks like regular English words.
-                if '-' in link_text and (slug in link_text or link_text.lower() == raw_url.lower()):
-                    clean_text = link_text.replace('-', ' ').replace('.md', '').replace('.html', '').title()
-                    return clean_text
-                    
-                return link_text 
+            return link_text
 
         content = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', markdown_link_healer, content)
 
@@ -2397,7 +2544,8 @@ if __name__ == "__main__":
     parser.add_argument("--publish", action="store_true", help="Publish next batch from the queue")
     parser.add_argument("--broadcast", action="store_true", help="Share published articles to social media")
     parser.add_argument("--force-recent", action="store_true", help="Force broadcast the most recent batch of articles, bypassing the queue")
-    parser.add_argument("--fix-links", action="store_true", help="Scan and fix broken links before Hugo build") # <-- ADD THIS
+    parser.add_argument("--fix-links", action="store_true", help="Scan and fix broken links before Hugo build")
+    parser.add_argument("--heal-hugo", action="store_true", help="Run Hugo test build and use AI to auto-fix any crashing markdown files")
     args = parser.parse_args()
 
     if args.scrape:
@@ -2407,9 +2555,45 @@ if __name__ == "__main__":
     elif args.broadcast:
         run_broadcaster()
     elif args.force_recent:
-        # 🚨 Calling the updated function with dynamic detection
         run_emergency_broadcaster()
-    elif args.fix_links: # <-- ADD THIS
+    elif args.fix_links:
         run_link_fixer()
+    elif args.heal_hugo:
+        print("\n--- 🩺 RUNNING HUGO BUILD SELF-HEALER ---")
+        for attempt in range(1, 4):
+            res = subprocess.run(["hugo", "--gc", "--minify"], capture_output=True, text=True)
+            if res.returncode == 0:
+                print(f"✅ Hugo build succeeded cleanly on attempt {attempt}!")
+                break
+            err_log = res.stderr + "\n" + res.stdout
+            print(f"⚠️ Hugo build failed (Attempt {attempt}):\n{err_log[:500]}")
+            # Extract crashing file path from Hugo error log
+            file_match = re.search(r'(content[/\\]posts[/\\][^\s:"\']+\.md)', err_log)
+            if file_match and os.path.exists(file_match.group(1)):
+                bad_file = file_match.group(1)
+                print(f"🧠 Sending crashing file {bad_file} to AI for surgical repair...")
+                with open(bad_file, "r", encoding="utf-8") as f:
+                    bad_content = f.read()
+                fix_prompt = f"""The following Hugo Markdown file caused this build error:
+ERROR:
+{err_log[:800]}
+
+FILE CONTENT:
+{bad_content}
+
+Fix the YAML frontmatter or Markdown syntax error causing the crash. Return ONLY the complete, valid Markdown file starting with --- and ending with the article content. Do NOT wrap in ```markdown codeblocks."""
+                healed = ai_quick_fix(fix_prompt, max_tokens=3500)
+                if healed and "---" in healed:
+                    healed = re.sub(r'^```(?:markdown|md|yaml)?\s*\n', '', healed, flags=re.IGNORECASE)
+                    healed = re.sub(r'\n```\s*$', '', healed).strip()
+                    with open(bad_file, "w", encoding="utf-8") as f:
+                        f.write(healed + "\n")
+                    print(f"🔧 AI repaired {bad_file}. Retrying build...")
+                else:
+                    print(f"🗑️ AI could not repair {bad_file}. Quarantining/Removing file to save site build.")
+                    os.remove(bad_file)
+            else:
+                print("❌ Could not isolate a specific markdown file from error log.")
+                break
     else:
-        print("Please provide a flag: --scrape, --publish, --broadcast, or --force-recent")
+        print("Please provide a flag: --scrape, --publish, --broadcast, --force-recent, --fix-links, or --heal-hugo")
