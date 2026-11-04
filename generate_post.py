@@ -2045,66 +2045,56 @@ When you have completely finished writing the conclusion of the article, you MUS
         if re.search(r'^thumbnail:\s*.*', article_content, re.MULTILINE):
             article_content = re.sub(r'^thumbnail:\s*.*', f'thumbnail: "{image_url}"', article_content, flags=re.MULTILINE)
         
-        # 🚀 NEW: Catch bare internal URLs, strip trailing punctuation (e.g., '.', ','), and force them into markdown links
+        # 🚀 NEW: Catch bare internal URLs, strip trailing brackets/punctuation, and force them into markdown links
         def convert_bare_internal_urls(match):
-            # If group 1 matched, the URL is already safely inside a markdown link. Leave it alone!
             if match.group(1):
                 return match.group(1)
-            
-            # Otherwise, it's a bare URL (group 2). Wrap it.
             url = match.group(2)
-            clean_url = url.rstrip('.,;:)')
+            clean_url = url.rstrip('.,;:)]}\'"')
             trailing_punct = url[len(clean_url):]
             return f"[{clean_url}]({clean_url}){trailing_punct}"
 
-        # Matches correctly formatted markdown links in Group 1 OR bare URLs in Group 2
+        # Stop bare URL regex from eating closing brackets ] or parentheses )
         article_content = re.sub(
-            r'(\[[^\]]+\]\s*\(\s*https?://ltdeveloperblogs\.github\.io/posts/[^\s\)]+\s*\))|(https?://ltdeveloperblogs\.github\.io/posts/[^\s>"]+)',
+            r'(\[[^\]]+\]\s*\(\s*https?://ltdeveloperblogs\.github\.io/posts/[^\s\)\]]+\s*\))|(https?://ltdeveloperblogs\.github\.io/posts/[^\s>"\)\]]+)',
             convert_bare_internal_urls,
             article_content
         )
 
-        # 🚨 STRICT INTERNAL LINK VALIDATOR WITH FUZZY FIX
+        # 🚨 STRICT INTERNAL LINK VALIDATOR
         def validate_internal_links(match):
-            link_text = match.group(1)
+            link_text = match.group(1).strip('[]')
             raw_url = match.group(2).strip()
 
             if not raw_url:
-                print(f"  -> ⚠️ Stripping empty markdown link: {link_text}")
                 return link_text
             
-            # Clean out any markdown titles in the URL (e.g., [text](url "Title") -> url)
             clean_url = raw_url.split()[0].strip()
 
-            # TRAP: Is this an internal link? 
-            # Catches absolute domain links, relative root links, and 'posts/' links
-            is_internal = False
-            if 'ltdeveloperblogs.github.io' in clean_url or clean_url.startswith('/') or 'posts/' in clean_url:
-                is_internal = True
-
-            # External link? Pass it through untouched.
+            is_internal = (
+                'ltdeveloperblogs.github.io' in clean_url
+                or clean_url.startswith('/')
+                or 'posts/' in clean_url
+            )
             if not is_internal:
                 return match.group(0)
 
-            # --- Process Internal Link ---
-            # Strip query parameters (?), anchors (#), and leading/trailing slashes
             url_no_params = clean_url.split('?')[0].split('#')[0].strip('/')
-            
-            # Extract the absolute last segment of the path as the slug
             parts = [p for p in url_no_params.split('/') if p]
             
             if parts:
-                original_slug = parts[-1].replace('.md', '').replace('.html', '').strip()
+                # Strictly strip any stray brackets, parens, quotes, or punctuation from the slug
+                raw_slug = parts[-1].replace('.md', '').replace('.html', '')
+                original_slug = re.sub(r'[^a-zA-Z0-9_-]', '', raw_slug).lower()
                 slug = original_slug
                 expected_md_file = os.path.join(output_dir, f"{slug}.md")
                 
-                # Helper function to ensure the file has valid frontmatter
                 def check_valid_hugo_post(md_file_path):
                     if os.path.exists(md_file_path):
                         try:
                             with open(md_file_path, 'r', encoding='utf-8') as f:
-                                head_content = f.read(500)
-                                if "---" in head_content and "title:" in head_content:
+                                head_content = f.read(600)
+                                if "---" in head_content and "title:" in head_content and "draft: true" not in head_content.lower():
                                     return True
                         except Exception:
                             pass
@@ -2112,39 +2102,26 @@ When you have completely finished writing the conclusion of the article, you MUS
 
                 is_valid = check_valid_hugo_post(expected_md_file)
                 
-                # 🚀 NEW: Fuzzy Matching Fallback if the URL is broken
                 if not is_valid:
-                    print(f"  -> ⚠️ Link broken for slug: {slug}. Attempting fuzzy fix...")
                     from difflib import get_close_matches
-                    
-                    # Grab all available post slugs from the directory
                     all_files = [f for f in os.listdir(output_dir) if f.endswith('.md') and f != '_index.md']
                     valid_slugs = [f.replace('.md', '') for f in all_files]
                     
-                    # Search for a 50% or greater match to the broken slug
-                    closest_matches = get_close_matches(slug, valid_slugs, n=1, cutoff=0.5)
-                    
+                    # High cutoff (0.75) prevents matching random unrelated articles
+                    closest_matches = get_close_matches(slug, valid_slugs, n=1, cutoff=0.75)
                     if closest_matches:
                         matched_slug = closest_matches[0]
-                        matched_md_file = os.path.join(output_dir, f"{matched_slug}.md")
-                        
-                        # Verify the newly matched file is actually valid
-                        if check_valid_hugo_post(matched_md_file):
-                            print(f"  -> 🔧 FIXED: Replaced broken '{slug}' with closest match '{matched_slug}'")
+                        if check_valid_hugo_post(os.path.join(output_dir, f"{matched_slug}.md")):
+                            print(f"  -> 🔧 FIXED: Replaced broken '{slug}' with '{matched_slug}'")
                             slug = matched_slug
                             is_valid = True
 
                 if is_valid:
-                    # Reconstruct as a perfect absolute link to prevent relative pathing issues
                     return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{slug})"
                 else:
-                    # The file does not exist, is corrupt, or couldn't be fuzzy-matched. Strip the link to save the build!
                     print(f"  -> ⚠️ Stripping unfixable dead internal link: {original_slug}")
                     return link_text
-            else:
-                # If we couldn't parse a slug but it flagged as internal, nuke it to be safe.
-                print(f"  -> ⚠️ Stripping unparseable internal link: {clean_url}")
-                return link_text
+            return link_text
 
         # Find ALL markdown links [text](url) and run them through the aggressive validator
         article_content = re.sub(
@@ -2389,8 +2366,8 @@ def run_link_fixer():
 
     from difflib import get_close_matches
 
-    # 1. STRICT VALIDATION: Only accept slugs if the file exists AND has valid frontmatter.
-    valid_slugs = []
+    # 1. STRICT VALIDATION: Only accept slugs if the file exists, has valid frontmatter, and is not a draft.
+    valid_slugs = set()
     all_files = [f for f in os.listdir(output_dir) if f.endswith('.md') and f != '_index.md']
     
     for filename in all_files:
@@ -2398,11 +2375,12 @@ def run_link_fixer():
         try:
             with open(filepath, "r", encoding="utf-8") as f:
                 head = f.read(1000)
-                if "---" in head and "title:" in head:
-                    valid_slugs.append(filename.replace('.md', ''))
+                if "---" in head and "title:" in head and "draft: true" not in head.lower():
+                    valid_slugs.add(filename.replace('.md', ''))
         except Exception:
             continue
 
+    valid_slugs_list = sorted(list(valid_slugs))
     files_modified = 0
 
     for filename in all_files:
@@ -2416,105 +2394,109 @@ def run_link_fixer():
         original_content = content
 
         # ==========================================
+        # PASS 0: Fix double-bracket or malformed bracket links
+        # e.g. [text](/posts/slug]) or [/posts/slug]
+        # ==========================================
+        content = re.sub(
+            r'((?:https?://ltdeveloperblogs\.github\.io)?/?posts/[a-zA-Z0-9_-]+)\]+',
+            r'\1',
+            content
+        )
+
+        # ==========================================
         # PASS 1: Catch standard Markdown Links [text](url)
         # ==========================================
         def markdown_link_healer(match):
-            link_text = match.group(1)
+            link_text = match.group(1).strip('[]')
             raw_url = match.group(2).strip()
 
-            # Ignore anchors and external links (unless they point to your own domain)
+            # Ignore anchors and external links (unless they point to your own domain or relative paths)
             if raw_url.startswith("#") or raw_url.startswith("mailto:"):
                 return match.group(0)
             if raw_url.startswith("http") and 'ltdeveloperblogs.github.io' not in raw_url:
-                return match.group(0) 
+                return match.group(0)
 
-            # Clean the URL
-            clean_url = raw_url.split('?')[0].split('#')[0].strip('/')
+            # Clean the URL and strip any stray brackets/quotes
+            clean_url = raw_url.split()[0].split('?')[0].split('#')[0].strip('/ \'"()[]{}.,;:')
             clean_url = clean_url.replace('.md', '').replace('.html', '')
             
-            # Extract slug
             parts = [p for p in clean_url.split('/') if p]
-            slug = parts[-1] if parts else ""
+            raw_slug = parts[-1] if parts else ""
+            slug = re.sub(r'[^a-zA-Z0-9_-]', '', raw_slug).lower()
 
             if not slug:
                 return link_text
 
             if slug in valid_slugs:
-                # Force absolute format to fix Hugo relative issues
                 return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{slug})"
             
-            # Broken! Try fuzzy match first.
-            closest = get_close_matches(slug, valid_slugs, n=1, cutoff=0.4)
+            # High cutoff (0.78) so we only fix genuine typos/truncations, NOT random unrelated posts
+            closest = get_close_matches(slug, valid_slugs_list, n=1, cutoff=0.78)
             if closest:
                 print(f"  -> 🔧 FIXED MD link in {filename}: '{slug}' -> '{closest[0]}'")
                 return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{closest[0]})"
-            
-            # 🧠 AI SEMANTIC MATCH: Ask Groq if one of our recent valid slugs matches the broken link topic
-            if valid_slugs:
-                sample_slugs = valid_slugs[:40] # Send up to 40 valid slugs
-                ai_pick = ai_quick_fix(
-                    f"Broken link slug: '{slug}' (Anchor text: '{link_text}').\n"
-                    f"Available valid slugs:\n{', '.join(sample_slugs)}\n\n"
-                    f"If one of the available slugs is clearly about the same topic, reply with ONLY that exact slug string. Otherwise, reply with NONE.",
-                    max_tokens=40
-                )
-                if ai_pick:
-                    ai_pick = ai_pick.strip().strip("'\"`")
-                    if ai_pick in valid_slugs:
-                        print(f"  -> 🧠 AI MATCHED MD link in {filename}: '{slug}' -> '{ai_pick}'")
-                        return f"[{link_text}](https://ltdeveloperblogs.github.io/posts/{ai_pick})"
 
-            # 🚨 Nuke the link, but clean up the remaining text!
-            print(f"  -> ☢️ NUKED dead MD link in {filename}: '{slug}'")
-            if '-' in link_text and (slug in link_text or link_text.lower() == raw_url.lower()):
-                clean_text = link_text.replace('-', ' ').replace('.md', '').replace('.html', '').title()
-                return clean_text
-                
+            # Unfixable dead internal link: unwrap cleanly to plain text so Hugo never crashes!
+            print(f"  -> ☢️ UNLINKED dead MD link in {filename}: '{slug}'")
+            if '-' in link_text and (slug in link_text.lower() or 'http' in link_text.lower() or 'posts/' in link_text.lower()):
+                return slug.replace('-', ' ').title()
             return link_text
 
         content = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', markdown_link_healer, content)
 
         # ==========================================
-        # PASS 2: Catch Bare Paths or HTML Links (/posts/slug or posts/slug)
+        # PASS 2: Catch Bare Paths NOT inside Markdown links
         # ==========================================
         def path_healer(match):
-            full_match = match.group(0)
-            slug = match.group(2).strip('.,;:\'\"()[]')
+            prefix_char = match.group(1) # Character right before the URL
+            full_url = match.group(2)
+            raw_slug = match.group(4)
             
+            # If preceded by '(' or '"', it's already inside a Markdown/HTML link! Leave it alone.
+            if prefix_char in ('(', '"', "'", '['):
+                # Still ensure no trailing bracket is inside
+                cleaned_slug = re.sub(r'[^a-zA-Z0-9_-]', '', raw_slug).lower()
+                if cleaned_slug in valid_slugs:
+                    return f"{prefix_char}https://ltdeveloperblogs.github.io/posts/{cleaned_slug}"
+                return match.group(0)
+
+            slug = re.sub(r'[^a-zA-Z0-9_-]', '', raw_slug).lower()
             if slug in valid_slugs:
-                return full_match
+                return f"{prefix_char}[{slug.replace('-', ' ').title()}](https://ltdeveloperblogs.github.io/posts/{slug})"
                 
-            closest = get_close_matches(slug, valid_slugs, n=1, cutoff=0.4)
+            closest = get_close_matches(slug, valid_slugs_list, n=1, cutoff=0.78)
             if closest:
-                print(f"  -> 🔧 FIXED path in {filename}: '{slug}' -> '{closest[0]}'")
-                return full_match.replace(slug, closest[0])
+                print(f"  -> 🔧 FIXED bare path in {filename}: '{slug}' -> '{closest[0]}'")
+                return f"{prefix_char}[{closest[0].replace('-', ' ').title()}](https://ltdeveloperblogs.github.io/posts/{closest[0]})"
             else:
-                # Delete the dead path completely instead of using a placeholder
-                print(f"  -> ☢️ NUKED dead path in {filename}: '{slug}'")
-                return ""
+                print(f"  -> ☢️ NUKED dead bare path in {filename}: '{slug}'")
+                return prefix_char
 
-        path_pattern = r'(https?://ltdeveloperblogs\.github\.io/posts/|/posts/|posts/)([-\w%]+)'
-        content = re.sub(path_pattern, path_healer, content, flags=re.IGNORECASE)
+        path_pattern = r'(^|.)((https?://ltdeveloperblogs\.github\.io/posts/|/posts/|posts/)([-\w%\[\]]+))'
+        content = re.sub(path_pattern, path_healer, content, flags=re.IGNORECASE | re.MULTILINE)
 
-        # 🧹 SMART CLEANUP: Remove lingering empty parentheses, brackets, or orphaned "see " artifacts across line breaks
-        content = re.sub(r'\(\s*(?:see|read|via)?\s*\)', '', content, flags=re.IGNORECASE | re.DOTALL)
+        # 🧹 SMART CLEANUP: Remove lingering empty parentheses, brackets, or orphaned "see " artifacts
+        content = re.sub(r'\(\s*(?:see|read|via|also:?|link:?)?\s*\)', '', content, flags=re.IGNORECASE | re.DOTALL)
         content = re.sub(r'\[\s*\]', '', content)
 
         # ==========================================
         # PASS 3: Catch and Destroy Empty Headings
         # ==========================================
+        content = re.sub(
+            r'^[^\S\r\n]*(?:>[^\S\r\n]*)*(?:(?:[-*+]|\d+\.)[^\S\r\n]+)+(#{1,6}\s+[^\r\n]+)',
+            r'\1',
+            content,
+            flags=re.MULTILINE
+        )
+
         def empty_heading_healer(match):
             prefix = match.group(1)
             hashes = match.group(2)
             heading_text = match.group(3)
         
             heading_text = re.sub(r'\{#[^\w]*\}', '', heading_text, flags=re.UNICODE)
-        
-            clean_text = re.sub(r'<!--.*?-->', '', heading_text)
-            clean_text = re.sub(r'<[^>]+>', '', clean_text)
-            clean_text = re.sub(r'\{[^}]+\}', '', clean_text)
-            clean_text = re.sub(r'!\[([^\]]*)\]\([^)]*\)', r'\1', clean_text)
-            clean_text = re.sub(r'\[([^\]]*)\]\([^)]*\)', r'\1', clean_text)
+            clean_text = re.sub(r'<!--.*?-->|<[^>]+>|\{[^}]+\}', '', heading_text)
+            clean_text = re.sub(r'!?\[([^\]]*)\]\([^)]*\)', r'\1', clean_text)
             clean_text = html.unescape(clean_text)
         
             if not re.search(r'[^\W_]', clean_text, flags=re.UNICODE):
@@ -2560,40 +2542,71 @@ if __name__ == "__main__":
         run_link_fixer()
     elif args.heal_hugo:
         print("\n--- 🩺 RUNNING HUGO BUILD SELF-HEALER ---")
-        for attempt in range(1, 4):
-            res = subprocess.run(["hugo", "--gc", "--minify"], capture_output=True, text=True)
+        hugo_cmd = ["hugo", "-F", "--gc", "--minify", "--baseURL", "[https://ltdeveloperblogs.github.io/](https://ltdeveloperblogs.github.io/)", "--logLevel", "error"]
+        for attempt in range(1, 5):
+            res = subprocess.run(hugo_cmd, capture_output=True, text=True)
             if res.returncode == 0:
                 print(f"✅ Hugo build succeeded cleanly on attempt {attempt}!")
                 break
             err_log = res.stderr + "\n" + res.stdout
-            print(f"⚠️ Hugo build failed (Attempt {attempt}):\n{err_log[:500]}")
-            # Extract crashing file path from Hugo error log
-            file_match = re.search(r'(content[/\\]posts[/\\][^\s:"\']+\.md)', err_log)
-            if file_match and os.path.exists(file_match.group(1)):
-                bad_file = file_match.group(1)
-                print(f"🧠 Sending crashing file {bad_file} to AI for surgical repair...")
-                with open(bad_file, "r", encoding="utf-8") as f:
-                    bad_content = f.read()
-                fix_prompt = f"""The following Hugo Markdown file caused this build error:
+            print(f"⚠️ Hugo build failed (Attempt {attempt}):\n{err_log[:800]}")
+
+            # 1. Catch Hinode broken link errors: Cannot find page or asset: '...'
+            dead_assets = re.findall(r"Cannot find page or asset:\s*'([^']+)'", err_log)
+            crashing_files = re.findall(r"(?:content[/\\])?posts[/\\]([^\s:\"'`]+\.md)", err_log)
+
+            fixed_something = False
+            if crashing_files:
+                for fname in set(crashing_files):
+                    bad_file = os.path.join(output_dir, fname)
+                    if not os.path.exists(bad_file):
+                        continue
+                    with open(bad_file, "r", encoding="utf-8") as f:
+                        bad_content = f.read()
+                    new_content = bad_content
+
+                    # Surgically strip any dead asset URLs reported by Hugo
+                    for asset in dead_assets:
+                        slug_part = asset.strip("/").split("/")[-1]
+                        # Replace [Anchor](...asset...) with just Anchor
+                        new_content = re.sub(
+                            rf'\[([^\]]+)\]\([^\)]*{re.escape(slug_part)}[^\)]*\)',
+                            r'\1',
+                            new_content
+                        )
+                        new_content = new_content.replace(asset, "")
+
+                    if new_content != bad_content:
+                        with open(bad_file, "w", encoding="utf-8") as f:
+                            f.write(new_content)
+                        print(f"🔧 Surgically stripped dead links {dead_assets} from {bad_file}!")
+                        fixed_something = True
+                    else:
+                        # Ask Groq AI to repair the file based on the exact Hugo error log
+                        print(f"🧠 Sending crashing file {bad_file} to AI for repair...")
+                        fix_prompt = f"""The following Hugo Markdown file caused this build error:
 ERROR:
 {err_log[:800]}
 
 FILE CONTENT:
 {bad_content}
 
-Fix the YAML frontmatter or Markdown syntax error causing the crash. Return ONLY the complete, valid Markdown file starting with --- and ending with the article content. Do NOT wrap in ```markdown codeblocks."""
-                healed = ai_quick_fix(fix_prompt, max_tokens=3500)
-                if healed and "---" in healed:
-                    healed = re.sub(r'^```(?:markdown|md|yaml)?\s*\n', '', healed, flags=re.IGNORECASE)
-                    healed = re.sub(r'\n```\s*$', '', healed).strip()
-                    with open(bad_file, "w", encoding="utf-8") as f:
-                        f.write(healed + "\n")
-                    print(f"🔧 AI repaired {bad_file}. Retrying build...")
-                else:
-                    print(f"🗑️ AI could not repair {bad_file}. Quarantining/Removing file to save site build.")
-                    os.remove(bad_file)
-            else:
+Fix the broken link, YAML frontmatter, or Markdown syntax error causing the crash. If a link is broken, remove the link syntax and keep only the anchor text. Return ONLY the complete, valid Markdown file starting with --- and ending with the article content. Do NOT wrap in ```markdown codeblocks."""
+                        healed = ai_quick_fix(fix_prompt, max_tokens=3500)
+                        if healed and "---" in healed:
+                            healed = re.sub(r'^```(?:markdown|md|yaml)?\s*\n', '', healed, flags=re.IGNORECASE)
+                            healed = re.sub(r'\n```\s*$', '', healed).strip()
+                            with open(bad_file, "w", encoding="utf-8") as f:
+                                f.write(healed + "\n")
+                            print(f"🔧 AI repaired {bad_file}. Retrying build...")
+                            fixed_something = True
+                        else:
+                            print(f"🗑️ AI could not repair {bad_file}. Removing file to save site build.")
+                            os.remove(bad_file)
+                            fixed_something = True
+
+            if not fixed_something:
                 print("❌ Could not isolate a specific markdown file from error log.")
-                break
+                exit(1)
     else:
         print("Please provide a flag: --scrape, --publish, --broadcast, --force-recent, --fix-links, or --heal-hugo")

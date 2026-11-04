@@ -101,11 +101,14 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: python generate_post.py --fix-links
 
-      - name: Build with Hugo
+      - name: Build with Hugo (With AI Self-Healer)
         env:
           HUGO_ENVIRONMENT: production
           NODE_ENV: production
-        run: hugo -F --gc --minify --baseURL "https://ltdeveloperblogs.github.io/" --logLevel error
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python generate_post.py --heal-hugo
 
         # 🚀 THE FIX: Use standard Git push instead of GitHub's broken API
       - name: Deploy to GitHub Pages
