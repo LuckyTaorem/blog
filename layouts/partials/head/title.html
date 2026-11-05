@@ -2,6 +2,19 @@
   {{- if .IsHome -}}
     {{ .Site.Title }}
   {{- else -}}
-    {{ .Title }}
+    {{- $titleLen := len .Title -}}
+    
+    {{- /* If title is less than 30 characters, append the Site Title */ -}}
+    {{- if lt $titleLen 30 -}}
+      {{ .Title }} | {{ .Site.Title }}
+      
+    {{- /* If title is between 40 and 55 characters, show only the Page Title */ -}}
+    {{- else if and (ge $titleLen 40) (le $titleLen 55) -}}
+      {{ .Title }}
+      
+    {{- /* Default fallback for lengths 30-39 or 56+ (currently set to just the Page Title) */ -}}
+    {{- else -}}
+      {{ .Title }}
+    {{- end -}}
   {{- end -}}
 </title>
