@@ -139,7 +139,28 @@
             <link rel="preload" href="{{ $font }}" as="font" type="font/{{ strings.TrimPrefix "." (path.Ext $font) }}" crossorigin>
         {{ end }}
     {{- end -}}
-    {{ partial "head/seo.html" . }}
+    {{- /* Intercept Hinode's SEO partial to conditionally format the Title */ -}}
+    {{- $seoOutput := partial "head/seo.html" . -}}
+    {{- $titleLen := len .Title -}}
+    
+    {{- $newTitle := .Title -}}
+    {{- if lt $titleLen 30 -}}
+      {{- $newTitle = printf "%s | %s" .Title .Site.Title -}}
+    {{- else if and (ge $titleLen 40) (le $titleLen 55) -}}
+      {{- $newTitle = .Title -}}
+    {{- else -}}
+      {{- $newTitle = .Title -}}
+    {{- end -}}
+
+    {{- /* Safely escape quotes and inject the conditional title into the metadata */ -}}
+    {{- $safeNewTitle := $newTitle | htmlEscape -}}
+    {{- $seoOutput = replaceRE "<title>.*?</title>" (printf "<title>%s</title>" $safeNewTitle) $seoOutput -}}
+    {{- $seoOutput = replaceRE "<meta property=\"og:title\" content=\"[^\"]*\"" (printf "<meta property=\"og:title\" content=\"%s\"" $safeNewTitle) $seoOutput -}}
+    {{- $seoOutput = replaceRE "<meta name=\"twitter:title\" content=\"[^\"]*\"" (printf "<meta name=\"twitter:title\" content=\"%s\"" $safeNewTitle) $seoOutput -}}
+    
+    {{- /* Output the modified SEO HTML safely */ -}}
+    {{ $seoOutput | safeHTML }}
+    
     {{ partialCached "head/favicon.html" . -}}
     {{ if gt (len .Site.Languages) 1}}
     <meta name="lang" content="{{ .Site.Language }}">
