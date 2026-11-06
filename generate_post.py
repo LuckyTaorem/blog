@@ -530,6 +530,8 @@ def git_commit_and_push(message, trigger_hugo=False):
         subprocess.run(["git", "add", "content/posts/"], check=True)
         subprocess.run(["git", "add", "assets/images/"], check=True)
         subprocess.run(["git", "add", "queue.json"], check=True)
+        if os.path.exists("static"):
+            subprocess.run(["git", "add", "static/"], check=False)
 
         subprocess.run(["git", "commit", "-m", message], check=False)
         subprocess.run(["git", "pull", "--rebase", "origin", "main"], check=True)
@@ -1258,28 +1260,61 @@ def ping_google_indexing_api(post_slug):
 
 
 def ping_bing_indexing_api(post_slug):
-    print(f"📡 Pinging Bing Indexing API for: {post_slug}")
     live_url = f"https://ltdeveloperblogs.github.io/posts/{post_slug}/"
-    bing_api_key = os.environ.get("BING_API_KEY")
-    
-    if not bing_api_key:
-        print("  ⚠️ Skipped: BING_API_KEY not found in environment.")
-        return
+    host = "ltdeveloperblogs.github.io"
 
-    try:
-        endpoint = f"https://ssl.bing.com/webmaster/api.svc/json/SubmitUrlbatch?apikey={bing_api_key}"
-        payload = {
-            "siteUrl": "https://ltdeveloperblogs.github.io/",
-            "urlList": [live_url]
-        }
-        response = requests.post(endpoint, json=payload, timeout=10)
-        
-        if response.status_code == 200:
-            print(f"  ✅ Success! Bing will index {live_url} shortly.")
-        else:
-            print(f"  ⚠️ Bing API Error {response.status_code}: {response.text}")
-    except Exception as e:
-        print(f"  🚨 Failed to notify Bing: {e}")
+    # 1. Microsoft IndexNow API (Pings Bing, Yandex, Naver, Seznam simultaneously)
+    indexnow_key = os.environ.get("INDEXNOW_API_KEY") or os.environ.get("BING_API_KEY")
+    if indexnow_key:
+        print(f"📡 Pinging Microsoft IndexNow API for: {post_slug}")
+        # Ensure static/<key>.txt exists for domain verification
+        try:
+            os.makedirs("static", exist_ok=True)
+            key_file_path = os.path.join("static", f"{indexnow_key}.txt")
+            if not os.path.exists(key_file_path):
+                with open(key_file_path, "w", encoding="utf-8") as kf:
+                    kf.write(indexnow_key.strip())
+                print(f"  -> Created IndexNow verification file: {key_file_path}")
+        except Exception as e:
+            print(f"  ⚠️ Could not write IndexNow key file: {e}")
+
+        try:
+            indexnow_endpoint = "https://api.indexnow.org/indexnow"
+            indexnow_payload = {
+                "host": host,
+                "key": indexnow_key.strip(),
+                "keyLocation": f"https://{host}/{indexnow_key.strip()}.txt",
+                "urlList": [live_url]
+            }
+            res = requests.post(
+                indexnow_endpoint,
+                json=indexnow_payload,
+                headers={"Content-Type": "application/json; charset=utf-8"},
+                timeout=10
+            )
+            if res.status_code in (200, 202):
+                print(f"  ✅ Success! IndexNow accepted {live_url} (HTTP {res.status_code}).")
+            else:
+                print(f"  ⚠️ IndexNow Error {res.status_code}: {res.text}")
+        except Exception as e:
+            print(f"  🚨 Failed to notify IndexNow: {e}")
+    else:
+        print("  ⚠️ Skipped IndexNow: INDEXNOW_API_KEY / BING_API_KEY not found in environment.")
+
+    # 2. Optional Legacy Bing Webmaster API (if BING_API_KEY is separately configured)
+    bing_api_key = os.environ.get("BING_API_KEY")
+    if bing_api_key and bing_api_key != os.environ.get("INDEXNOW_API_KEY"):
+        try:
+            endpoint = f"https://ssl.bing.com/webmaster/api.svc/json/SubmitUrlbatch?apikey={bing_api_key}"
+            payload = {
+                "siteUrl": f"https://{host}/",
+                "urlList": [live_url]
+            }
+            response = requests.post(endpoint, json=payload, timeout=10)
+            if response.status_code == 200:
+                print(f"  ✅ Success! Legacy Bing Webmaster API notified.")
+        except Exception:
+            pass
 
 def complete_truncated_article(partial_text, article_summary):
     """Takes a truncated article draft and calls fallback APIs to complete it from the cutoff point."""
@@ -1935,12 +1970,13 @@ When you have completely finished writing the conclusion of the article, you MUS
         
         # 🚨 UPDATE THIS BLOCK IN run_publisher()
 
-        # 1. Check if the article was cut off mid-way
-        if "[END OF ARTICLE]" not in article_content:
-            # Attempt to complete the text using a secondary model
+        # 1. Check if the article was cut off mid-way (allow up to 2 continuation passes)
+        continuation_attempts = 0
+        while "[END OF ARTICLE]" not in article_content and continuation_attempts < 2:
+            continuation_attempts += 1
             article_content = complete_truncated_article(article_content, article['summary'])
         
-        # 2. Final check: If it STILL lacks [END OF ARTICLE] after the completion attempt, reject it safely
+        # 2. Final check: If it STILL lacks [END OF ARTICLE] after continuation attempts, reject it safely
         if "[END OF ARTICLE]" not in article_content:
             print(f"  -> 🚨 CRITICAL: Article cut off mid-way and completion failed. Rejecting.")
             if os.path.exists(file_path):
@@ -1950,6 +1986,27 @@ When you have completely finished writing the conclusion of the article, you MUS
         
         # Strip the marker tag out before saving
         article_content = article_content.replace("[END OF ARTICLE]", "").strip()
+
+        # 3. Clean up any trailing dangling half-line (e.g., "**Q: Can I launch a") if the AI placed [END OF ARTICLE] right after an incomplete sentence
+        lines = [line.rstrip() for line in article_content.splitlines()]
+        while lines:
+            last_line = lines[-1].strip()
+            if not last_line:
+                lines.pop()
+                continue
+            # If the last line is a dangling question/bullet or doesn't end with valid sentence punctuation
+            if (
+                last_line.startswith(("**Q:", "Q:", "- **", "* **", "#"))
+                and not last_line.endswith((".", "?", "!", '"', "'", ")", "*", ">", "|"))
+            ) or (
+                not last_line.endswith((".", "?", "!", '"', "'", ")", "*", ">", "|", "}"))
+                and len(last_line) < 80
+            ):
+                print(f"  -> 🧹 Stripping incomplete trailing line: '{last_line}'")
+                lines.pop()
+            else:
+                break
+        article_content = "\n".join(lines).strip()
             
         # 🚨 THE BOUNCER: Forcefully overwrite AI image hallucinations with our verified Python variable
         if re.search(r'^images:\s*\[.*\]', article_content, re.MULTILINE):
@@ -1958,18 +2015,26 @@ When you have completely finished writing the conclusion of the article, you MUS
         if re.search(r'^thumbnail:\s*.*', article_content, re.MULTILINE):
             article_content = re.sub(r'^thumbnail:\s*.*', f'thumbnail: "{image_url}"', article_content, flags=re.MULTILINE)
         
-        # 🚀 NEW: Catch bare internal URLs, strip trailing brackets/punctuation, and force them into markdown links
+        # 🚀 1. Repair broken [text(url) links where the closing ']' before '(' was accidentally omitted or stripped
+        article_content = re.sub(
+            r'\[([^\[\]\n]+?)\((https?://[^\s\)]+|/posts/[^\s\)]+)\)',
+            r'[\1](\2)',
+            article_content
+        )
+
+        # 🚀 2. Catch bare internal URLs (not preceded by '[' or '(') and turn them into clean readable title links
         def convert_bare_internal_urls(match):
             if match.group(1):
                 return match.group(1)
             url = match.group(2)
             clean_url = url.rstrip('.,;:)]}\'"')
             trailing_punct = url[len(clean_url):]
-            return f"[{clean_url}]({clean_url}){trailing_punct}"
+            slug_part = clean_url.rstrip('/').split('/')[-1]
+            readable_title = slug_part.replace('-', ' ').title() if slug_part else clean_url
+            return f"[{readable_title}]({clean_url}){trailing_punct}"
 
-        # Stop bare URL regex from eating closing brackets ] or parentheses )
         article_content = re.sub(
-            r'(\[[^\]]+\]\s*\(\s*https?://ltdeveloperblogs\.github\.io/posts/[^\s\)\]]+\s*\))|(https?://ltdeveloperblogs\.github\.io/posts/[^\s>"\)\]]+)',
+            r'(\[[^\]]+\]\s*\(\s*https?://ltdeveloperblogs\.github\.io/posts/[^\s\)\]]+\s*\))|(?<!\[)(?<!\()(https?://ltdeveloperblogs\.github\.io/posts/[^\s>"\)\]\(]+)',
             convert_bare_internal_urls,
             article_content
         )
@@ -2307,12 +2372,17 @@ def run_link_fixer():
         original_content = content
 
         # ==========================================
-        # PASS 0: Fix double-bracket or malformed bracket links
-        # e.g. [text](/posts/slug]) or [/posts/slug]
+        # PASS 0: Fix missing closing bracket before '(' e.g. [https://.../slug(https://.../slug)
+        # and fix trailing ']' inside parentheses e.g. [text](/posts/slug])
         # ==========================================
         content = re.sub(
-            r'((?:https?://ltdeveloperblogs\.github\.io)?/?posts/[a-zA-Z0-9_-]+)\]+',
-            r'\1',
+            r'\[([^\[\]\n]+?)\((https?://[^\s\)]+|/posts/[^\s\)]+)\)',
+            r'[\1](\2)',
+            content
+        )
+        content = re.sub(
+            r'\(((?:https?://ltdeveloperblogs\.github\.io)?/?posts/[a-zA-Z0-9_-]+)\]+\)',
+            r'(\1)',
             content
         )
 
@@ -2340,24 +2410,27 @@ def run_link_fixer():
             
             parts = [p for p in clean_url.split('/') if p]
             raw_slug = parts[-1] if parts else ""
-            # Keep word characters (including unicode like é) and hyphens, strip brackets/punctuation
             slug = re.sub(r'[^\w-]', '', raw_slug, flags=re.UNICODE).lower()
 
             if not slug or slug in ("posts", "ltdeveloperblogsgithubio"):
                 return link_text
+
+            # Convert ugly raw URL link text into a clean readable title
+            if link_text.startswith("http") or link_text.startswith("/posts/") or link_text.startswith("posts/"):
+                link_text = slug.replace('-', ' ').title()
 
             base_domain = "https://" + "ltdeveloperblogs.github.io"
 
             if slug in valid_slugs:
                 return f"[{link_text}]({base_domain}/posts/{slug})"
             
-            # High cutoff (0.78) so we only fix genuine typos/truncations, NOT random unrelated posts
             closest = get_close_matches(slug, valid_slugs_list, n=1, cutoff=0.78)
             if closest:
                 print(f"  -> 🔧 FIXED MD link in {filename}: '{slug}' -> '{closest[0]}'")
+                if link_text == slug.replace('-', ' ').title():
+                    link_text = closest[0].replace('-', ' ').title()
                 return f"[{link_text}]({base_domain}/posts/{closest[0]})"
 
-            # Unfixable dead internal link: unwrap cleanly to plain text so Hugo never crashes!
             print(f"  -> ☢️ UNLINKED dead MD link in {filename}: '{slug}'")
             if '-' in link_text and (slug in link_text.lower() or 'http' in link_text.lower() or 'posts/' in link_text.lower()):
                 return slug.replace('-', ' ').title()
@@ -2369,15 +2442,12 @@ def run_link_fixer():
         # PASS 2: Catch Bare Paths NOT inside Markdown links
         # ==========================================
         def path_healer(match):
-            prefix_char = match.group(1) # Character right before the URL
+            prefix_char = match.group(1)
             raw_slug = match.group(4)
             base_domain = "https://" + "ltdeveloperblogs.github.io"
             
-            # If preceded by '(' or '"', it's already inside a Markdown/HTML link! Leave it alone.
+            # If preceded by '(', '"', "'", or '[', it's already inside a Markdown/HTML link!
             if prefix_char in ('(', '"', "'", '['):
-                cleaned_slug = re.sub(r'[^\w-]', '', raw_slug, flags=re.UNICODE).lower()
-                if cleaned_slug in valid_slugs:
-                    return f"{prefix_char}{base_domain}/posts/{cleaned_slug}"
                 return match.group(0)
 
             slug = re.sub(r'[^\w-]', '', raw_slug, flags=re.UNICODE).lower()
@@ -2392,12 +2462,12 @@ def run_link_fixer():
                 print(f"  -> ☢️ NUKED dead bare path in {filename}: '{slug}'")
                 return prefix_char
 
-        path_pattern = r'(^|.)((https?://ltdeveloperblogs\.github\.io/posts/|/posts/|posts/)([-\w%\[\]]+))'
+        path_pattern = r'(^|[^\w/])((https?://ltdeveloperblogs\.github\.io/posts/|/posts/|posts/)([-\w%]+))'
         content = re.sub(path_pattern, path_healer, content, flags=re.IGNORECASE | re.MULTILINE)
 
-        # 🧹 SMART CLEANUP: Remove lingering empty parentheses, brackets, or orphaned "see " artifacts
-        content = re.sub(r'\(\s*(?:see|read|via|also:?|link:?)?\s*\)', '', content, flags=re.IGNORECASE | re.DOTALL)
-        content = re.sub(r'\[\s*\]', '', content)
+        # 🧹 SMART CLEANUP (SAFE SINGLE-LINE ONLY): Remove orphaned "(see )" or "[]" without eating across lines
+        content = re.sub(r'\([ \t]*(?:see|read|via|also:?|link:?)[ \t]*\)', '', content, flags=re.IGNORECASE)
+        content = re.sub(r'\[[ \t]*\]', '', content)
 
         # ==========================================
         # PASS 3: Catch and Destroy Empty Headings

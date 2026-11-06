@@ -120,6 +120,17 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python generate_post.py --heal-hugo
 
+        # 🚀 Write IndexNow verification file into ./public before deploying to GitHub Pages
+      - name: Create IndexNow Verification File
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_API_KEY || secrets.BING_API_KEY }}
+        run: |
+          if [ -n "$INDEXNOW_KEY" ]; then
+            mkdir -p ./public
+            echo -n "$INDEXNOW_KEY" > "./public/${INDEXNOW_KEY}.txt"
+            echo "✅ Created IndexNow verification file in ./public/${INDEXNOW_KEY}.txt"
+          fi
+
         # 🚀 THE FIX: Use standard Git push instead of GitHub's broken API
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
@@ -182,8 +193,8 @@ jobs:
           WP_COM_USERNAME: ${{ secrets.WP_COM_USERNAME }}
           WP_COM_PASSWORD: ${{ secrets.WP_COM_PASSWORD }}
           WP_COM_SITE_DOMAIN: ${{ secrets.WP_COM_SITE_DOMAIN }}
-          CODERLEGION_API_KEY: ${{ secrets.CODERLEGION_API_KEY }}
           BING_API_KEY: ${{ secrets.BING_API_KEY }}
+          INDEXNOW_API_KEY: ${{ secrets.INDEXNOW_API_KEY }}
         run: |
           COMMIT_MSG="${{ github.event.head_commit.message }}"
           echo "Last commit message was: $COMMIT_MSG"

@@ -45,7 +45,9 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INDEXNOW_API_KEY: ${{ secrets.INDEXNOW_API_KEY }}
         run: python generate_post.py --publish
 

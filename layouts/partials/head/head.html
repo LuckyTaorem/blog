@@ -20,6 +20,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="google-site-verification" content="i8FXlaFc-ZLFqIzN-rgTIK614f6dGg1gz8HAegeb4tI" />
     <link rel="canonical" href="{{ .Permalink }}">
+
+    <!-- Robots & X-Robots-Tag -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta http-equiv="X-Robots-Tag" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="x-robots-tag" content="index, follow">
+
+    <!-- Publisher & Author Meta -->
+    <meta name="author" content="{{ .Site.Params.author.name | default "Taorem Lucky Singh" }}">
+    <meta name="publisher" content="{{ .Site.Params.publisher.name | default "Taorem Lucky Singh" }}">
+    <meta property="article:publisher" content="{{ .Site.Params.publisher.name | default "Taorem Lucky Singh" }}">
+
+    <!-- Tags & Categories as Meta Keywords -->
+    {{- $keywords := slice -}}
+    {{- with .Params.tags }}{{ $keywords = $keywords | append . }}{{ end -}}
+    {{- with .Params.categories }}{{ $keywords = $keywords | append . }}{{ end -}}
+    {{- if gt (len $keywords) 0 -}}
+    <meta name="keywords" content="{{ delimit ($keywords | uniq) ", " | htmlEscape }}">
+    {{- else if .Site.Params.keywords -}}
+    <meta name="keywords" content="{{ delimit .Site.Params.keywords ", " | htmlEscape }}">
+    {{- end -}}
     
 
 <!-- 🚀 AGGRESSIVE THIRD-PARTY LAZY LOADER -->
