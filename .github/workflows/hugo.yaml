@@ -80,7 +80,7 @@ jobs:
           echo "$(pwd)/dart-sass" >> $GITHUB_PATH
 
       - name: Install npm dependencies
-        run: npm install
+        run: npm install --ignore-scripts --no-audit --no-fund
 
       # 🚀 FAST PATH: Try building directly without Python or pip overhead
       - name: Fast Build with Hugo
