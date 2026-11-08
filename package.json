@@ -21,8 +21,11 @@
     "husky": "^9.1.7",
     "sass": "^1.101.0"
   },
+  "overrides": {
+    "minimatch": "^11.0.1"
+  },
   "scripts": {
-    "mod:update": "hugo mod npm pack && npm install",
+    "mod:update": "hugo mod npm pack && npm install --ignore-scripts",
     "lint:css": "stylelint \"**/*.scss\"",
     "build:css": "postcss src/css/*.css -d public/css",
     "prepare": "node .husky/install.mjs"
