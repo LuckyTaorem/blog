@@ -1,96 +1,322 @@
 <style>
-  /* Custom Hover Animations */
-  .article-group {
-    cursor: pointer;
+  /* ===================================================
+     🚀 AI CLOUD-DIVE HERO & ATMOSPHERIC TRANSITION
+     =================================================== */
+  :root {
+    --sky-top: #eff6ff;
+    --sky-mid: #e0f2fe;
+    --sky-bottom: var(--bs-body-bg, #ffffff);
+    --cloud-back: rgba(255, 255, 255, 0.65);
+    --cloud-mid: rgba(255, 255, 255, 0.85);
+    --cloud-front: var(--bs-body-bg, #ffffff);
+    --hud-bg: rgba(255, 255, 255, 0.78);
+    --hud-border: rgba(15, 23, 42, 0.09);
+    --hud-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.1);
+    --hero-grid-line: rgba(15, 23, 42, 0.04);
+    --hero-accent: #f97316;
+    --hero-accent-glow: rgba(249, 115, 22, 0.22);
   }
-  .article-group .img-wrapper {
+
+  [data-bs-theme="dark"], [data-theme="dark"], html.dark {
+    --sky-top: #0b0f19;
+    --sky-mid: #111827;
+    --sky-bottom: var(--bs-body-bg, #16191d);
+    --cloud-back: rgba(30, 41, 59, 0.55);
+    --cloud-mid: rgba(22, 25, 29, 0.82);
+    --cloud-front: var(--bs-body-bg, #16191d);
+    --hud-bg: rgba(17, 24, 39, 0.75);
+    --hud-border: rgba(255, 255, 255, 0.1);
+    --hud-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.55);
+    --hero-grid-line: rgba(255, 255, 255, 0.035);
+    --hero-accent: #f97316;
+    --hero-accent-glow: rgba(249, 115, 22, 0.28);
+  }
+
+  /* Break out to full viewport width cleanly */
+  .cloud-hero-stage {
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: -1.5rem;
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     overflow: hidden;
+    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 62%, var(--sky-bottom) 100%);
+    padding: 4.5rem 1rem 9.5rem;
+    isolation: isolate;
   }
-  .article-group img {
-    transition: transform 0.4s ease-in-out;
+
+  /* Subtle Perspective Cyber Grid */
+  .cloud-hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(to right, var(--hero-grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--hero-grid-line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 65% at 50% 35%, #000 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 35%, #000 30%, transparent 100%);
+    z-index: 0;
+    pointer-events: none;
   }
-  .article-group:hover img {
-    transform: scale(1.08);
+
+  /* Ambient Radial Glow */
+  .hero-glow {
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    width: min(850px, 92vw);
+    height: min(500px, 60vh);
+    transform: translate3d(-50%, -50%, 0);
+    background: radial-gradient(circle, var(--hero-accent-glow) 0%, rgba(59, 130, 246, 0.1) 45%, transparent 72%);
+    z-index: 0;
+    pointer-events: none;
+    animation: ambientPulse 6s ease-in-out infinite alternate;
   }
-  .article-group .title-link {
-    transition: color 0.2s ease-in-out;
+
+  @keyframes ambientPulse {
+    0% { opacity: 0.75; transform: translate3d(-50%, -50%, 0) scale(0.96); }
+    100% { opacity: 1; transform: translate3d(-50%, -50%, 0) scale(1.06); }
   }
-  /* Change the hex code below to match your theme's primary color (e.g., orange or blue) */
-  .article-group:hover .title-link {
-    color: #f97316 !important; 
+
+  /* Floating AI Telemetry Cards (Static idle float + scroll parallax) */
+  .ai-sky-hud {
+    position: absolute;
+    z-index: 2;
+    background: var(--hud-bg);
+    border: 1px solid var(--hud-border);
+    box-shadow: var(--hud-shadow);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 0.65rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    pointer-events: none;
+    will-change: transform, opacity;
   }
-  /* Container Fixes */
-.hero-container {
-  /* No overflow:hidden here, allowing the dropdown to flow naturally */
-  z-index: 1;
-}
 
-.hero-glow {
-  background: radial-gradient(circle, rgba(var(--bs-primary-rgb), 0.08) 0%, transparent 60%);
-  z-index: -1;
-  pointer-events: none;
-}
-
-/* Premium Button Hover Effects */
-.premium-btn,
-.premium-btn-outline {
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.premium-btn:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 20px -10px rgba(var(--bs-primary-rgb), 0.8) !important;
-}
-
-.premium-btn-outline:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.15) !important;
-  background-color: var(--bs-secondary-bg) !important;
-}
-
-/* Dropdown Animation */
-.premium-dropdown {
-  animation: slideFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transform-origin: top center;
-}
-
-@keyframes slideFadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.98);
+  .ai-sky-hud-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    animation: hudFloat 5s ease-in-out infinite alternate;
   }
-  100% {
+
+  .hud-card-1 { top: 14%; left: max(3%, calc(50% - 610px)); }
+  .hud-card-2 { top: 18%; right: max(3%, calc(50% - 610px)); }
+  .hud-card-2 .ai-sky-hud-inner { animation-delay: -2.2s; }
+  .hud-card-3 { bottom: 26%; left: max(5%, calc(50% - 570px)); }
+  .hud-card-3 .ai-sky-hud-inner { animation-delay: -3.6s; }
+  .hud-card-4 { bottom: 28%; right: max(5%, calc(50% - 570px)); }
+  .hud-card-4 .ai-sky-hud-inner { animation-delay: -1.4s; }
+
+  @keyframes hudFloat {
+    0% { transform: translate3d(0, -7px, 0); }
+    100% { transform: translate3d(0, 7px, 0); }
+  }
+
+  .hud-pulse-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);
+    animation: dotBlink 2s infinite;
+  }
+
+  @keyframes dotBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Core Hero Content Cockpit */
+  .hero-cockpit {
+    position: relative;
+    z-index: 5;
+    will-change: transform, opacity;
+  }
+
+  /* Multi-Layered Cloud Bank System */
+  .cloud-layer-wrap {
+    position: absolute;
+    left: -10%;
+    width: 120%;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+
+  .cloud-layer-back {
+    bottom: 55px;
+    z-index: 1;
+    color: var(--cloud-back);
+  }
+
+  .cloud-layer-mid {
+    bottom: 18px;
+    z-index: 3;
+    color: var(--cloud-mid);
+  }
+
+  .cloud-layer-front {
+    bottom: -2px;
+    z-index: 6;
+    color: var(--cloud-front);
+  }
+
+  .cloud-svg-drift-slow {
+    animation: cloudDriftSlow 18s ease-in-out infinite alternate;
+  }
+
+  .cloud-svg-drift-med {
+    animation: cloudDriftMed 13s ease-in-out infinite alternate;
+  }
+
+  @keyframes cloudDriftSlow {
+    0% { transform: translate3d(-1.8%, 0, 0); }
+    100% { transform: translate3d(1.8%, 0, 0); }
+  }
+
+  @keyframes cloudDriftMed {
+    0% { transform: translate3d(1.5%, 3px, 0); }
+    100% { transform: translate3d(-1.5%, -3px, 0); }
+  }
+
+  /* Live Pipeline Status Ticker */
+  .pipeline-live-strip {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    padding: 0.55rem 1.25rem;
+    border-radius: 999px;
+    background: var(--hud-bg);
+    border: 1px solid var(--hud-border);
+    box-shadow: var(--hud-shadow);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    font-size: 0.8rem;
+  }
+
+  /* Scroll-Down Cloud Dive Indicator */
+  .scroll-dive-cue {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--bs-secondary-color);
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.8;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .scroll-dive-cue:hover {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    color: var(--bs-primary);
+    transform: translateY(3px);
   }
-}
+  .scroll-dive-mouse {
+    width: 22px;
+    height: 34px;
+    border: 2px solid currentColor;
+    border-radius: 12px;
+    position: relative;
+  }
+  .scroll-dive-wheel {
+    width: 4px;
+    height: 7px;
+    background: currentColor;
+    border-radius: 2px;
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: scrollWheelDive 1.6s infinite;
+  }
+  @keyframes scrollWheelDive {
+    0% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, 12px); }
+  }
 
-/* Tech Stack Pill Hover Effects */
-.tech-pill {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.85rem;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  cursor: default;
-}
+  /* Responsive Adjustments for Tablet & Mobile */
+  @media (max-width: 1199.98px) {
+    .hud-card-3, .hud-card-4 { display: none; }
+    .hud-card-1 { top: 8%; left: 3%; }
+    .hud-card-2 { top: 8%; right: 3%; }
+  }
 
-.tech-pill i {
-  transition: transform 0.3s ease, color 0.3s ease;
-  font-size: 1rem;
-}
+  @media (max-width: 767.98px) {
+    .cloud-hero-stage {
+      min-height: auto;
+      padding: 3rem 0.75rem 6.5rem;
+    }
+    .ai-sky-hud { display: none; }
+    .hero-headline { font-size: 2.35rem !important; }
+    .hero-subtext { font-size: 1.05rem !important; }
+    .cloud-layer-back { bottom: 28px; }
+    .cloud-layer-mid { bottom: 8px; }
+  }
 
-.tech-pill:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 8px 15px -8px rgba(0, 0, 0, 0.2) !important;
-  border-color: var(--bs-primary) !important;
-}
+  @media (prefers-reduced-motion: reduce) {
+    .ai-sky-hud-inner, .cloud-svg-drift-slow, .cloud-svg-drift-med, .hero-glow, .scroll-dive-wheel {
+      animation: none !important;
+    }
+  }
 
-.tech-pill:hover i {
-  transform: scale(1.15);
-  color: var(--bs-primary) !important;
-}
+  /* Existing Card & Button Hover Animations */
+  .article-group { cursor: pointer; }
+  .article-group .img-wrapper { overflow: hidden; }
+  .article-group img { transition: transform 0.4s ease-in-out; }
+  .article-group:hover img { transform: scale(1.08); }
+  .article-group .title-link { transition: color 0.2s ease-in-out; }
+  .article-group:hover .title-link { color: #f97316 !important; }
+
+  .premium-btn, .premium-btn-outline {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .premium-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px -10px rgba(var(--bs-primary-rgb), 0.8) !important;
+  }
+  .premium-btn-outline:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.15) !important;
+    background-color: var(--bs-secondary-bg) !important;
+  }
+  .premium-dropdown {
+    animation: slideFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform-origin: top center;
+  }
+  @keyframes slideFadeIn {
+    0% { opacity: 0; transform: translateY(-10px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .tech-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: default;
+  }
+  .tech-pill i { transition: transform 0.3s ease, color 0.3s ease; font-size: 1rem; }
+  .tech-pill:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 15px -8px rgba(0, 0, 0, 0.2) !important;
+    border-color: var(--bs-primary) !important;
+  }
+  .tech-pill:hover i { transform: scale(1.15); color: var(--bs-primary) !important; }
 </style>
 
 {{/* Fetch all posts */}}
@@ -100,97 +326,269 @@
 {{ $heroFeatures := first 3 $posts }}
 {{ $gridPosts := first 6 (after 3 $posts) }}
 
-<!-- ENHANCED PROJECT & AI BLOG HERO -->
-<div class="hero-container row align-items-center py-5 my-4 my-lg-5 position-relative">
-  
-  <!-- Subtly animated AI-style background glow -->
-  <div class="hero-glow position-absolute top-50 start-50 translate-middle w-100 h-100"></div>
-  
-  <div class="col-lg-10 col-xl-8 mx-auto text-center position-relative" style="z-index: 2;">
-    
-    <!-- Top Badge -->
-    <span class="badge bg-primary-subtle text-primary mb-4 px-3 py-2 rounded-pill fw-bold text-uppercase border border-primary-subtle shadow-sm hero-badge">
-      <i class="fas fa-robot me-2"></i>Automated Content Infrastructure
-    </span>
-    
-    <!-- Main Headline -->
-    <h1 class="display-3 fw-bolder mb-4 hero-headline" style="letter-spacing: -0.03em; line-height: 1.1;">
-      Intelligent pipelines for the <span class="text-primary">modern web.</span>
-    </h1>
-    
-    <!-- Subheadline -->
-    <p class="lead text-secondary mb-5 fs-4 px-md-5 hero-subtext" style="opacity: 0.9; line-height: 1.6;">
-      Deploy AI-driven publishing architectures, dynamic web applications, and hands-free content engines that scale automatically.
-    </p>
-    
-    <!-- Call to Actions -->
-    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center mb-5">
-      
-      <!-- Projects Dropdown Button -->
-      <div class="dropdown">
-        <button class="btn btn-primary btn-lg px-5 py-3 fw-bold rounded-pill shadow-sm dropdown-toggle w-100 premium-btn" type="button" id="heroProjectsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="fas fa-tools me-2"></i>Use Free Tools
-        </button>
-        <ul class="dropdown-menu shadow border-subtle mt-2 w-100 text-center premium-dropdown" aria-labelledby="heroProjectsDropdown">
-          <li><a class="dropdown-item py-2 fw-medium" href="{{ "ats-scanner/" | absURL }}">ATS Scanner</a></li>
-          <li><a class="dropdown-item py-2 fw-medium" href="{{ "cover-letter-generator/" | absURL }}">Cover Letter Generator</a></li>
-          <li><a class="dropdown-item py-2 fw-medium" href="{{ "schema-generator/" | absURL }}">Schema Generator</a></li>
-          <li><a class="dropdown-item py-2 fw-medium" href="{{ "web-scraper/" | absURL }}">Web Scraper</a></li>
-          <li><a class="dropdown-item py-2 fw-medium" href="{{ "csv-to-json/" | absURL }}">CSV to JSON</a></li>
-          <li><a class="dropdown-item py-2 fw-medium" href="{{ "sitemap-validator/" | absURL }}">Sitemap Validator</a></li>
-        </ul>
-      </div>
+<!-- ========================================================= -->
+<!-- ☁️ ANIMATED AI CLOUD-DIVE HERO (STATIC FLOAT + SCROLL DIVE) -->
+<!-- ========================================================= -->
+<section class="cloud-hero-stage mb-5" id="cloud-hero-stage">
+  <div class="cloud-hero-grid"></div>
+  <div class="hero-glow"></div>
 
-      <!-- Blogs Button -->
-      <a href="{{ "posts/" | absURL }}" class="btn btn-outline-secondary bg-body btn-lg px-5 py-3 fw-bold rounded-pill premium-btn-outline">
-        <i class="fas fa-book-open me-2"></i>Explore Blogs
-      </a>
-    </div>
-
-    <!-- Tech Stack Trust Signals -->
-    <div class="mt-5 pt-4 border-top border-secondary border-opacity-25">
-      <p class="text-uppercase text-secondary fw-bold small mb-4" style="letter-spacing: 1.5px; font-size: 0.75rem;">Powered By</p>
-      
-      <div class="d-flex flex-wrap justify-content-center gap-3">
-        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-          <i class="fas fa-microchip"></i> AI Automation
-        </div>
-        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-          <i class="fas fa-database text-danger"></i> Redis Database
-        </div>
-        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-          <i class="fas fa-spider text-success"></i> Web Scraping
-        </div>
-        <!-- HTML5 -->
-        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-          <i class="fab fa-html5" style="color: #e34f26;"></i> HTML
-        </div>
-        
-        <!-- CSS3 -->
-        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-          <i class="fab fa-css3-alt" style="color: #1572b6;"></i> CSS
-        </div>
-        
-        <!-- JavaScript -->
-        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-          <i class="fab fa-js" style="color: #f7df1e;"></i> JavaScript
-        </div>
-        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-          <i class="fas fa-caret-up text-body"></i> Vercel
-        </div>
-        <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-          <i class="fab fa-github text-body"></i> GitHub Actions
-        </div>
+  <!-- Floating AI & Automation Telemetry Nodes (Parallax on Scroll) -->
+  <div class="ai-sky-hud hud-card-1" id="hud-left-top">
+    <div class="ai-sky-hud-inner">
+      <span class="hud-pulse-dot"></span>
+      <div class="text-start">
+        <div class="fw-bold text-body" style="font-size: 0.78rem;">Autonomous RSS Engine</div>
+        <div class="text-secondary" style="font-size: 0.68rem;">11 Tech Feeds • Fact Extraction</div>
       </div>
     </div>
-    
   </div>
-</div>
+
+  <div class="ai-sky-hud hud-card-2" id="hud-right-top">
+    <div class="ai-sky-hud-inner">
+      <i class="fas fa-network-wired text-primary fs-5"></i>
+      <div class="text-start">
+        <div class="fw-bold text-body" style="font-size: 0.78rem;">Multi-LLM Waterfall</div>
+        <div class="text-secondary" style="font-size: 0.68rem;">Groq • Gemini • Mistral • GPT-4o</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-sky-hud hud-card-3" id="hud-left-btm">
+    <div class="ai-sky-hud-inner">
+      <i class="fas fa-bolt text-warning fs-5"></i>
+      <div class="text-start">
+        <div class="fw-bold text-body" style="font-size: 0.78rem;">8-Platform Broadcast</div>
+        <div class="text-secondary" style="font-size: 0.68rem;">Bluesky • LinkedIn • DEV • WP</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-sky-hud hud-card-4" id="hud-right-btm">
+    <div class="ai-sky-hud-inner">
+      <i class="fas fa-shield-alt text-success fs-5"></i>
+      <div class="text-start">
+        <div class="fw-bold text-body" style="font-size: 0.78rem;">Self-Healing CI/CD</div>
+        <div class="text-secondary" style="font-size: 0.68rem;">IndexNow & Google API Active</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Center Cockpit -->
+  <div class="container position-relative hero-cockpit" id="hero-cockpit">
+    <div class="col-lg-10 col-xl-8 mx-auto text-center">
+      
+      <!-- Top Badge -->
+      <span class="badge bg-primary-subtle text-primary mb-3 px-3 py-2 rounded-pill fw-bold text-uppercase border border-primary-subtle shadow-sm hero-badge">
+        <i class="fas fa-robot me-2"></i>Automated Content Infrastructure
+      </span>
+      
+      <!-- Main Headline -->
+      <h1 class="display-3 fw-bolder mb-3 hero-headline" style="letter-spacing: -0.03em; line-height: 1.1;">
+        Intelligent pipelines for the <span class="text-primary">modern web.</span>
+      </h1>
+      
+      <!-- Subheadline -->
+      <p class="lead text-secondary mb-4 fs-4 px-md-5 hero-subtext" style="opacity: 0.92; line-height: 1.6;">
+        Deploy AI-driven publishing architectures, autonomous LLM workflows, and full-stack developer utilities that scale in the cloud.
+      </p>
+
+      <!-- Live Telemetry Status Bar -->
+      <div class="mb-4">
+        <div class="pipeline-live-strip">
+          <span class="d-inline-flex align-items-center gap-2 fw-semibold text-body">
+            <span class="hud-pulse-dot"></span> {{ len $posts }}+ AI-Curated Articles
+          </span>
+          <span class="text-secondary opacity-50 d-none d-sm-inline">•</span>
+          <span class="text-secondary fw-medium d-none d-sm-inline">
+            <i class="fas fa-cloud-upload-alt text-primary me-1"></i>6 Free Developer Tools
+          </span>
+          <span class="text-secondary opacity-50 d-none d-md-inline">•</span>
+          <span class="text-secondary fw-medium d-none d-md-inline">
+            <i class="fas fa-sync-alt text-primary me-1"></i>24/7 GitHub Actions Pipeline
+          </span>
+        </div>
+      </div>
+      
+      <!-- Call to Actions -->
+      <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center mb-4">
+        <!-- Projects Dropdown Button -->
+        <div class="dropdown">
+          <button class="btn btn-primary btn-lg px-5 py-3 fw-bold rounded-pill shadow-sm dropdown-toggle w-100 premium-btn" type="button" id="heroProjectsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-tools me-2"></i>Use Free Tools
+          </button>
+          <ul class="dropdown-menu shadow border-subtle mt-2 w-100 text-center premium-dropdown" aria-labelledby="heroProjectsDropdown">
+            <li><a class="dropdown-item py-2 fw-medium" href="{{ "ats-scanner/" | absURL }}">ATS Scanner</a></li>
+            <li><a class="dropdown-item py-2 fw-medium" href="{{ "cover-letter-generator/" | absURL }}">Cover Letter Generator</a></li>
+            <li><a class="dropdown-item py-2 fw-medium" href="{{ "schema-generator/" | absURL }}">Schema Generator</a></li>
+            <li><a class="dropdown-item py-2 fw-medium" href="{{ "web-scraper/" | absURL }}">Web Scraper</a></li>
+            <li><a class="dropdown-item py-2 fw-medium" href="{{ "csv-to-json/" | absURL }}">CSV to JSON</a></li>
+            <li><a class="dropdown-item py-2 fw-medium" href="{{ "sitemap-validator/" | absURL }}">Sitemap Validator</a></li>
+          </ul>
+        </div>
+
+        <!-- Blogs Button -->
+        <a href="{{ "posts/" | absURL }}" class="btn btn-outline-secondary bg-body btn-lg px-5 py-3 fw-bold rounded-pill premium-btn-outline">
+          <i class="fas fa-book-open me-2"></i>Explore Blogs
+        </a>
+      </div>
+
+      <!-- Tech Stack Trust Signals -->
+      <div class="mt-4 pt-4 border-top border-secondary border-opacity-25">
+        <p class="text-uppercase text-secondary fw-bold small mb-3" style="letter-spacing: 1.5px; font-size: 0.72rem;">Powered By Cloud & AI Architecture</p>
+        
+        <div class="d-flex flex-wrap justify-content-center gap-2 gap-sm-3">
+          <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+            <i class="fas fa-microchip text-primary"></i> AI Automation
+          </div>
+          <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+            <i class="fas fa-database text-danger"></i> Redis Database
+          </div>
+          <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+            <i class="fas fa-spider text-success"></i> Web Scraping
+          </div>
+          <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+            <i class="fab fa-python" style="color: #3776ab;"></i> Python
+          </div>
+          <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+            <i class="fab fa-js" style="color: #f7df1e;"></i> JavaScript
+          </div>
+          <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+            <i class="fas fa-caret-up text-body"></i> Vercel
+          </div>
+          <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
+            <i class="fab fa-github text-body"></i> GitHub Actions
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll Dive Cue -->
+      <div class="mt-4 pt-2">
+        <a href="#latest-innovations-section" class="scroll-dive-cue" aria-label="Scroll through the clouds to articles">
+          <div class="scroll-dive-mouse"><div class="scroll-dive-wheel"></div></div>
+          <span>Dive Into Articles</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LAYER 1: Distant Atmospheric Cloud Bank -->
+  <div class="cloud-layer-wrap cloud-layer-back" id="cloud-back">
+    <svg class="w-100 cloud-svg-drift-slow" viewBox="0 0 1440 220" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height: clamp(95px, 14vw, 190px);">
+      <path d="M0 160C110 160 140 85 260 95C380 105 430 40 570 55C710 70 760 130 900 110C1040 90 1110 30 1240 50C1340 65 1390 120 1440 130V220H0V160Z" fill="currentColor"/>
+    </svg>
+  </div>
+
+  <!-- LAYER 2: Midground parting Cloud Bank -->
+  <div class="cloud-layer-wrap cloud-layer-mid" id="cloud-mid">
+    <svg class="w-100 cloud-svg-drift-med" viewBox="0 0 1440 200" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height: clamp(85px, 12vw, 165px);">
+      <path d="M0 120C130 95 210 150 350 130C490 110 560 45 720 60C880 75 940 145 1090 125C1240 105 1320 55 1440 85V200H0V120Z" fill="currentColor"/>
+    </svg>
+  </div>
+
+  <!-- LAYER 3: Foreground Seamless Page-Transition Cloud Bank -->
+  <div class="cloud-layer-wrap cloud-layer-front" id="cloud-front">
+    <svg class="w-100" viewBox="0 0 1440 160" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height: clamp(70px, 10vw, 135px);">
+      <path d="M0 95C95 125 190 55 320 65C450 75 520 135 670 120C820 105 910 35 1060 55C1210 75 1310 125 1440 90V160H0V95Z" fill="currentColor"/>
+    </svg>
+  </div>
+</section>
+
+<script>
+  // 60FPS Hardware-Accelerated Cloud-Dive Scroll Engine
+  document.addEventListener("DOMContentLoaded", function() {
+    const stage = document.getElementById("cloud-hero-stage");
+    const cockpit = document.getElementById("hero-cockpit");
+    const cloudBack = document.getElementById("cloud-back");
+    const cloudMid = document.getElementById("cloud-mid");
+    const cloudFront = document.getElementById("cloud-front");
+    const hudLT = document.getElementById("hud-left-top");
+    const hudRT = document.getElementById("hud-right-top");
+    const hudLB = document.getElementById("hud-left-btm");
+    const hudRB = document.getElementById("hud-right-btm");
+
+    if (!stage || !cockpit) return;
+
+    let isHeroVisible = true;
+    let ticking = false;
+
+    // Pause calculations completely when hero is off-screen
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver((entries) => {
+        isHeroVisible = entries[0].isIntersecting;
+      }, { threshold: 0 });
+      observer.observe(stage);
+    }
+
+    function updateCloudDive() {
+      ticking = false;
+      if (!isHeroVisible) return;
+
+      // Respect Accessibility "Pause Motion" or OS Reduced Motion
+      if (
+        document.documentElement.classList.contains("a11y-pause-motion") ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        cockpit.style.transform = "";
+        cockpit.style.opacity = "";
+        return;
+      }
+
+      const scrollY = window.scrollY || window.pageYOffset;
+      const stageHeight = stage.offsetHeight || 700;
+      const progress = Math.min(1, Math.max(0, scrollY / (stageHeight * 0.85)));
+
+      // 1. Cockpit zooms forward as if flying through the clouds
+      const scale = 1 + progress * 0.16;
+      const translateY = scrollY * 0.28;
+      const opacity = Math.max(0, 1 - progress * 1.35);
+      cockpit.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
+      cockpit.style.opacity = opacity.toFixed(3);
+
+      // 2. Clouds rise and expand toward the viewer to create the cloud-pass effect
+      if (cloudBack) {
+        cloudBack.style.transform = `translate3d(${(progress * -35).toFixed(1)}px, ${(progress * -55).toFixed(1)}px, 0) scale(${(1 + progress * 0.18).toFixed(3)})`;
+      }
+      if (cloudMid) {
+        cloudMid.style.transform = `translate3d(${(progress * 45).toFixed(1)}px, ${(progress * -90).toFixed(1)}px, 0) scale(${(1 + progress * 0.28).toFixed(3)})`;
+      }
+      if (cloudFront) {
+        cloudFront.style.transform = `translate3d(0, ${(progress * -25).toFixed(1)}px, 0) scale(${(1 + progress * 0.12).toFixed(3)})`;
+      }
+
+      // 3. Telemetry HUD cards part outward left & right as you dive through
+      if (hudLT && window.innerWidth >= 768) {
+        hudLT.style.transform = `translate3d(${(progress * -140).toFixed(1)}px, ${(progress * -60).toFixed(1)}px, 0)`;
+        hudLT.style.opacity = opacity.toFixed(3);
+      }
+      if (hudRT && window.innerWidth >= 768) {
+        hudRT.style.transform = `translate3d(${(progress * 140).toFixed(1)}px, ${(progress * -60).toFixed(1)}px, 0)`;
+        hudRT.style.opacity = opacity.toFixed(3);
+      }
+      if (hudLB && window.innerWidth >= 1200) {
+        hudLB.style.transform = `translate3d(${(progress * -180).toFixed(1)}px, ${(progress * 40).toFixed(1)}px, 0)`;
+        hudLB.style.opacity = opacity.toFixed(3);
+      }
+      if (hudRB && window.innerWidth >= 1200) {
+        hudRB.style.transform = `translate3d(${(progress * 180).toFixed(1)}px, ${(progress * 40).toFixed(1)}px, 0)`;
+        hudRB.style.opacity = opacity.toFixed(3);
+      }
+    }
+
+    window.addEventListener("scroll", function() {
+      if (!ticking && isHeroVisible) {
+        window.requestAnimationFrame(updateCloudDive);
+        ticking = true;
+      }
+    }, { passive: true });
+  });
+</script>
 
 <!-- ========================================== -->
 <!-- SECTION 1: RECENT POSTS AS "FEATURES"      -->
 <!-- ========================================== -->
-<div class="row g-4 mb-5 pb-5">
+<div class="row g-4 mb-5 pb-5 pt-2" id="latest-innovations-section">
   <div class="col-12 text-center mb-4">
     <h2 class="fw-bolder h3">Latest Innovations & Architectures</h2>
   </div>

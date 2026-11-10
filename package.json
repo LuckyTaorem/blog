@@ -1,33 +1,52 @@
 {
-  "name": "blog",
-  "version": "1.0.0",
-  "workspaces": [
-    "packages/hugoautogen"
-  ],
+  "comments": {
+    "dependencies": {},
+    "devDependencies": {
+      "@commitlint/cli": "project",
+      "@commitlint/config-conventional": "project",
+      "@eslint/js": "project",
+      "@fullhuman/postcss-purgecss": "project",
+      "@stylistic/eslint-plugin": "project",
+      "cssnano": "project",
+      "cssnano-preset-advanced": "project",
+      "eslint": "project",
+      "globals": "project",
+      "husky": "project",
+      "postcss-cli": "project",
+      "sass": "project",
+      "stylelint": "project",
+      "stylelint-config-standard-scss": "project"
+    }
+  },
   "dependencies": {},
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@stylistic/eslint-plugin": "^5.10.0",
-    "eslint": "^10.1.0",
-    "globals": "^17.4.0",
-    "stylelint": "^17.5.0",
-    "stylelint-config-standard-scss": "^17.0.0",
-    "@fullhuman/postcss-purgecss": "^8.0.0",
-    "cssnano": "^7.1.3",
-    "cssnano-preset-advanced": "^7.0.11",
-    "postcss-cli": "^11.0.1",
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
+    "@eslint/js": "^10.0.1",
+    "@fullhuman/postcss-purgecss": "^8.0.0",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "cssnano": "^7.1.3",
+    "cssnano-preset-advanced": "^7.0.11",
+    "eslint": "^10.1.0",
+    "globals": "^17.4.0",
     "husky": "^9.1.7",
-    "sass": "^1.101.0"
+    "postcss-cli": "^11.0.1",
+    "sass": "^1.101.0",
+    "stylelint": "^17.5.0",
+    "stylelint-config-standard-scss": "^17.0.0"
   },
+  "name": "blog",
   "overrides": {
     "minimatch": "^11.0.1"
   },
   "scripts": {
-    "mod:update": "hugo mod npm pack && npm install --ignore-scripts",
-    "lint:css": "stylelint \"**/*.scss\"",
     "build:css": "postcss src/css/*.css -d public/css",
+    "lint:css": "stylelint \"**/*.scss\"",
+    "mod:update": "hugo mod npm pack && npm install --ignore-scripts",
     "prepare": "node .husky/install.mjs"
-  }
+  },
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/hugoautogen"
+  ]
 }

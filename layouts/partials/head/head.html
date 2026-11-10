@@ -161,15 +161,25 @@
     {{- end -}}
     {{- /* Intercept Hinode's SEO partial to conditionally format the Title */ -}}
     {{- $seoOutput := partial "head/seo.html" . -}}
-    {{- $titleLen := len .Title -}}
+    {{- $rawTitle := strings.TrimSpace .Title -}}
+    {{- $titleLen := len $rawTitle -}}
     
-    {{- $newTitle := .Title -}}
-    {{- if lt $titleLen 30 -}}
-      {{- $newTitle = printf "%s | %s" .Title .Site.Title -}}
+    {{- $newTitle := $rawTitle -}}
+    {{- if .IsHome -}}
+      {{- if and (ge $titleLen 40) (le $titleLen 60) -}}
+        {{- $newTitle = $rawTitle -}}
+      {{- else -}}
+        {{- /* Exactly 50 characters fallback for Homepage */ -}}
+        {{- $newTitle = "Lucky Taorem | AI Automation, Tech & Web Dev Blog" -}}
+      {{- end -}}
+    {{- else if eq $titleLen 0 -}}
+      {{- $newTitle = "Lucky Taorem | AI Automation, Tech & Web Dev Blog" -}}
+    {{- else if lt $titleLen 30 -}}
+      {{- $newTitle = printf "%s | %s" $rawTitle .Site.Title -}}
     {{- else if and (ge $titleLen 40) (le $titleLen 55) -}}
-      {{- $newTitle = .Title -}}
+      {{- $newTitle = $rawTitle -}}
     {{- else -}}
-      {{- $newTitle = .Title -}}
+      {{- $newTitle = $rawTitle -}}
     {{- end -}}
 
     {{- /* Safely escape quotes and inject the conditional title into the metadata */ -}}
@@ -186,32 +196,142 @@
     <meta name="lang" content="{{ .Site.Language }}">
     {{ end }}
 <style>
-    /* CSS Overrides for specific text areas */
-    html.a11y-custom-fs body { font-size: var(--a11y-fs-global) !important; }
-    html.a11y-custom-fs .article-content-wrapper { font-size: var(--a11y-fs-article) !important; }
-    html.a11y-custom-fs .card-body p, html.a11y-custom-fs .card a, html.a11y-custom-fs .d-flex.flex-column.gap-4 p { font-size: var(--a11y-fs-cards) !important; }
-    
-    /* Headings are scaled using a percentage so H1 stays bigger than H2 */
-    html.a11y-custom-fs h1, html.a11y-custom-fs h2, html.a11y-custom-fs h3, 
-    html.a11y-custom-fs h4, html.a11y-custom-fs h5, html.a11y-custom-fs h6,
-    html.a11y-custom-fs .card-title a {
-        font-size: calc(var(--a11y-fs-headings) * 1%) !important;
+    /* =========================================
+       ♿ ENHANCED ACCESSIBILITY ENGINE STYLES
+       ========================================= */
+    /* 1. Individual Font Size Scopes */
+    html.a11y-custom-global body,
+    html.a11y-custom-global p:not(.card-text):not(.article-content-wrapper p),
+    html.a11y-custom-global li:not(.nav-item):not(.dropdown-menu li),
+    html.a11y-custom-global .lead {
+        font-size: var(--a11y-fs-global, 16px) !important;
+    }
+    html.a11y-custom-article .article-content-wrapper,
+    html.a11y-custom-article .article-content-wrapper p,
+    html.a11y-custom-article .article-content-wrapper li,
+    html.a11y-custom-article .ai-summary-text {
+        font-size: var(--a11y-fs-article, 18px) !important;
+    }
+    html.a11y-custom-cards .card-body p,
+    html.a11y-custom-cards .card-text,
+    html.a11y-custom-cards .article-group p,
+    html.a11y-custom-cards .d-flex.flex-column.gap-4 p {
+        font-size: var(--a11y-fs-cards, 14px) !important;
     }
 
-    /* Colors */
-    html.a11y-custom-bg body, html.a11y-custom-bg .premium-footer, html.a11y-custom-bg .card, html.a11y-custom-bg .offcanvas { 
+    /* 2. Proportional Heading Scale (Preserves Hierarchy H1 > H2 > H3) */
+    html.a11y-custom-headings h1, html.a11y-custom-headings .h1, html.a11y-custom-headings .display-3, html.a11y-custom-headings .display-4 {
+        font-size: calc(2.4rem * var(--a11y-scale-headings, 1)) !important;
+    }
+    html.a11y-custom-headings h2, html.a11y-custom-headings .h2, html.a11y-custom-headings .display-5 {
+        font-size: calc(1.9rem * var(--a11y-scale-headings, 1)) !important;
+    }
+    html.a11y-custom-headings h3, html.a11y-custom-headings .h3, html.a11y-custom-headings .display-6, html.a11y-custom-headings .card-title a {
+        font-size: calc(1.35rem * var(--a11y-scale-headings, 1)) !important;
+    }
+    html.a11y-custom-headings h4, html.a11y-custom-headings .h4,
+    html.a11y-custom-headings h5, html.a11y-custom-headings .h5 {
+        font-size: calc(1.15rem * var(--a11y-scale-headings, 1)) !important;
+    }
+
+    /* 3. Line Height & Letter Spacing */
+    html.a11y-custom-lh body,
+    html.a11y-custom-lh p,
+    html.a11y-custom-lh li,
+    html.a11y-custom-lh .article-content-wrapper {
+        line-height: var(--a11y-lh, 1.6) !important;
+    }
+    html.a11y-custom-ls body,
+    html.a11y-custom-ls p,
+    html.a11y-custom-ls h1, html.a11y-custom-ls h2, html.a11y-custom-ls h3, html.a11y-custom-ls h4,
+    html.a11y-custom-ls a {
+        letter-spacing: var(--a11y-ls, 0px) !important;
+    }
+
+    /* 4. Custom Colors */
+    html.a11y-custom-bg body,
+    html.a11y-custom-bg .main-content,
+    html.a11y-custom-bg .premium-footer,
+    html.a11y-custom-bg .card,
+    html.a11y-custom-bg .bg-body-tertiary,
+    html.a11y-custom-bg .offcanvas { 
         background-color: var(--a11y-bg) !important; 
+        background-image: none !important;
         transition: none !important; 
     }
-    html.a11y-custom-link a { color: var(--a11y-link) !important; }
-    html.a11y-custom-btn .btn-primary, html.a11y-custom-btn .btn-outline-primary, html.a11y-custom-btn .badge.bg-primary { 
+    html.a11y-custom-link a:not(.btn) {
+        color: var(--a11y-link) !important;
+    }
+    html.a11y-custom-btn .btn-primary,
+    html.a11y-custom-btn .btn-outline-primary,
+    html.a11y-custom-btn .badge.bg-primary,
+    html.a11y-custom-btn .badge.bg-primary-subtle { 
         background-color: var(--a11y-btn) !important; 
         border-color: var(--a11y-btn) !important; 
-        color: #fff !important; 
+        color: #ffffff !important; 
+    }
+
+    /* 5. Quick-Toggle Modes */
+    html.a11y-dyslexia body,
+    html.a11y-dyslexia p,
+    html.a11y-dyslexia li,
+    html.a11y-dyslexia h1, html.a11y-dyslexia h2, html.a11y-dyslexia h3, html.a11y-dyslexia h4,
+    html.a11y-dyslexia a {
+        font-family: "Comic Sans MS", "OpenDyslexic", "Trebuchet MS", Verdana, sans-serif !important;
+        word-spacing: 0.14em !important;
+    }
+    html.a11y-highlight-links a:not(.btn) {
+        text-decoration: underline !important;
+        text-decoration-thickness: 2px !important;
+        text-underline-offset: 4px !important;
+        background-color: rgba(255, 235, 59, 0.22) !important;
+        border-radius: 4px;
+        padding: 0 3px;
+    }
+    html.a11y-high-contrast {
+        filter: contrast(135%) saturate(120%);
+    }
+    html.a11y-grayscale {
+        filter: grayscale(100%);
+    }
+    html.a11y-high-contrast.a11y-grayscale {
+        filter: grayscale(100%) contrast(135%);
+    }
+    html.a11y-pause-motion *,
+    html.a11y-pause-motion *::before,
+    html.a11y-pause-motion *::after {
+        animation-play-state: paused !important;
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+    .a11y-toggle-btn.active {
+        background-color: var(--bs-primary) !important;
+        border-color: var(--bs-primary) !important;
+        color: #ffffff !important;
+    }
+
+    /* Reading Guide Bar */
+    #a11y-reading-guide {
+        position: fixed;
+        left: 0;
+        top: -100px;
+        width: 100vw;
+        height: 36px;
+        background: rgba(249, 115, 22, 0.16);
+        border-top: 2px solid #f97316;
+        border-bottom: 2px solid #f97316;
+        pointer-events: none;
+        z-index: 99998;
+        display: none;
+        transform: translate3d(0, 0, 0);
+        box-shadow: 0 0 25px rgba(249, 115, 22, 0.25);
+    }
+    html.a11y-reading-guide #a11y-reading-guide {
+        display: block;
     }
 
     /* Mobile Transparent Drag Effect */
-    /* 1. Make the main navbar wrappers completely transparent */
     body.a11y-is-dragging .fixed-top,
     body.a11y-is-dragging .navbar,
     body.a11y-is-dragging .navbar-collapse.show,
@@ -220,16 +340,12 @@
         box-shadow: none !important;
         border: none !important;
     }
-    
-    /* 2. Keep a slight blur/tint only on the dropdown menu itself */
     body.a11y-is-dragging .dropdown-menu {
         background-color: rgba(128, 128, 128, 0.15) !important;
         box-shadow: none !important;
         border-color: transparent !important;
         backdrop-filter: blur(2px);
     }
-
-    /* 3. Aggressively fade out EVERYTHING else */
     body.a11y-is-dragging .navbar-nav > li:not(.a11y-widget-container),
     body.a11y-is-dragging .navbar-brand,
     body.a11y-is-dragging .navbar-toggler,
@@ -237,10 +353,8 @@
     body.a11y-is-dragging .dropdown-menu > li:not(.is-dragging-row) {
         opacity: 0.05 !important;
         transition: opacity 0.2s ease;
-        pointer-events: none; /* Prevents accidental clicks */
+        pointer-events: none;
     }
-    
-    /* Ensure the widget itself stays 100% visible */
     body.a11y-is-dragging .navbar-nav > li.a11y-widget-container {
         opacity: 1 !important;
     }
@@ -248,7 +362,6 @@
     /* =========================================
        ✨ PREMIUM MOBILE NAVIGATION MENU ✨
        ========================================= */
-    /* Target only when the navbar is explicitly collapsed */
     @media (max-width: 991.98px) {
         .navbar-collapse.show,
         .navbar-collapse.collapsing {
@@ -257,19 +370,14 @@
             border-radius: 1.5rem;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
             border: 1px solid rgba(128, 128, 128, 0.08);
-            
-            /* FIX: Use standard document flow with a top margin instead of absolute positioning */
             position: relative; 
             margin-top: 1rem;
             margin-bottom: 1rem;
-            
             z-index: 1050; 
             overflow-x: hidden !important; 
             overflow-y: auto !important;  
             max-height: calc(100vh - 120px) !important; 
         }
-
-        /* 1.5. Mobile Dropdown Menu Fix */
         .navbar-collapse.show .navbar-nav .dropdown-menu,
         .navbar-collapse.collapsing .navbar-nav .dropdown-menu {
             position: static !important; 
@@ -284,13 +392,10 @@
             margin-top: 1rem !important;
             border-radius: 14px;
         }
-
-        /* 2. Main Navigation Links (Home, Articles, etc.) */
         .navbar-collapse.show .navbar-nav,
         .navbar-collapse.collapsing .navbar-nav { 
             gap: 0.5rem; 
         }
-        
         .navbar-collapse.show .navbar-nav > .nav-item > .nav-link,
         .navbar-collapse.collapsing .navbar-nav > .nav-item > .nav-link {
             font-size: 1.25rem !important;
@@ -303,8 +408,6 @@
             align-items: center;
             background-color: transparent;
         }
-        
-        /* Soft tap/hover effect with slide animation */
         .navbar-collapse.show .navbar-nav > .nav-item > .nav-link:hover,
         .navbar-collapse.show .navbar-nav > .nav-item > .nav-link:active,
         .navbar-collapse.collapsing .navbar-nav > .nav-item > .nav-link:hover,
@@ -313,8 +416,6 @@
             color: var(--bs-primary) !important;
             transform: translateX(6px);
         }
-
-        /* Add a sleek right arrow to main links */
         .navbar-collapse.show .navbar-nav > .nav-item > .nav-link:not(.btn-link):not([data-bs-toggle="modal"]):not(.dropdown-toggle)::after,
         .navbar-collapse.collapsing .navbar-nav > .nav-item > .nav-link:not(.btn-link):not([data-bs-toggle="modal"]):not(.dropdown-toggle)::after {
             content: "›";
@@ -323,14 +424,10 @@
             font-weight: 300;
             opacity: 0.3;
         }
-
-        /* Hide the ugly default horizontal line */
         .navbar-collapse.show .navbar-nav > li > hr,
         .navbar-collapse.collapsing .navbar-nav > li > hr { 
             display: none !important; 
         }
-
-        /* 3. Utility Tools Group */
         .navbar-collapse.show .navbar-nav .btn-link, 
         .navbar-collapse.show .navbar-nav .nav-link[data-bs-toggle="modal"],
         .navbar-collapse.show .navbar-nav .a11y-widget-container > button,
@@ -348,8 +445,6 @@
             align-items: center;
             width: 100%;
         }
-
-        /* Tint the utility icons */
         .navbar-collapse.show .navbar-nav .btn-link svg,
         .navbar-collapse.show .navbar-nav .nav-link[data-bs-toggle="modal"] svg,
         .navbar-collapse.show .navbar-nav .nav-link[data-bs-toggle="modal"] i,
@@ -364,8 +459,6 @@
             height: 22px;
             margin-right: 0.5rem;
         }
-        
-        /* Reset hover animation for the tools */
         .navbar-collapse.show .navbar-nav .btn-link:hover,
         .navbar-collapse.show .navbar-nav .nav-link[data-bs-toggle="modal"]:hover,
         .navbar-collapse.show .navbar-nav .a11y-widget-container > button:hover,
@@ -379,30 +472,80 @@
 </style>
 
 <script>
-    // 1. RUN IMMEDIATELY: Prevent screen flickering
+    // 1.SHARED A11Y APPLIER: Runs immediately to prevent FOUC and on every user interaction
+    window.applyA11ySettings = function(settings) {
+        const html = document.documentElement;
+        const s = settings || {};
+
+        // Scoped Sliders
+        if (s.fsGlobal) { html.style.setProperty('--a11y-fs-global', s.fsGlobal + 'px'); html.classList.add('a11y-custom-global'); }
+        else { html.classList.remove('a11y-custom-global'); }
+
+        if (s.fsArticle) { html.style.setProperty('--a11y-fs-article', s.fsArticle + 'px'); html.classList.add('a11y-custom-article'); }
+        else { html.classList.remove('a11y-custom-article'); }
+
+        if (s.fsCards) { html.style.setProperty('--a11y-fs-cards', s.fsCards + 'px'); html.classList.add('a11y-custom-cards'); }
+        else { html.classList.remove('a11y-custom-cards'); }
+
+        if (s.fsHeadings) { html.style.setProperty('--a11y-scale-headings', (parseFloat(s.fsHeadings) / 100).toFixed(2)); html.classList.add('a11y-custom-headings'); }
+        else { html.classList.remove('a11y-custom-headings'); }
+
+        if (s.lh) { html.style.setProperty('--a11y-lh', s.lh); html.classList.add('a11y-custom-lh'); }
+        else { html.classList.remove('a11y-custom-lh'); }
+
+        if (s.ls) { html.style.setProperty('--a11y-ls', s.ls + 'px'); html.classList.add('a11y-custom-ls'); }
+        else { html.classList.remove('a11y-custom-ls'); }
+
+        // Colors
+        if (s.bg) { html.style.setProperty('--a11y-bg', s.bg); html.classList.add('a11y-custom-bg'); }
+        else { html.classList.remove('a11y-custom-bg'); }
+
+        if (s.link) { html.style.setProperty('--a11y-link', s.link); html.classList.add('a11y-custom-link'); }
+        else { html.classList.remove('a11y-custom-link'); }
+
+        if (s.btn) { html.style.setProperty('--a11y-btn', s.btn); html.classList.add('a11y-custom-btn'); }
+        else { html.classList.remove('a11y-custom-btn'); }
+
+        // Toggle Modes
+        html.classList.toggle('a11y-dyslexia', !!s.dyslexia);
+        html.classList.toggle('a11y-highlight-links', !!s.highlightLinks);
+        html.classList.toggle('a11y-high-contrast', !!s.highContrast);
+        html.classList.toggle('a11y-grayscale', !!s.grayscale);
+        html.classList.toggle('a11y-reading-guide', !!s.readingGuide);
+        html.classList.toggle('a11y-pause-motion', !!s.pauseMotion);
+    };
+
     (function() {
         try {
-            const settings = JSON.parse(localStorage.getItem('a11ySettings')) || {};
-            const html = document.documentElement;
-            if (settings.fsGlobal) { 
-                html.style.setProperty('--a11y-fs-global', settings.fsGlobal + 'px'); 
-                html.style.setProperty('--a11y-fs-article', settings.fsArticle + 'px'); 
-                html.style.setProperty('--a11y-fs-cards', settings.fsCards + 'px'); 
-                html.style.setProperty('--a11y-fs-headings', settings.fsHeadings); 
-                html.classList.add('a11y-custom-fs'); 
-            }
-            if (settings.bg) { html.style.setProperty('--a11y-bg', settings.bg); html.classList.add('a11y-custom-bg'); }
-            if (settings.link) { html.style.setProperty('--a11y-link', settings.link); html.classList.add('a11y-custom-link'); }
-            if (settings.btn) { html.style.setProperty('--a11y-btn', settings.btn); html.classList.add('a11y-custom-btn'); }
+            const saved = JSON.parse(localStorage.getItem('a11ySettings')) || {};
+            window.applyA11ySettings(saved);
         } catch(e) {}
     })();
 
-    // 2. UI LOGIC
+    // 2. DOM UI INITIALIZATION
     document.addEventListener("DOMContentLoaded", function() {
-        const html = document.documentElement;
-        let settings = JSON.parse(localStorage.getItem('a11ySettings')) || {};
+        let settings = {};
+        try { settings = JSON.parse(localStorage.getItem('a11ySettings')) || {}; } catch(e) {}
+
+        // Inject Reading Guide DOM bar once
+        if (!document.getElementById('a11y-reading-guide')) {
+            const guideBar = document.createElement('div');
+            guideBar.id = 'a11y-reading-guide';
+            document.body.appendChild(guideBar);
+
+            const moveGuide = (clientY) => {
+                if (document.documentElement.classList.contains('a11y-reading-guide')) {
+                    guideBar.style.top = (clientY - 18) + 'px';
+                }
+            };
+            window.addEventListener('mousemove', (e) => moveGuide(e.clientY), { passive: true });
+            window.addEventListener('touchmove', (e) => {
+                if (e.touches && e.touches[0]) moveGuide(e.touches[0].clientY);
+            }, { passive: true });
+        }
 
         function getHexColor(element, property) {
+            if (!element) return '#000000';
             const rgb = window.getComputedStyle(element)[property];
             if (!rgb || rgb.indexOf('rgb') === -1) return '#000000';
             const match = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
@@ -410,49 +553,55 @@
             return "#" + (1 << 24 | match[1] << 16 | match[2] << 8 | match[3]).toString(16).slice(1);
         }
 
-        // Font Sliders
         const slGlobal = document.getElementById('a11y-fs-global');
         const slArticle = document.getElementById('a11y-fs-article');
         const slCards = document.getElementById('a11y-fs-cards');
         const slHeadings = document.getElementById('a11y-fs-headings');
+        const slLh = document.getElementById('a11y-lh');
+        const slLs = document.getElementById('a11y-ls');
         
-        // Colors & Reset
         const bgColor = document.getElementById('a11y-bgcolor');
         const linkColor = document.getElementById('a11y-linkcolor');
         const btnColor = document.getElementById('a11y-btncolor');
         const btnReset = document.getElementById('a11y-reset');
+        const toggleBtns = document.querySelectorAll('[data-a11y-toggle]');
 
-        if(slGlobal) {
-            // Init Values
+        function syncUI() {
+            if (!slGlobal) return;
             slGlobal.value = settings.fsGlobal || 16; document.getElementById('val-global').innerText = slGlobal.value;
             slArticle.value = settings.fsArticle || 18; document.getElementById('val-article').innerText = slArticle.value;
             slCards.value = settings.fsCards || 14; document.getElementById('val-cards').innerText = slCards.value;
             slHeadings.value = settings.fsHeadings || 100; document.getElementById('val-headings').innerText = slHeadings.value;
-            
+            if (slLh) { slLh.value = settings.lh || 1.6; document.getElementById('val-lh').innerText = slLh.value; }
+            if (slLs) { slLs.value = settings.ls || 0; document.getElementById('val-ls').innerText = slLs.value; }
+
             bgColor.value = settings.bg || getHexColor(document.body, 'backgroundColor');
-            btnColor.value = settings.btn || '#0d6efd'; 
-            
-            const tempLink = document.createElement('a'); tempLink.href="#"; document.body.appendChild(tempLink);
+            btnColor.value = settings.btn || '#f97316';
+            const tempLink = document.createElement('a'); tempLink.href = "#"; document.body.appendChild(tempLink);
             linkColor.value = settings.link || getHexColor(tempLink, 'color');
             document.body.removeChild(tempLink);
 
-            function saveAndApply() {
-                localStorage.setItem('a11ySettings', JSON.stringify(settings));
-                html.style.setProperty('--a11y-fs-global', settings.fsGlobal + 'px');
-                html.style.setProperty('--a11y-fs-article', settings.fsArticle + 'px');
-                html.style.setProperty('--a11y-fs-cards', settings.fsCards + 'px');
-                html.style.setProperty('--a11y-fs-headings', settings.fsHeadings);
-                html.classList.add('a11y-custom-fs');
-                if (settings.bg) { html.style.setProperty('--a11y-bg', settings.bg); html.classList.add('a11y-custom-bg'); }
-                if (settings.link) { html.style.setProperty('--a11y-link', settings.link); html.classList.add('a11y-custom-link'); }
-                if (settings.btn) { html.style.setProperty('--a11y-btn', settings.btn); html.classList.add('a11y-custom-btn'); }
-            }
+            toggleBtns.forEach(btn => {
+                const key = btn.getAttribute('data-a11y-toggle');
+                btn.classList.toggle('active', !!settings[key]);
+                btn.setAttribute('aria-pressed', !!settings[key]);
+            });
+        }
 
-            // Slider Listeners
-            function bindSlider(slider, key, valDisplay, isPercent = false) {
+        function saveAndApply() {
+            localStorage.setItem('a11ySettings', JSON.stringify(settings));
+            window.applyA11ySettings(settings);
+        }
+
+        if (slGlobal) {
+            syncUI();
+
+            function bindSlider(slider, key, valDisplay) {
+                if (!slider) return;
                 slider.addEventListener('input', (e) => { 
                     settings[key] = e.target.value; 
-                    document.getElementById(valDisplay).innerText = e.target.value; 
+                    const disp = document.getElementById(valDisplay);
+                    if (disp) disp.innerText = e.target.value; 
                     saveAndApply(); 
                 });
             }
@@ -460,43 +609,51 @@
             bindSlider(slArticle, 'fsArticle', 'val-article');
             bindSlider(slCards, 'fsCards', 'val-cards');
             bindSlider(slHeadings, 'fsHeadings', 'val-headings');
+            bindSlider(slLh, 'lh', 'val-lh');
+            bindSlider(slLs, 'ls', 'val-ls');
 
             bgColor.addEventListener('input', (e) => { settings.bg = e.target.value; saveAndApply(); });
             linkColor.addEventListener('input', (e) => { settings.link = e.target.value; saveAndApply(); });
             btnColor.addEventListener('input', (e) => { settings.btn = e.target.value; saveAndApply(); });
-            
-            // Transparency effect for Mobile
-            const sliders = document.querySelectorAll('.form-range');
 
+            toggleBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const key = btn.getAttribute('data-a11y-toggle');
+                    settings[key] = !settings[key];
+                    btn.classList.toggle('active', !!settings[key]);
+                    btn.setAttribute('aria-pressed', !!settings[key]);
+                    saveAndApply();
+                });
+            });
+
+            // Transparency effect for Mobile Slider Dragging
+            const sliders = document.querySelectorAll('.form-range');
             sliders.forEach(slider => {
                 const handleDragStart = () => {
                     if (window.innerWidth < 992) {
                         document.body.classList.add('a11y-is-dragging');
-                        slider.closest('li').classList.add('is-dragging-row');
+                        const li = slider.closest('li');
+                        if (li) li.classList.add('is-dragging-row');
                     }
                 };
-                
                 const handleDragEnd = () => {
                     document.body.classList.remove('a11y-is-dragging');
-                    slider.closest('li').classList.remove('is-dragging-row');
+                    const li = slider.closest('li');
+                    if (li) li.classList.remove('is-dragging-row');
                 };
-
-                // Trigger on touch (mobile) and click (desktop simulating mobile)
-                slider.addEventListener('touchstart', handleDragStart, {passive: true});
-                slider.addEventListener('touchend', handleDragEnd);
+                slider.addEventListener('touchstart', handleDragStart, { passive: true });
+                slider.addEventListener('touchend', handleDragEnd, { passive: true });
                 slider.addEventListener('mousedown', handleDragStart);
                 window.addEventListener('mouseup', handleDragEnd);
             });
 
-            // Reset
-            btnReset.addEventListener('click', () => {
-                settings = {}; localStorage.removeItem('a11ySettings');
-                html.classList.remove('a11y-custom-fs', 'a11y-custom-bg', 'a11y-custom-link', 'a11y-custom-btn');
-                slGlobal.value = 16; document.getElementById('val-global').innerText = 16;
-                slArticle.value = 18; document.getElementById('val-article').innerText = 18;
-                slCards.value = 14; document.getElementById('val-cards').innerText = 14;
-                slHeadings.value = 100; document.getElementById('val-headings').innerText = 100;
-                bgColor.value = getHexColor(document.body, 'backgroundColor');
+            btnReset.addEventListener('click', (e) => {
+                e.stopPropagation();
+                settings = {};
+                localStorage.removeItem('a11ySettings');
+                window.applyA11ySettings({});
+                syncUI();
             });
         }
     });

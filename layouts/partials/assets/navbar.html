@@ -564,8 +564,7 @@ if (document.cookie.includes('googtrans')) {
 
                     {{/* Accessibility Menu Widget */}}
                     <li class="nav-item dropdown ms-lg-2 a11y-widget-container mb-3 mb-lg-0 mt-2 mt-lg-0">
-                        <button class="btn btn-link nav-link d-flex align-items-center justify-content-between w-100 text-start px-3 py-2 dropdown-toggle" type="button" id="a11yMenu" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Accessibility Options" title="Accessibility Options" style="color: inherit; background: transparent; border: none;">
-                            <!-- Groups Icon and Text together on the left -->
+                        <button class="btn btn-link nav-link d-flex align-items-center justify-content-between w-100 text-start px-3 py-2 dropdown-toggle" type="button" id="a11yMenu" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Accessibility Options" title="Accessibility Options" style="color: inherit; background: transparent; border: none;">
                             <div class="d-flex align-items-center gap-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-universal-access-circle flex-shrink-0" viewBox="0 0 16 16">
                                     <path d="M8 4.143A1.071 1.071 0 1 0 8 2a1.071 1.071 0 0 0 0 2.143Zm-4.668 1.47 3.24.316v2.5l-.323 4.585A.383.383 0 0 0 7 13.14l.826-4.017c.045-.18.301-.18.346 0l.826 4.017a.383.383 0 0 0 .753-.125L9.43 8.43v-2.5l3.239-.316a.38.38 0 0 0-.047-.756H8.5l-.5-.005H8L7.5 4.86h-4.12a.38.38 0 0 0-.048.756z"/>
@@ -575,45 +574,92 @@ if (document.cookie.includes('googtrans')) {
                             </div>
                         </button>
                         
-                        <ul class="dropdown-menu dropdown-menu-end p-3 shadow-lg" aria-labelledby="a11yMenu" style="min-width: 290px; box-sizing: border-box; font-size: 0.85rem;">
+                        <ul class="dropdown-menu dropdown-menu-end p-3 shadow-lg a11y-dropdown-panel" aria-labelledby="a11yMenu" style="min-width: 320px; max-height: 82vh; overflow-y: auto; box-sizing: border-box; font-size: 0.85rem;">
                             
-                            <li class="fw-bold mb-2 text-uppercase text-muted border-bottom pb-1" style="font-size: 0.75rem;">Text Sizes</li>
+                            <li class="fw-bold mb-2 text-uppercase text-muted border-bottom pb-1 d-flex justify-content-between align-items-center" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                                <span>Typography & Scaling</span>
+                                <span class="badge bg-primary-subtle text-primary rounded-pill" style="font-size: 0.65rem;">Live</span>
+                            </li>
                             
                             <li class="mb-2 d-flex flex-column">
-                                <label class="form-label fw-semibold d-flex justify-content-between mb-1">Global Text <span><span id="val-global">16</span>px</span></label>
+                                <label class="form-label fw-semibold d-flex justify-content-between mb-1" for="a11y-fs-global">Global Text <span><span id="val-global">16</span>px</span></label>
                                 <input type="range" class="form-range w-100" id="a11y-fs-global" min="12" max="24" step="1" value="16">
                             </li>
                             <li class="mb-2 d-flex flex-column">
-                                <label class="form-label fw-semibold d-flex justify-content-between mb-1">Article Body <span><span id="val-article">18</span>px</span></label>
+                                <label class="form-label fw-semibold d-flex justify-content-between mb-1" for="a11y-fs-article">Article Body <span><span id="val-article">18</span>px</span></label>
                                 <input type="range" class="form-range w-100" id="a11y-fs-article" min="14" max="28" step="1" value="18">
                             </li>
                             <li class="mb-2 d-flex flex-column">
-                                <label class="form-label fw-semibold d-flex justify-content-between mb-1">Sidebar & Cards <span><span id="val-cards">14</span>px</span></label>
-                                <input type="range" class="form-range w-100" id="a11y-fs-cards" min="10" max="20" step="1" value="14">
+                                <label class="form-label fw-semibold d-flex justify-content-between mb-1" for="a11y-fs-cards">Sidebar & Cards <span><span id="val-cards">14</span>px</span></label>
+                                <input type="range" class="form-range w-100" id="a11y-fs-cards" min="10" max="22" step="1" value="14">
                             </li>
-                            <li class="mb-3 d-flex flex-column">
-                                <label class="form-label fw-semibold d-flex justify-content-between mb-1">Headings (Scale) <span><span id="val-headings">100</span>%</span></label>
+                            <li class="mb-2 d-flex flex-column">
+                                <label class="form-label fw-semibold d-flex justify-content-between mb-1" for="a11y-fs-headings">Headings Scale <span><span id="val-headings">100</span>%</span></label>
                                 <input type="range" class="form-range w-100" id="a11y-fs-headings" min="80" max="150" step="5" value="100">
                             </li>
+                            <li class="mb-2 d-flex flex-column">
+                                <label class="form-label fw-semibold d-flex justify-content-between mb-1" for="a11y-lh">Line Height <span><span id="val-lh">1.6</span></span></label>
+                                <input type="range" class="form-range w-100" id="a11y-lh" min="1.2" max="2.4" step="0.1" value="1.6">
+                            </li>
+                            <li class="mb-3 d-flex flex-column">
+                                <label class="form-label fw-semibold d-flex justify-content-between mb-1" for="a11y-ls">Letter Spacing <span><span id="val-ls">0</span>px</span></label>
+                                <input type="range" class="form-range w-100" id="a11y-ls" min="0" max="5" step="0.5" value="0">
+                            </li>
+
+                            <li class="fw-bold mb-2 mt-2 text-uppercase text-muted border-bottom pb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Reading & Visual Aids</li>
+                            <li class="mb-3">
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center gap-2 py-2 px-2 a11y-toggle-btn" id="a11y-btn-dyslexia" data-a11y-toggle="dyslexia">
+                                            <i class="fas fa-font fa-fw"></i> <span class="small fw-semibold">Dyslexia Font</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center gap-2 py-2 px-2 a11y-toggle-btn" id="a11y-btn-links" data-a11y-toggle="highlightLinks">
+                                            <i class="fas fa-underline fa-fw"></i> <span class="small fw-semibold">Highlight Links</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center gap-2 py-2 px-2 a11y-toggle-btn" id="a11y-btn-contrast" data-a11y-toggle="highContrast">
+                                            <i class="fas fa-adjust fa-fw"></i> <span class="small fw-semibold">High Contrast</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center gap-2 py-2 px-2 a11y-toggle-btn" id="a11y-btn-grayscale" data-a11y-toggle="grayscale">
+                                            <i class="fas fa-eye-slash fa-fw"></i> <span class="small fw-semibold">Monochrome</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center gap-2 py-2 px-2 a11y-toggle-btn" id="a11y-btn-guide" data-a11y-toggle="readingGuide">
+                                            <i class="fas fa-grip-lines fa-fw"></i> <span class="small fw-semibold">Reading Guide</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center gap-2 py-2 px-2 a11y-toggle-btn" id="a11y-btn-motion" data-a11y-toggle="pauseMotion">
+                                            <i class="fas fa-pause-circle fa-fw"></i> <span class="small fw-semibold">Pause Motion</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
                             
-                            <li class="fw-bold mb-2 mt-2 text-uppercase text-muted border-bottom pb-1" style="font-size: 0.75rem;">Colors</li>
+                            <li class="fw-bold mb-2 mt-2 text-uppercase text-muted border-bottom pb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Custom Colors</li>
                             
                             <li class="mb-2 d-flex justify-content-between align-items-center">
-                                <label class="form-label fw-semibold mb-0">Background</label>
-                                <input type="color" class="form-control form-control-color p-0" id="a11y-bgcolor" style="width: 35px; height: 35px; border: 2px solid rgba(128,128,128,0.3); border-radius: 6px;" title="Choose background color">
+                                <label class="form-label fw-semibold mb-0" for="a11y-bgcolor">Background</label>
+                                <input type="color" class="form-control form-control-color p-0" id="a11y-bgcolor" style="width: 34px; height: 34px; border: 2px solid rgba(128,128,128,0.3); border-radius: 6px;" title="Choose background color">
                             </li>
                             <li class="mb-2 d-flex justify-content-between align-items-center">
-                                <label class="form-label fw-semibold mb-0">Links</label>
-                                <input type="color" class="form-control form-control-color p-0" id="a11y-linkcolor" style="width: 35px; height: 35px; border: 2px solid rgba(128,128,128,0.3); border-radius: 6px;" title="Choose link color">
+                                <label class="form-label fw-semibold mb-0" for="a11y-linkcolor">Links</label>
+                                <input type="color" class="form-control form-control-color p-0" id="a11y-linkcolor" style="width: 34px; height: 34px; border: 2px solid rgba(128,128,128,0.3); border-radius: 6px;" title="Choose link color">
                             </li>
                             <li class="mb-3 d-flex justify-content-between align-items-center">
-                                <label class="form-label fw-semibold mb-0">Buttons & Badges</label>
-                                <input type="color" class="form-control form-control-color p-0" id="a11y-btncolor" style="width: 35px; height: 35px; border: 2px solid rgba(128,128,128,0.3); border-radius: 6px;" title="Choose button color">
+                                <label class="form-label fw-semibold mb-0" for="a11y-btncolor">Buttons & Badges</label>
+                                <input type="color" class="form-control form-control-color p-0" id="a11y-btncolor" style="width: 34px; height: 34px; border: 2px solid rgba(128,128,128,0.3); border-radius: 6px;" title="Choose button color">
                             </li>
                             
                             <li><hr class="dropdown-divider mb-2"></li>
                             <li>
-                                <button class="btn btn-sm btn-outline-danger w-100 mt-1 fw-bold" id="a11y-reset">Reset to Default</button>
+                                <button type="button" class="btn btn-sm btn-outline-danger w-100 mt-1 fw-bold" id="a11y-reset">Reset All to Default</button>
                             </li>
                         </ul>
                     </li>
