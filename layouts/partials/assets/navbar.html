@@ -193,7 +193,7 @@
 
                 {{- partial "page/navbar-extra.html" (dict "page" $page "breakpoint" $args.breakpoint) -}}
                 
-                <ul class="navbar-nav navbar-nav-scroll {{ if $flex }}d-flex flex-grow-1{{ else }}ms-auto{{ end }}">
+                <ul class="navbar-nav navbar-nav-scroll align-items-lg-center {{ if $flex }}d-flex flex-grow-1{{ else }}ms-auto{{ end }}">
                     {{/* Render top-menu items (maximum depth of 2) */}}
                     {{- partial "assets/helpers/navbar-render-menu.html" (dict
                         "page"       $page
@@ -204,19 +204,18 @@
                         "control"    false
                     ) }}
 
-                    {{/* CUSTOM DROPDOWN INJECTED HERE */}}
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Projects
+                    {{/* CUSTOM DROPDOWN INJECTED HERE (Matched to Hinode's exact py-2 py-md-1 & p-2 classes) */}}
+    <li class="nav-item dropdown py-2 py-md-1">
+        <a class="nav-link dropdown-toggle p-2 d-inline-flex align-items-center" href="#" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span>Projects</span>
         </a>
         <ul class="dropdown-menu shadow-sm border-subtle" aria-labelledby="projectsDropdown">
-            <li><a class="dropdown-item py-2" href="/ats-scanner/">ATS Scanner</a></li>
-            <li><a class="dropdown-item py-2" href="/cover-letter-generator/">Cover Letter Generator</a></li>
-            <li><a class="dropdown-item py-2" href="/schema-generator/">Schema Generator</a></li>
-            <li><a class="dropdown-item py-2" href="/web-scraper/">Web Scraper</a></li>
-            <li><a class="dropdown-item py-2" href="/csv-to-json/">CSV to JSON</a></li>
-            <li><a class="dropdown-item py-2" href="/sitemap-validator/">Sitemap Validator</a></li>
-            {{/* Add more project links here later if needed */}}
+            <li><a class="dropdown-item py-2" href="/ats-scanner/"><i class="fas fa-file-alt fa-fw me-2 text-primary"></i>ATS Scanner</a></li>
+            <li><a class="dropdown-item py-2" href="/cover-letter-generator/"><i class="fas fa-envelope-open-text fa-fw me-2 text-primary"></i>Cover Letter Generator</a></li>
+            <li><a class="dropdown-item py-2" href="/schema-generator/"><i class="fas fa-code fa-fw me-2 text-primary"></i>Schema Generator</a></li>
+            <li><a class="dropdown-item py-2" href="/web-scraper/"><i class="fas fa-spider fa-fw me-2 text-primary"></i>Web Scraper</a></li>
+            <li><a class="dropdown-item py-2" href="/csv-to-json/"><i class="fas fa-exchange-alt fa-fw me-2 text-primary"></i>CSV to JSON</a></li>
+            <li><a class="dropdown-item py-2" href="/sitemap-validator/"><i class="fas fa-sitemap fa-fw me-2 text-primary"></i>Sitemap Validator</a></li>
         </ul>
     </li>
     
@@ -323,6 +322,22 @@
 <!-- CUSTOM TRANSLATE STYLES & SCRIPTS          -->
 <!-- ========================================== -->
 <style>
+/* Force all desktop navbar links, dropdowns, and switches onto a single horizontal baseline */
+@media (min-width: 992px) {
+    .navbar-nav > .nav-item {
+        display: flex;
+        align-items: center;
+    }
+    .navbar-nav > .nav-item > .nav-link,
+    .navbar-nav > .nav-item > .btn-link {
+        display: inline-flex;
+        align-items: center;
+        line-height: 1.25 !important;
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+}
+
 /* Style our Custom Select to match Bootstrap perfectly */
 .custom-translate-select {
     background: var(--bs-body-bg);

@@ -12,9 +12,12 @@
     {{ end }}
     
     <!-- Preconnect to external resources to speed up DNS lookups -->
+    <!-- Preconnect to external resources to speed up DNS lookups -->
     <link rel="preconnect" href="https://cdn-cookieyes.com">
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://www.clarity.ms">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Google Sign-In with Google Publisher Script -->
 <script async src="https://news.google.com/swg/js/v1/publisher.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -248,25 +251,36 @@
         letter-spacing: var(--a11y-ls, 0px) !important;
     }
 
-    /* 4. Custom Colors */
+    /* 4. Custom Colors (Synced with Light/Dark Mode & Hero Stage) */
     html.a11y-custom-bg body,
     html.a11y-custom-bg .main-content,
     html.a11y-custom-bg .premium-footer,
     html.a11y-custom-bg .card,
     html.a11y-custom-bg .bg-body-tertiary,
-    html.a11y-custom-bg .offcanvas { 
+    html.a11y-custom-bg .offcanvas,
+    html.a11y-custom-bg .nx-hero-stage,
+    html.a11y-custom-bg .nx-bento-card,
+    html.a11y-custom-bg .nx-telemetry-bar,
+    html.a11y-custom-bg .tech-pill { 
         background-color: var(--a11y-bg) !important; 
         background-image: none !important;
         transition: none !important; 
     }
-    html.a11y-custom-link a:not(.btn) {
+    html.a11y-custom-link a:not(.btn),
+    html.a11y-custom-link .title-link,
+    html.a11y-custom-link .list-title-link,
+    html.a11y-custom-link .scroll-dive-cue,
+    html.a11y-custom-link .nx-card-tag {
         color: var(--a11y-link) !important;
     }
     html.a11y-custom-btn .btn-primary,
     html.a11y-custom-btn .btn-outline-primary,
     html.a11y-custom-btn .badge.bg-primary,
-    html.a11y-custom-btn .badge.bg-primary-subtle { 
+    html.a11y-custom-btn .badge.bg-primary-subtle,
+    html.a11y-custom-btn .nx-hero-badge,
+    html.a11y-custom-btn .nx-btn-primary { 
         background-color: var(--a11y-btn) !important; 
+        background-image: none !important;
         border-color: var(--a11y-btn) !important; 
         color: #ffffff !important; 
     }
@@ -280,13 +294,12 @@
         font-family: "Comic Sans MS", "OpenDyslexic", "Trebuchet MS", Verdana, sans-serif !important;
         word-spacing: 0.14em !important;
     }
-    html.a11y-highlight-links a:not(.btn) {
+    html.a11y-highlight-links a:not(.btn):not(.nav-link):not(.navbar-brand):not(.dropdown-item):not(.scroll-dive-cue) {
         text-decoration: underline !important;
         text-decoration-thickness: 2px !important;
         text-underline-offset: 4px !important;
-        background-color: rgba(255, 235, 59, 0.22) !important;
+        background-color: rgba(255, 235, 59, 0.18) !important;
         border-radius: 4px;
-        padding: 0 3px;
     }
     html.a11y-high-contrast {
         filter: contrast(135%) saturate(120%);
@@ -472,7 +485,7 @@
 </style>
 
 <script>
-    // 1.SHARED A11Y APPLIER: Runs immediately to prevent FOUC and on every user interaction
+    // 1. SHARED A11Y APPLIER: Runs immediately to prevent FOUC and on every user interaction
     window.applyA11ySettings = function(settings) {
         const html = document.documentElement;
         const s = settings || {};
@@ -498,13 +511,13 @@
 
         // Colors
         if (s.bg) { html.style.setProperty('--a11y-bg', s.bg); html.classList.add('a11y-custom-bg'); }
-        else { html.classList.remove('a11y-custom-bg'); }
+        else { html.style.removeProperty('--a11y-bg'); html.classList.remove('a11y-custom-bg'); }
 
         if (s.link) { html.style.setProperty('--a11y-link', s.link); html.classList.add('a11y-custom-link'); }
-        else { html.classList.remove('a11y-custom-link'); }
+        else { html.style.removeProperty('--a11y-link'); html.classList.remove('a11y-custom-link'); }
 
         if (s.btn) { html.style.setProperty('--a11y-btn', s.btn); html.classList.add('a11y-custom-btn'); }
-        else { html.classList.remove('a11y-custom-btn'); }
+        else { html.style.removeProperty('--a11y-btn'); html.classList.remove('a11y-custom-btn'); }
 
         // Toggle Modes
         html.classList.toggle('a11y-dyslexia', !!s.dyslexia);
@@ -522,7 +535,7 @@
         } catch(e) {}
     })();
 
-    // 2. DOM UI INITIALIZATION
+    // 2. DOM UI INITIALIZATION & THEME-SYNCED COLOR PICKERS
     document.addEventListener("DOMContentLoaded", function() {
         let settings = {};
         try { settings = JSON.parse(localStorage.getItem('a11ySettings')) || {}; } catch(e) {}
@@ -544,13 +557,55 @@
             }, { passive: true });
         }
 
-        function getHexColor(element, property) {
-            if (!element) return '#000000';
-            const rgb = window.getComputedStyle(element)[property];
-            if (!rgb || rgb.indexOf('rgb') === -1) return '#000000';
+        function rgbToHex(rgb) {
+            if (!rgb || rgb.indexOf('rgb') === -1) return null;
             const match = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-            if (!match) return '#000000';
-            return "#" + (1 << 24 | match[1] << 16 | match[2] << 8 | match[3]).toString(16).slice(1);
+            if (!match) return null;
+            return "#" + (1 << 24 | parseInt(match[1], 10) << 16 | parseInt(match[2], 10) << 8 | parseInt(match[3], 10)).toString(16).slice(1);
+        }
+
+        function isDarkThemeActive() {
+            const html = document.documentElement;
+            const themeAttr = html.getAttribute('data-bs-theme') || html.getAttribute('data-theme') || document.body.getAttribute('data-bs-theme');
+            if (themeAttr) return themeAttr === 'dark';
+            return html.classList.contains('dark') || document.body.classList.contains('dark');
+        }
+
+        function getThemeDefaultColors() {
+            const isDark = isDarkThemeActive();
+            const html = document.documentElement;
+
+            // Temporarily pause custom classes so computed styles reflect true active theme defaults
+            const hadBg = html.classList.contains('a11y-custom-bg');
+            const hadLink = html.classList.contains('a11y-custom-link');
+            const hadBtn = html.classList.contains('a11y-custom-btn');
+            html.classList.remove('a11y-custom-bg', 'a11y-custom-link', 'a11y-custom-btn');
+
+            const computedBg = rgbToHex(window.getComputedStyle(document.body).backgroundColor) || (isDark ? '#0f172a' : '#ffffff');
+
+            const tempLink = document.createElement('a');
+            tempLink.href = '#';
+            tempLink.style.display = 'none';
+            document.body.appendChild(tempLink);
+            const computedLink = rgbToHex(window.getComputedStyle(tempLink).color) || (isDark ? '#fb923c' : '#ea580c');
+            document.body.removeChild(tempLink);
+
+            const tempBtn = document.createElement('button');
+            tempBtn.className = 'btn btn-primary';
+            tempBtn.style.display = 'none';
+            document.body.appendChild(tempBtn);
+            const computedBtn = rgbToHex(window.getComputedStyle(tempBtn).backgroundColor) || (isDark ? '#f97316' : '#ea580c');
+            document.body.removeChild(tempBtn);
+
+            if (hadBg) html.classList.add('a11y-custom-bg');
+            if (hadLink) html.classList.add('a11y-custom-link');
+            if (hadBtn) html.classList.add('a11y-custom-btn');
+
+            return {
+                bg: computedBg,
+                link: computedLink,
+                btn: computedBtn
+            };
         }
 
         const slGlobal = document.getElementById('a11y-fs-global');
@@ -566,6 +621,14 @@
         const btnReset = document.getElementById('a11y-reset');
         const toggleBtns = document.querySelectorAll('[data-a11y-toggle]');
 
+        function syncColorPickersWithTheme() {
+            if (!bgColor || !linkColor || !btnColor) return;
+            const defaults = getThemeDefaultColors();
+            bgColor.value = settings.bg || defaults.bg;
+            linkColor.value = settings.link || defaults.link;
+            btnColor.value = settings.btn || defaults.btn;
+        }
+
         function syncUI() {
             if (!slGlobal) return;
             slGlobal.value = settings.fsGlobal || 16; document.getElementById('val-global').innerText = slGlobal.value;
@@ -575,11 +638,7 @@
             if (slLh) { slLh.value = settings.lh || 1.6; document.getElementById('val-lh').innerText = slLh.value; }
             if (slLs) { slLs.value = settings.ls || 0; document.getElementById('val-ls').innerText = slLs.value; }
 
-            bgColor.value = settings.bg || getHexColor(document.body, 'backgroundColor');
-            btnColor.value = settings.btn || '#f97316';
-            const tempLink = document.createElement('a'); tempLink.href = "#"; document.body.appendChild(tempLink);
-            linkColor.value = settings.link || getHexColor(tempLink, 'color');
-            document.body.removeChild(tempLink);
+            syncColorPickersWithTheme();
 
             toggleBtns.forEach(btn => {
                 const key = btn.getAttribute('data-a11y-toggle');
@@ -595,6 +654,35 @@
 
         if (slGlobal) {
             syncUI();
+
+            // Watch for Light / Dark Mode switches and automatically update Accessibility Color Pickers
+            // If the user previously set a custom background/link color for one mode, switching theme resets custom overrides
+            // OR updates default swatches seamlessly so light/dark mode never gets stuck with an unreadable dark/light background.
+            let lastTheme = isDarkThemeActive();
+            const themeObserver = new MutationObserver(() => {
+                const currentTheme = isDarkThemeActive();
+                if (currentTheme !== lastTheme) {
+                    lastTheme = currentTheme;
+                    // Clear mode-locked custom background/link overrides when user switches Light <-> Dark mode
+                    // so the new theme renders with full contrast and updated color swatches
+                    if (settings.bg || settings.link) {
+                        delete settings.bg;
+                        delete settings.link;
+                        saveAndApply();
+                    }
+                    setTimeout(syncColorPickersWithTheme, 40);
+                }
+            });
+            themeObserver.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ['data-bs-theme', 'data-theme', 'class']
+            });
+            if (document.body) {
+                themeObserver.observe(document.body, {
+                    attributes: true,
+                    attributeFilter: ['data-bs-theme', 'data-theme', 'class']
+                });
+            }
 
             function bindSlider(slider, key, valDisplay) {
                 if (!slider) return;

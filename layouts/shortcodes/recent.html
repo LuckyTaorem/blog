@@ -1,39 +1,79 @@
 <style>
-  /* ===================================================
-     🚀 AI CLOUD-DIVE HERO & ATMOSPHERIC TRANSITION
-     =================================================== */
+  /* ==========================================================================
+     ☁️ REAL FRACTAL CLOUD FLY-THROUGH HERO (LIGHT & DARK ADAPTIVE + 60FPS GPU)
+     ========================================================================== */
   :root {
-    --sky-top: #eff6ff;
-    --sky-mid: #e0f2fe;
+    --scroll-p: 0;
+    --mouse-x: 0;
+    --mouse-y: 0;
+
+    /* Crisp Light Mode Sky & High-Contrast Typography */
+    --sky-top: #c2dcf7;
+    --sky-mid: #e3effd;
+    --sky-horizon: #f8fafc;
     --sky-bottom: var(--bs-body-bg, #ffffff);
-    --cloud-back: rgba(255, 255, 255, 0.65);
-    --cloud-mid: rgba(255, 255, 255, 0.85);
-    --cloud-front: var(--bs-body-bg, #ffffff);
-    --hud-bg: rgba(255, 255, 255, 0.78);
-    --hud-border: rgba(15, 23, 42, 0.09);
-    --hud-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.1);
-    --hero-grid-line: rgba(15, 23, 42, 0.04);
-    --hero-accent: #f97316;
-    --hero-accent-glow: rgba(249, 115, 22, 0.22);
+
+    --hero-ink: #0f172a;
+    --hero-sub-ink: #1e293b;
+    --hero-muted-ink: #334155;
+    --hero-text-shield: radial-gradient(ellipse 68% 62% at 50% 46%, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.55) 58%, transparent 100%);
+
+    --cloud-lit: rgba(255, 255, 255, 0.98);
+    --cloud-core: rgba(248, 250, 252, 0.92);
+    --cloud-shadow: rgba(148, 163, 184, 0.32);
+    --cloud-ambient-tint: rgba(255, 255, 255, 0.85);
+
+    --bento-bg: rgba(255, 255, 255, 0.88);
+    --bento-hover-bg: rgba(255, 255, 255, 0.98);
+    --bento-border: rgba(15, 23, 42, 0.12);
+    --bento-hover-border: rgba(234, 88, 12, 0.6);
+    --bento-shadow: 0 18px 40px -12px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.05);
+    --bento-hover-shadow: 0 24px 52px -10px rgba(234, 88, 12, 0.24), 0 8px 20px rgba(15, 23, 42, 0.08);
+
+    --pill-bg: rgba(255, 255, 255, 0.92);
+    --pill-border: rgba(15, 23, 42, 0.15);
+    --accent-primary: #ea580c;
+    --accent-secondary: #2563eb;
+    --badge-bg: rgba(234, 88, 12, 0.12);
+    --badge-border: rgba(234, 88, 12, 0.35);
+    --badge-text: #c2410c;
   }
 
-  [data-bs-theme="dark"], [data-theme="dark"], html.dark {
-    --sky-top: #0b0f19;
-    --sky-mid: #111827;
+  [data-bs-theme="dark"], [data-theme="dark"], html.dark, body.dark {
+    /* Deep Stratosphere Night Sky & Luminous Cloud Contrast */
+    --sky-top: #040711;
+    --sky-mid: #0a1124;
+    --sky-horizon: #111c35;
     --sky-bottom: var(--bs-body-bg, #16191d);
-    --cloud-back: rgba(30, 41, 59, 0.55);
-    --cloud-mid: rgba(22, 25, 29, 0.82);
-    --cloud-front: var(--bs-body-bg, #16191d);
-    --hud-bg: rgba(17, 24, 39, 0.75);
-    --hud-border: rgba(255, 255, 255, 0.1);
-    --hud-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.55);
-    --hero-grid-line: rgba(255, 255, 255, 0.035);
-    --hero-accent: #f97316;
-    --hero-accent-glow: rgba(249, 115, 22, 0.28);
+
+    --hero-ink: #f8fafc;
+    --hero-sub-ink: #e2e8f0;
+    --hero-muted-ink: #cbd5e1;
+    --hero-text-shield: radial-gradient(ellipse 68% 62% at 50% 46%, rgba(7, 11, 22, 0.84) 0%, rgba(10, 17, 36, 0.5) 58%, transparent 100%);
+
+    --cloud-lit: rgba(71, 85, 105, 0.55);
+    --cloud-core: rgba(30, 41, 59, 0.68);
+    --cloud-shadow: rgba(2, 6, 23, 0.75);
+    --cloud-ambient-tint: rgba(51, 65, 85, 0.45);
+
+    --bento-bg: rgba(15, 23, 42, 0.82);
+    --bento-hover-bg: rgba(30, 41, 59, 0.95);
+    --bento-border: rgba(148, 163, 184, 0.22);
+    --bento-hover-border: rgba(249, 115, 22, 0.7);
+    --bento-shadow: 0 22px 50px -12px rgba(0, 0, 0, 0.75);
+    --bento-hover-shadow: 0 28px 60px -12px rgba(249, 115, 22, 0.32), 0 0 35px rgba(56, 189, 248, 0.14);
+
+    --pill-bg: rgba(30, 41, 59, 0.9);
+    --pill-border: rgba(148, 163, 184, 0.28);
+    --accent-primary: #f97316;
+    --accent-secondary: #38bdf8;
+    --badge-bg: rgba(249, 115, 22, 0.18);
+    --badge-border: rgba(249, 115, 22, 0.45);
+    --badge-text: #fdba74;
   }
 
-  /* Break out to full viewport width cleanly */
-  .cloud-hero-stage {
+  /* Full-Bleed 3D Atmospheric Viewport Stage */
+  .nx-hero-stage {
     position: relative;
     width: 100vw;
     left: 50%;
@@ -41,282 +81,627 @@
     margin-left: -50vw;
     margin-right: -50vw;
     margin-top: -1.5rem;
-    min-height: 92vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    padding: clamp(3.25rem, 6vw, 5.75rem) 1rem clamp(7.5rem, 13vw, 11.5rem);
+    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 48%, var(--sky-horizon) 82%, var(--sky-bottom) 100%);
     overflow: hidden;
-    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 62%, var(--sky-bottom) 100%);
-    padding: 4.5rem 1rem 9.5rem;
     isolation: isolate;
+    perspective: 1200px;
   }
 
-  /* Subtle Perspective Cyber Grid */
-  .cloud-hero-grid {
+  /* Hidden SVG Filter Definition for Real Fractal Volumetric Cloud Edges */
+  .nx-cloud-svg-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  /* ==========================================================================
+     ☁️ LAYER 1: REAL PROCEDURAL VOLUMETRIC CLOUD CANVAS & FRACTAL VAPOR BANKS
+     ========================================================================== */
+  #nx-volumetric-cloud-canvas {
     position: absolute;
     inset: 0;
-    background-image: 
-      linear-gradient(to right, var(--hero-grid-line) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--hero-grid-line) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(ellipse 80% 65% at 50% 35%, #000 30%, transparent 100%);
-    -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 35%, #000 30%, transparent 100%);
-    z-index: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
+    z-index: 1;
+    opacity: 0.95;
   }
 
-  /* Ambient Radial Glow */
-  .hero-glow {
+  /* Real Fractal Cloud Formations (Using SVG feTurbulence + feDisplacementMap) */
+  .nx-fractal-cloud-layer {
     position: absolute;
-    top: 38%;
-    left: 50%;
-    width: min(850px, 92vw);
-    height: min(500px, 60vh);
-    transform: translate3d(-50%, -50%, 0);
-    background: radial-gradient(circle, var(--hero-accent-glow) 0%, rgba(59, 130, 246, 0.1) 45%, transparent 72%);
-    z-index: 0;
+    inset: 0;
     pointer-events: none;
-    animation: ambientPulse 6s ease-in-out infinite alternate;
-  }
-
-  @keyframes ambientPulse {
-    0% { opacity: 0.75; transform: translate3d(-50%, -50%, 0) scale(0.96); }
-    100% { opacity: 1; transform: translate3d(-50%, -50%, 0) scale(1.06); }
-  }
-
-  /* Floating AI Telemetry Cards (Static idle float + scroll parallax) */
-  .ai-sky-hud {
-    position: absolute;
     z-index: 2;
-    background: var(--hud-bg);
-    border: 1px solid var(--hud-border);
-    box-shadow: var(--hud-shadow);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 0.65rem 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    overflow: hidden;
+  }
+
+  .nx-real-cloud-cluster {
+    position: absolute;
+    filter: url(#real-cumulus-filter);
+    will-change: transform, opacity;
     pointer-events: none;
-    will-change: transform, opacity;
   }
 
-  .ai-sky-hud-inner {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    animation: hudFloat 5s ease-in-out infinite alternate;
-  }
-
-  .hud-card-1 { top: 14%; left: max(3%, calc(50% - 610px)); }
-  .hud-card-2 { top: 18%; right: max(3%, calc(50% - 610px)); }
-  .hud-card-2 .ai-sky-hud-inner { animation-delay: -2.2s; }
-  .hud-card-3 { bottom: 26%; left: max(5%, calc(50% - 570px)); }
-  .hud-card-3 .ai-sky-hud-inner { animation-delay: -3.6s; }
-  .hud-card-4 { bottom: 28%; right: max(5%, calc(50% - 570px)); }
-  .hud-card-4 .ai-sky-hud-inner { animation-delay: -1.4s; }
-
-  @keyframes hudFloat {
-    0% { transform: translate3d(0, -7px, 0); }
-    100% { transform: translate3d(0, 7px, 0); }
-  }
-
-  .hud-pulse-dot {
-    width: 9px;
-    height: 9px;
+  /* Multi-lobe organic cloud anatomy (Sunlit top + core body + atmospheric base) */
+  .nx-real-cloud-cluster .cloud-lobe-main {
+    position: absolute;
+    inset: 15% 10% 20% 10%;
     border-radius: 50%;
-    background: #22c55e;
-    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);
-    animation: dotBlink 2s infinite;
+    background: radial-gradient(ellipse at 50% 30%, var(--cloud-lit) 0%, var(--cloud-core) 58%, transparent 78%);
+    box-shadow:
+      -90px 20px 65px 25px var(--cloud-core),
+      95px 15px 70px 30px var(--cloud-lit),
+      0 45px 80px 20px var(--cloud-shadow);
   }
 
-  @keyframes dotBlink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+  /* Distant Background Clouds (Slow continuous horizontal drift + zooms in on scroll) */
+  .nx-cloud-distant-left {
+    width: clamp(380px, 46vw, 680px);
+    height: clamp(220px, 26vw, 380px);
+    top: 4%;
+    left: -8%;
+    opacity: calc(0.85 - var(--scroll-p) * 0.3);
+    transform: translate3d(
+      calc(var(--scroll-p) * -220px + var(--mouse-x) * -18px),
+      calc(var(--scroll-p) * -80px + var(--mouse-y) * -12px),
+      calc(var(--scroll-p) * 320px)
+    ) scale(calc(1 + var(--scroll-p) * 1.15));
   }
 
-  /* Core Hero Content Cockpit */
-  .hero-cockpit {
-    position: relative;
-    z-index: 5;
+  .nx-cloud-distant-right {
+    width: clamp(420px, 48vw, 720px);
+    height: clamp(240px, 28vw, 400px);
+    top: 6%;
+    right: -10%;
+    opacity: calc(0.85 - var(--scroll-p) * 0.3);
+    transform: translate3d(
+      calc(var(--scroll-p) * 220px + var(--mouse-x) * -18px),
+      calc(var(--scroll-p) * -70px + var(--mouse-y) * -12px),
+      calc(var(--scroll-p) * 320px)
+    ) scale(calc(1 + var(--scroll-p) * 1.15));
+  }
+
+  /* ==========================================================================
+     ☁️ LAYER 2: FOREGROUND SCROLL-THROUGH CLOUD GATES (RUSH PAST USER ON SCROLL)
+     ========================================================================== */
+  .nx-flythrough-gate {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 6;
+    overflow: hidden;
+  }
+
+  /* Left & Right Foreground Cumulus Banks that part & rush past camera as user scrolls */
+  .nx-gate-cloud-left,
+  .nx-gate-cloud-right {
+    position: absolute;
+    bottom: -8%;
+    width: clamp(460px, 62vw, 960px);
+    height: clamp(280px, 38vw, 520px);
+    filter: url(#real-cumulus-filter);
     will-change: transform, opacity;
   }
 
-  /* Multi-Layered Cloud Bank System */
-  .cloud-layer-wrap {
+  .nx-gate-cloud-left {
+    left: -14%;
+    transform: translate3d(
+      calc(var(--scroll-p) * -320px + var(--mouse-x) * 28px),
+      calc(var(--scroll-p) * -190px),
+      0
+    ) scale(calc(1 + var(--scroll-p) * 1.85));
+    opacity: calc(0.92 - var(--scroll-p) * 0.45);
+  }
+
+  .nx-gate-cloud-right {
+    right: -14%;
+    transform: translate3d(
+      calc(var(--scroll-p) * 320px + var(--mouse-x) * 28px),
+      calc(var(--scroll-p) * -190px),
+      0
+    ) scale(calc(1 + var(--scroll-p) * 1.85));
+    opacity: calc(0.92 - var(--scroll-p) * 0.45);
+  }
+
+  /* Center Tunnel Vapor Veil: Rushes up from the horizon as you scroll to transition into Section 1 */
+  .nx-scroll-transition-veil {
     position: absolute;
     left: -10%;
-    width: 120%;
+    right: -10%;
+    bottom: -5%;
+    height: clamp(190px, 28vw, 360px);
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      var(--cloud-ambient-tint) 38%,
+      var(--sky-bottom) 88%,
+      var(--sky-bottom) 100%
+    );
+    transform: translate3d(0, calc(var(--scroll-p) * -95px), 0) scaleY(calc(1 + var(--scroll-p) * 0.85));
+    transform-origin: bottom center;
+    z-index: 7;
     pointer-events: none;
+    will-change: transform;
+  }
+
+  /* ==========================================================================
+     🎯 LAYER 3: 3-COLUMN INTERACTIVE COCKPIT (WITH CONTRAST HALO SHIELD)
+     ========================================================================== */
+  .nx-hero-grid {
+    position: relative;
+    z-index: 5;
+    max-width: 1420px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  @media (min-width: 1200px) {
+    .nx-hero-grid {
+      grid-template-columns: 295px minmax(0, 1fr) 295px;
+      gap: 1.75rem;
+    }
+  }
+
+  /* Center Content Dives Forward Through the Clouds on Scroll */
+  .nx-cockpit-core {
+    position: relative;
+    padding: 1.5rem 1rem;
+    border-radius: 36px;
+    background: var(--hero-text-shield);
+    transform: translate3d(
+      calc(var(--mouse-x) * -8px),
+      calc(var(--scroll-p) * 110px + var(--mouse-y) * -8px),
+      0
+    ) scale(calc(1 - var(--scroll-p) * 0.14));
+    opacity: calc(1 - var(--scroll-p) * 1.25);
     will-change: transform, opacity;
   }
 
-  .cloud-layer-back {
-    bottom: 55px;
-    z-index: 1;
-    color: var(--cloud-back);
+  /* Side Bento Wings Part Outward Like Cloud Portals on Scroll */
+  .nx-bento-wing {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    will-change: transform, opacity;
   }
 
-  .cloud-layer-mid {
-    bottom: 18px;
-    z-index: 3;
-    color: var(--cloud-mid);
+  @media (min-width: 1200px) {
+    .nx-wing-left {
+      transform: translate3d(
+        calc(var(--scroll-p) * -240px + var(--mouse-x) * 14px),
+        calc(var(--scroll-p) * -45px + var(--mouse-y) * 10px),
+        0
+      ) scale(calc(1 + var(--scroll-p) * 0.28));
+      opacity: calc(1 - var(--scroll-p) * 1.3);
+    }
+    .nx-wing-right {
+      transform: translate3d(
+        calc(var(--scroll-p) * 240px + var(--mouse-x) * 14px),
+        calc(var(--scroll-p) * -45px + var(--mouse-y) * 10px),
+        0
+      ) scale(calc(1 + var(--scroll-p) * 0.28));
+      opacity: calc(1 - var(--scroll-p) * 1.3);
+    }
   }
 
-  .cloud-layer-front {
-    bottom: -2px;
-    z-index: 6;
-    color: var(--cloud-front);
+  @media (max-width: 1199.98px) {
+    .nx-cockpit-core { order: 1; }
+    .nx-wing-left {
+      order: 2;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.15rem;
+    }
+    .nx-wing-right {
+      order: 3;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.15rem;
+    }
   }
 
-  .cloud-svg-drift-slow {
-    animation: cloudDriftSlow 18s ease-in-out infinite alternate;
+  /* ==========================================================================
+     ✨ INTERACTIVE FLOATING BENTO CARDS (HOVER TILT, GLOW & TELEMETRY BAR)
+     ========================================================================== */
+  .nx-bento-card {
+    position: relative;
+    background: var(--bento-bg);
+    border: 1px solid var(--bento-border);
+    box-shadow: var(--bento-shadow);
+    border-radius: 22px;
+    padding: 1.25rem 1.3rem;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.3s ease,
+                background-color 0.3s ease;
+    cursor: pointer;
+    overflow: hidden;
+    animation: nxFloatBob 5.8s ease-in-out infinite alternate;
   }
 
-  .cloud-svg-drift-med {
-    animation: cloudDriftMed 13s ease-in-out infinite alternate;
+  .nx-card-delay-1 { animation-delay: -1.4s; }
+  .nx-card-delay-2 { animation-delay: -2.9s; }
+  .nx-card-delay-3 { animation-delay: -4.3s; }
+
+  @keyframes nxFloatBob {
+    0% { transform: translate3d(0, -5px, 0); }
+    100% { transform: translate3d(0, 5px, 0); }
   }
 
-  @keyframes cloudDriftSlow {
-    0% { transform: translate3d(-1.8%, 0, 0); }
-    100% { transform: translate3d(1.8%, 0, 0); }
+  .nx-bento-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    opacity: 0;
+    transform: scaleX(0.35);
+    transition: opacity 0.3s ease, transform 0.35s ease;
   }
 
-  @keyframes cloudDriftMed {
-    0% { transform: translate3d(1.5%, 3px, 0); }
-    100% { transform: translate3d(-1.5%, -3px, 0); }
+  .nx-bento-card:hover,
+  .nx-bento-card:focus-within {
+    transform: translate3d(0, -8px, 0) scale(1.03) !important;
+    background: var(--bento-hover-bg);
+    border-color: var(--bento-hover-border);
+    box-shadow: var(--bento-hover-shadow);
   }
 
-  /* Live Pipeline Status Ticker */
-  .pipeline-live-strip {
+  .nx-bento-card:hover::before,
+  .nx-bento-card:focus-within::before {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  .nx-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .nx-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .nx-bento-card:hover .nx-card-icon {
+    transform: scale(1.15) rotate(-6deg);
+  }
+
+  .nx-card-tag {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    border: 1px solid var(--badge-border);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .nx-bento-title {
+    font-size: 0.98rem !important;
+    font-weight: 800;
+    color: var(--hero-ink);
+    margin: 0.15rem 0 0;
+    line-height: 1.3;
+    transition: color 0.25s ease;
+  }
+
+  .nx-bento-card:hover .nx-bento-title {
+    color: var(--accent-primary);
+  }
+
+  .nx-bento-sub {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--hero-sub-ink);
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  .nx-card-meter {
+    height: 4px;
+    width: 100%;
+    background: rgba(148, 163, 184, 0.24);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 0.25rem;
+  }
+
+  .nx-card-meter-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    width: 80%;
+    transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nx-bento-card:hover .nx-card-meter-fill {
+    width: 100%;
+  }
+
+  .nx-live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #16a34a;
+    display: inline-block;
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.24);
+    animation: nxPulseDot 2s infinite;
+  }
+
+  @keyframes nxPulseDot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.25); opacity: 0.55; }
+  }
+
+  /* ==========================================================================
+     🎯 HIGH-CONTRAST TYPOGRAPHY, CTAS & TECH STACK PILLS
+     ========================================================================== */
+  .nx-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.15rem;
+    border-radius: 999px;
+    background: var(--pill-bg);
+    border: 1.5px solid var(--badge-border);
+    color: var(--badge-text);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .nx-hero-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(234, 88, 12, 0.2);
+  }
+
+  .nx-hero-headline {
+    color: var(--hero-ink) !important;
+    font-weight: 900;
+    letter-spacing: -0.035em;
+    line-height: 1.08;
+    text-shadow: 0 2px 18px rgba(255, 255, 255, 0.25);
+  }
+
+  [data-bs-theme="dark"] .nx-hero-headline,
+  html.dark .nx-hero-headline {
+    text-shadow: 0 4px 24px rgba(0, 0, 0, 0.65);
+  }
+
+  .nx-gradient-text {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, #f97316 52%, var(--accent-secondary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: nxGradientFlow 6s ease infinite;
+  }
+
+  @keyframes nxGradientFlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .nx-hero-subtext {
+    color: var(--hero-sub-ink) !important;
+    font-weight: 600 !important;
+    max-width: 720px;
+    line-height: 1.65;
+  }
+
+  /* Telemetry Pill Strip */
+  .nx-telemetry-bar {
     display: inline-flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 0.75rem 1.25rem;
-    padding: 0.55rem 1.25rem;
+    gap: 0.65rem 1.2rem;
+    padding: 0.65rem 1.45rem;
     border-radius: 999px;
-    background: var(--hud-bg);
-    border: 1px solid var(--hud-border);
-    box-shadow: var(--hud-shadow);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    font-size: 0.8rem;
+    background: var(--pill-bg);
+    border: 1px solid var(--pill-border);
+    box-shadow: var(--bento-shadow);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    font-size: 0.85rem;
+    transition: transform 0.3s ease, border-color 0.3s ease;
   }
 
-  /* Scroll-Down Cloud Dive Indicator */
+  .nx-telemetry-bar:hover {
+    transform: translateY(-2px);
+    border-color: var(--bento-hover-border);
+  }
+
+  .nx-telemetry-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--hero-ink);
+    font-weight: 700;
+    transition: color 0.2s ease;
+  }
+
+  .nx-telemetry-item:hover {
+    color: var(--accent-primary);
+  }
+
+  /* Primary & Secondary Interactive Buttons */
+  .nx-btn-primary {
+    background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+    border: none;
+    color: #ffffff !important;
+    box-shadow: 0 12px 28px -8px rgba(234, 88, 12, 0.6);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+  }
+
+  .nx-btn-primary:hover,
+  .nx-btn-primary:focus-visible {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 18px 36px -8px rgba(234, 88, 12, 0.8);
+  }
+
+  .nx-btn-secondary {
+    background: var(--pill-bg) !important;
+    color: var(--hero-ink) !important;
+    border: 1.5px solid var(--pill-border) !important;
+    box-shadow: var(--bento-shadow);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, color 0.25s ease;
+  }
+
+  .nx-btn-secondary:hover,
+  .nx-btn-secondary:focus-visible {
+    transform: translateY(-4px) scale(1.02);
+    border-color: var(--accent-primary) !important;
+    color: var(--accent-primary) !important;
+  }
+
+  .nx-stack-heading {
+    color: var(--hero-muted-ink) !important;
+    letter-spacing: 0.12em;
+    font-size: 0.74rem;
+    font-weight: 800;
+  }
+
+  .tech-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.05rem;
+    font-size: 0.84rem;
+    font-weight: 700;
+    background: var(--pill-bg) !important;
+    color: var(--hero-ink) !important;
+    border: 1px solid var(--pill-border) !important;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+                border-color 0.25s ease,
+                box-shadow 0.25s ease,
+                color 0.25s ease;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .tech-pill i {
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-size: 1rem;
+  }
+
+  .tech-pill:hover {
+    transform: translateY(-4px) scale(1.06);
+    border-color: var(--accent-primary) !important;
+    color: var(--accent-primary) !important;
+    box-shadow: 0 12px 24px -6px rgba(234, 88, 12, 0.25) !important;
+  }
+
+  .tech-pill:hover i {
+    transform: scale(1.2) rotate(-6deg);
+  }
+
+  /* High-Contrast Scroll Through Clouds Button */
   .scroll-dive-cue {
     display: inline-flex;
-    flex-direction: column;
     align-items: center;
-    gap: 0.25rem;
-    color: var(--bs-secondary-color);
-    text-decoration: none;
-    font-size: 0.75rem;
-    font-weight: 700;
+    gap: 0.55rem;
+    padding: 0.55rem 1.25rem;
+    border-radius: 999px;
+    background: var(--pill-bg);
+    border: 1.5px solid var(--pill-border);
+    color: var(--hero-ink) !important;
+    text-decoration: none !important;
+    font-size: 0.76rem;
+    font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    opacity: 0.8;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   }
+
   .scroll-dive-cue:hover {
-    opacity: 1;
-    color: var(--bs-primary);
+    color: var(--accent-primary) !important;
+    border-color: var(--accent-primary);
     transform: translateY(3px);
+    box-shadow: 0 10px 24px -4px rgba(234, 88, 12, 0.28);
   }
-  .scroll-dive-mouse {
-    width: 22px;
-    height: 34px;
-    border: 2px solid currentColor;
-    border-radius: 12px;
+
+  /* Section 1 Seamless Cloud Arrival Transition */
+  #latest-innovations-section {
     position: relative;
-  }
-  .scroll-dive-wheel {
-    width: 4px;
-    height: 7px;
-    background: currentColor;
-    border-radius: 2px;
-    position: absolute;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    animation: scrollWheelDive 1.6s infinite;
-  }
-  @keyframes scrollWheelDive {
-    0% { opacity: 1; transform: translate(-50%, 0); }
-    100% { opacity: 0; transform: translate(-50%, 12px); }
+    z-index: 8;
   }
 
-  /* Responsive Adjustments for Tablet & Mobile */
-  @media (max-width: 1199.98px) {
-    .hud-card-3, .hud-card-4 { display: none; }
-    .hud-card-1 { top: 8%; left: 3%; }
-    .hud-card-2 { top: 8%; right: 3%; }
-  }
-
-  @media (max-width: 767.98px) {
-    .cloud-hero-stage {
-      min-height: auto;
-      padding: 3rem 0.75rem 6.5rem;
-    }
-    .ai-sky-hud { display: none; }
-    .hero-headline { font-size: 2.35rem !important; }
-    .hero-subtext { font-size: 1.05rem !important; }
-    .cloud-layer-back { bottom: 28px; }
-    .cloud-layer-mid { bottom: 8px; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .ai-sky-hud-inner, .cloud-svg-drift-slow, .cloud-svg-drift-med, .hero-glow, .scroll-dive-wheel {
-      animation: none !important;
-    }
-  }
-
-  /* Existing Card & Button Hover Animations */
+  /* Existing Card & Dropdown Hover Animations */
   .article-group { cursor: pointer; }
   .article-group .img-wrapper { overflow: hidden; }
   .article-group img { transition: transform 0.4s ease-in-out; }
   .article-group:hover img { transform: scale(1.08); }
   .article-group .title-link { transition: color 0.2s ease-in-out; }
-  .article-group:hover .title-link { color: #f97316 !important; }
+  .article-group:hover .title-link { color: var(--accent-primary) !important; }
 
-  .premium-btn, .premium-btn-outline {
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  }
-  .premium-btn:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 20px -10px rgba(var(--bs-primary-rgb), 0.8) !important;
-  }
-  .premium-btn-outline:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.15) !important;
-    background-color: var(--bs-secondary-bg) !important;
-  }
   .premium-dropdown {
-    animation: slideFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: slideFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     transform-origin: top center;
   }
+
   @keyframes slideFadeIn {
-    0% { opacity: 0; transform: translateY(-10px) scale(0.98); }
+    0% { opacity: 0; transform: translateY(-8px) scale(0.98); }
     100% { opacity: 1; transform: translateY(0) scale(1); }
   }
-  .tech-pill {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    cursor: default;
+
+  @media (max-width: 767.98px) {
+    .nx-hero-stage {
+      padding: 2.25rem 0.75rem 6rem;
+    }
+    .nx-hero-headline {
+      font-size: clamp(2rem, 8vw, 2.6rem) !important;
+    }
+    .nx-hero-subtext {
+      font-size: 1rem !important;
+    }
+    .nx-telemetry-bar {
+      border-radius: 18px;
+      padding: 0.65rem 1rem;
+      width: 100%;
+    }
   }
-  .tech-pill i { transition: transform 0.3s ease, color 0.3s ease; font-size: 1rem; }
-  .tech-pill:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 15px -8px rgba(0, 0, 0, 0.2) !important;
-    border-color: var(--bs-primary) !important;
+
+  @media (prefers-reduced-motion: reduce) {
+    .nx-bento-card, .nx-gradient-text, .nx-live-dot {
+      animation: none !important;
+    }
   }
-  .tech-pill:hover i { transform: scale(1.15); color: var(--bs-primary) !important; }
 </style>
 
 {{/* Fetch all posts */}}
@@ -326,263 +711,433 @@
 {{ $heroFeatures := first 3 $posts }}
 {{ $gridPosts := first 6 (after 3 $posts) }}
 
-<!-- ========================================================= -->
-<!-- ☁️ ANIMATED AI CLOUD-DIVE HERO (STATIC FLOAT + SCROLL DIVE) -->
-<!-- ========================================================= -->
-<section class="cloud-hero-stage mb-5" id="cloud-hero-stage">
-  <div class="cloud-hero-grid"></div>
-  <div class="hero-glow"></div>
+<!-- ========================================================================= -->
+<!-- ☁️ REAL PROCEDURAL VOLUMETRIC CLOUD FLY-THROUGH HERO                      -->
+<!-- ========================================================================= -->
+<section class="nx-hero-stage mb-4" id="cloud-hero-stage">
 
-  <!-- Floating AI & Automation Telemetry Nodes (Parallax on Scroll) -->
-  <div class="ai-sky-hud hud-card-1" id="hud-left-top">
-    <div class="ai-sky-hud-inner">
-      <span class="hud-pulse-dot"></span>
-      <div class="text-start">
-        <div class="fw-bold text-body" style="font-size: 0.78rem;">Autonomous RSS Engine</div>
-        <div class="text-secondary" style="font-size: 0.68rem;">11 Tech Feeds • Fact Extraction</div>
-      </div>
+  <!-- Real Fractal Perlin-Noise SVG Filter for Authentic Billowy Cumulus Edges -->
+  <svg class="nx-cloud-svg-defs" aria-hidden="true">
+    <defs>
+      <filter id="real-cumulus-filter" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.011 0.018" numOctaves="5" seed="14" result="fractalNoise" />
+        <feDisplacementMap in="SourceGraphic" in2="fractalNoise" scale="68" xChannelSelector="R" yChannelSelector="G" result="displacedCloud" />
+        <feGaussianBlur in="displacedCloud" stdDeviation="6" result="softCloud" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- 1. Interactive 60FPS Volumetric Cloud Canvas (Moving Real Vapor Puffs + Scroll Fly-Through) -->
+  <canvas id="nx-volumetric-cloud-canvas" aria-hidden="true"></canvas>
+
+  <!-- 2. Distant Fractal Cumulus Formations -->
+  <div class="nx-fractal-cloud-layer" aria-hidden="true">
+    <div class="nx-real-cloud-cluster nx-cloud-distant-left">
+      <div class="cloud-lobe-main"></div>
+    </div>
+    <div class="nx-real-cloud-cluster nx-cloud-distant-right">
+      <div class="cloud-lobe-main"></div>
     </div>
   </div>
 
-  <div class="ai-sky-hud hud-card-2" id="hud-right-top">
-    <div class="ai-sky-hud-inner">
-      <i class="fas fa-network-wired text-primary fs-5"></i>
-      <div class="text-start">
-        <div class="fw-bold text-body" style="font-size: 0.78rem;">Multi-LLM Waterfall</div>
-        <div class="text-secondary" style="font-size: 0.68rem;">Groq • Gemini • Mistral • GPT-4o</div>
-      </div>
-    </div>
-  </div>
+  <!-- 3. Main Interactive 3-Column Cockpit Layout -->
+  <div class="container-xxl position-relative">
+    <div class="nx-hero-grid">
 
-  <div class="ai-sky-hud hud-card-3" id="hud-left-btm">
-    <div class="ai-sky-hud-inner">
-      <i class="fas fa-bolt text-warning fs-5"></i>
-      <div class="text-start">
-        <div class="fw-bold text-body" style="font-size: 0.78rem;">8-Platform Broadcast</div>
-        <div class="text-secondary" style="font-size: 0.68rem;">Bluesky • LinkedIn • DEV • WP</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="ai-sky-hud hud-card-4" id="hud-right-btm">
-    <div class="ai-sky-hud-inner">
-      <i class="fas fa-shield-alt text-success fs-5"></i>
-      <div class="text-start">
-        <div class="fw-bold text-body" style="font-size: 0.78rem;">Self-Healing CI/CD</div>
-        <div class="text-secondary" style="font-size: 0.68rem;">IndexNow & Google API Active</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Center Cockpit -->
-  <div class="container position-relative hero-cockpit" id="hero-cockpit">
-    <div class="col-lg-10 col-xl-8 mx-auto text-center">
-      
-      <!-- Top Badge -->
-      <span class="badge bg-primary-subtle text-primary mb-3 px-3 py-2 rounded-pill fw-bold text-uppercase border border-primary-subtle shadow-sm hero-badge">
-        <i class="fas fa-robot me-2"></i>Automated Content Infrastructure
-      </span>
-      
-      <!-- Main Headline -->
-      <h1 class="display-3 fw-bolder mb-3 hero-headline" style="letter-spacing: -0.03em; line-height: 1.1;">
-        Intelligent pipelines for the <span class="text-primary">modern web.</span>
-      </h1>
-      
-      <!-- Subheadline -->
-      <p class="lead text-secondary mb-4 fs-4 px-md-5 hero-subtext" style="opacity: 0.92; line-height: 1.6;">
-        Deploy AI-driven publishing architectures, autonomous LLM workflows, and full-stack developer utilities that scale in the cloud.
-      </p>
-
-      <!-- Live Telemetry Status Bar -->
-      <div class="mb-4">
-        <div class="pipeline-live-strip">
-          <span class="d-inline-flex align-items-center gap-2 fw-semibold text-body">
-            <span class="hud-pulse-dot"></span> {{ len $posts }}+ AI-Curated Articles
-          </span>
-          <span class="text-secondary opacity-50 d-none d-sm-inline">•</span>
-          <span class="text-secondary fw-medium d-none d-sm-inline">
-            <i class="fas fa-cloud-upload-alt text-primary me-1"></i>6 Free Developer Tools
-          </span>
-          <span class="text-secondary opacity-50 d-none d-md-inline">•</span>
-          <span class="text-secondary fw-medium d-none d-md-inline">
-            <i class="fas fa-sync-alt text-primary me-1"></i>24/7 GitHub Actions Pipeline
-          </span>
-        </div>
-      </div>
-      
-      <!-- Call to Actions -->
-      <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center mb-4">
-        <!-- Projects Dropdown Button -->
-        <div class="dropdown">
-          <button class="btn btn-primary btn-lg px-5 py-3 fw-bold rounded-pill shadow-sm dropdown-toggle w-100 premium-btn" type="button" id="heroProjectsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fas fa-tools me-2"></i>Use Free Tools
-          </button>
-          <ul class="dropdown-menu shadow border-subtle mt-2 w-100 text-center premium-dropdown" aria-labelledby="heroProjectsDropdown">
-            <li><a class="dropdown-item py-2 fw-medium" href="{{ "ats-scanner/" | absURL }}">ATS Scanner</a></li>
-            <li><a class="dropdown-item py-2 fw-medium" href="{{ "cover-letter-generator/" | absURL }}">Cover Letter Generator</a></li>
-            <li><a class="dropdown-item py-2 fw-medium" href="{{ "schema-generator/" | absURL }}">Schema Generator</a></li>
-            <li><a class="dropdown-item py-2 fw-medium" href="{{ "web-scraper/" | absURL }}">Web Scraper</a></li>
-            <li><a class="dropdown-item py-2 fw-medium" href="{{ "csv-to-json/" | absURL }}">CSV to JSON</a></li>
-            <li><a class="dropdown-item py-2 fw-medium" href="{{ "sitemap-validator/" | absURL }}">Sitemap Validator</a></li>
-          </ul>
+      <!-- LEFT CLOUD WING: 2 Interactive Telemetry Cards -->
+      <div class="nx-bento-wing nx-wing-left">
+        <div class="nx-bento-card" tabindex="0">
+          <div class="nx-card-header">
+            <div class="nx-card-icon bg-success-subtle text-success">
+              <i class="bi bi-rss-fill"></i>
+            </div>
+            <span class="nx-card-tag">
+              <span class="nx-live-dot"></span> Active Stream
+            </span>
+          </div>
+          <h2 class="nx-bento-title">Autonomous RSS Engine</h2>
+          <p class="nx-bento-sub">11 Live Tech Feeds • AI Fact Extraction</p>
+          <div class="nx-card-meter" aria-hidden="true">
+            <div class="nx-card-meter-fill" style="width: 88%;"></div>
+          </div>
         </div>
 
-        <!-- Blogs Button -->
-        <a href="{{ "posts/" | absURL }}" class="btn btn-outline-secondary bg-body btn-lg px-5 py-3 fw-bold rounded-pill premium-btn-outline">
-          <i class="fas fa-book-open me-2"></i>Explore Blogs
-        </a>
-      </div>
-
-      <!-- Tech Stack Trust Signals -->
-      <div class="mt-4 pt-4 border-top border-secondary border-opacity-25">
-        <p class="text-uppercase text-secondary fw-bold small mb-3" style="letter-spacing: 1.5px; font-size: 0.72rem;">Powered By Cloud & AI Architecture</p>
-        
-        <div class="d-flex flex-wrap justify-content-center gap-2 gap-sm-3">
-          <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-            <i class="fas fa-microchip text-primary"></i> AI Automation
+        <div class="nx-bento-card nx-card-delay-2" tabindex="0">
+          <div class="nx-card-header">
+            <div class="nx-card-icon bg-warning-subtle text-warning">
+              <i class="bi bi-broadcast-pin"></i>
+            </div>
+            <span class="nx-card-tag">8 Channels</span>
           </div>
-          <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-            <i class="fas fa-database text-danger"></i> Redis Database
-          </div>
-          <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-            <i class="fas fa-spider text-success"></i> Web Scraping
-          </div>
-          <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-            <i class="fab fa-python" style="color: #3776ab;"></i> Python
-          </div>
-          <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-            <i class="fab fa-js" style="color: #f7df1e;"></i> JavaScript
-          </div>
-          <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-            <i class="fas fa-caret-up text-body"></i> Vercel
-          </div>
-          <div class="tech-pill bg-body-tertiary border border-secondary-subtle rounded-pill shadow-sm text-body fw-medium">
-            <i class="fab fa-github text-body"></i> GitHub Actions
+          <h2 class="nx-bento-title">8-Platform Omni-Broadcast</h2>
+          <p class="nx-bento-sub">Bluesky • LinkedIn • DEV.to • WordPress</p>
+          <div class="nx-card-meter" aria-hidden="true">
+            <div class="nx-card-meter-fill" style="width: 82%;"></div>
           </div>
         </div>
       </div>
 
-      <!-- Scroll Dive Cue -->
-      <div class="mt-4 pt-2">
-        <a href="#latest-innovations-section" class="scroll-dive-cue" aria-label="Scroll through the clouds to articles">
-          <div class="scroll-dive-mouse"><div class="scroll-dive-wheel"></div></div>
-          <span>Dive Into Articles</span>
-        </a>
+      <!-- CENTER COCKPIT: High-Contrast Headline, Live Metrics, CTAs & Tech Stack -->
+      <div class="nx-cockpit-core text-center px-2 px-md-4">
+
+        <!-- Top Badge -->
+        <div class="mb-3">
+          <span class="nx-hero-badge">
+            <i class="bi bi-cpu-fill"></i>
+            <span>Automated Content Infrastructure</span>
+          </span>
+        </div>
+
+        <!-- Main Headline -->
+        <h1 class="display-3 mb-3 nx-hero-headline">
+          Intelligent pipelines for the <span class="nx-gradient-text">modern web.</span>
+        </h1>
+
+        <!-- High-Contrast Subheadline -->
+        <p class="lead mb-4 fs-5 px-lg-3 nx-hero-subtext mx-auto">
+          Deploy AI-driven publishing architectures, autonomous multi-LLM workflows, and full-stack developer utilities engineered to scale in the cloud.
+        </p>
+
+        <!-- Live Telemetry Strip -->
+        <div class="mb-4">
+          <div class="nx-telemetry-bar">
+            <span class="nx-telemetry-item">
+              <span class="nx-live-dot"></span>
+              <span>{{ len $posts }}+ AI-Curated Articles</span>
+            </span>
+            <span class="text-secondary opacity-50 d-none d-sm-inline">•</span>
+            <span class="nx-telemetry-item">
+              <i class="bi bi-boxes text-primary"></i>
+              <span>6 Free Developer Tools</span>
+            </span>
+            <span class="text-secondary opacity-50 d-none d-md-inline">•</span>
+            <span class="nx-telemetry-item d-none d-md-inline-flex">
+              <i class="bi bi-infinity text-primary"></i>
+              <span>24/7 GitHub Actions CI/CD</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Call to Actions -->
+        <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-stretch align-items-sm-center mb-4">
+          <div class="dropdown">
+            <button class="btn btn-lg px-5 py-3 fw-bold rounded-pill dropdown-toggle w-100 nx-btn-primary d-inline-flex align-items-center justify-content-center gap-2" type="button" id="heroProjectsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-tools"></i>
+              <span>Use Free Tools</span>
+            </button>
+            <ul class="dropdown-menu shadow-lg border-subtle mt-2 w-100 text-start premium-dropdown p-2" aria-labelledby="heroProjectsDropdown">
+              <li><a class="dropdown-item rounded-3 py-2 fw-medium" href="{{ "ats-scanner/" | absURL }}"><i class="bi bi-file-earmark-check text-primary me-2"></i>ATS Resume Scanner</a></li>
+              <li><a class="dropdown-item rounded-3 py-2 fw-medium" href="{{ "cover-letter-generator/" | absURL }}"><i class="bi bi-envelope-paper text-primary me-2"></i>AI Cover Letter Generator</a></li>
+              <li><a class="dropdown-item rounded-3 py-2 fw-medium" href="{{ "schema-generator/" | absURL }}"><i class="bi bi-braces text-primary me-2"></i>JSON-LD Schema Generator</a></li>
+              <li><a class="dropdown-item rounded-3 py-2 fw-medium" href="{{ "web-scraper/" | absURL }}"><i class="bi bi-globe2 text-primary me-2"></i>Live Web Scraper</a></li>
+              <li><a class="dropdown-item rounded-3 py-2 fw-medium" href="{{ "csv-to-json/" | absURL }}"><i class="bi bi-arrow-left-right text-primary me-2"></i>CSV to JSON Converter</a></li>
+              <li><a class="dropdown-item rounded-3 py-2 fw-medium" href="{{ "sitemap-validator/" | absURL }}"><i class="bi bi-diagram-3 text-primary me-2"></i>XML Sitemap Validator</a></li>
+            </ul>
+          </div>
+
+          <a href="{{ "posts/" | absURL }}" class="btn btn-lg px-5 py-3 fw-bold rounded-pill nx-btn-secondary d-inline-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-journal-richtext"></i>
+            <span>Explore Blogs</span>
+          </a>
+        </div>
+
+        <!-- Tech Stack Trust Signals -->
+        <div class="mt-4 pt-3 border-top border-secondary border-opacity-25">
+          <p class="text-uppercase nx-stack-heading mb-3">
+            <i class="bi bi-cloud-check-fill text-primary me-1"></i>Powered By Cloud & AI Architecture
+          </p>
+
+          <div class="d-flex flex-wrap justify-content-center gap-2">
+            <div class="tech-pill">
+              <i class="bi bi-cpu-fill text-primary"></i> AI Automation
+            </div>
+            <div class="tech-pill">
+              <i class="bi bi-hdd-network-fill text-danger"></i> Redis Cloud
+            </div>
+            <div class="tech-pill">
+              <i class="fas fa-spider text-success"></i> Web Scraping
+            </div>
+            <div class="tech-pill">
+              <i class="fab fa-python" style="color: #3776ab;"></i> Python
+            </div>
+            <div class="tech-pill">
+              <i class="fab fa-js" style="color: #eab308;"></i> JavaScript
+            </div>
+            <div class="tech-pill">
+              <i class="bi bi-triangle-fill" style="font-size: 0.75rem;"></i> Vercel
+            </div>
+            <div class="tech-pill">
+              <i class="bi bi-github"></i> GitHub Actions
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll Dive Cue -->
+        <div class="mt-4 pt-2">
+          <a href="#latest-innovations-section" class="scroll-dive-cue" aria-label="Scroll through the clouds to articles">
+            <i class="bi bi-cloud-arrow-down-fill fs-5 text-primary"></i>
+            <span>Scroll Through The Clouds</span>
+          </a>
+        </div>
+
+      </div>
+
+      <!-- RIGHT CLOUD WING: 2 Interactive Telemetry Cards -->
+      <div class="nx-bento-wing nx-wing-right">
+        <div class="nx-bento-card nx-card-delay-1" tabindex="0">
+          <div class="nx-card-header">
+            <div class="nx-card-icon bg-primary-subtle text-primary">
+              <i class="bi bi-diagram-3-fill"></i>
+            </div>
+            <span class="nx-card-tag">Failover Ready</span>
+          </div>
+          <h2 class="nx-bento-title">Multi-LLM Waterfall</h2>
+          <p class="nx-bento-sub">Groq • Gemini 2.5 • Mistral • GPT-4o</p>
+          <div class="nx-card-meter" aria-hidden="true">
+            <div class="nx-card-meter-fill" style="width: 94%;"></div>
+          </div>
+        </div>
+
+        <div class="nx-bento-card nx-card-delay-3" tabindex="0">
+          <div class="nx-card-header">
+            <div class="nx-card-icon bg-info-subtle text-info">
+              <i class="bi bi-shield-fill-check"></i>
+            </div>
+            <span class="nx-card-tag">Auto-Indexed</span>
+          </div>
+          <h2 class="nx-bento-title">Self-Healing SEO Engine</h2>
+          <p class="nx-bento-sub">IndexNow & Google Indexing API</p>
+          <div class="nx-card-meter" aria-hidden="true">
+            <div class="nx-card-meter-fill" style="width: 90%;"></div>
+          </div>
+        </div>
       </div>
 
     </div>
   </div>
 
-  <!-- LAYER 1: Distant Atmospheric Cloud Bank -->
-  <div class="cloud-layer-wrap cloud-layer-back" id="cloud-back">
-    <svg class="w-100 cloud-svg-drift-slow" viewBox="0 0 1440 220" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height: clamp(95px, 14vw, 190px);">
-      <path d="M0 160C110 160 140 85 260 95C380 105 430 40 570 55C710 70 760 130 900 110C1040 90 1110 30 1240 50C1340 65 1390 120 1440 130V220H0V160Z" fill="currentColor"/>
-    </svg>
+  <!-- 4. Foreground Fly-Through Cloud Portal Gates (Part & Rush Past User on Scroll) -->
+  <div class="nx-flythrough-gate" aria-hidden="true">
+    <div class="nx-gate-cloud-left">
+      <div class="cloud-lobe-main"></div>
+    </div>
+    <div class="nx-gate-cloud-right">
+      <div class="cloud-lobe-main"></div>
+    </div>
   </div>
 
-  <!-- LAYER 2: Midground parting Cloud Bank -->
-  <div class="cloud-layer-wrap cloud-layer-mid" id="cloud-mid">
-    <svg class="w-100 cloud-svg-drift-med" viewBox="0 0 1440 200" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height: clamp(85px, 12vw, 165px);">
-      <path d="M0 120C130 95 210 150 350 130C490 110 560 45 720 60C880 75 940 145 1090 125C1240 105 1320 55 1440 85V200H0V120Z" fill="currentColor"/>
-    </svg>
-  </div>
-
-  <!-- LAYER 3: Foreground Seamless Page-Transition Cloud Bank -->
-  <div class="cloud-layer-wrap cloud-layer-front" id="cloud-front">
-    <svg class="w-100" viewBox="0 0 1440 160" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height: clamp(70px, 10vw, 135px);">
-      <path d="M0 95C95 125 190 55 320 65C450 75 520 135 670 120C820 105 910 35 1060 55C1210 75 1310 125 1440 90V160H0V95Z" fill="currentColor"/>
-    </svg>
-  </div>
+  <!-- 5. Seamless Horizon Mist Transition into Section 1 -->
+  <div class="nx-scroll-transition-veil" aria-hidden="true"></div>
 </section>
 
 <script>
-  // 60FPS Hardware-Accelerated Cloud-Dive Scroll Engine
-  document.addEventListener("DOMContentLoaded", function() {
+  /* ==========================================================================
+     ☁️ PROCEDURAL VOLUMETRIC CLOUD ENGINE + 3D SCROLL FLY-THROUGH CONTROLLER
+     - Generates multi-layered soft-feathered cumulus cloud sprites on an offscreen
+       buffer and flies the camera straight through them as the user scrolls down.
+     ========================================================================== */
+  (function() {
     const stage = document.getElementById("cloud-hero-stage");
-    const cockpit = document.getElementById("hero-cockpit");
-    const cloudBack = document.getElementById("cloud-back");
-    const cloudMid = document.getElementById("cloud-mid");
-    const cloudFront = document.getElementById("cloud-front");
-    const hudLT = document.getElementById("hud-left-top");
-    const hudRT = document.getElementById("hud-right-top");
-    const hudLB = document.getElementById("hud-left-btm");
-    const hudRB = document.getElementById("hud-right-btm");
+    const canvas = document.getElementById("nx-volumetric-cloud-canvas");
+    if (!stage || !canvas) return;
 
-    if (!stage || !cockpit) return;
+    const ctx = canvas.getContext("2d");
+    let width = 0;
+    let height = 0;
+    let scrollProgress = 0; // 0 (top) -> 1 (scrolled through clouds)
+    let targetMouseX = 0;
+    let targetMouseY = 0;
+    let currentMouseX = 0;
+    let currentMouseY = 0;
 
-    let isHeroVisible = true;
-    let ticking = false;
-
-    // Pause calculations completely when hero is off-screen
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver((entries) => {
-        isHeroVisible = entries[0].isIntersecting;
-      }, { threshold: 0 });
-      observer.observe(stage);
+    function isDarkMode() {
+      const html = document.documentElement;
+      const attr = html.getAttribute("data-bs-theme") || html.getAttribute("data-theme") || document.body.getAttribute("data-bs-theme");
+      if (attr) return attr === "dark";
+      return html.classList.contains("dark") || document.body.classList.contains("dark");
     }
 
-    function updateCloudDive() {
-      ticking = false;
-      if (!isHeroVisible) return;
-
-      // Respect Accessibility "Pause Motion" or OS Reduced Motion
-      if (
+    function isMotionPaused() {
+      return (
         document.documentElement.classList.contains("a11y-pause-motion") ||
         window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      ) {
-        cockpit.style.transform = "";
-        cockpit.style.opacity = "";
-        return;
-      }
-
-      const scrollY = window.scrollY || window.pageYOffset;
-      const stageHeight = stage.offsetHeight || 700;
-      const progress = Math.min(1, Math.max(0, scrollY / (stageHeight * 0.85)));
-
-      // 1. Cockpit zooms forward as if flying through the clouds
-      const scale = 1 + progress * 0.16;
-      const translateY = scrollY * 0.28;
-      const opacity = Math.max(0, 1 - progress * 1.35);
-      cockpit.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
-      cockpit.style.opacity = opacity.toFixed(3);
-
-      // 2. Clouds rise and expand toward the viewer to create the cloud-pass effect
-      if (cloudBack) {
-        cloudBack.style.transform = `translate3d(${(progress * -35).toFixed(1)}px, ${(progress * -55).toFixed(1)}px, 0) scale(${(1 + progress * 0.18).toFixed(3)})`;
-      }
-      if (cloudMid) {
-        cloudMid.style.transform = `translate3d(${(progress * 45).toFixed(1)}px, ${(progress * -90).toFixed(1)}px, 0) scale(${(1 + progress * 0.28).toFixed(3)})`;
-      }
-      if (cloudFront) {
-        cloudFront.style.transform = `translate3d(0, ${(progress * -25).toFixed(1)}px, 0) scale(${(1 + progress * 0.12).toFixed(3)})`;
-      }
-
-      // 3. Telemetry HUD cards part outward left & right as you dive through
-      if (hudLT && window.innerWidth >= 768) {
-        hudLT.style.transform = `translate3d(${(progress * -140).toFixed(1)}px, ${(progress * -60).toFixed(1)}px, 0)`;
-        hudLT.style.opacity = opacity.toFixed(3);
-      }
-      if (hudRT && window.innerWidth >= 768) {
-        hudRT.style.transform = `translate3d(${(progress * 140).toFixed(1)}px, ${(progress * -60).toFixed(1)}px, 0)`;
-        hudRT.style.opacity = opacity.toFixed(3);
-      }
-      if (hudLB && window.innerWidth >= 1200) {
-        hudLB.style.transform = `translate3d(${(progress * -180).toFixed(1)}px, ${(progress * 40).toFixed(1)}px, 0)`;
-        hudLB.style.opacity = opacity.toFixed(3);
-      }
-      if (hudRB && window.innerWidth >= 1200) {
-        hudRB.style.transform = `translate3d(${(progress * 180).toFixed(1)}px, ${(progress * 40).toFixed(1)}px, 0)`;
-        hudRB.style.opacity = opacity.toFixed(3);
-      }
+      );
     }
 
-    window.addEventListener("scroll", function() {
-      if (!ticking && isHeroVisible) {
-        window.requestAnimationFrame(updateCloudDive);
-        ticking = true;
-      }
+    // Pre-render realistic multi-lobe volumetric cloud sprite onto offscreen canvas for 60FPS performance
+    function buildCloudSprite(darkTheme) {
+      const off = document.createElement("canvas");
+      off.width = 360;
+      off.height = 220;
+      const octx = off.getContext("2d");
+
+      // Multi-puff cumulus cluster coordinates [x, y, radius, alpha]
+      const puffs = [
+        [180, 115, 78, 0.95],
+        [115, 125, 62, 0.85],
+        [245, 122, 66, 0.88],
+        [145, 82, 58, 0.9],
+        [215, 86, 54, 0.86],
+        [75, 142, 46, 0.65],
+        [285, 140, 48, 0.68]
+      ];
+
+      puffs.forEach(function(p) {
+        const cx = p[0], cy = p[1], r = p[2], a = p[3];
+        const grad = octx.createRadialGradient(cx, cy - r * 0.25, r * 0.1, cx, cy, r);
+        if (darkTheme) {
+          grad.addColorStop(0, "rgba(71, 85, 105, " + (a * 0.55) + ")");
+          grad.addColorStop(0.55, "rgba(30, 41, 59, " + (a * 0.38) + ")");
+          grad.addColorStop(1, "rgba(15, 23, 42, 0)");
+        } else {
+          grad.addColorStop(0, "rgba(255, 255, 255, " + a + ")");
+          grad.addColorStop(0.6, "rgba(241, 245, 249, " + (a * 0.72) + ")");
+          grad.addColorStop(1, "rgba(226, 232, 240, 0)");
+        }
+        octx.fillStyle = grad;
+        octx.beginPath();
+        octx.arc(cx, cy, r, 0, Math.PI * 2);
+        octx.fill();
+      });
+
+      return off;
+    }
+
+    let darkState = isDarkMode();
+    let cloudSprite = buildCloudSprite(darkState);
+
+    // 14 Volumetric 3D Cloud Banks distributed in depth (z: 0.15 to 0.95)
+    // Positioned primarily along the left, right, top, and horizon so they frame the text
+    // when static, and rush outward/forward past the user when scrolling down!
+    const clouds = [
+      { xAnchor: 0.12, yAnchor: 0.22, z: 0.25, scale: 1.15, vx: 0.18, driftOffset: 0 },
+      { xAnchor: 0.88, yAnchor: 0.20, z: 0.30, scale: 1.25, vx: -0.15, driftOffset: 100 },
+      { xAnchor: 0.08, yAnchor: 0.58, z: 0.45, scale: 1.35, vx: 0.22, driftOffset: 40 },
+      { xAnchor: 0.92, yAnchor: 0.55, z: 0.48, scale: 1.40, vx: -0.20, driftOffset: 80 },
+      { xAnchor: 0.24, yAnchor: 0.84, z: 0.62, scale: 1.50, vx: 0.26, driftOffset: 20 },
+      { xAnchor: 0.76, yAnchor: 0.82, z: 0.65, scale: 1.55, vx: -0.24, driftOffset: 60 },
+      { xAnchor: 0.50, yAnchor: 0.92, z: 0.75, scale: 1.80, vx: 0.14, driftOffset: 150 },
+      { xAnchor: 0.15, yAnchor: 0.88, z: 0.85, scale: 1.95, vx: 0.30, driftOffset: 10 },
+      { xAnchor: 0.85, yAnchor: 0.88, z: 0.88, scale: 2.00, vx: -0.28, driftOffset: 110 },
+      { xAnchor: 0.32, yAnchor: 0.14, z: 0.20, scale: 0.95, vx: 0.12, driftOffset: 70 },
+      { xAnchor: 0.68, yAnchor: 0.15, z: 0.22, scale: 1.00, vx: -0.14, driftOffset: 130 },
+      { xAnchor: 0.48, yAnchor: 0.88, z: 0.94, scale: 2.25, vx: 0.20, driftOffset: 45 }
+    ];
+
+    function resizeCanvas() {
+      const rect = stage.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = rect.width;
+      height = rect.height;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function updateScroll() {
+      const stageHeight = stage.offsetHeight || 760;
+      const y = window.scrollY || window.pageYOffset || 0;
+      scrollProgress = Math.min(1, Math.max(0, y / (stageHeight * 0.82)));
+      stage.style.setProperty("--scroll-p", scrollProgress.toFixed(4));
+    }
+
+    // Track pointer for interactive 3D parallax & card tilt
+    stage.addEventListener("pointermove", function(e) {
+      if (isMotionPaused()) return;
+      const rect = stage.getBoundingClientRect();
+      targetMouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+      targetMouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
     }, { passive: true });
-  });
+
+    stage.addEventListener("pointerleave", function() {
+      targetMouseX = 0;
+      targetMouseY = 0;
+    }, { passive: true });
+
+    // Interactive 3D Tilt on Bento Cards
+    const bentoCards = stage.querySelectorAll(".nx-bento-card");
+    bentoCards.forEach(function(card) {
+      card.addEventListener("pointermove", function(e) {
+        if (window.innerWidth < 992 || isMotionPaused()) return;
+        const rect = card.getBoundingClientRect();
+        const rx = (((e.clientY - rect.top) / rect.height - 0.5) * -8).toFixed(2);
+        const ry = (((e.clientX - rect.left) / rect.width - 0.5) * 8).toFixed(2);
+        card.style.transform = "perspective(750px) translate3d(0, -8px, 0) rotateX(" + rx + "deg) rotateY(" + ry + "deg) scale(1.03)";
+      }, { passive: true });
+
+      card.addEventListener("pointerleave", function() {
+        card.style.transform = "";
+      }, { passive: true });
+    });
+
+    // Rebuild cloud sprite automatically when switching between Light & Dark Mode
+    const themeObs = new MutationObserver(function() {
+      const nowDark = isDarkMode();
+      if (nowDark !== darkState) {
+        darkState = nowDark;
+        cloudSprite = buildCloudSprite(darkState);
+      }
+    });
+    themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-bs-theme", "data-theme", "class"] });
+
+    let time = 0;
+    function renderLoop() {
+      if (!isMotionPaused()) {
+        time += 1;
+      }
+
+      // Smoothly interpolate mouse parallax
+      currentMouseX += (targetMouseX - currentMouseX) * 0.06;
+      currentMouseY += (targetMouseY - currentMouseY) * 0.06;
+      stage.style.setProperty("--mouse-x", currentMouseX.toFixed(3));
+      stage.style.setProperty("--mouse-y", currentMouseY.toFixed(3));
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Draw each volumetric cloud cluster with ambient horizontal drift + 3D scroll fly-through zoom
+      const centerX = width * 0.5;
+      const centerY = height * 0.45;
+
+      for (let i = 0; i < clouds.length; i++) {
+        const c = clouds[i];
+
+        // Ambient continuous horizontal drift
+        const ambientShiftX = Math.sin((time * 0.004 * c.vx) + c.driftOffset) * 55 + (time * c.vx * 0.35) % 160;
+        const baseX = c.xAnchor * width + ambientShiftX + (currentMouseX * 28 * c.z);
+        const baseY = c.yAnchor * height + (currentMouseY * 18 * c.z);
+
+        // 3D Scroll Fly-Through Mathematics:
+        // As scrollProgress goes 0 -> 1, clouds accelerate outward from the center and scale up 2.6x
+        // just like flying through real clouds into the next section!
+        const flyMultiplier = 1 + (scrollProgress * (1.8 + c.z * 1.6));
+        const dx = baseX - centerX;
+        const dy = baseY - centerY;
+        const finalX = centerX + dx * flyMultiplier;
+        const finalY = centerY + dy * flyMultiplier - (scrollProgress * 95 * c.z);
+
+        const drawW = 360 * c.scale * flyMultiplier;
+        const drawH = 220 * c.scale * flyMultiplier;
+
+        // Fade foreground clouds smoothly at the very end of the scroll dive
+        const alpha = Math.max(0, Math.min(1, (1 - scrollProgress * 0.55)));
+        ctx.globalAlpha = alpha;
+        ctx.drawImage(cloudSprite, finalX - drawW * 0.5, finalY - drawH * 0.5, drawW, drawH);
+      }
+
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(renderLoop);
+    }
+
+    window.addEventListener("scroll", updateScroll, { passive: true });
+    window.addEventListener("resize", function() {
+      resizeCanvas();
+      updateScroll();
+    }, { passive: true });
+
+    resizeCanvas();
+    updateScroll();
+    requestAnimationFrame(renderLoop);
+  })();
 </script>
 
 <!-- ========================================== -->

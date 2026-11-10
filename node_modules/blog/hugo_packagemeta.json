@@ -1,10 +1,11 @@
 {
-  "sum": "a3e69155ba27c970",
+  "sum": "8dd0d699e40505c2",
   "dependencySources": {
     "dependencies": {
       "@fullhuman/postcss-purgecss": "github.com/gethinode/hinode/v3",
       "autoprefixer": "github.com/gethinode/hinode/v3",
       "cssnano": "github.com/gethinode/hinode/v3",
+      "hugo-extended": "github.com/gethinode/hinode/v3",
       "postcss-cli": "github.com/gethinode/hinode/v3",
       "rimraf": "github.com/gethinode/hinode/v3"
     },
@@ -17,8 +18,8 @@
       "@babel/cli": "github.com/twbs/bootstrap",
       "@babel/core": "github.com/twbs/bootstrap",
       "@babel/preset-env": "github.com/twbs/bootstrap",
+      "@bookshop/hugo-engine": "github.com/gethinode/mod-blocks/v2",
       "@docsearch/js": "github.com/twbs/bootstrap",
-      "@mermaid-js/layout-elk": "github.com/gethinode/mod-mermaid/v5",
       "@popperjs/core": "github.com/twbs/bootstrap",
       "@rollup/plugin-babel": "github.com/twbs/bootstrap",
       "@rollup/plugin-commonjs": "github.com/twbs/bootstrap",

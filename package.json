@@ -40,6 +40,8 @@
     "minimatch": "^11.0.1"
   },
   "scripts": {
+    "dev": "hugo server --renderToMemory --disableFastRender --buildDrafts=false --logLevel info",
+    "dev:fast": "hugo server --renderToMemory --disableKinds=RSS,sitemap,taxonomy,term --ForHomepage",
     "build:css": "postcss src/css/*.css -d public/css",
     "lint:css": "stylelint \"**/*.scss\"",
     "mod:update": "hugo mod npm pack && npm install --ignore-scripts",

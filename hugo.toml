@@ -1,6 +1,6 @@
 title = "Lucky Taorem | Tech & AI Blog"
 baseURL = "https://ltdeveloperblogs.github.io/"
-ignoreLogs = ['warn-missing-page-argument']
+ignoreLogs = ['warn-missing-page-argument', 'error-deprecated', 'warn-deprecated']
 
 [params]
   description = "Expert analysis, tutorials, and news on Artificial Intelligence, Web Development, and Technology by Lucky Taorem."
@@ -121,7 +121,6 @@ locale = "en-us"
       unsafe = true
 
 [main]
-  [main.build]
     transpiler = "dartsass"
     silenceDeprecations = true
 

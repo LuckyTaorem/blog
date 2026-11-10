@@ -1,0 +1,11 @@
+# Fast Local Preview Override
+disableKinds = ["sitemap", "RSS", "taxonomy", "term"]
+disableFastRender = false
+
+[outputs]
+  home = ["HTML"]
+
+[caches]
+  [caches.assets]
+    dir = ":resourceDir/_gen"
+    maxAge = "720h"
