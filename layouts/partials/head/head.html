@@ -24,6 +24,34 @@
     <meta name="google-site-verification" content="i8FXlaFc-ZLFqIzN-rgTIK614f6dGg1gz8HAegeb4tI" />
     <link rel="canonical" href="{{ .Permalink }}">
 
+    <!-- 🌙 DEFAULT DARK MODE INITIALIZER (Defaults to Dark on 1st visit, allows instant Light/Dark switching) -->
+    <script>
+      (function() {
+        try {
+          const html = document.documentElement;
+          const savedTheme = localStorage.getItem('theme') || localStorage.getItem('pref-theme');
+          const initialTheme = savedTheme ? savedTheme : 'dark';
+          if (!savedTheme) {
+            localStorage.setItem('theme', 'dark');
+          }
+          html.setAttribute('data-bs-theme', initialTheme);
+          html.setAttribute('data-theme', initialTheme);
+          html.classList.toggle('dark', initialTheme === 'dark');
+
+          // Keep data-theme and class="dark" synced whenever Hinode's navbar toggle changes data-bs-theme
+          new MutationObserver(function() {
+            const current = html.getAttribute('data-bs-theme') || 'dark';
+            if (html.getAttribute('data-theme') !== current) {
+              html.setAttribute('data-theme', current);
+            }
+            html.classList.toggle('dark', current === 'dark');
+          }).observe(html, { attributes: true, attributeFilter: ['data-bs-theme'] });
+        } catch (e) {
+          document.documentElement.setAttribute('data-bs-theme', 'dark');
+        }
+      })();
+    </script>
+
     <!-- Robots & X-Robots-Tag -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta http-equiv="X-Robots-Tag" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">

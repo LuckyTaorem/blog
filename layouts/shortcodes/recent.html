@@ -1,75 +1,86 @@
 <style>
   /* ==========================================================================
-     ☁️ REAL FRACTAL CLOUD FLY-THROUGH HERO (LIGHT & DARK ADAPTIVE + 60FPS GPU)
+     🌫️ LIGHT & DARK ADAPTIVE CLOUD + SMOKE HERO (ULTRA-LIGHTWEIGHT 60FPS)
      ========================================================================== */
-  :root {
+  :root,
+  [data-bs-theme="light"] {
     --scroll-p: 0;
     --mouse-x: 0;
     --mouse-y: 0;
 
-    /* Crisp Light Mode Sky & High-Contrast Typography */
-    --sky-top: #c2dcf7;
-    --sky-mid: #e3effd;
-    --sky-horizon: #f8fafc;
-    --sky-bottom: var(--bs-body-bg, #ffffff);
+    /* Crisp Daylight Sky that flushes 100% into Pure White (#ffffff) at the bottom */
+    --sky-top: #cfe4fc;
+    --sky-mid: #eaf3ff;
+    --sky-horizon: #f8fbff;
+    --sky-bottom: #ffffff;
 
     --hero-ink: #0f172a;
     --hero-sub-ink: #1e293b;
     --hero-muted-ink: #334155;
-    --hero-text-shield: radial-gradient(ellipse 68% 62% at 50% 46%, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.55) 58%, transparent 100%);
+    /* Subtle halo so swirling smoke behind the hero is clearly visible while text stays 100% readable */
+    --hero-text-shield: radial-gradient(ellipse 62% 55% at 50% 46%, rgba(255, 255, 255, 0.52) 0%, rgba(255, 255, 255, 0.22) 55%, transparent 100%);
 
-    --cloud-lit: rgba(255, 255, 255, 0.98);
-    --cloud-core: rgba(248, 250, 252, 0.92);
-    --cloud-shadow: rgba(148, 163, 184, 0.32);
-    --cloud-ambient-tint: rgba(255, 255, 255, 0.85);
-
-    --bento-bg: rgba(255, 255, 255, 0.88);
-    --bento-hover-bg: rgba(255, 255, 255, 0.98);
+    --bento-bg: rgba(255, 255, 255, 0.86);
+    --bento-hover-bg: #ffffff;
     --bento-border: rgba(15, 23, 42, 0.12);
-    --bento-hover-border: rgba(234, 88, 12, 0.6);
-    --bento-shadow: 0 18px 40px -12px rgba(15, 23, 42, 0.12), 0 4px 12px rgba(15, 23, 42, 0.05);
-    --bento-hover-shadow: 0 24px 52px -10px rgba(234, 88, 12, 0.24), 0 8px 20px rgba(15, 23, 42, 0.08);
+    --bento-hover-border: rgba(234, 88, 12, 0.55);
+    --bento-shadow: 0 14px 32px -10px rgba(15, 23, 42, 0.1), 0 4px 12px rgba(15, 23, 42, 0.04);
+    --bento-hover-shadow: 0 22px 46px -10px rgba(234, 88, 12, 0.22), 0 8px 18px rgba(15, 23, 42, 0.06);
 
-    --pill-bg: rgba(255, 255, 255, 0.92);
-    --pill-border: rgba(15, 23, 42, 0.15);
+    --pill-bg: #ffffff;
+    --pill-border: rgba(15, 23, 42, 0.14);
     --accent-primary: #ea580c;
     --accent-secondary: #2563eb;
-    --badge-bg: rgba(234, 88, 12, 0.12);
-    --badge-border: rgba(234, 88, 12, 0.35);
+    --badge-bg: rgba(234, 88, 12, 0.1);
+    --badge-border: rgba(234, 88, 12, 0.3);
     --badge-text: #c2410c;
+
+    /* Seamless multi-stop bottom flush so smoke blends into Pure White (#ffffff) at the very bottom */
+    --bottom-flush-gradient: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.45) 42%,
+      rgba(255, 255, 255, 0.88) 76%,
+      #ffffff 100%
+    );
   }
 
-  [data-bs-theme="dark"], [data-theme="dark"], html.dark, body.dark {
-    /* Deep Stratosphere Night Sky & Luminous Cloud Contrast */
+  html[data-bs-theme="dark"] {
+    /* Deep Stratosphere Night Sky that flushes 100% into the Dark Mode Page Body */
     --sky-top: #040711;
-    --sky-mid: #0a1124;
-    --sky-horizon: #111c35;
-    --sky-bottom: var(--bs-body-bg, #16191d);
+    --sky-mid: #091022;
+    --sky-horizon: #111827;
+    --sky-bottom: var(--bs-body-bg, #212529);
 
     --hero-ink: #f8fafc;
     --hero-sub-ink: #e2e8f0;
     --hero-muted-ink: #cbd5e1;
-    --hero-text-shield: radial-gradient(ellipse 68% 62% at 50% 46%, rgba(7, 11, 22, 0.84) 0%, rgba(10, 17, 36, 0.5) 58%, transparent 100%);
+    /* Subtle dark halo so swirling smoke behind the hero is clearly visible */
+    --hero-text-shield: radial-gradient(ellipse 62% 55% at 50% 46%, rgba(6, 10, 20, 0.48) 0%, rgba(9, 16, 34, 0.2) 55%, transparent 100%);
 
-    --cloud-lit: rgba(71, 85, 105, 0.55);
-    --cloud-core: rgba(30, 41, 59, 0.68);
-    --cloud-shadow: rgba(2, 6, 23, 0.75);
-    --cloud-ambient-tint: rgba(51, 65, 85, 0.45);
-
-    --bento-bg: rgba(15, 23, 42, 0.82);
-    --bento-hover-bg: rgba(30, 41, 59, 0.95);
-    --bento-border: rgba(148, 163, 184, 0.22);
+    --bento-bg: rgba(15, 23, 42, 0.8);
+    --bento-hover-bg: rgba(30, 41, 59, 0.96);
+    --bento-border: rgba(148, 163, 184, 0.2);
     --bento-hover-border: rgba(249, 115, 22, 0.7);
-    --bento-shadow: 0 22px 50px -12px rgba(0, 0, 0, 0.75);
-    --bento-hover-shadow: 0 28px 60px -12px rgba(249, 115, 22, 0.32), 0 0 35px rgba(56, 189, 248, 0.14);
+    --bento-shadow: 0 20px 44px -12px rgba(0, 0, 0, 0.7);
+    --bento-hover-shadow: 0 26px 56px -12px rgba(249, 115, 22, 0.3), 0 0 30px rgba(56, 189, 248, 0.12);
 
-    --pill-bg: rgba(30, 41, 59, 0.9);
-    --pill-border: rgba(148, 163, 184, 0.28);
+    --pill-bg: rgba(30, 41, 59, 0.92);
+    --pill-border: rgba(148, 163, 184, 0.26);
     --accent-primary: #f97316;
     --accent-secondary: #38bdf8;
     --badge-bg: rgba(249, 115, 22, 0.18);
     --badge-border: rgba(249, 115, 22, 0.45);
     --badge-text: #fdba74;
+
+    /* Seamless multi-stop bottom flush into Dark Mode body background */
+    --bottom-flush-gradient: linear-gradient(
+      180deg,
+      rgba(22, 25, 29, 0) 0%,
+      rgba(22, 25, 29, 0.45) 42%,
+      rgba(22, 25, 29, 0.88) 76%,
+      var(--bs-body-bg, #212529) 100%
+    );
   }
 
   /* Full-Bleed 3D Atmospheric Viewport Stage */
@@ -81,154 +92,42 @@
     margin-left: -50vw;
     margin-right: -50vw;
     margin-top: -1.5rem;
-    padding: clamp(3.25rem, 6vw, 5.75rem) 1rem clamp(7.5rem, 13vw, 11.5rem);
-    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 48%, var(--sky-horizon) 82%, var(--sky-bottom) 100%);
+    padding: clamp(3.25rem, 6vw, 5.5rem) 1rem clamp(7.5rem, 13vw, 11.5rem);
+    background: linear-gradient(
+      180deg,
+      var(--sky-top) 0%,
+      var(--sky-mid) 44%,
+      var(--sky-horizon) 76%,
+      var(--sky-bottom) 100%
+    );
     overflow: hidden;
     isolation: isolate;
-    perspective: 1200px;
   }
 
-  /* Hidden SVG Filter Definition for Real Fractal Volumetric Cloud Edges */
-  .nx-cloud-svg-defs {
-    position: absolute;
-    width: 0;
-    height: 0;
-    pointer-events: none;
-  }
-
-  /* ==========================================================================
-     ☁️ LAYER 1: REAL PROCEDURAL VOLUMETRIC CLOUD CANVAS & FRACTAL VAPOR BANKS
-     ========================================================================== */
-  #nx-volumetric-cloud-canvas {
+  /* Single Hardware-Accelerated Cloud & Smoke Canvas (Low-End Device Optimized) */
+  #nx-atmosphere-canvas {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 1;
-    opacity: 0.95;
-  }
-
-  /* Real Fractal Cloud Formations (Using SVG feTurbulence + feDisplacementMap) */
-  .nx-fractal-cloud-layer {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
     z-index: 2;
-    overflow: hidden;
   }
 
-  .nx-real-cloud-cluster {
+  /* Tall Feathered Horizon Flush (Eliminates any dark-to-white seam at the bottom) */
+  .nx-smoke-horizon-blend {
     position: absolute;
-    filter: url(#real-cumulus-filter);
-    will-change: transform, opacity;
-    pointer-events: none;
-  }
-
-  /* Multi-lobe organic cloud anatomy (Sunlit top + core body + atmospheric base) */
-  .nx-real-cloud-cluster .cloud-lobe-main {
-    position: absolute;
-    inset: 15% 10% 20% 10%;
-    border-radius: 50%;
-    background: radial-gradient(ellipse at 50% 30%, var(--cloud-lit) 0%, var(--cloud-core) 58%, transparent 78%);
-    box-shadow:
-      -90px 20px 65px 25px var(--cloud-core),
-      95px 15px 70px 30px var(--cloud-lit),
-      0 45px 80px 20px var(--cloud-shadow);
-  }
-
-  /* Distant Background Clouds (Slow continuous horizontal drift + zooms in on scroll) */
-  .nx-cloud-distant-left {
-    width: clamp(380px, 46vw, 680px);
-    height: clamp(220px, 26vw, 380px);
-    top: 4%;
-    left: -8%;
-    opacity: calc(0.85 - var(--scroll-p) * 0.3);
-    transform: translate3d(
-      calc(var(--scroll-p) * -220px + var(--mouse-x) * -18px),
-      calc(var(--scroll-p) * -80px + var(--mouse-y) * -12px),
-      calc(var(--scroll-p) * 320px)
-    ) scale(calc(1 + var(--scroll-p) * 1.15));
-  }
-
-  .nx-cloud-distant-right {
-    width: clamp(420px, 48vw, 720px);
-    height: clamp(240px, 28vw, 400px);
-    top: 6%;
-    right: -10%;
-    opacity: calc(0.85 - var(--scroll-p) * 0.3);
-    transform: translate3d(
-      calc(var(--scroll-p) * 220px + var(--mouse-x) * -18px),
-      calc(var(--scroll-p) * -70px + var(--mouse-y) * -12px),
-      calc(var(--scroll-p) * 320px)
-    ) scale(calc(1 + var(--scroll-p) * 1.15));
-  }
-
-  /* ==========================================================================
-     ☁️ LAYER 2: FOREGROUND SCROLL-THROUGH CLOUD GATES (RUSH PAST USER ON SCROLL)
-     ========================================================================== */
-  .nx-flythrough-gate {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: clamp(140px, 20vw, 230px);
+    background: var(--bottom-flush-gradient);
     z-index: 6;
-    overflow: hidden;
-  }
-
-  /* Left & Right Foreground Cumulus Banks that part & rush past camera as user scrolls */
-  .nx-gate-cloud-left,
-  .nx-gate-cloud-right {
-    position: absolute;
-    bottom: -8%;
-    width: clamp(460px, 62vw, 960px);
-    height: clamp(280px, 38vw, 520px);
-    filter: url(#real-cumulus-filter);
-    will-change: transform, opacity;
-  }
-
-  .nx-gate-cloud-left {
-    left: -14%;
-    transform: translate3d(
-      calc(var(--scroll-p) * -320px + var(--mouse-x) * 28px),
-      calc(var(--scroll-p) * -190px),
-      0
-    ) scale(calc(1 + var(--scroll-p) * 1.85));
-    opacity: calc(0.92 - var(--scroll-p) * 0.45);
-  }
-
-  .nx-gate-cloud-right {
-    right: -14%;
-    transform: translate3d(
-      calc(var(--scroll-p) * 320px + var(--mouse-x) * 28px),
-      calc(var(--scroll-p) * -190px),
-      0
-    ) scale(calc(1 + var(--scroll-p) * 1.85));
-    opacity: calc(0.92 - var(--scroll-p) * 0.45);
-  }
-
-  /* Center Tunnel Vapor Veil: Rushes up from the horizon as you scroll to transition into Section 1 */
-  .nx-scroll-transition-veil {
-    position: absolute;
-    left: -10%;
-    right: -10%;
-    bottom: -5%;
-    height: clamp(190px, 28vw, 360px);
-    background: linear-gradient(
-      180deg,
-      transparent 0%,
-      var(--cloud-ambient-tint) 38%,
-      var(--sky-bottom) 88%,
-      var(--sky-bottom) 100%
-    );
-    transform: translate3d(0, calc(var(--scroll-p) * -95px), 0) scaleY(calc(1 + var(--scroll-p) * 0.85));
-    transform-origin: bottom center;
-    z-index: 7;
     pointer-events: none;
-    will-change: transform;
   }
 
   /* ==========================================================================
-     🎯 LAYER 3: 3-COLUMN INTERACTIVE COCKPIT (WITH CONTRAST HALO SHIELD)
+     🎯 3-COLUMN INTERACTIVE COCKPIT (WITH CONTRAST HALO SHIELD)
      ========================================================================== */
   .nx-hero-grid {
     position: relative;
@@ -248,18 +147,18 @@
     }
   }
 
-  /* Center Content Dives Forward Through the Clouds on Scroll */
+  /* Center Content Smoothly Dives Into the Smoke on Scroll */
   .nx-cockpit-core {
     position: relative;
     padding: 1.5rem 1rem;
     border-radius: 36px;
     background: var(--hero-text-shield);
     transform: translate3d(
-      calc(var(--mouse-x) * -8px),
-      calc(var(--scroll-p) * 110px + var(--mouse-y) * -8px),
+      calc(var(--mouse-x) * -6px),
+      calc(var(--scroll-p) * 80px + var(--mouse-y) * -6px),
       0
-    ) scale(calc(1 - var(--scroll-p) * 0.14));
-    opacity: calc(1 - var(--scroll-p) * 1.25);
+    ) scale(calc(1 - var(--scroll-p) * 0.1));
+    opacity: calc(1 - var(--scroll-p) * 1.15);
     will-change: transform, opacity;
   }
 
@@ -274,19 +173,19 @@
   @media (min-width: 1200px) {
     .nx-wing-left {
       transform: translate3d(
-        calc(var(--scroll-p) * -240px + var(--mouse-x) * 14px),
-        calc(var(--scroll-p) * -45px + var(--mouse-y) * 10px),
+        calc(var(--scroll-p) * -190px + var(--mouse-x) * 10px),
+        calc(var(--scroll-p) * -30px + var(--mouse-y) * 6px),
         0
-      ) scale(calc(1 + var(--scroll-p) * 0.28));
-      opacity: calc(1 - var(--scroll-p) * 1.3);
+      ) scale(calc(1 + var(--scroll-p) * 0.18));
+      opacity: calc(1 - var(--scroll-p) * 1.2);
     }
     .nx-wing-right {
       transform: translate3d(
-        calc(var(--scroll-p) * 240px + var(--mouse-x) * 14px),
-        calc(var(--scroll-p) * -45px + var(--mouse-y) * 10px),
+        calc(var(--scroll-p) * 190px + var(--mouse-x) * 10px),
+        calc(var(--scroll-p) * -30px + var(--mouse-y) * 6px),
         0
-      ) scale(calc(1 + var(--scroll-p) * 0.28));
-      opacity: calc(1 - var(--scroll-p) * 1.3);
+      ) scale(calc(1 + var(--scroll-p) * 0.18));
+      opacity: calc(1 - var(--scroll-p) * 1.2);
     }
   }
 
@@ -307,7 +206,7 @@
   }
 
   /* ==========================================================================
-     ✨ INTERACTIVE FLOATING BENTO CARDS (HOVER TILT, GLOW & TELEMETRY BAR)
+     ✨ INTERACTIVE FLOATING BENTO CARDS (LIGHT-ENGINE OPTIMIZED)
      ========================================================================== */
   .nx-bento-card {
     position: relative;
@@ -320,24 +219,24 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                border-color 0.3s ease,
-                background-color 0.3s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.3s ease,
+                border-color 0.25s ease,
+                background-color 0.25s ease;
     cursor: pointer;
     overflow: hidden;
-    animation: nxFloatBob 5.8s ease-in-out infinite alternate;
+    animation: nxFloatBob 6s ease-in-out infinite alternate;
   }
 
-  .nx-card-delay-1 { animation-delay: -1.4s; }
-  .nx-card-delay-2 { animation-delay: -2.9s; }
-  .nx-card-delay-3 { animation-delay: -4.3s; }
+  .nx-card-delay-1 { animation-delay: -1.5s; }
+  .nx-card-delay-2 { animation-delay: -3.0s; }
+  .nx-card-delay-3 { animation-delay: -4.5s; }
 
   @keyframes nxFloatBob {
-    0% { transform: translate3d(0, -5px, 0); }
-    100% { transform: translate3d(0, 5px, 0); }
+    0% { transform: translate3d(0, -4px, 0); }
+    100% { transform: translate3d(0, 4px, 0); }
   }
 
   .nx-bento-card::before {
@@ -350,12 +249,12 @@
     background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
     opacity: 0;
     transform: scaleX(0.35);
-    transition: opacity 0.3s ease, transform 0.35s ease;
+    transition: opacity 0.25s ease, transform 0.3s ease;
   }
 
   .nx-bento-card:hover,
   .nx-bento-card:focus-within {
-    transform: translate3d(0, -8px, 0) scale(1.03) !important;
+    transform: translate3d(0, -7px, 0) scale(1.025) !important;
     background: var(--bento-hover-bg);
     border-color: var(--bento-hover-border);
     box-shadow: var(--bento-hover-shadow);
@@ -382,11 +281,11 @@
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.3s ease;
   }
 
   .nx-bento-card:hover .nx-card-icon {
-    transform: scale(1.15) rotate(-6deg);
+    transform: scale(1.12) rotate(-5deg);
   }
 
   .nx-card-tag {
@@ -410,7 +309,7 @@
     color: var(--hero-ink);
     margin: 0.15rem 0 0;
     line-height: 1.3;
-    transition: color 0.25s ease;
+    transition: color 0.2s ease;
   }
 
   .nx-bento-card:hover .nx-bento-title {
@@ -428,7 +327,7 @@
   .nx-card-meter {
     height: 4px;
     width: 100%;
-    background: rgba(148, 163, 184, 0.24);
+    background: rgba(148, 163, 184, 0.22);
     border-radius: 999px;
     overflow: hidden;
     margin-top: 0.25rem;
@@ -439,7 +338,7 @@
     border-radius: 999px;
     background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
     width: 80%;
-    transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: width 0.4s ease;
   }
 
   .nx-bento-card:hover .nx-card-meter-fill {
@@ -452,13 +351,13 @@
     border-radius: 50%;
     background: #16a34a;
     display: inline-block;
-    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.24);
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.22);
     animation: nxPulseDot 2s infinite;
   }
 
   @keyframes nxPulseDot {
     0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.25); opacity: 0.55; }
+    50% { transform: scale(1.2); opacity: 0.55; }
   }
 
   /* ==========================================================================
@@ -478,12 +377,11 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
     box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition: transform 0.25s ease;
   }
 
   .nx-hero-badge:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(234, 88, 12, 0.2);
   }
 
   .nx-hero-headline {
@@ -491,12 +389,6 @@
     font-weight: 900;
     letter-spacing: -0.035em;
     line-height: 1.08;
-    text-shadow: 0 2px 18px rgba(255, 255, 255, 0.25);
-  }
-
-  [data-bs-theme="dark"] .nx-hero-headline,
-  html.dark .nx-hero-headline {
-    text-shadow: 0 4px 24px rgba(0, 0, 0, 0.65);
   }
 
   .nx-gradient-text {
@@ -504,13 +396,6 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-size: 200% auto;
-    animation: nxGradientFlow 6s ease infinite;
-  }
-
-  @keyframes nxGradientFlow {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
   }
 
   .nx-hero-subtext {
@@ -532,10 +417,8 @@
     background: var(--pill-bg);
     border: 1px solid var(--pill-border);
     box-shadow: var(--bento-shadow);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
     font-size: 0.85rem;
-    transition: transform 0.3s ease, border-color 0.3s ease;
+    transition: transform 0.25s ease, border-color 0.25s ease;
   }
 
   .nx-telemetry-bar:hover {
@@ -561,14 +444,14 @@
     background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
     border: none;
     color: #ffffff !important;
-    box-shadow: 0 12px 28px -8px rgba(234, 88, 12, 0.6);
-    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+    box-shadow: 0 12px 26px -8px rgba(234, 88, 12, 0.55);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
   }
 
   .nx-btn-primary:hover,
   .nx-btn-primary:focus-visible {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 18px 36px -8px rgba(234, 88, 12, 0.8);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 16px 32px -8px rgba(234, 88, 12, 0.75);
   }
 
   .nx-btn-secondary {
@@ -576,12 +459,12 @@
     color: var(--hero-ink) !important;
     border: 1.5px solid var(--pill-border) !important;
     box-shadow: var(--bento-shadow);
-    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, color 0.25s ease;
+    transition: transform 0.25s ease, border-color 0.25s ease, color 0.25s ease;
   }
 
   .nx-btn-secondary:hover,
   .nx-btn-secondary:focus-visible {
-    transform: translateY(-4px) scale(1.02);
+    transform: translateY(-3px) scale(1.02);
     border-color: var(--accent-primary) !important;
     color: var(--accent-primary) !important;
   }
@@ -605,29 +488,25 @@
     color: var(--hero-ink) !important;
     border: 1px solid var(--pill-border) !important;
     border-radius: 999px;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
-    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
-                border-color 0.25s ease,
-                box-shadow 0.25s ease,
-                color 0.25s ease;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05);
+    transition: transform 0.25s ease, border-color 0.2s ease, color 0.2s ease;
     cursor: pointer;
     user-select: none;
   }
 
   .tech-pill i {
-    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.25s ease;
     font-size: 1rem;
   }
 
   .tech-pill:hover {
-    transform: translateY(-4px) scale(1.06);
+    transform: translateY(-3px) scale(1.04);
     border-color: var(--accent-primary) !important;
     color: var(--accent-primary) !important;
-    box-shadow: 0 12px 24px -6px rgba(234, 88, 12, 0.25) !important;
   }
 
   .tech-pill:hover i {
-    transform: scale(1.2) rotate(-6deg);
+    transform: scale(1.18) rotate(-5deg);
   }
 
   /* High-Contrast Scroll Through Clouds Button */
@@ -646,17 +525,16 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
     box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
-    transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.25s ease, border-color 0.25s ease, color 0.25s ease;
   }
 
   .scroll-dive-cue:hover {
     color: var(--accent-primary) !important;
     border-color: var(--accent-primary);
     transform: translateY(3px);
-    box-shadow: 0 10px 24px -4px rgba(234, 88, 12, 0.28);
   }
 
-  /* Section 1 Seamless Cloud Arrival Transition */
+  /* Section 1 Seamless Smoke Reveal Transition */
   #latest-innovations-section {
     position: relative;
     z-index: 8;
@@ -671,7 +549,7 @@
   .article-group:hover .title-link { color: var(--accent-primary) !important; }
 
   .premium-dropdown {
-    animation: slideFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: slideFadeIn 0.25s ease forwards;
     transform-origin: top center;
   }
 
@@ -695,10 +573,15 @@
       padding: 0.65rem 1rem;
       width: 100%;
     }
+    /* Disable backdrop blur on mobile GPUs for butter-smooth 60fps scrolling */
+    .nx-bento-card {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .nx-bento-card, .nx-gradient-text, .nx-live-dot {
+    .nx-bento-card, .nx-live-dot {
       animation: none !important;
     }
   }
@@ -712,35 +595,14 @@
 {{ $gridPosts := first 6 (after 3 $posts) }}
 
 <!-- ========================================================================= -->
-<!-- ☁️ REAL PROCEDURAL VOLUMETRIC CLOUD FLY-THROUGH HERO                      -->
+<!-- 🌫️ REAL VOLUMETRIC CLOUD & BILLOWING SMOKE FLY-THROUGH HERO               -->
 <!-- ========================================================================= -->
 <section class="nx-hero-stage mb-4" id="cloud-hero-stage">
 
-  <!-- Real Fractal Perlin-Noise SVG Filter for Authentic Billowy Cumulus Edges -->
-  <svg class="nx-cloud-svg-defs" aria-hidden="true">
-    <defs>
-      <filter id="real-cumulus-filter" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
-        <feTurbulence type="fractalNoise" baseFrequency="0.011 0.018" numOctaves="5" seed="14" result="fractalNoise" />
-        <feDisplacementMap in="SourceGraphic" in2="fractalNoise" scale="68" xChannelSelector="R" yChannelSelector="G" result="displacedCloud" />
-        <feGaussianBlur in="displacedCloud" stdDeviation="6" result="softCloud" />
-      </filter>
-    </defs>
-  </svg>
+  <!-- 1. Single Hardware-Accelerated Cloud & Smoke Canvas -->
+  <canvas id="nx-atmosphere-canvas" aria-hidden="true"></canvas>
 
-  <!-- 1. Interactive 60FPS Volumetric Cloud Canvas (Moving Real Vapor Puffs + Scroll Fly-Through) -->
-  <canvas id="nx-volumetric-cloud-canvas" aria-hidden="true"></canvas>
-
-  <!-- 2. Distant Fractal Cumulus Formations -->
-  <div class="nx-fractal-cloud-layer" aria-hidden="true">
-    <div class="nx-real-cloud-cluster nx-cloud-distant-left">
-      <div class="cloud-lobe-main"></div>
-    </div>
-    <div class="nx-real-cloud-cluster nx-cloud-distant-right">
-      <div class="cloud-lobe-main"></div>
-    </div>
-  </div>
-
-  <!-- 3. Main Interactive 3-Column Cockpit Layout -->
+  <!-- 2. Main Interactive 3-Column Cockpit Layout -->
   <div class="container-xxl position-relative">
     <div class="nx-hero-grid">
 
@@ -916,45 +778,38 @@
     </div>
   </div>
 
-  <!-- 4. Foreground Fly-Through Cloud Portal Gates (Part & Rush Past User on Scroll) -->
-  <div class="nx-flythrough-gate" aria-hidden="true">
-    <div class="nx-gate-cloud-left">
-      <div class="cloud-lobe-main"></div>
-    </div>
-    <div class="nx-gate-cloud-right">
-      <div class="cloud-lobe-main"></div>
-    </div>
-  </div>
-
-  <!-- 5. Seamless Horizon Mist Transition into Section 1 -->
-  <div class="nx-scroll-transition-veil" aria-hidden="true"></div>
+  <!-- 3. Seamless Horizon Smoke-to-Content Flush (Zero Dark Band) -->
+  <div class="nx-smoke-horizon-blend" aria-hidden="true"></div>
 </section>
 
 <script>
   /* ==========================================================================
-     ☁️ PROCEDURAL VOLUMETRIC CLOUD ENGINE + 3D SCROLL FLY-THROUGH CONTROLLER
-     - Generates multi-layered soft-feathered cumulus cloud sprites on an offscreen
-       buffer and flies the camera straight through them as the user scrolls down.
+     🌫️ HIGH-VOLUME SWIRLING SMOKE & CLOUD ENGINE (STATIC VORTEX + SCROLL FLY-IN)
+     - Continuous swirling smoke behind the hero elements even when static (scroll=0)
+     - Darker slate-silver cumulus smoke in Light Mode so it stands out clearly
+     - Bottom horizon bed still flushes 100% into pure white in Light Mode
+     - Low-end device friendly: 0.6x internal canvas resolution + auto-pause offscreen
      ========================================================================== */
   (function() {
     const stage = document.getElementById("cloud-hero-stage");
-    const canvas = document.getElementById("nx-volumetric-cloud-canvas");
+    const canvas = document.getElementById("nx-atmosphere-canvas");
     if (!stage || !canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true });
     let width = 0;
     let height = 0;
-    let scrollProgress = 0; // 0 (top) -> 1 (scrolled through clouds)
+    let isHeroVisible = true;
+
+    let targetScrollP = 0;
+    let smoothScrollP = 0;
     let targetMouseX = 0;
     let targetMouseY = 0;
-    let currentMouseX = 0;
-    let currentMouseY = 0;
+    let smoothMouseX = 0;
+    let smoothMouseY = 0;
 
     function isDarkMode() {
-      const html = document.documentElement;
-      const attr = html.getAttribute("data-bs-theme") || html.getAttribute("data-theme") || document.body.getAttribute("data-bs-theme");
-      if (attr) return attr === "dark";
-      return html.classList.contains("dark") || document.body.classList.contains("dark");
+      const attr = document.documentElement.getAttribute("data-bs-theme");
+      return attr !== "light";
     }
 
     function isMotionPaused() {
@@ -964,86 +819,206 @@
       );
     }
 
-    // Pre-render realistic multi-lobe volumetric cloud sprite onto offscreen canvas for 60FPS performance
-    function buildCloudSprite(darkTheme) {
+    // Fast 2D Fractal Noise for Real Wispy Smoke Filaments (Baked once at startup)
+    function hash2D(ix, iy, seed) {
+      let n = ix * 374761393 + iy * 668265263 + seed * 1442695041;
+      n = (n ^ (n >> 13)) * 1274126177;
+      return ((n ^ (n >> 16)) >>> 0) / 4294967295;
+    }
+
+    function smoothNoise(x, y, seed) {
+      const ix = Math.floor(x);
+      const iy = Math.floor(y);
+      const fx = x - ix;
+      const fy = y - iy;
+      const ux = fx * fx * (3 - 2 * fx);
+      const uy = fy * fy * (3 - 2 * fy);
+      const a = hash2D(ix, iy, seed);
+      const b = hash2D(ix + 1, iy, seed);
+      const c = hash2D(ix, iy + 1, seed);
+      const d = hash2D(ix + 1, iy + 1, seed);
+      return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy;
+    }
+
+    function fbmSmoke(x, y, seed) {
+      let value = 0;
+      let amp = 0.55;
+      let freq = 1;
+      for (let o = 0; o < 4; o++) {
+        value += amp * smoothNoise(x * freq, y * freq, seed + o * 19);
+        freq *= 2.05;
+        amp *= 0.48;
+      }
+      return value;
+    }
+
+    // Bake organic swirling smoke sprite with internal spiral curl
+    // mode: "vortex" (high-visibility smoke behind hero), "sky" (mid-sky cloud), "flush" (bottom white/dark flush)
+    function bakeSmokeSprite(darkTheme, seed, mode) {
+      const size = 220;
       const off = document.createElement("canvas");
-      off.width = 360;
-      off.height = 220;
+      off.width = size;
+      off.height = size;
       const octx = off.getContext("2d");
+      const imgData = octx.createImageData(size, size);
+      const data = imgData.data;
 
-      // Multi-puff cumulus cluster coordinates [x, y, radius, alpha]
-      const puffs = [
-        [180, 115, 78, 0.95],
-        [115, 125, 62, 0.85],
-        [245, 122, 66, 0.88],
-        [145, 82, 58, 0.9],
-        [215, 86, 54, 0.86],
-        [75, 142, 46, 0.65],
-        [285, 140, 48, 0.68]
-      ];
-
-      puffs.forEach(function(p) {
-        const cx = p[0], cy = p[1], r = p[2], a = p[3];
-        const grad = octx.createRadialGradient(cx, cy - r * 0.25, r * 0.1, cx, cy, r);
-        if (darkTheme) {
-          grad.addColorStop(0, "rgba(71, 85, 105, " + (a * 0.55) + ")");
-          grad.addColorStop(0.55, "rgba(30, 41, 59, " + (a * 0.38) + ")");
-          grad.addColorStop(1, "rgba(15, 23, 42, 0)");
+      let rTop, gTop, bTop, rBot, gBot, bBot, maxAlpha;
+      if (darkTheme) {
+        if (mode === "flush") {
+          rTop = 115; gTop = 132; bTop = 158;
+          rBot = 33;  gBot = 37;  bBot = 41;
+          maxAlpha = 225;
+        } else if (mode === "vortex") {
+          // Brighter luminous silver-blue smoke behind hero in Dark Mode
+          rTop = 165; gTop = 182; bTop = 208;
+          rBot = 51;  gBot = 65;  bBot = 85;
+          maxAlpha = 235;
         } else {
-          grad.addColorStop(0, "rgba(255, 255, 255, " + a + ")");
-          grad.addColorStop(0.6, "rgba(241, 245, 249, " + (a * 0.72) + ")");
-          grad.addColorStop(1, "rgba(226, 232, 240, 0)");
+          rTop = 135; gTop = 152; bTop = 180;
+          rBot = 30;  gBot = 41;  bBot = 59;
+          maxAlpha = 215;
         }
-        octx.fillStyle = grad;
-        octx.beginPath();
-        octx.arc(cx, cy, r, 0, Math.PI * 2);
-        octx.fill();
-      });
+      } else {
+        if (mode === "flush") {
+          // Bottom horizon plumes transition from soft silver-gray top into pure white base
+          rTop = 203; gTop = 213; bTop = 225;
+          rBot = 255; gBot = 255; bBot = 255;
+          maxAlpha = 250;
+        } else if (mode === "vortex") {
+          // Darker, rich stormy slate-blue & silver cumulus smoke in Light Mode so it is unmistakably visible!
+          rTop = 100; gTop = 116; bTop = 139;
+          rBot = 148; gBot = 163; bBot = 184;
+          maxAlpha = 220;
+        } else {
+          // Distinct cool slate-gray sky clouds in Light Mode
+          rTop = 120; gTop = 136; bTop = 160;
+          rBot = 186; gBot = 200; bBot = 218;
+          maxAlpha = 210;
+        }
+      }
 
+      const half = size * 0.5;
+      for (let py = 0; py < size; py++) {
+        const ny = (py - half) / half;
+        const gradMix = py / size;
+        const rCol = rTop + (rBot - rTop) * gradMix;
+        const gCol = gTop + (gBot - gTop) * gradMix;
+        const bCol = bTop + (bBot - bTop) * gradMix;
+
+        for (let px = 0; px < size; px++) {
+          const nx = (px - half) / half;
+          const distSq = nx * nx + ny * ny;
+          if (distSq >= 1) continue;
+
+          const dist = Math.sqrt(distSq);
+          // Add spiral vortex distortion to the noise coordinates so the texture itself looks like swirling smoke
+          const swirlAngle = (1 - dist) * 1.65;
+          const cosA = Math.cos(swirlAngle);
+          const sinA = Math.sin(swirlAngle);
+          const wx = nx * cosA - ny * sinA;
+          const wy = nx * sinA + ny * cosA;
+
+          const radialMask = Math.pow(1 - dist, 1.35);
+          const nVal = fbmSmoke((wx + 1) * 2.2, (wy + 1) * 2.2, seed);
+
+          // Carve billowy smoke rings and filaments
+          const density = Math.max(0, (nVal - 0.16) * 1.55) * radialMask;
+          const alpha = Math.min(255, Math.floor(density * maxAlpha));
+
+          if (alpha > 1) {
+            const idx = (py * size + px) * 4;
+            data[idx]     = rCol;
+            data[idx + 1] = gCol;
+            data[idx + 2] = bCol;
+            data[idx + 3] = alpha;
+          }
+        }
+      }
+
+      octx.putImageData(imgData, 0, 0);
       return off;
     }
 
     let darkState = isDarkMode();
-    let cloudSprite = buildCloudSprite(darkState);
+    let sprites = [
+      bakeSmokeSprite(darkState, 111, "vortex"),
+      bakeSmokeSprite(darkState, 222, "vortex"),
+      bakeSmokeSprite(darkState, 333, "sky"),
+      bakeSmokeSprite(darkState, 444, "sky"),
+      bakeSmokeSprite(darkState, 555, "flush"),
+      bakeSmokeSprite(darkState, 666, "flush")
+    ];
 
-    // 14 Volumetric 3D Cloud Banks distributed in depth (z: 0.15 to 0.95)
-    // Positioned primarily along the left, right, top, and horizon so they frame the text
-    // when static, and rush outward/forward past the user when scrolling down!
-    const clouds = [
-      { xAnchor: 0.12, yAnchor: 0.22, z: 0.25, scale: 1.15, vx: 0.18, driftOffset: 0 },
-      { xAnchor: 0.88, yAnchor: 0.20, z: 0.30, scale: 1.25, vx: -0.15, driftOffset: 100 },
-      { xAnchor: 0.08, yAnchor: 0.58, z: 0.45, scale: 1.35, vx: 0.22, driftOffset: 40 },
-      { xAnchor: 0.92, yAnchor: 0.55, z: 0.48, scale: 1.40, vx: -0.20, driftOffset: 80 },
-      { xAnchor: 0.24, yAnchor: 0.84, z: 0.62, scale: 1.50, vx: 0.26, driftOffset: 20 },
-      { xAnchor: 0.76, yAnchor: 0.82, z: 0.65, scale: 1.55, vx: -0.24, driftOffset: 60 },
-      { xAnchor: 0.50, yAnchor: 0.92, z: 0.75, scale: 1.80, vx: 0.14, driftOffset: 150 },
-      { xAnchor: 0.15, yAnchor: 0.88, z: 0.85, scale: 1.95, vx: 0.30, driftOffset: 10 },
-      { xAnchor: 0.85, yAnchor: 0.88, z: 0.88, scale: 2.00, vx: -0.28, driftOffset: 110 },
-      { xAnchor: 0.32, yAnchor: 0.14, z: 0.20, scale: 0.95, vx: 0.12, driftOffset: 70 },
-      { xAnchor: 0.68, yAnchor: 0.15, z: 0.22, scale: 1.00, vx: -0.14, driftOffset: 130 },
-      { xAnchor: 0.48, yAnchor: 0.88, z: 0.94, scale: 2.25, vx: 0.20, driftOffset: 45 }
+    const isMobile = window.innerWidth < 768;
+
+    // 26 High-Volume Swirling Smoke & Cloud Plumes:
+    // - "vortex": Placed directly behind the center hero & side cards, continuously rotating & swirling when static!
+    // - "sky": Framing upper/mid sky clouds
+    // - "bed": Dense rolling smoke along the bottom horizon
+    // - "surge": Massive fly-through smoke plumes that engulf the screen as you scroll down
+    const plumes = [
+      // 10 Continuous Swirling Vortex Smoke Plumes Behind the Hero Elements (Always active & visible!)
+      { s: 0, x: 0.50, y: 0.34, side: -1, z: 0.38, size: 580, orbitR: 48, spd: 0.42, rotSpd:  0.18, ph: 0.0, role: "vortex" },
+      { s: 1, x: 0.50, y: 0.48, side:  1, z: 0.42, size: 620, orbitR: 54, spd: 0.38, rotSpd: -0.16, ph: 2.1, role: "vortex" },
+      { s: 0, x: 0.34, y: 0.38, side: -1, z: 0.45, size: 520, orbitR: 44, spd: 0.45, rotSpd:  0.22, ph: 1.1, role: "vortex" },
+      { s: 1, x: 0.66, y: 0.38, side:  1, z: 0.45, size: 520, orbitR: 44, spd: 0.45, rotSpd: -0.22, ph: 3.4, role: "vortex" },
+      { s: 1, x: 0.20, y: 0.32, side: -1, z: 0.50, size: 490, orbitR: 38, spd: 0.50, rotSpd:  0.20, ph: 4.5, role: "vortex" },
+      { s: 0, x: 0.80, y: 0.32, side:  1, z: 0.50, size: 490, orbitR: 38, spd: 0.50, rotSpd: -0.20, ph: 5.6, role: "vortex" },
+      { s: 0, x: 0.22, y: 0.62, side: -1, z: 0.55, size: 530, orbitR: 42, spd: 0.44, rotSpd: -0.19, ph: 0.8, role: "vortex" },
+      { s: 1, x: 0.78, y: 0.62, side:  1, z: 0.55, size: 530, orbitR: 42, spd: 0.44, rotSpd:  0.19, ph: 2.7, role: "vortex" },
+      { s: 1, x: 0.42, y: 0.64, side: -1, z: 0.58, size: 560, orbitR: 46, spd: 0.40, rotSpd:  0.17, ph: 3.9, role: "vortex" },
+      { s: 0, x: 0.58, y: 0.64, side:  1, z: 0.58, size: 560, orbitR: 46, spd: 0.40, rotSpd: -0.17, ph: 5.1, role: "vortex" },
+
+      // 6 Upper & Outer Sky Billowing Cloud Banks
+      { s: 2, x: 0.08, y: 0.16, side: -1, z: 0.30, size: 480, orbitR: 52, spd: 0.32, rotSpd:  0.10, ph: 0.3, role: "sky" },
+      { s: 3, x: 0.92, y: 0.16, side:  1, z: 0.30, size: 480, orbitR: 52, spd: 0.32, rotSpd: -0.10, ph: 1.8, role: "sky" },
+      { s: 3, x: 0.30, y: 0.14, side: -1, z: 0.28, size: 450, orbitR: 45, spd: 0.30, rotSpd:  0.12, ph: 3.1, role: "sky" },
+      { s: 2, x: 0.70, y: 0.14, side:  1, z: 0.28, size: 450, orbitR: 45, spd: 0.30, rotSpd: -0.12, ph: 4.7, role: "sky" },
+      { s: 2, x: 0.04, y: 0.48, side: -1, z: 0.48, size: 540, orbitR: 58, spd: 0.36, rotSpd:  0.14, ph: 2.4, role: "sky" },
+      { s: 3, x: 0.96, y: 0.48, side:  1, z: 0.48, size: 540, orbitR: 58, spd: 0.36, rotSpd: -0.14, ph: 5.9, role: "sky" },
+
+      // 6 Bottom Horizon Rolling Smoke Plumes (Flushes cleanly into white/dark page bottom)
+      { s: 4, x: 0.08, y: 0.92, side: -1, z: 0.82, size: 550, orbitR: 48, spd: 0.35, rotSpd:  0.12, ph: 0.5, role: "bed" },
+      { s: 5, x: 0.25, y: 0.94, side: -1, z: 0.88, size: 590, orbitR: 52, spd: 0.33, rotSpd: -0.11, ph: 1.9, role: "bed" },
+      { s: 4, x: 0.42, y: 0.96, side: -1, z: 0.94, size: 620, orbitR: 55, spd: 0.30, rotSpd:  0.10, ph: 3.2, role: "bed" },
+      { s: 5, x: 0.58, y: 0.96, side:  1, z: 0.94, size: 620, orbitR: 55, spd: 0.30, rotSpd: -0.10, ph: 4.6, role: "bed" },
+      { s: 4, x: 0.75, y: 0.94, side:  1, z: 0.88, size: 590, orbitR: 52, spd: 0.33, rotSpd:  0.11, ph: 5.8, role: "bed" },
+      { s: 5, x: 0.92, y: 0.92, side:  1, z: 0.82, size: 550, orbitR: 48, spd: 0.35, rotSpd: -0.12, ph: 2.3, role: "bed" },
+
+      // 4 Scroll Fly-Through Smoke Surge Plumes
+      { s: 0, x: 0.22, y: 0.74, side: -1, z: 1.15, size: 600, orbitR: 50, spd: 0.45, rotSpd:  0.22, ph: 1.2, role: "surge" },
+      { s: 1, x: 0.42, y: 0.68, side: -1, z: 1.30, size: 660, orbitR: 56, spd: 0.42, rotSpd: -0.24, ph: 3.7, role: "surge" },
+      { s: 0, x: 0.58, y: 0.68, side:  1, z: 1.30, size: 660, orbitR: 56, spd: 0.42, rotSpd:  0.24, ph: 5.2, role: "surge" },
+      { s: 1, x: 0.78, y: 0.74, side:  1, z: 1.15, size: 600, orbitR: 50, spd: 0.45, rotSpd: -0.22, ph: 0.8, role: "surge" }
     ];
 
     function resizeCanvas() {
       const rect = stage.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // 0.6x internal resolution keeps GPU fill-rate super light so rotations run at locked 60fps on any device
+      const renderScale = window.innerWidth < 768 ? 0.5 : 0.62;
       width = rect.width;
       height = rect.height;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      canvas.width = Math.max(1, Math.floor(width * renderScale));
+      canvas.height = Math.max(1, Math.floor(height * renderScale));
+      ctx.setTransform(renderScale, 0, 0, renderScale, 0, 0);
     }
 
-    function updateScroll() {
-      const stageHeight = stage.offsetHeight || 760;
+    function onScroll() {
+      const stageHeight = stage.offsetHeight || 780;
       const y = window.scrollY || window.pageYOffset || 0;
-      scrollProgress = Math.min(1, Math.max(0, y / (stageHeight * 0.82)));
-      stage.style.setProperty("--scroll-p", scrollProgress.toFixed(4));
+      targetScrollP = Math.min(1, Math.max(0, y / (stageHeight * 0.85)));
     }
 
-    // Track pointer for interactive 3D parallax & card tilt
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(function(entries) {
+        isHeroVisible = entries[0].isIntersecting;
+      }, { threshold: 0.01 });
+      io.observe(stage);
+    }
+
     stage.addEventListener("pointermove", function(e) {
-      if (isMotionPaused()) return;
+      if (isMobile || isMotionPaused()) return;
       const rect = stage.getBoundingClientRect();
       targetMouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
       targetMouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
@@ -1054,88 +1029,99 @@
       targetMouseY = 0;
     }, { passive: true });
 
-    // Interactive 3D Tilt on Bento Cards
-    const bentoCards = stage.querySelectorAll(".nx-bento-card");
-    bentoCards.forEach(function(card) {
-      card.addEventListener("pointermove", function(e) {
-        if (window.innerWidth < 992 || isMotionPaused()) return;
-        const rect = card.getBoundingClientRect();
-        const rx = (((e.clientY - rect.top) / rect.height - 0.5) * -8).toFixed(2);
-        const ry = (((e.clientX - rect.left) / rect.width - 0.5) * 8).toFixed(2);
-        card.style.transform = "perspective(750px) translate3d(0, -8px, 0) rotateX(" + rx + "deg) rotateY(" + ry + "deg) scale(1.03)";
-      }, { passive: true });
-
-      card.addEventListener("pointerleave", function() {
-        card.style.transform = "";
-      }, { passive: true });
-    });
-
-    // Rebuild cloud sprite automatically when switching between Light & Dark Mode
-    const themeObs = new MutationObserver(function() {
+    new MutationObserver(function() {
       const nowDark = isDarkMode();
       if (nowDark !== darkState) {
         darkState = nowDark;
-        cloudSprite = buildCloudSprite(darkState);
+        sprites = [
+          bakeSmokeSprite(darkState, 111, "vortex"),
+          bakeSmokeSprite(darkState, 222, "vortex"),
+          bakeSmokeSprite(darkState, 333, "sky"),
+          bakeSmokeSprite(darkState, 444, "sky"),
+          bakeSmokeSprite(darkState, 555, "flush"),
+          bakeSmokeSprite(darkState, 666, "flush")
+        ];
       }
-    });
-    themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-bs-theme", "data-theme", "class"] });
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-bs-theme", "data-theme", "class"] });
 
-    let time = 0;
-    function renderLoop() {
+    let lastTime = performance.now();
+    let elapsed = 0;
+
+    function renderLoop(now) {
+      requestAnimationFrame(renderLoop);
+      if (!isHeroVisible) return;
+
+      const dt = Math.min(0.05, (now - lastTime) * 0.001);
+      lastTime = now;
+
       if (!isMotionPaused()) {
-        time += 1;
+        elapsed += dt;
       }
 
-      // Smoothly interpolate mouse parallax
-      currentMouseX += (targetMouseX - currentMouseX) * 0.06;
-      currentMouseY += (targetMouseY - currentMouseY) * 0.06;
-      stage.style.setProperty("--mouse-x", currentMouseX.toFixed(3));
-      stage.style.setProperty("--mouse-y", currentMouseY.toFixed(3));
+      smoothScrollP += (targetScrollP - smoothScrollP) * 0.12;
+      smoothMouseX  += (targetMouseX  - smoothMouseX)  * 0.07;
+      smoothMouseY  += (targetMouseY  - smoothMouseY)  * 0.07;
+
+      stage.style.setProperty("--scroll-p", smoothScrollP.toFixed(3));
+      stage.style.setProperty("--mouse-x", smoothMouseX.toFixed(3));
+      stage.style.setProperty("--mouse-y", smoothMouseY.toFixed(3));
 
       ctx.clearRect(0, 0, width, height);
 
-      // Draw each volumetric cloud cluster with ambient horizontal drift + 3D scroll fly-through zoom
-      const centerX = width * 0.5;
-      const centerY = height * 0.45;
+      const smokeSurge = Math.sin(smoothScrollP * Math.PI);
 
-      for (let i = 0; i < clouds.length; i++) {
-        const c = clouds[i];
+      for (let i = 0; i < plumes.length; i++) {
+        const p = plumes[i];
 
-        // Ambient continuous horizontal drift
-        const ambientShiftX = Math.sin((time * 0.004 * c.vx) + c.driftOffset) * 55 + (time * c.vx * 0.35) % 160;
-        const baseX = c.xAnchor * width + ambientShiftX + (currentMouseX * 28 * c.z);
-        const baseY = c.yAnchor * height + (currentMouseY * 18 * c.z);
+        // Figure-8 orbital swirling + breathing scale so smoke actively churns & moves when static!
+        const orbitX = Math.sin(elapsed * p.spd + p.ph) * p.orbitR + Math.cos(elapsed * (p.spd * 0.6) + p.ph) * (p.orbitR * 0.45);
+        const orbitY = Math.cos(elapsed * (p.spd * 0.85) + p.ph) * (p.orbitR * 0.55);
+        const breatheScale = 1 + Math.sin(elapsed * 0.55 + p.ph) * 0.12;
 
-        // 3D Scroll Fly-Through Mathematics:
-        // As scrollProgress goes 0 -> 1, clouds accelerate outward from the center and scale up 2.6x
-        // just like flying through real clouds into the next section!
-        const flyMultiplier = 1 + (scrollProgress * (1.8 + c.z * 1.6));
-        const dx = baseX - centerX;
-        const dy = baseY - centerY;
-        const finalX = centerX + dx * flyMultiplier;
-        const finalY = centerY + dy * flyMultiplier - (scrollProgress * 95 * c.z);
+        let posX = p.x * width + orbitX + (smoothMouseX * 26 * p.z);
+        let posY = p.y * height + orbitY + (smoothMouseY * 16 * p.z);
 
-        const drawW = 360 * c.scale * flyMultiplier;
-        const drawH = 220 * c.scale * flyMultiplier;
+        // Expand and part outward as user scrolls through the smoke into the next section
+        const scrollZoom = 1 + smoothScrollP * (1.4 * p.z);
+        posX += p.side * (smoothScrollP * smoothScrollP) * width * 0.28;
+        posY -= smoothScrollP * height * (0.34 * p.z);
 
-        // Fade foreground clouds smoothly at the very end of the scroll dive
-        const alpha = Math.max(0, Math.min(1, (1 - scrollProgress * 0.55)));
-        ctx.globalAlpha = alpha;
-        ctx.drawImage(cloudSprite, finalX - drawW * 0.5, finalY - drawH * 0.5, drawW, drawH);
+        const drawSize = p.size * breatheScale * scrollZoom;
+        const angle = elapsed * p.rotSpd + (smoothScrollP * p.side * 0.7);
+
+        let alpha = 0.85;
+        if (p.role === "vortex") {
+          // Clearly visible behind the hero when static; surges as you scroll through
+          alpha = (darkState ? 0.78 : 0.82) + smokeSurge * 0.18 - smoothScrollP * 0.35;
+        } else if (p.role === "surge") {
+          alpha = 0.32 + smokeSurge * 0.68;
+        } else if (p.role === "bed") {
+          alpha = 0.94 - smoothScrollP * 0.2;
+        } else {
+          alpha = 0.88 - smoothScrollP * 0.4;
+        }
+
+        if (alpha > 0.02) {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+          ctx.translate(posX, posY);
+          ctx.rotate(angle);
+          ctx.drawImage(sprites[p.s], -drawSize * 0.5, -drawSize * 0.5, drawSize, drawSize);
+          ctx.restore();
+        }
       }
 
       ctx.globalAlpha = 1;
-      requestAnimationFrame(renderLoop);
     }
 
-    window.addEventListener("scroll", updateScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", function() {
       resizeCanvas();
-      updateScroll();
+      onScroll();
     }, { passive: true });
 
     resizeCanvas();
-    updateScroll();
+    onScroll();
     requestAnimationFrame(renderLoop);
   })();
 </script>

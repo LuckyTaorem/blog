@@ -9,3 +9,5 @@ google-auth-httplib2
 praw
 beautifulsoup4
 google-auth-oauthlib
+
+# $env:PATH += ";$PWD\node_modules\.bin"; hugo server --config hugo.toml,hugo.dev.toml --renderToMemory --noBuildLock

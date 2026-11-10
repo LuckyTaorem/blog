@@ -23,6 +23,10 @@ locale = "en-us"
 
 [params.main]
   endorse = false
+  [params.main.colorMode]
+    enabled = true
+    default = "dark"
+    modes = ["light", "dark"]
 
 [params.footer]
   copyright = "© 2026 LT Developer. All rights reserved."
