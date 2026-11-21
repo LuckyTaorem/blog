@@ -1,5 +1,6 @@
 title = "Lucky Taorem | Tech & AI Blog"
 baseURL = "https://ltdeveloperblogs.github.io/"
+timeout = "120s"
 ignoreLogs = ['warn-missing-page-argument', 'error-deprecated', 'warn-deprecated']
 
 [params]

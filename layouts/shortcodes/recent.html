@@ -134,6 +134,7 @@
     z-index: 5;
     max-width: 1420px;
     margin: 0 auto;
+    padding-inline: 0.75rem;
     display: grid;
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -142,8 +143,9 @@
 
   @media (min-width: 1200px) {
     .nx-hero-grid {
-      grid-template-columns: 295px minmax(0, 1fr) 295px;
-      gap: 1.75rem;
+      /* Fluid side wings so cards never crowd the viewport edges on 1200px–1399px screens */
+      grid-template-columns: clamp(230px, 20vw, 290px) minmax(0, 1fr) clamp(230px, 20vw, 290px);
+      gap: clamp(1rem, 1.5vw, 1.75rem);
     }
   }
 
@@ -173,19 +175,37 @@
   @media (min-width: 1200px) {
     .nx-wing-left {
       transform: translate3d(
-        calc(var(--scroll-p) * -190px + var(--mouse-x) * 10px),
-        calc(var(--scroll-p) * -30px + var(--mouse-y) * 6px),
+        calc(var(--scroll-p) * -55px + var(--mouse-x) * 4px),
+        calc(var(--scroll-p) * -25px + var(--mouse-y) * 5px),
         0
-      ) scale(calc(1 + var(--scroll-p) * 0.18));
+      ) scale(calc(1 + var(--scroll-p) * 0.04));
       opacity: calc(1 - var(--scroll-p) * 1.2);
     }
     .nx-wing-right {
       transform: translate3d(
-        calc(var(--scroll-p) * 190px + var(--mouse-x) * 10px),
+        calc(var(--scroll-p) * 55px + var(--mouse-x) * 4px),
+        calc(var(--scroll-p) * -25px + var(--mouse-y) * 5px),
+        0
+      ) scale(calc(1 + var(--scroll-p) * 0.04));
+      opacity: calc(1 - var(--scroll-p) * 1.2);
+    }
+  }
+
+  /* Restore wider fly-out motion only on large desktop monitors */
+  @media (min-width: 1500px) {
+    .nx-wing-left {
+      transform: translate3d(
+        calc(var(--scroll-p) * -140px + var(--mouse-x) * 8px),
         calc(var(--scroll-p) * -30px + var(--mouse-y) * 6px),
         0
-      ) scale(calc(1 + var(--scroll-p) * 0.18));
-      opacity: calc(1 - var(--scroll-p) * 1.2);
+      ) scale(calc(1 + var(--scroll-p) * 0.12));
+    }
+    .nx-wing-right {
+      transform: translate3d(
+        calc(var(--scroll-p) * 140px + var(--mouse-x) * 8px),
+        calc(var(--scroll-p) * -30px + var(--mouse-y) * 6px),
+        0
+      ) scale(calc(1 + var(--scroll-p) * 0.12));
     }
   }
 
@@ -254,7 +274,7 @@
 
   .nx-bento-card:hover,
   .nx-bento-card:focus-within {
-    transform: translate3d(0, -7px, 0) scale(1.025) !important;
+    transform: translate3d(0, -6px, 0) scale(1.01) !important;
     background: var(--bento-hover-bg);
     border-color: var(--bento-hover-border);
     box-shadow: var(--bento-hover-shadow);
@@ -584,6 +604,87 @@
     .nx-bento-card, .nx-live-dot {
       animation: none !important;
     }
+  }
+
+  /* ==========================================================================
+     📰 SECTION 1: ASYMMETRIC EDITORIAL BENTO (1 LARGE + 2 STACKED SIDE CARDS)
+     ========================================================================== */
+  .nx-featured-hero-card {
+    position: relative;
+    min-height: 440px;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--bento-border);
+    box-shadow: var(--bento-shadow);
+    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.25s ease;
+  }
+
+  .nx-featured-hero-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--bento-hover-border);
+    box-shadow: var(--bento-hover-shadow);
+  }
+
+  .nx-featured-hero-card .nx-featured-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nx-featured-hero-card:hover .nx-featured-img {
+    transform: scale(1.06);
+  }
+
+  .nx-featured-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(15, 23, 42, 0.08) 0%,
+      rgba(15, 23, 42, 0.45) 45%,
+      rgba(15, 23, 42, 0.92) 100%
+    );
+  }
+
+  .nx-featured-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .nx-side-card {
+    position: relative;
+    border-radius: 20px;
+    border: 1px solid var(--bento-border);
+    background: var(--bs-tertiary-bg);
+    padding: 0.9rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.25s ease;
+  }
+
+  .nx-side-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--bento-hover-border);
+    box-shadow: var(--bento-hover-shadow);
+  }
+
+  .nx-side-thumb {
+    width: 145px;
+    min-width: 145px;
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  @media (max-width: 575.98px) {
+    .nx-featured-hero-card { min-height: 360px; }
+    .nx-side-thumb { width: 100%; min-width: 100%; aspect-ratio: 16 / 9; }
   }
 </style>
 
@@ -1127,51 +1228,114 @@
 </script>
 
 <!-- ========================================== -->
-<!-- SECTION 1: RECENT POSTS AS "FEATURES"      -->
+<!-- SECTION 1: ASYMMETRIC EDITORIAL BENTO      -->
 <!-- ========================================== -->
-<div class="row g-4 mb-5 pb-5 pt-2" id="latest-innovations-section">
-  <div class="col-12 text-center mb-4">
-    <h2 class="fw-bolder h3">Latest Innovations & Architectures</h2>
+<div class="mb-5 pb-5 pt-2" id="latest-innovations-section">
+  <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between mb-4 gap-2">
+    <div>
+      <span class="text-uppercase fw-bold text-primary" style="font-size: 0.75rem; letter-spacing: 0.12em;">
+        Fresh Off The Pipeline
+      </span>
+      <h2 class="fw-bolder h2 mb-0 mt-1">Latest Innovations & Architectures</h2>
+    </div>
+    <a href="{{ "posts/" | absURL }}" class="text-decoration-none fw-bold text-primary d-inline-flex align-items-center gap-1">
+      View All Articles <i class="bi bi-arrow-right"></i>
+    </a>
   </div>
-  
-  {{ range $heroFeatures }}
-  <div class="col-lg-4 col-md-6">
-    <article class="card h-100 border-0 bg-body-tertiary rounded-4 p-2 article-group shadow-sm" style="transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.classList.add('shadow');" onmouseout="this.style.transform='translateY(0)'; this.classList.remove('shadow');">
-      
-      {{/* Image Container */}}
-      <div class="img-wrapper rounded-3 mb-3 w-100 overflow-hidden" style="aspect-ratio: 16/10;">
+
+  {{ $leadPost := index $heroFeatures 0 }}
+  {{ $sidePosts := after 1 $heroFeatures }}
+
+  <div class="row g-4 align-items-stretch">
+    
+    {{/* LEFT: 1 Large Spotlight Feature Card */}}
+    {{ with $leadPost }}
+    <div class="col-lg-7">
+      <article class="nx-featured-hero-card h-100 article-group">
         {{ $thumbStr := .Params.thumbnail | default (index .Params.images 0) }}
         {{ if $thumbStr }}
           {{ $thumbRes := resources.Get $thumbStr }}
           {{ if $thumbRes }}
-              {{ $thumbOpt := $thumbRes.Resize "600x webp q80" }}
-              <img src="{{ $thumbOpt.RelPermalink }}" loading="eager" fetchpriority="high" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
+            {{ $thumbOpt := $thumbRes.Resize "900x webp q82" }}
+            <img src="{{ $thumbOpt.RelPermalink }}" loading="eager" fetchpriority="high" class="nx-featured-img" alt="{{ .Title }}">
           {{ else }}
-              <img src="{{ $thumbStr | absURL }}" loading="eager" fetchpriority="high" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
+            <img src="{{ $thumbStr | absURL }}" loading="eager" fetchpriority="high" class="nx-featured-img" alt="{{ .Title }}">
           {{ end }}
         {{ end }}
-      </div>
 
-      {{/* Card Content (Stripped of standard blog meta to look like a feature) */}}
-      <div class="card-body p-3 pt-1">
-        <div class="mb-2">
-          <span class="text-uppercase fw-bold text-primary" style="font-size: 0.7rem; letter-spacing: 0.1em;">
-            {{ index .Params.categories 0 | default "Highlight" }}
-          </span>
+        <div class="nx-featured-overlay" aria-hidden="true"></div>
+
+        <div class="nx-featured-content text-white">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="badge rounded-pill text-uppercase fw-bold px-3 py-2" style="background: var(--accent-primary); font-size: 0.7rem; letter-spacing: 0.08em;">
+              {{ index .Params.categories 0 | default "Featured" }}
+            </span>
+            <span class="small opacity-75 fw-medium">
+              <i class="bi bi-calendar3 me-1"></i>{{ .Date.Format "Jan 2, 2006" }}
+            </span>
+          </div>
+
+          <h3 class="h2 fw-bolder mb-2 text-white" style="line-height: 1.2;">
+            <a href="{{ .RelPermalink }}" class="text-decoration-none text-white stretched-link title-link">
+              {{ .Title }}
+            </a>
+          </h3>
+
+          <p class="mb-3 text-white-50" style="font-size: 0.95rem; max-width: 60ch;">
+            {{ .Summary | plainify | truncate 140 }}
+          </p>
+
+          <div>
+            <span class="d-inline-flex align-items-center gap-2 fw-bold text-white small">
+              Read Featured Story <i class="bi bi-arrow-right-circle-fill fs-5" style="color: var(--accent-primary);"></i>
+            </span>
+          </div>
         </div>
-        <h3 class="h5 fw-bold mb-2" style="line-height: 1.4;">
-          <a href="{{ .RelPermalink }}" class="text-decoration-none text-body stretched-link title-link">
-            {{ .Title }}
-          </a>
-        </h3>
-        <p class="text-secondary mb-0" style="font-size: 0.9rem; opacity: 0.85;">
-          {{ .Summary | plainify | truncate 100 }}
-        </p>
-      </div>
-      
-    </article>
+      </article>
+    </div>
+    {{ end }}
+
+    {{/* RIGHT: 2 Stacked Compact Horizontal Cards */}}
+    <div class="col-lg-5 d-flex flex-column gap-4">
+      {{ range $sidePosts }}
+      <article class="nx-side-card flex-fill d-flex flex-column flex-sm-row align-items-sm-center gap-3 article-group shadow-sm">
+        <div class="img-wrapper nx-side-thumb flex-shrink-0">
+          {{ $thumbStr := .Params.thumbnail | default (index .Params.images 0) }}
+          {{ if $thumbStr }}
+            {{ $thumbRes := resources.Get $thumbStr }}
+            {{ if $thumbRes }}
+              {{ $thumbOpt := $thumbRes.Resize "400x webp q80" }}
+              <img src="{{ $thumbOpt.RelPermalink }}" loading="eager" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
+            {{ else }}
+              <img src="{{ $thumbStr | absURL }}" loading="eager" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
+            {{ end }}
+          {{ end }}
+        </div>
+
+        <div class="d-flex flex-column justify-content-center py-1">
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="text-uppercase fw-bold text-primary" style="font-size: 0.68rem; letter-spacing: 0.1em;">
+              {{ index .Params.categories 0 | default "Highlight" }}
+            </span>
+            <span class="text-secondary opacity-50">&middot;</span>
+            <span class="text-secondary" style="font-size: 0.75rem;">{{ .Date.Format "Jan 2" }}</span>
+          </div>
+
+          <h3 class="h5 fw-bold mb-2" style="line-height: 1.35;">
+            <a href="{{ .RelPermalink }}" class="text-decoration-none text-body stretched-link title-link">
+              {{ .Title }}
+            </a>
+          </h3>
+
+          <p class="text-secondary mb-0" style="font-size: 0.85rem; opacity: 0.85;">
+            {{ .Summary | plainify | truncate 85 }}
+          </p>
+        </div>
+      </article>
+      {{ end }}
+    </div>
+
   </div>
-  {{ end }}
 </div>
 
 <!-- ========================================== -->
