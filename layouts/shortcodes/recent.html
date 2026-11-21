@@ -607,84 +607,106 @@
   }
 
   /* ==========================================================================
-     📰 SECTION 1: ASYMMETRIC EDITORIAL BENTO (1 LARGE + 2 STACKED SIDE CARDS)
+     📰 SECTION 1: COMPACT EDITORIAL LEAD + 4-ITEM SIDE STREAM
      ========================================================================== */
-  .nx-featured-hero-card {
+  .nx-lead-card {
     position: relative;
-    min-height: 440px;
-    border-radius: 24px;
-    overflow: hidden;
-    border: 1px solid var(--bento-border);
-    box-shadow: var(--bento-shadow);
-    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.25s ease;
-  }
-
-  .nx-featured-hero-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--bento-hover-border);
-    box-shadow: var(--bento-hover-shadow);
-  }
-
-  .nx-featured-hero-card .nx-featured-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .nx-featured-hero-card:hover .nx-featured-img {
-    transform: scale(1.06);
-  }
-
-  .nx-featured-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      180deg,
-      rgba(15, 23, 42, 0.08) 0%,
-      rgba(15, 23, 42, 0.45) 45%,
-      rgba(15, 23, 42, 0.92) 100%
-    );
-  }
-
-  .nx-featured-content {
-    position: relative;
-    z-index: 2;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: clamp(1.5rem, 3vw, 2.25rem);
-  }
-
-  .nx-side-card {
-    position: relative;
-    border-radius: 20px;
+    border-radius: 22px;
     border: 1px solid var(--bento-border);
     background: var(--bs-tertiary-bg);
     padding: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--bento-shadow);
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.25s ease;
   }
 
-  .nx-side-card:hover {
+  .nx-lead-card:hover {
     transform: translateY(-4px);
     border-color: var(--bento-hover-border);
     box-shadow: var(--bento-hover-shadow);
   }
 
-  .nx-side-thumb {
-    width: 145px;
-    min-width: 145px;
-    aspect-ratio: 4 / 3;
-    border-radius: 14px;
+  .nx-lead-img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: 16px;
     overflow: hidden;
   }
 
-  @media (max-width: 575.98px) {
-    .nx-featured-hero-card { min-height: 360px; }
-    .nx-side-thumb { width: 100%; min-width: 100%; aspect-ratio: 16 / 9; }
+  .nx-lead-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 2;
+    background: var(--accent-primary);
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  }
+
+  .nx-mini-card {
+    position: relative;
+    border-radius: 18px;
+    border: 1px solid var(--bento-border);
+    background: var(--bs-tertiary-bg);
+    padding: 0.65rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+
+  .nx-mini-card:hover {
+    transform: translateX(4px);
+    border-color: var(--bento-hover-border);
+    box-shadow: var(--bento-hover-shadow);
+  }
+
+  .nx-mini-thumb {
+    width: 88px;
+    height: 88px;
+    min-width: 88px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .nx-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (max-width: 767.98px) {
+    .nx-lead-card {
+      padding: 0.75rem;
+      border-radius: 18px;
+    }
+    .nx-lead-img-wrap {
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+    }
+    .nx-mini-card {
+      padding: 0.6rem;
+      gap: 0.75rem;
+      border-radius: 14px;
+    }
+    .nx-mini-card:hover {
+      transform: none;
+    }
+    .nx-mini-thumb {
+      width: 72px;
+      height: 72px;
+      min-width: 72px;
+      border-radius: 10px;
+    }
   }
 </style>
 
@@ -692,8 +714,8 @@
 {{ $posts := (where .Site.RegularPages "Section" "posts") }}
 
 {{/* Split posts for Landing Page layout */}}
-{{ $heroFeatures := first 3 $posts }}
-{{ $gridPosts := first 6 (after 3 $posts) }}
+{{ $heroFeatures := first 5 $posts }}
+{{ $gridPosts := first 6 (after 5 $posts) }}
 
 <!-- ========================================================================= -->
 <!-- 🌫️ REAL VOLUMETRIC CLOUD & BILLOWING SMOKE FLY-THROUGH HERO               -->
@@ -1228,17 +1250,17 @@
 </script>
 
 <!-- ========================================== -->
-<!-- SECTION 1: ASYMMETRIC EDITORIAL BENTO      -->
+<!-- SECTION 1: COMPACT LEAD + 4 SIDE ARTICLES  -->
 <!-- ========================================== -->
-<div class="mb-5 pb-5 pt-2" id="latest-innovations-section">
-  <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between mb-4 gap-2">
+<div class="mb-5 pb-4 pt-2" id="latest-innovations-section">
+  <div class="d-flex flex-column flex-sm-row align-items-sm-end justify-content-between mb-4 gap-2">
     <div>
       <span class="text-uppercase fw-bold text-primary" style="font-size: 0.75rem; letter-spacing: 0.12em;">
         Fresh Off The Pipeline
       </span>
-      <h2 class="fw-bolder h2 mb-0 mt-1">Latest Innovations & Architectures</h2>
+      <h2 class="fw-bolder h3 mb-0 mt-1">Latest Innovations & Architectures</h2>
     </div>
-    <a href="{{ "posts/" | absURL }}" class="text-decoration-none fw-bold text-primary d-inline-flex align-items-center gap-1">
+    <a href="{{ "posts/" | absURL }}" class="text-decoration-none fw-bold text-primary d-inline-flex align-items-center gap-1 small">
       View All Articles <i class="bi bi-arrow-right"></i>
     </a>
   </div>
@@ -1246,48 +1268,47 @@
   {{ $leadPost := index $heroFeatures 0 }}
   {{ $sidePosts := after 1 $heroFeatures }}
 
-  <div class="row g-4 align-items-stretch">
+  <div class="row g-3 g-lg-4 align-items-stretch">
     
-    {{/* LEFT: 1 Large Spotlight Feature Card */}}
+    {{/* LEFT: Compact Editorial Lead Card */}}
     {{ with $leadPost }}
-    <div class="col-lg-7">
-      <article class="nx-featured-hero-card h-100 article-group">
-        {{ $thumbStr := .Params.thumbnail | default (index .Params.images 0) }}
-        {{ if $thumbStr }}
-          {{ $thumbRes := resources.Get $thumbStr }}
-          {{ if $thumbRes }}
-            {{ $thumbOpt := $thumbRes.Resize "900x webp q82" }}
-            <img src="{{ $thumbOpt.RelPermalink }}" loading="eager" fetchpriority="high" class="nx-featured-img" alt="{{ .Title }}">
-          {{ else }}
-            <img src="{{ $thumbStr | absURL }}" loading="eager" fetchpriority="high" class="nx-featured-img" alt="{{ .Title }}">
+    <div class="col-lg-6">
+      <article class="nx-lead-card h-100 article-group">
+        <div class="img-wrapper nx-lead-img-wrap mb-3">
+          <span class="nx-lead-badge">
+            {{ index .Params.categories 0 | default "Featured" }}
+          </span>
+          {{ $thumbStr := .Params.thumbnail | default (index .Params.images 0) }}
+          {{ if $thumbStr }}
+            {{ $thumbRes := resources.Get $thumbStr }}
+            {{ if $thumbRes }}
+              {{ $thumbOpt := $thumbRes.Resize "750x webp q82" }}
+              <img src="{{ $thumbOpt.RelPermalink }}" loading="eager" fetchpriority="high" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
+            {{ else }}
+              <img src="{{ $thumbStr | absURL }}" loading="eager" fetchpriority="high" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
+            {{ end }}
           {{ end }}
-        {{ end }}
+        </div>
 
-        <div class="nx-featured-overlay" aria-hidden="true"></div>
-
-        <div class="nx-featured-content text-white">
-          <div class="d-flex align-items-center gap-2 mb-3">
-            <span class="badge rounded-pill text-uppercase fw-bold px-3 py-2" style="background: var(--accent-primary); font-size: 0.7rem; letter-spacing: 0.08em;">
-              {{ index .Params.categories 0 | default "Featured" }}
-            </span>
-            <span class="small opacity-75 fw-medium">
-              <i class="bi bi-calendar3 me-1"></i>{{ .Date.Format "Jan 2, 2006" }}
-            </span>
+        <div class="px-2 pb-1 d-flex flex-column flex-grow-1">
+          <div class="d-flex align-items-center gap-2 mb-2 text-secondary" style="font-size: 0.78rem;">
+            <i class="bi bi-calendar3"></i>
+            <span>{{ .Date.Format "Jan 2, 2006" }}</span>
           </div>
 
-          <h3 class="h2 fw-bolder mb-2 text-white" style="line-height: 1.2;">
-            <a href="{{ .RelPermalink }}" class="text-decoration-none text-white stretched-link title-link">
+          <h3 class="h4 fw-bolder mb-2" style="line-height: 1.3;">
+            <a href="{{ .RelPermalink }}" class="text-decoration-none text-body stretched-link title-link">
               {{ .Title }}
             </a>
           </h3>
 
-          <p class="mb-3 text-white-50" style="font-size: 0.95rem; max-width: 60ch;">
-            {{ .Summary | plainify | truncate 140 }}
+          <p class="text-secondary mb-3" style="font-size: 0.9rem; line-height: 1.55; opacity: 0.88;">
+            {{ .Summary | plainify | truncate 135 }}
           </p>
 
-          <div>
-            <span class="d-inline-flex align-items-center gap-2 fw-bold text-white small">
-              Read Featured Story <i class="bi bi-arrow-right-circle-fill fs-5" style="color: var(--accent-primary);"></i>
+          <div class="mt-auto pt-1">
+            <span class="d-inline-flex align-items-center gap-2 fw-bold text-primary small">
+              Read Featured Story <i class="bi bi-arrow-right"></i>
             </span>
           </div>
         </div>
@@ -1295,16 +1316,16 @@
     </div>
     {{ end }}
 
-    {{/* RIGHT: 2 Stacked Compact Horizontal Cards */}}
-    <div class="col-lg-5 d-flex flex-column gap-4">
+    {{/* RIGHT: 4 Compact Horizontal Cards */}}
+    <div class="col-lg-6 d-flex flex-column justify-content-between gap-3">
       {{ range $sidePosts }}
-      <article class="nx-side-card flex-fill d-flex flex-column flex-sm-row align-items-sm-center gap-3 article-group shadow-sm">
-        <div class="img-wrapper nx-side-thumb flex-shrink-0">
+      <article class="nx-mini-card flex-fill article-group shadow-sm">
+        <div class="img-wrapper nx-mini-thumb flex-shrink-0">
           {{ $thumbStr := .Params.thumbnail | default (index .Params.images 0) }}
           {{ if $thumbStr }}
             {{ $thumbRes := resources.Get $thumbStr }}
             {{ if $thumbRes }}
-              {{ $thumbOpt := $thumbRes.Resize "400x webp q80" }}
+              {{ $thumbOpt := $thumbRes.Resize "240x webp q80" }}
               <img src="{{ $thumbOpt.RelPermalink }}" loading="eager" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
             {{ else }}
               <img src="{{ $thumbStr | absURL }}" loading="eager" class="w-100 h-100 object-fit-cover" alt="{{ .Title }}">
@@ -1312,24 +1333,20 @@
           {{ end }}
         </div>
 
-        <div class="d-flex flex-column justify-content-center py-1">
+        <div class="d-flex flex-column justify-content-center min-w-0">
           <div class="d-flex align-items-center gap-2 mb-1">
-            <span class="text-uppercase fw-bold text-primary" style="font-size: 0.68rem; letter-spacing: 0.1em;">
+            <span class="text-uppercase fw-bold text-primary text-truncate" style="font-size: 0.66rem; letter-spacing: 0.08em;">
               {{ index .Params.categories 0 | default "Highlight" }}
             </span>
             <span class="text-secondary opacity-50">&middot;</span>
-            <span class="text-secondary" style="font-size: 0.75rem;">{{ .Date.Format "Jan 2" }}</span>
+            <span class="text-secondary flex-shrink-0" style="font-size: 0.72rem;">{{ .Date.Format "Jan 2" }}</span>
           </div>
 
-          <h3 class="h5 fw-bold mb-2" style="line-height: 1.35;">
+          <h3 class="h6 fw-bold mb-0 nx-clamp-2" style="line-height: 1.35;">
             <a href="{{ .RelPermalink }}" class="text-decoration-none text-body stretched-link title-link">
               {{ .Title }}
             </a>
           </h3>
-
-          <p class="text-secondary mb-0" style="font-size: 0.85rem; opacity: 0.85;">
-            {{ .Summary | plainify | truncate 85 }}
-          </p>
         </div>
       </article>
       {{ end }}
@@ -1408,7 +1425,7 @@
 <!-- SECTION 3: TYPOGRAPHY-FIRST INDEX          -->
 <!-- ========================================== -->
 {{/* Fetch the next 5 posts for the list */}}
-{{ $listPosts := first 5 (after 9 $posts) }}
+{{ $listPosts := first 5 (after 11 $posts) }}
 
 {{ if $listPosts }}
 <div class="mt-5 pt-5 border-top border-secondary border-opacity-25 mb-5">
