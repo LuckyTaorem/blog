@@ -68,7 +68,7 @@
     "katex": "^0.19.0",
     "leaflet": "^1.9.4",
     "lockfile-lint": "^4.14.1",
-    "markdownlint-cli2": "^0.24.0",
+    "markdownlint-cli2": "^0.24.2",
     "mermaid": "^12.2.0",
     "mime": "^4.0.7",
     "netlify-plugin-hugo-cache-resources": "^0.2.1",
